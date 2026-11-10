@@ -49,7 +49,7 @@ flowchart LR
 
 - **Catálogo de times** em `src/resenha/teams.toml`: `slug`, nome, apelido da torcida, ESPN id,
   slug do ge, termos de busca do Google News, cores, competições. Time novo = uma entrada nova.
-- **Agenda por time**: a lógica de edições guiada por jogos (`flanews.schedule`) roda por time; o
+- **Agenda por time**: a lógica de edições guiada por jogos (`resenha.schedule`) roda por time; o
   `due` devolve a lista de (time, edição) vencidas.
 - **Web**: um app só (inscrição, ranking, palpites, pedidos), SQLite em volume Docker, atrás do
   Caddy na VPS (`infra`), como a Urubu News.

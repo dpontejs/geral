@@ -3,11 +3,11 @@
 Ordem de execução. Cada fatia vira um PR; a página da fatia fica em `docs/features/`.
 
 ## Fatia 1 — Newsletter de qualquer time (`docs/features/newsletter-por-time.md`)
-- [ ] T1: esqueleto do projeto (`pyproject.toml`, `uv`, ruff, pytest, CI) copiando a configuração da Urubu News
-- [ ] T2: catálogo `teams.toml` + `load_teams()` validado com pydantic (Flamengo, Botafogo, Palmeiras para começar)
-- [ ] T3: copiar coleta, resumo, ESPN, render e envio da Urubu News, trocando constantes do Flamengo por `Team`
-- [ ] T4: prompts e templates parametrizados pelo time (nome, torcida, cores, escudo)
-- [ ] T5: CLI `resenha preview --team <slug>` e `resenha run --team <slug>`
+- [x] T1: esqueleto do projeto (`pyproject.toml`, `uv`, ruff, pytest, CI) copiando a configuração da Urubu News
+- [x] T2: catálogo `teams.toml` + `load_teams()` validado com pydantic (Vasco, Palmeiras, ABC, Náutico)
+- [x] T3: copiar coleta, resumo, ESPN, render e envio da Urubu News, trocando constantes do Flamengo por `Team`
+- [x] T4: prompts e templates parametrizados pelo time (nome, torcida, cores, escudo)
+- [x] T5: CLI `resenha preview --team <slug>` e `resenha run --team <slug>`
 
 ## Fatia 2 — Inscrição com escolha de times
 - [ ] Inscrição com um ou mais times, confirmação por e-mail, descadastro por time e geral

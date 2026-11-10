@@ -1,7 +1,7 @@
 # Newsletter de qualquer time
 
 - **Data:** 2026-11-10
-- **Status:** proposta
+- **Status:** implementada (aguardando PR)
 - **ADRs:** —
 
 ## Objetivo
@@ -20,14 +20,15 @@ trocando só o parâmetro `--team`. É a base de todas as outras fatias do hub.
 ```python
 # src/resenha/teams.py — lê src/resenha/teams.toml
 class Team(BaseModel):
-    slug: str                 # "botafogo"
-    name: str                 # "Botafogo"
-    fans: str                 # "alvinegros"
-    espn_id: int              # conferir na ESPN ao cadastrar
-    ge_slug: str              # ge.globo.com/futebol/times/<ge_slug>/
-    news_query: str           # busca do Google News
-    colors: tuple[str, str]   # primária, secundária (hex)
-    leagues: list[str]        # ["bra.1", "conmebol.libertadores", "bra.copa_do_brazil"]
+    slug: str  # "botafogo"
+    name: str  # "Botafogo"
+    fans: str  # "alvinegros"
+    espn_id: int  # conferir na ESPN ao cadastrar
+    ge_slug: str  # ge.globo.com/futebol/times/<ge_slug>/
+    news_query: str  # busca do Google News
+    accent: str  # cor da marca (hex)
+    leagues: list[str]  # ["bra.1", "conmebol.libertadores", "bra.copa_do_brazil"]
+
 
 def load_teams(path: Path | None = None) -> dict[str, Team]: ...
 def get_team(slug: str) -> Team: ...  # UnknownTeam com a lista de slugs válidos

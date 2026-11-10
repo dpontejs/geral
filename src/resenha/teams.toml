@@ -1,0 +1,57 @@
+# Team catalog. A new team is a new entry here: check `espn_id` on
+# https://site.api.espn.com/apis/site/v2/sports/soccer/<league>/teams and `ge_url` in the browser.
+# `leagues` are the ESPN league codes tracked (names in resenha.teams.LEAGUES); `league` is the
+# one whose table, campaign and rankings go in the e-mail (none when ESPN has no table). `accent` must read well on white and under white text.
+
+[vasco]
+name = "Vasco"
+newsletter = "Almirante News"
+fans = "vascaínos"
+espn_id = 3454
+ge_url = "https://ge.globo.com/futebol/times/vasco/"
+news_query = '"Vasco" futebol'
+keywords = ["vasco", "vascaíno", "vascaínos", "cruzmaltino", "gigante da colina"]
+accent = "#141414"
+leagues = ["bra.1", "conmebol.sudamericana", "bra.copa_do_brazil", "bra.camp.carioca"]
+league = "bra.1"
+[vasco.other_sports]
+"Futebol feminino" = '"Vasco" futebol feminino'
+"Basquete" = '"Vasco" basquete OR NBB'
+
+[palmeiras]
+name = "Palmeiras"
+newsletter = "Porco News"
+fans = "palmeirenses"
+espn_id = 2029
+ge_url = "https://ge.globo.com/futebol/times/palmeiras/"
+news_query = '"Palmeiras" futebol'
+keywords = ["palmeiras", "verdão", "palmeirense", "palmeirenses", "alviverde"]
+accent = "#006437"
+leagues = ["bra.1", "conmebol.libertadores", "bra.copa_do_brazil", "bra.camp.paulista"]
+league = "bra.1"
+[palmeiras.other_sports]
+"Futebol feminino" = '"Palmeiras" futebol feminino'
+
+[abc]
+name = "ABC"
+newsletter = "Elefante News"
+fans = "abecedistas"
+espn_id = 9965
+ge_url = "https://ge.globo.com/rn/futebol/times/abc/"
+news_query = '"ABC" futebol Natal'
+keywords = ["abc", "abecedista", "abecedistas", "alvinegro potiguar"]
+accent = "#141414"
+# Série C is not on ESPN: those matches come without stats, and there is no table.
+leagues = ["bra.copa_do_nordeste", "bra.copa_do_brazil"]
+
+[nautico]
+name = "Náutico"
+newsletter = "Timbu News"
+fans = "alvirrubros"
+espn_id = 7633
+ge_url = "https://ge.globo.com/pe/futebol/times/nautico/"
+news_query = '"Náutico" futebol'
+keywords = ["náutico", "nautico", "timbu", "alvirrubro", "alvirrubros"]
+accent = "#C60000"
+leagues = ["bra.2", "bra.copa_do_nordeste", "bra.copa_do_brazil"]
+league = "bra.2"
