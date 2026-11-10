@@ -351,12 +351,36 @@ def test_render_subscribe_link_only_when_given() -> None:
     assert "Inscreva-se" not in plain_html and "Inscreva-se" not in plain_text
 
 
-def test_render_header_uses_team_crest_and_brand() -> None:
-    html, text = render(full_newsletter())
+def email_header(html: str) -> str:
+    """From <body> to the edition label, which sits right under the brand."""
+    body = html[html.index("<body") :]
+    return body[: body.index(EDITION.label)]
 
-    assert re.search(r'<img src="https://a.espncdn.com/i/teamlogos/soccer/500/819.png"', html)
+
+def test_render_header_uses_the_brand_logo_not_the_crest() -> None:
+    # The Urubu News way: the newsletter has its own mascot; the crest is match data only.
+    logo = "https://urubunews.diegoponte.dev/static/logo-email.png"
+    newsletter = full_newsletter().model_copy(
+        update={"team": FLAMENGO.model_copy(update={"brand_logo": logo})}
+    )
+
+    html, text = render(newsletter)
+
+    header = email_header(html)
+    assert re.search(rf'<img src="{re.escape(logo)}" alt="Urubu News"', header)
+    assert "teamlogos" not in header
     assert "<title>Urubu News" in html
     assert text.startswith("URUBU NEWS")
+
+
+def test_render_header_without_logo_shows_the_name_only() -> None:
+    newsletter = full_newsletter().model_copy(update={"team": get_team("abc")})
+
+    html, _ = render(newsletter)
+
+    header = email_header(html)
+    assert "<img" not in header
+    assert "Elefante News" in header
 
 
 def test_render_uses_team_name_and_colors() -> None:

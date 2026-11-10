@@ -41,7 +41,8 @@ ge_url = "https://ge.globo.com/rn/futebol/times/abc/"
 news_query = '"ABC" futebol Natal'
 keywords = ["abc", "abecedista", "abecedistas", "alvinegro potiguar"]
 accent = "#141414"
-# Série C is not on ESPN: those matches come without stats, and there is no table.
+# Série D 2026, promoted to Série C 2027. ESPN covers neither: those matches come without
+# stats, and there is no table (sources for C/D under research).
 leagues = ["bra.copa_do_nordeste", "bra.copa_do_brazil"]
 
 [nautico]

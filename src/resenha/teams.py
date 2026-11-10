@@ -46,6 +46,9 @@ class Team(BaseModel):
     # League of the table, campaign and player rankings; None when ESPN has no table for it.
     league: str | None = None
     other_sports: dict[str, str] = Field(default_factory=dict)  # name -> Google News query
+    # The newsletter's own mascot logo (640x255 PNG, absolute URL). Never the club crest:
+    # the newsletter must not look official. Without it the header shows the name in text.
+    brand_logo: str | None = None
 
     @field_validator("accent")
     @classmethod

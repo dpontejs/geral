@@ -65,11 +65,12 @@
   <tr><td class="header font">
     <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
       <td valign="middle">
-        <img src="{{ team.logo }}" alt="{{ team.name }}" width="56" height="56" style="display: block; border: 0;">
-      </td>
-      <td valign="middle" style="padding-left: 12px;">
+        {% if team.brand_logo %}
+        <img src="{{ team.brand_logo }}" alt="{{ team.newsletter }}" width="320" height="127" style="display: block; border: 0; color: {{ accent }}; font-size: 26px; font-weight: 800;">
+        {% else %}
         <p class="brand" style="color: {{ accent }};">{{ team.newsletter }}</p>
-        <p class="edition">{{ n.edition.label }}</p>
+        {% endif %}
+        <p class="edition" style="padding-left: 4px;">{{ n.edition.label }}</p>
       </td>
     </tr></table>
   </td></tr>
