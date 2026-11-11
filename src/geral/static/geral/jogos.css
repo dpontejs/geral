@@ -49,3 +49,41 @@
 .words .tile.existe { background: var(--ticket); }
 .words .tile.nao { background: var(--concrete-lt); }
 .guess input.word-input { width: min(100%, 360px); text-align: left; letter-spacing: .12em; text-transform: uppercase; }
+
+/* Onde jogou?: the player's career, one slot per stint. */
+.match .player { font-size: clamp(26px, 5.4vw, 60px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.career { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.slot { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; border: 2px solid #3A3833; min-height: 72px; }
+.slot .years { font: 700 14px/1 var(--body); color: var(--concrete-lt); letter-spacing: .04em; }
+.slot .lamp { font-size: 26px; }
+.slot-club { font: 800 20px/1.1 var(--display); text-transform: uppercase; }
+.slot-club.found { color: #7BE38D; }
+.slot-club.missed { color: var(--concrete-lt); }
+.slot-club.given { color: var(--lamp); }
+
+/* Onde jogou?: club picker (search, countries, paged buttons). */
+.picker { display: flex; flex-direction: column; gap: 12px; background: var(--paper); border: 3px solid var(--ink); padding: 16px; }
+.picker-top { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
+.picker-search { flex: 1 1 260px; display: flex; flex-direction: column; gap: 6px; font-weight: 600; }
+.picker-search input { font: 18px var(--body); padding: 12px; border: 3px solid var(--ink); background: #fff; color: var(--ink); }
+.countries { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 700 14px/1 var(--body); padding: 9px 12px; min-height: 40px; border: 2px solid var(--ink); background: transparent; color: var(--ink); cursor: pointer; }
+.chip[aria-pressed="true"], select.chip.on { background: var(--ink); color: var(--lamp); }
+select.chip { appearance: auto; }
+/* Every club square the same size: two lines of name at most, the country at the bottom. */
+.club-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); grid-auto-rows: 92px; gap: 8px; }
+.club-grid li { min-width: 0; }
+.club { width: 100%; height: 100%; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; gap: 4px; padding: 10px 12px; border: 2px solid var(--ink); background: #fff; color: var(--ink); cursor: pointer; text-align: left; overflow: hidden; }
+.club .club-name { display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.25; padding-top: 1px; }
+.club:hover:not(:disabled) { background: var(--ticket); }
+.club .club-name { font: 800 18px/1.25 var(--display); text-transform: uppercase; }
+.club .club-country { font-size: 12px; color: var(--ink-soft); }
+.club.found { background: #2F7D3A; color: #fff; border-color: #2F7D3A; }
+.club.found .club-country { color: #E6F4E8; }
+.club.wrong { background: var(--concrete-lt); text-decoration: line-through; }
+.club:disabled { cursor: default; }
+.club-grid .empty { grid-column: 1 / -1; color: var(--ink-soft); align-self: center; }
+.pager { display: flex; align-items: center; justify-content: center; gap: 12px; font-weight: 600; }
+.pager button { font: 900 24px/1 var(--display); width: 44px; height: 44px; border: 2px solid var(--ink); background: transparent; cursor: pointer; }
+.pager button:disabled { opacity: .3; cursor: default; }
+.picker .btn.secondary { border-width: 3px; }
