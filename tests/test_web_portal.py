@@ -65,3 +65,11 @@ def test_favicon_points_to_the_geral_icon(client) -> None:
     response = client.get("/favicon.ico", follow_redirects=False)
 
     assert response.headers["location"] == "/static/geral/icon-512.png"
+
+
+def test_portal_explains_the_name(client) -> None:
+    page = client.get("/").text
+
+    assert 'id="por-que-geral"' in page
+    assert "Por que Geral?" in page
+    assert "Maracanã" in page and "geraldino" in page
