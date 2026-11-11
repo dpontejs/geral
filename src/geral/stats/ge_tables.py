@@ -321,6 +321,7 @@ class GETablesClient:
         at = time.fromisoformat(hour) if hour else time(0, 0)
         kickoff = datetime.combine(date.fromisoformat(day[:10]), at, tzinfo=self.tz)
         home, away = item["equipes"]["mandante"], item["equipes"]["visitante"]
+        pens = (item.get("placar_penaltis_mandante"), item.get("placar_penaltis_visitante"))
         if not (isinstance(home["nome_popular"], str) and isinstance(away["nome_popular"], str)):
             raise ValueError("a side without name")
         return Game(
@@ -336,8 +337,9 @@ class GETablesClient:
             away_goals=item.get("placar_oficial_visitante"),
             venue=(item.get("sede") or {}).get("nome_popular"),
             started=bool(item.get("jogo_ja_comecou")),
-            home_penalties=item.get("placar_penaltis_mandante"),
-            away_penalties=item.get("placar_penaltis_visitante"),
+            # Both sides or none: a half shoot-out would print "3 x None".
+            home_penalties=pens[0] if None not in pens else None,
+            away_penalties=pens[1] if None not in pens else None,
         )
 
     def _fixture(self, game: Game, now: datetime) -> Fixture:

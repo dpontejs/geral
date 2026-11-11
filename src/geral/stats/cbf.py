@@ -7,7 +7,7 @@ Any failure is an empty list: the edition keeps the score without the scorers.
 
 import logging
 import re
-from datetime import date, datetime
+from datetime import date, datetime, timedelta
 
 import httpx
 
@@ -23,6 +23,9 @@ CBF_GAMES_URL = (
 GOAL_DETAILS = {"PN": "Pênalti", "FT": "Falta", "CT": "Contra"}
 HALF_START = {"1": 0, "2": 45, "3": 90, "4": 105}  # extra time halves are 15 minutes
 HALF_LENGTH = {"1": 45, "2": 45, "3": 15, "4": 15}
+# A round all older than the match by this much ends the phase's search; closer than that,
+# a postponed match may still sit in an earlier round.
+POSTPONED_SLACK = timedelta(days=45)
 
 COMPETITION = re.compile(r'competitionId\\?"\s*:\s*\\?"(\d+)')
 PHASE = re.compile(r'fase_id\\?"\s*:\s*\\?"(\d+)\\?",\s*\\?"fase_nome\\?"\s*:\s*\\?"[^"\\]*\\?",'
@@ -43,17 +46,17 @@ class CBFGoals:
             if competition is None or not phases:
                 raise ValueError("no competition id or phases on the CBF page")
             game = self._find(competition.group(1), phases, day, team_id)
+            if game is None:
+                return []
+            events = [
+                _goal(p, team_id=team_id, ours=ours, theirs=theirs)
+                for p in game.get("penalidades") or []
+                if p.get("tipo") == "GOL"
+            ]
+            return sorted((e for e in events if e), key=lambda e: (e.minute, e.extra_minute or 0))
         except Exception as e:
             logger.warning("Failed to load CBF goals for %s on %s: %s", path, day, e)
             return []
-        if game is None:
-            return []
-        events = [
-            _goal(p, team_id=team_id, ours=ours, theirs=theirs)
-            for p in game.get("penalidades", [])
-            if p.get("tipo") == "GOL"
-        ]
-        return sorted((e for e in events if e), key=lambda e: (e.minute, e.extra_minute or 0))
 
     def _find(
         self, competition: str, phases: list[tuple[int, int]], day: date, team_id: int
@@ -61,18 +64,29 @@ class CBFGoals:
         """Our game on `day`, searching from the last round backwards."""
         for phase, rounds in reversed(phases):
             for n in range(rounds, 0, -1):
-                url = CBF_GAMES_URL.format(competition=competition, round=n, phase=phase)
-                response = self._client.get(url)
-                response.raise_for_status()
-                games = [g for group in response.json().get("jogos", []) for g in group["jogo"]]
+                games = self._round(competition, phase, n)
                 days = [d for d in map(_day, games) if d]
                 for game in games:
                     sides = (game["mandante"]["id"], game["visitante"]["id"])
                     if str(team_id) in sides and _day(game) == day:
                         return game
-                if days and max(days) < day:
-                    break  # this phase's earlier rounds are older still; phases may overlap
+                if days and max(days) < day - POSTPONED_SLACK:
+                    break  # earlier rounds are older still; phases may overlap, so go on
         return None
+
+    def _round(self, competition: str, phase: int, n: int) -> list[dict]:
+        """The round's games; a failing or empty round (the API answers `[]`) has none."""
+        url = CBF_GAMES_URL.format(competition=competition, round=n, phase=phase)
+        try:
+            response = self._client.get(url)
+            response.raise_for_status()
+            data = response.json()
+        except (httpx.HTTPError, ValueError) as e:
+            logger.info("Skipping CBF round %s of phase %s: %s", n, phase, e)
+            return []
+        if not isinstance(data, dict):
+            return []
+        return [g for group in data.get("jogos") or [] for g in group.get("jogo") or []]
 
 
 def _day(game: dict) -> date | None:

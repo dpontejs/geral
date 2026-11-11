@@ -411,3 +411,13 @@ def test_ge_last_match_without_cbf_table_has_no_goal_lookup(ge) -> None:
     )
 
     assert fake.calls == [] and match.events == []
+
+
+def test_ge_one_sided_shootout_is_dropped(ge) -> None:
+    mock_final(ge, lambda g: g.update(placar_penaltis_visitante=None))
+
+    match = make_client().get_last_match(
+        datetime(2026, 3, 15, tzinfo=TZ), datetime(2026, 3, 22, 8, 0, tzinfo=TZ)
+    )
+
+    assert (match.home_penalties, match.away_penalties) == (None, None)
