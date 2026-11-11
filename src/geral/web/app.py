@@ -178,11 +178,13 @@ def create_app(
     def game_pools_by_edition() -> dict[str, list[Match]]:
         """'geral' plus every listed team that has Série A matches, built on first use."""
         if not game_pools:
+            # Built aside and published at once: a request running alongside never sees half.
             source = matches if matches is not None else quanto_foi.load_matches()
-            game_pools["geral"] = quanto_foi.pool(source, None)
+            built = {"geral": quanto_foi.pool(source, None)}
             for slug, team in listed.items():
                 if games := quanto_foi.pool(source, team.name):
-                    game_pools[slug] = games
+                    built[slug] = games
+            game_pools.update(built)
         return game_pools
 
     def game_pool(edition: str) -> list[Match] | None:

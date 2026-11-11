@@ -7,7 +7,7 @@ from webkit import make_client
 from geral.games.quanto_foi import by_number, convert, load_matches, pool
 
 FIXTURES = Path(__file__).parent / "fixtures" / "brasileirao"
-DAY = datetime(2026, 11, 20, 12, 0, tzinfo=UTC)  # puzzle #9 (launch 2026-11-12)
+DAY = datetime(2026, 11, 19, 12, 0, tzinfo=UTC)  # puzzle #9 (launch 2026-11-11)
 
 
 @pytest.fixture
@@ -95,7 +95,7 @@ def test_api_rejects_bad_guesses(game, guesses) -> None:
 
 
 def test_day_follows_brasilia_time(game, clock) -> None:
-    clock.now = datetime(2026, 11, 21, 1, 0, tzinfo=UTC)  # still the 20th in Brasília
+    clock.now = datetime(2026, 11, 20, 1, 0, tzinfo=UTC)  # still the 19th in Brasília
 
     assert "#9" in game.get("/jogos/quanto-foi").text
     assert (

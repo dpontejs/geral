@@ -7,6 +7,7 @@
   const number = Number(root.dataset.number);
   const label = root.dataset.label;
   const max = Number(root.dataset.max);
+  const matchKey = root.dataset.match;
   const $ = (id) => document.getElementById(id);
   const form = $("qf-form");
   const KEY = `quanto-foi:${edition}`;
@@ -28,7 +29,8 @@
   };
 
   let day = read(KEY, null);
-  if (!day || day.number !== number) day = { number, guesses: [] };
+  // A new day, or the same number on a different match (the data was updated): start over.
+  if (!day || day.number !== number || day.match !== matchKey) day = { number, match: matchKey, guesses: [] };
   let verdict = null;
 
   const el = (tag, cls, text) => {
@@ -99,12 +101,12 @@
     render();
   };
 
+  const button = form.querySelector("button");
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
-    const home = Number($("qf-home").value);
-    const away = Number($("qf-away").value);
-    if (day.guesses.length >= max) return;
-    day.guesses.push([home, away]);
+    if (button.disabled || day.guesses.length >= max) return;
+    button.disabled = true; // one guess in flight at a time
+    day.guesses.push([Number($("qf-home").value), Number($("qf-away").value)]);
     try {
       await judge();
       write(KEY, day);
@@ -113,6 +115,8 @@
     } catch {
       day.guesses.pop();
       alert("Não deu para conferir o chute agora. Tente de novo.");
+    } finally {
+      button.disabled = false;
     }
   });
 
@@ -131,5 +135,11 @@
     }
   });
 
-  if (day.guesses.length) judge().catch(() => {});
+  if (day.guesses.length) {
+    // Replays today's guesses; the form stays hidden until we know whether the game is over.
+    form.hidden = true;
+    judge().catch(() => {
+      form.hidden = day.guesses.length >= max;
+    });
+  }
 })();

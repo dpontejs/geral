@@ -44,7 +44,7 @@ DISPLAY = {
 }
 SCORER_SEP = ";"
 
-LAUNCH = date(2026, 11, 12)  # puzzle #1
+LAUNCH = date(2026, 11, 11)  # puzzle #1: no later than the deploy, or two days share #1
 MAX_GUESSES = 6
 COACH_HINT_AFTER, WINNER_HINT_AFTER = 3, 4  # misses
 # The 12 big clubs (a data file, like the matches): their meetings are "clássicos".

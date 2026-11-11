@@ -21,16 +21,17 @@ edição por torcida (o diferencial), usando dados gratuitos do Brasileirão 200
 
 ## Contratos
 
-- Dados: `src/geral/games/data/brasileirao.csv` (uma linha por jogo: `id,date,round,home,away,
+- Dados: `src/geral/games/brasileirao.csv` (fora de `data/`, que o `.gitignore` ignora; uma linha por jogo: `id,date,round,home,away,
   home_goals,away_goals,stadium,home_coach,away_coach,home_scorers,away_scorers`), gerado por
   `scripts/import_brasileirao.py` a partir do dataset `adaoduque/Brasileirao_Dataset` (GitHub, sem
   licença declarada; crédito na página). Os testes usam um CSV pequeno em `tests/fixtures/`.
 - `geral/games/quanto_foi.py`:
-  - `load_matches(path) -> list[Match]`; `EDITIONS = {"geral": None, "vasco": "Vasco",
-    "palmeiras": "Palmeiras", "flamengo": "Flamengo", "nautico": "Nautico"}` (slug → nome no dataset).
-  - `pool(matches, edition)`: geral = jogos marcantes (clássico entre os 12 grandes, 4+ gols ou
+  - `load_matches(path) -> list[Match]`, com os nomes acentuados (`Náutico`, `São Paulo`). As
+    edições são `geral` mais cada time do `teams.toml` cujo `name` tem jogos no dataset (o ABC fica
+    de fora sozinho); nenhum clube escrito no código. Os 12 grandes ficam em `games/grandes.txt`.
+  - `pool(matches, club | None)`: geral = jogos marcantes (clássico entre os 12 grandes, 4+ gols ou
     diferença de 3+); torcida = jogos do time com 3+ gols ou contra um grande.
-  - `puzzle(pool, edition, day) -> Puzzle(number, match)`: `number` = dias desde `LAUNCH` + 1;
+  - `puzzle(pool, day) -> Puzzle(number, match)`: `number` = dias desde `LAUNCH` (11/11/2026) + 1;
     a ordem é uma permutação fixa do pool por edição (sem repetir até esgotar).
   - `judge(match, guesses) -> Verdict`: por chute e por lado, `certo` | `perto` (1 gol) | `longe`, e
     `mais` | `menos`; `solved`, `over` (acertou ou 6 chutes), dicas (técnicos a partir do 3º erro,
@@ -74,6 +75,8 @@ uv run uvicorn geral.web.app:create_app --factory  # jogar /jogos/quanto-foi e /
 ## Riscos e dúvidas abertas
 
 - Dataset sem licença declarada: crédito visível; trocar de fonte se o autor pedir.
-- Dados param em 2024; jogos de 2025–26 entram quando houver fonte.
+- Dados param em 2024; jogos de 2025–26 entram quando houver fonte. Reimportar reembaralha a ordem
+  dos dias (o jogo de hoje pode mudar); a página guarda qual jogo era e recomeça se ele mudar. Uma
+  ordem só de acréscimo fica para quando os dados forem atualizados de verdade.
 - Cola: o chute vai ao servidor, mas o `Verdict` final revela o placar; quem quiser trapacear
   consegue. Aceito: é um joguinho, sem prêmio.

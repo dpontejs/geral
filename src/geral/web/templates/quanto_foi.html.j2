@@ -48,7 +48,7 @@
 {% endblock %}
 {% block content %}
 <section class="qf wall">
-  <div class="wrap" id="qf" data-edition="{{ edition }}" data-number="{{ puzzle.number }}" data-label="{{ label }}" data-max="{{ max_guesses }}">
+  <div class="wrap" id="qf" data-edition="{{ edition }}" data-number="{{ puzzle.number }}" data-match="{{ m.day.isoformat() }} {{ m.home }} {{ m.away }}" data-label="{{ label }}" data-max="{{ max_guesses }}">
     <h1>Quanto foi?</h1>
     <p class="lead">Um jogo do Brasileirão por dia, o mesmo para todo mundo. Chute o placar: você tem {{ max_guesses }} tentativas, e cada chute diz se você chegou perto.</p>
     <nav class="editions" aria-label="Edições">
