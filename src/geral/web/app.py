@@ -23,8 +23,7 @@ from jinja2 import select_autoescape
 from pydantic import AwareDatetime, BaseModel, Field
 
 from geral.config import Settings, get_settings
-from geral.games import craque, quanto_foi
-from geral.games.quanto_foi import Match
+from geral.games import craque
 from geral.send.resend_sender import UNSUBSCRIBE_PLACEHOLDER, personalize
 from geral.teams import Team, load_teams
 from geral.web.bolao import TZ, BolaoStore
@@ -111,17 +110,10 @@ def unsubscribe_purpose(team: str | None) -> str:
     return f"unsubscribe:{team}" if team else "unsubscribe"
 
 
-Goals = Annotated[int, Field(ge=0, le=20)]
-
-
 class WordGuessesIn(BaseModel):
     guesses: list[Annotated[str, Field(max_length=20)]] = Field(
         min_length=1, max_length=craque.MAX_GUESSES
     )
-
-
-class GuessesIn(BaseModel):
-    guesses: list[tuple[Goals, Goals]] = Field(min_length=1, max_length=quanto_foi.MAX_GUESSES)
 
 
 def create_app(
@@ -131,7 +123,6 @@ def create_app(
     now: Callable[[], datetime] = lambda: datetime.now(UTC),
     teams: dict[str, Team] | None = None,
     bolao: BolaoStore | None = None,
-    matches: list[Match] | None = None,
 ) -> FastAPI:
     settings = settings or get_settings()
     secret = settings.SUBSCRIBE_SECRET
@@ -179,27 +170,6 @@ def create_app(
             **context,
         )
 
-    game_pools: dict[str, list[Match]] = {}
-
-    def game_pools_by_edition() -> dict[str, list[Match]]:
-        """'geral' plus every listed team that has Série A matches, built on first use."""
-        if not game_pools:
-            # Built aside and published at once: a request running alongside never sees half.
-            source = matches if matches is not None else quanto_foi.load_matches()
-            built = {"geral": quanto_foi.pool(source, None)}
-            for slug, team in listed.items():
-                if games := quanto_foi.pool(source, team.name):
-                    built[slug] = games
-            game_pools.update(built)
-        return game_pools
-
-    def game_pool(edition: str) -> list[Match] | None:
-        return game_pools_by_edition().get(edition)
-
-    def today_number() -> int:
-        # Before the launch everyone plays puzzle #1.
-        return max(1, quanto_foi.puzzle_number(now().astimezone(BRASILIA).date()))
-
     craque_pools: dict[str, list[craque.Craque]] = {}
 
     def craque_editions() -> dict[str, list[craque.Craque]]:
@@ -210,7 +180,7 @@ def create_app(
             for slug in listed:
                 if games := craque.pool(lists, slug):
                     built[slug] = games
-            craque_pools.update(built)  # published at once, like the Quanto foi? pools
+            craque_pools.update(built)  # published at once: a request alongside never sees half
         return craque_pools
 
     def craque_number() -> int:
@@ -621,36 +591,6 @@ def create_app(
             return JSONResponse({"detail": "unknown match"}, status_code=404)
         score = (result.our_goals, result.their_goals)
         return bolao.summary(team, match_id, score, persist=True)
-
-    @app.get("/jogos/quanto-foi", response_class=HTMLResponse)
-    @app.get("/jogos/quanto-foi/{edition}", response_class=HTMLResponse)
-    def quanto_foi_page(request: Request, edition: str = "geral"):
-        games = game_pool(edition)
-        if games is None:
-            return message(
-                request,
-                "Jogo não encontrado",
-                "Essa torcida ainda não tem o Quanto foi?. Jogue a edição geral enquanto isso.",
-                status=404,
-            )
-        puzzle = quanto_foi.by_number(games, today_number())
-        return page(
-            request,
-            "quanto_foi.html.j2",
-            edition=edition,
-            team=catalog.get(edition),
-            puzzle=puzzle,
-            editions=[(slug, catalog.get(slug)) for slug in game_pools_by_edition()],
-            max_guesses=quanto_foi.MAX_GUESSES,
-        )
-
-    @app.post("/api/jogos/quanto-foi/{edition}/{number}")
-    def quanto_foi_guess(edition: str, number: int, body: GuessesIn):
-        games = game_pool(edition)
-        if games is None or not 1 <= number <= today_number():
-            return JSONResponse({"detail": "puzzle not found"}, status_code=404)
-        match = quanto_foi.by_number(games, number).match
-        return quanto_foi.judge(match, [tuple(g) for g in body.guesses])
 
     @app.get("/jogos/craque-do-dia", response_class=HTMLResponse)
     @app.get("/jogos/craque-do-dia/{edition}", response_class=HTMLResponse)

@@ -1,4 +1,4 @@
-/* Shared by the Geral games (Quanto foi?, Craque do dia): page, board, guesses, result. */
+/* Shared by the Geral games: page, board, guesses, result. */
 .jogo .wrap { display: flex; flex-direction: column; gap: 22px; padding-block: 36px 48px; }
 .jogo h1 { font-size: clamp(52px, 8vw, 104px); color: var(--paper); text-shadow: 4px 4px 0 var(--ink); }
 .jogo .lead { margin: 0; max-width: 44em; background: var(--paper); border: 3px solid var(--ink); padding: 12px 16px; }
