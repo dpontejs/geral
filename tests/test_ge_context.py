@@ -253,3 +253,12 @@ def test_context_without_current_phase_uses_the_last_one_with_data(ge) -> None:
     fixtures = make_client().get_fixtures(datetime(2026, 10, 1, tzinfo=TZ))
 
     assert len(fixtures) == 6
+
+
+def test_context_competition_tells_the_current_phase(ge) -> None:
+    from geral.stats.ge_tables import load_competition
+
+    competition = load_competition(httpx.Client(), "Pernambucano", PAGE, TZ)
+
+    assert competition.phase == "Oitavas de final (Primeiro turno)"
+    assert competition.phase_kind == "knockout"

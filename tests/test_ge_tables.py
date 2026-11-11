@@ -421,3 +421,25 @@ def test_ge_one_sided_shootout_is_dropped(ge) -> None:
     )
 
     assert (match.home_penalties, match.away_penalties) == (None, None)
+
+
+def test_load_competition_matches_the_team_client(ge) -> None:
+    from geral.stats.ge_tables import load_competition
+
+    competition = load_competition(httpx.Client(), "Potiguar", POTIGUAR_PAGE, TZ)
+
+    ours = [g for g in competition.games if g.involves(350)]
+    team_fixtures = make_client().get_fixtures(datetime(2026, 1, 1, tzinfo=TZ))
+    assert sorted(str(g.id) for g in ours) == sorted(f.match_id for f in team_fixtures)
+    assert len(competition.games) > len(ours)  # every match of the championship
+
+
+def test_load_competition_tells_the_current_phase(ge) -> None:
+    from geral.stats.ge_tables import load_competition
+
+    final = load_competition(httpx.Client(), "Potiguar", POTIGUAR_PAGE, TZ)
+    groups = load_competition(httpx.Client(), "Série D", SERIE_D_PAGE, TZ)
+
+    assert (final.phase, final.phase_kind) == ("Final", "knockout")
+    assert (groups.phase, groups.phase_kind) == ("Primeira fase", "groups")
+    assert groups.groups and not any(r.is_ours for g in groups.groups for r in g)
