@@ -87,3 +87,10 @@ select.chip { appearance: auto; }
 .pager button { font: 900 24px/1 var(--display); width: 44px; height: 44px; border: 2px solid var(--ink); background: transparent; cursor: pointer; }
 .pager button:disabled { opacity: .3; cursor: default; }
 .picker .btn.secondary { border-width: 3px; }
+
+/* Quem é?: a guess per row, the player's name in one cell. */
+#qe-tries li { grid-template-columns: 40px 1fr; }
+#qe-tries .cell { font-size: 24px; }
+/* Players have a one-line name and no country: smaller squares, two columns on a phone. */
+#qe-results { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); grid-auto-rows: 56px; }
+#qe-results .club { justify-content: center; }

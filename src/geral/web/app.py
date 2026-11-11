@@ -24,7 +24,7 @@ from jinja2 import select_autoescape
 from pydantic import AwareDatetime, BaseModel, Field
 
 from geral.config import Settings, get_settings
-from geral.games import craque, onde_jogou
+from geral.games import craque, onde_jogou, quem_e
 from geral.send.resend_sender import UNSUBSCRIBE_PLACEHOLDER, personalize
 from geral.teams import Team, load_teams
 from geral.web.bolao import TZ, BolaoStore
@@ -109,6 +109,12 @@ def is_valid_email(email: str) -> bool:
 def unsubscribe_purpose(team: str | None) -> str:
     """`unsubscribe:<slug>` leaves one team (the newsletter footer); `unsubscribe` leaves all."""
     return f"unsubscribe:{team}" if team else "unsubscribe"
+
+
+class PlayerGuessesIn(BaseModel):
+    palpites: list[Annotated[str, Field(max_length=20)]] = Field(
+        min_length=1, max_length=quem_e.MAX_GUESSES
+    )
 
 
 class ClubGuessesIn(BaseModel):
@@ -212,6 +218,19 @@ def create_app(
         """The edition's own team, shown from the start ('geral' gives nothing)."""
         team = listed.get(edition)
         return onde_jogou.team_clubs(careers(), team.name) if team else set()
+
+    def who_editions() -> dict[str, list[onde_jogou.Jogador]]:
+        """Same editions as 'Onde jogou?', in the 'Quem é?' daily order."""
+        if "who" not in career_state:
+            data = careers()
+            names = {slug: team.name for slug, team in listed.items()}
+            career_state["who"] = {
+                slug: quem_e.pool(data, slug, names) for slug in career_editions()
+            }
+        return career_state["who"]
+
+    def who_number() -> int:
+        return max(1, quem_e.puzzle_number(now().astimezone(BRASILIA).date()))
 
     def career_number() -> int:
         return max(1, onde_jogou.puzzle_number(now().astimezone(BRASILIA).date()))
@@ -709,6 +728,50 @@ def create_app(
             clubs.append(club)
         jogador = onde_jogou.by_number(players, number)
         return onde_jogou.judge(data, jogador, clubs, body.desistiu, given_clubs(edition))
+
+    @app.get("/jogos/quem-e", response_class=HTMLResponse)
+    @app.get("/jogos/quem-e/{edition}", response_class=HTMLResponse)
+    def quem_e_page(request: Request, edition: str = "geral"):
+        players = who_editions().get(edition)
+        if not players:
+            return message(
+                request,
+                "Jogo não encontrado",
+                "Essa torcida ainda não tem o Quem é?. Jogue a edição geral enquanto isso.",
+                status=404,
+            )
+        number = who_number()
+        data = careers()
+        jogador = quem_e.by_number(players, number)
+        return page(
+            request,
+            "quem_e.html.j2",
+            edition=edition,
+            team=catalog.get(edition),
+            number=number,
+            jogador=jogador,
+            clubes=data.clubes,
+            player_key=hashlib.sha256(f"{secret}:quem-e:{jogador.wikidata}".encode()).hexdigest()[
+                :12
+            ],
+            players=sorted(
+                ({"id": j.wikidata, "nome": j.nome} for j in data.jogadores),
+                key=lambda p: p["nome"],
+            ),
+            editions=[(slug, catalog.get(slug)) for slug in who_editions()],
+            max_guesses=quem_e.MAX_GUESSES,
+        )
+
+    @app.post("/api/jogos/quem-e/{edition}/{number}")
+    def quem_e_guess(edition: str, number: int, body: PlayerGuessesIn):
+        players = who_editions().get(edition)
+        if not players or not 1 <= number <= who_number():
+            return JSONResponse({"detail": "puzzle not found"}, status_code=404)
+        data = careers()
+        known = {j.wikidata for j in data.jogadores}
+        if unknown := [q for q in body.palpites if q not in known]:
+            return JSONResponse({"detail": f"Jogador desconhecido: {unknown[0]}"}, status_code=422)
+        return quem_e.judge(data, quem_e.by_number(players, number), body.palpites)
 
     @app.get("/version.json")
     def version():

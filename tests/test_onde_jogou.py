@@ -241,3 +241,21 @@ def test_real_club_names_are_unique() -> None:
     names = Counter(normalize(c.nome) for c in load().clubes.values())
 
     assert [n for n, k in names.items() if k > 1] == []
+
+
+@pytest.mark.parametrize(
+    "raw, shown",
+    [
+        ("wing half", "Volante"),
+        ("Winger", "Ponta"),
+        ("defesa central", "Zagueiro"),
+        ("Attacking midfielder", "Meia"),
+        ("ponteiro", "Ponta"),
+        ("atacante", "Atacante"),
+        ("Lateral (futebol)", "Lateral"),
+    ],
+)
+def test_convert_writes_positions_in_brazilian_portuguese(raw, shown) -> None:
+    rows = [row("Q2", "Q100", "Vasco", "1990", "1992", position=raw)]
+
+    assert player(Data.from_dict(convert(PLAYERS, rows, {})), "Edmundo").posicao == shown

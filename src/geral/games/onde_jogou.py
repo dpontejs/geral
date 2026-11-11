@@ -33,6 +33,19 @@ NOT_A_CLUB = re.compile(
     re.IGNORECASE,
 )
 FIRST_YEAR = 1850  # Wikidata writes an unknown date as year 0001
+# Positions as a Brazilian fan says them (Wikidata mixes English and Portugal's Portuguese).
+POSITIONS = {
+    "wing half": "Volante",
+    "winger": "Ponta",
+    "ponteiro": "Ponta",
+    "defesa central": "Zagueiro",
+    "defender": "Zagueiro",
+    "attacking midfielder": "Meia",
+    "midfielder": "Meio-campista",
+    "forward": "Atacante",
+    "goalkeeper": "Goleiro",
+    "guarda-redes": "Goleiro",
+}
 # Country names as the fans look for them.
 COUNTRY_NAMES = {"Reino Unido": "Inglaterra", "República Popular da China": "China"}
 
@@ -62,7 +75,8 @@ def convert(players: list[dict], rows: list[dict], fixes: dict[str, dict]) -> di
         if qid not in names:
             continue
         if r.get("position") and qid not in positions:
-            position = re.sub(r"\s*\(.*\)$", "", r["position"])  # "Lateral (futebol)"
+            position = re.sub(r"\s*\(.*\)$", "", r["position"]).strip()  # "Lateral (futebol)"
+            position = POSITIONS.get(position.lower(), position)
             positions[qid] = position[:1].upper() + position[1:]
         start = _year(r["start"]) or _year(r["end"])  # unknown start: the end year at least
         ignored = fixes.get(club, {}).get("ignorar", False)  # e.g. a country listed as a club
@@ -187,8 +201,13 @@ def team_clubs(data: Data, name: str | None) -> set[str]:
     return {qid for qid, c in data.clubes.items() if name and c.nome == name}
 
 
-def pool(data: Data, edition: str, teams: dict[str, str]) -> list[Jogador]:
-    """The edition's players in its fixed daily order; `teams` maps slug -> team name."""
+def pool(
+    data: Data, edition: str, teams: dict[str, str], game: str = "onde-jogou"
+) -> list[Jogador]:
+    """The edition's players in its fixed daily order; `teams` maps slug -> team name.
+
+    `game` seeds the order, so two games on the same players don't fall on the same day.
+    """
     if edition == "geral":
         chosen = [j for j in data.jogadores if len(j.distintos) >= MIN_CLUBS["geral"]]
     else:
@@ -199,7 +218,7 @@ def pool(data: Data, edition: str, teams: dict[str, str]) -> list[Jogador]:
             if j.distintos & clubs and len(j.distintos) >= MIN_CLUBS["team"]
         ]
     chosen.sort(key=lambda j: j.wikidata)
-    return shuffled(chosen, f"onde-jogou:{edition}") if chosen else []
+    return shuffled(chosen, f"{game}:{edition}") if chosen else []
 
 
 def puzzle_number(day: date) -> int:
