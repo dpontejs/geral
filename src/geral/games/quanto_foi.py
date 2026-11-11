@@ -6,6 +6,7 @@ Matches come from the free Brasileirão dataset (github.com/adaoduque/Brasileira
 
 import csv
 import io
+import random
 import re
 from dataclasses import dataclass
 from datetime import date, datetime
@@ -39,6 +40,32 @@ DISPLAY = {
     "Vitoria": "Vitória",
 }
 SCORER_SEP = ";"
+
+LAUNCH = date(2026, 11, 12)  # puzzle #1
+# Edition slug -> club in the dataset (display name); "geral" plays the whole Série A.
+EDITIONS: dict[str, str | None] = {
+    "geral": None,
+    "vasco": "Vasco",
+    "palmeiras": "Palmeiras",
+    "flamengo": "Flamengo",
+    "nautico": "Náutico",
+}
+BIG_12 = frozenset(
+    {
+        "Atlético-MG",
+        "Botafogo",
+        "Corinthians",
+        "Cruzeiro",
+        "Flamengo",
+        "Fluminense",
+        "Grêmio",
+        "Internacional",
+        "Palmeiras",
+        "Santos",
+        "São Paulo",
+        "Vasco",
+    }
+)
 
 
 @dataclass(frozen=True)
@@ -122,3 +149,37 @@ def load_matches(path: Path = DATA) -> list[Match]:
             )
             for r in csv.DictReader(f)
         ]
+
+
+@dataclass(frozen=True)
+class Puzzle:
+    number: int
+    match: Match
+
+
+def _memorable(m: Match, club: str | None) -> bool:
+    goals, margin = m.home_goals + m.away_goals, abs(m.home_goals - m.away_goals)
+    if club is None:
+        return (m.home in BIG_12 and m.away in BIG_12) or goals >= 4 or margin >= 3
+    rival = m.away if m.home == club else m.home
+    return club in (m.home, m.away) and (goals >= 3 or rival in BIG_12)
+
+
+def pool(matches: list[Match], edition: str) -> list[Match]:
+    """The edition's matches in its fixed daily order (KeyError for an unknown edition)."""
+    club = EDITIONS[edition]
+    games = sorted((m for m in matches if _memorable(m, club)), key=lambda m: m.id)
+    random.Random(f"quanto-foi:{edition}").shuffle(games)
+    return games
+
+
+def puzzle_number(day: date) -> int:
+    return (day - LAUNCH).days + 1
+
+
+def by_number(games: list[Match], number: int) -> Puzzle:
+    return Puzzle(number, games[(number - 1) % len(games)])
+
+
+def puzzle(games: list[Match], day: date) -> Puzzle:
+    return by_number(games, puzzle_number(day))
