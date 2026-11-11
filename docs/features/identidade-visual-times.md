@@ -23,15 +23,19 @@ O escudo continua só no placar, como dado da partida.
   - `logo-email.png`: 640×255, exibida a 320×127, mascote + nome, sobre fundo papel `#F4EFE6`;
   - `icon-512.png`: só o mascote num círculo, transparente fora dele (favicon, avatar);
   - `og-image.png`: 1200×630, prévia de link (WhatsApp, LinkedIn).
-- Base comum a todas: papel `#F4EFE6`, tinta `#1C1C1C`, cinza `#6B6B6B`; cada time só troca a cor
-  de destaque e o mascote.
+- **A paleta do mascote é a do clube**, e só ela: as cores da camisa (Vasco e ABC preto e branco,
+  Palmeiras verde e branco, Náutico vermelho e branco) mais o contorno `#1C1C1C`. Nada de cor
+  extra (dourado, latão, azul), nem a cor de detalhe de um símbolo que não usamos (o vermelho da
+  cruz do Vasco). O torcedor tem que reconhecer o time pela cor antes de ler o nome.
+- Base comum a todas: papel `#F4EFE6`, tinta `#1C1C1C`, cinza `#6B6B6B` (no "NEWS" dos times em que
+  o branco sumiria sobre o papel); cada time só troca o mascote e as cores do clube.
 
 | Newsletter | Mascote | Destaque | Apoio | Por quê |
 |---|---|---|---|---|
-| Almirante News (Vasco) | almirante navegador: chapéu bicorne, luneta, barba | carvão `#141414` | vermelho `#B3122E` (só detalhe) | o Vasco é o "Almirante"; vermelho remete à cruz sem desenhá-la |
-| Porco News (Palmeiras) | porco bravo, presas à mostra, faixa na testa | verde `#006437` | verde-claro `#3FA34D` | apelido assumido pela torcida |
-| Elefante News (ABC) | elefante investindo, tromba erguida, presas | carvão `#141414` | cinza-elefante `#8A8F98` | mascote do ABC |
-| Timbu News (Náutico) | timbu (gambá-de-orelha-branca) de cara fechada | vermelho `#C60000` | branco | mascote e apelido do Náutico |
+| Almirante News (Vasco) | velho navegador português do século XVI: barba branca cheia, gorro de navegador, gola alta, luneta | preto `#141414` | branco `#FFFFFF` | o Vasco é o "Almirante"; alvinegro, sem o vermelho da cruz |
+| Porco News (Palmeiras) | porco bravo, presas à mostra, faixa na testa | verde `#006437` | branco `#FFFFFF` | apelido assumido pela torcida; alviverde |
+| Elefante News (ABC) | elefante investindo, tromba erguida, presas | preto `#141414` | branco `#FFFFFF` | mascote do ABC; alvinegro |
+| Timbu News (Náutico) | timbu (gambá-de-orelha-branca) de cara fechada | vermelho `#C60000` | branco `#FFFFFF` | mascote e apelido do Náutico; alvirrubro |
 
 ## Como gerar
 
@@ -42,7 +46,7 @@ O script recorta o círculo (o "fundo transparente" do Nano Banana é um quadric
 monta as três imagens e reduz a paleta:
 
 ```bash
-python scripts/make_brand.py <icone.png> src/resenha/static/vasco Almirante News "#141414" "#B3122E" Vasco
+python scripts/make_brand.py <icone.png> src/resenha/static/vasco Almirante News "#141414" "#6B6B6B" Vasco
 ```
 
 ## Prompts (Nano Banana)
@@ -70,10 +74,10 @@ Valores por time:
 
 | Newsletter | `<MASCOTE>` | `<CORES>` | Destaque no nome |
 |---|---|---|---|
-| Almirante News | a bearded old navigator admiral with a bicorne hat and a brass spyglass | #141414, #B3122E | "ALMIRANTE" em #141414, "NEWS" em #B3122E |
-| Porco News | a fierce wild boar-style pig with small tusks and a headband | #006437, #3FA34D | "PORCO" em #006437 |
-| Elefante News | a charging elephant with raised trunk and tusks | #141414, #8A8F98 | "ELEFANTE" em #141414, "NEWS" em #8A8F98 |
-| Timbu News | a white-eared opossum (Brazilian "timbu") with a grumpy tough face | #C60000 | "TIMBU" em #C60000 |
+| Almirante News | a stern old 16th-century Portuguese navigator with a full white beard, a dark navigator's cap, a high white collar and a dark spyglass | #141414, #FFFFFF | "ALMIRANTE" em #141414, "NEWS" em #6B6B6B |
+| Porco News | a fierce wild boar-style pig with small tusks and a headband | #006437, #FFFFFF | "PORCO" em #006437 |
+| Elefante News | a charging elephant with raised trunk and tusks | #141414, #FFFFFF | "ELEFANTE" em #141414, "NEWS" em #6B6B6B |
+| Timbu News | a white-eared opossum (Brazilian "timbu") with a grumpy tough face | #C60000, #FFFFFF | "TIMBU" em #C60000 |
 
 ## Critérios de aceite (como testes)
 
