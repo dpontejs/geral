@@ -126,14 +126,13 @@ def test_unknown_team_exits_2_listing_valid_slugs(tmp_path) -> None:
     assert "nautico" in result.output
 
 
-def test_flamengo_is_the_urubu_news_and_waits_hidden_for_the_switch() -> None:
+def test_flamengo_is_the_urubu_news_and_is_on_the_portal() -> None:
     flamengo = load_teams()["flamengo"]
 
     assert flamengo.newsletter == "Urubu News" and flamengo.accent == "#A51C24"
     assert flamengo.espn_id == 819 and "fifa.cwc" in flamengo.leagues
     assert set(flamengo.other_sports) == {"Basquete", "Vôlei", "Futebol feminino"}
-    assert flamengo.listed is False
-    assert all(team.listed for slug, team in load_teams().items() if slug != "flamengo")
+    assert all(team.listed for team in load_teams().values())  # the switch is done
 
 
 def test_every_team_has_its_brand_files() -> None:
