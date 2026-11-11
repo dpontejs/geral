@@ -160,12 +160,12 @@ def test_portal_card_links_to_request_page_with_top_request(client) -> None:
     assert 'href="/pedir"' in page
 
     ask(client, "Remo")
-    card = client.get("/").text.split('href="/pedir"', 1)[1].split("</a>", 1)[0]
+    card = client.get("/").text.split('play-card" href="/pedir"', 1)[1].split("</a>", 1)[0]
     assert "Remo" not in card  # under 3 votes it stays out of the home
 
     for i in range(2, 4):
         ask(from_ip(client, f"10.0.0.{i}"), "Remo")
-    card = client.get("/").text.split('href="/pedir"', 1)[1].split("</a>", 1)[0]
+    card = client.get("/").text.split('play-card" href="/pedir"', 1)[1].split("</a>", 1)[0]
     assert "Remo" in card
 
 
@@ -220,3 +220,16 @@ def test_request_notification_failure_keeps_the_request(notified, mailer, store)
 
     assert ask(notified, "Remo").status_code == 200
     assert votes(store) == {"Remo": 1}
+
+
+def test_request_link_is_in_the_header_on_every_page(client) -> None:
+    for path in ("/", "/pedir", "/jogos/onde-jogou"):
+        header = client.get(path).text.split("<header>", 1)[1].split("</header>", 1)[0]
+
+        assert '<a href="/pedir">Peça seu time</a>' in header, path
+
+
+def test_request_link_is_in_the_ticket_under_the_teams(client) -> None:
+    ticket = client.get("/").text.split('id="signup"', 1)[1].split("</form>", 1)[0]
+
+    assert "Seu time não está aqui?" in ticket and 'href="/pedir"' in ticket
