@@ -575,7 +575,12 @@ def edicao_geral(
         return
     recipients = None
     if send:
-        recipients = resolve_recipients(settings, GENERAL_SLUG).recipients
+        resolved = resolve_recipients(settings, GENERAL_SLUG)
+        if resolved.api_failed and not settings.DRY_RUN:
+            # Once a week: better a retry (the VPS dispatches it again) than the fixed list only.
+            typer.echo(f"{label}: lista de inscritos indisponível, envio cancelado.", err=True)
+            raise typer.Exit(code=1)
+        recipients = resolved.recipients
         if not recipients and not settings.DRY_RUN:
             typer.echo(f"{label}: nada a enviar, sem inscritos na edição geral.")
             return
@@ -620,7 +625,9 @@ def edicao_geral(
         try:
             publish_latest_edition(settings, GENERAL_SLUG, edition.subject, html, text)
         except httpx.HTTPError as e:
-            logger.error("Edição geral sent but not published on the page: %s", e)
+            # Sent but not on the page: say it loudly, or a manual retry would send it again.
+            typer.echo(f"{edition.label}: enviada, mas não publicada no portal: {e}", err=True)
+            raise typer.Exit(code=1) from e
 
 
 def _setup_logging() -> None:

@@ -235,3 +235,70 @@ def test_dry_run_send_does_not_publish(send_env, monkeypatch) -> None:
 
     assert result.exit_code == 0, result.output
     assert not published.called
+
+
+# --- review: the edição geral is not a torcida ---------------------------------------------
+
+
+def test_games_do_not_treat_the_general_edition_as_a_team(client) -> None:
+    page = client.get("/jogos/onde-jogou").text
+
+    assert "passagens pelo Geral" not in page
+
+
+def test_portal_total_counts_only_torcidas(client, store) -> None:
+    store.request("ana@example.com", ["geral"], NOW)
+    store.confirm("ana@example.com", NOW)
+    store.request("bia@example.com", ["vasco"], NOW)
+    store.confirm("bia@example.com", NOW)
+
+    page = client.get("/").text
+
+    assert "Nº 000002" in page  # the next ticket after one torcida subscriber
+
+
+def test_confirming_only_the_general_edition_says_every_monday(client, mailer) -> None:
+    sign_up(client, teams=("geral",))
+
+    page = confirm_last(client, mailer).text
+
+    assert "vai receber a Edição geral toda segunda de manhã." in page
+    assert "Edição geral antes e depois de cada jogo" not in page
+
+
+def test_bolao_has_no_general_edition(client) -> None:
+    assert client.get("/bolao/geral").status_code == 404
+    match = {"opponent": "X", "home": True, "kickoff": "2026-11-16T16:00:00-03:00"}
+    assert (
+        client.put("/api/teams/geral/bolao/matches/1", json=match, headers=AUTH).status_code == 404
+    )
+
+
+@respx.mock
+def test_send_fails_loudly_when_publishing_fails(send_env) -> None:
+    respx.get(API, params={"team": "geral"}).mock(
+        return_value=httpx.Response(200, json=subscribers("ana@example.com"))
+    )
+    respx.post(RESEND_BATCH_URL).mock(
+        return_value=httpx.Response(200, json={"data": [{"id": "e"}]})
+    )
+    respx.put(LATEST).mock(return_value=httpx.Response(500))
+
+    result = run_send()
+
+    assert result.exit_code == 1
+    assert "não publicada" in result.output
+
+
+@respx.mock
+def test_send_stops_when_the_subscribers_api_fails(send_env, monkeypatch) -> None:
+    monkeypatch.setenv("NEWSLETTER_RECIPIENTS", "dono@example.com")
+    get_settings.cache_clear()
+    respx.get(API, params={"team": "geral"}).mock(return_value=httpx.Response(503))
+    resend = respx.post(RESEND_BATCH_URL).mock(return_value=httpx.Response(200, json={"data": []}))
+
+    result = run_send()
+
+    assert result.exit_code == 1
+    assert not resend.called
+    assert send_env == []

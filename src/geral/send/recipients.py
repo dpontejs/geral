@@ -34,6 +34,7 @@ class Recipient:
 class ResolvedRecipients:
     recipients: list[Recipient]
     from_api: int
+    api_failed: bool = False  # the subscriber list could not be read: only the fixed list
 
 
 class _Subscriber(BaseModel):
@@ -98,6 +99,7 @@ def resolve_recipients(
         merged.setdefault(email.strip().lower(), Recipient(email.strip().lower(), mailto))
 
     from_api = 0
+    failed = False
     if settings.SUBSCRIBERS_API_TOKEN:
         try:
             subscribers = fetch_subscribers(
@@ -108,13 +110,14 @@ def resolve_recipients(
             )
         except (httpx.HTTPError, ValidationError, ValueError) as e:
             logger.error("Could not fetch subscribers, sending to the fixed list only: %s", e)
+            failed = True
         else:
             from_api = len(subscribers)
             for s in subscribers:
                 email = s.email.strip().lower()
                 # A subscriber's signed link beats the fixed list's mailto.
                 merged[email] = Recipient(email, s.unsubscribe_url, s.bet_token)
-    return ResolvedRecipients(list(merged.values()), from_api)
+    return ResolvedRecipients(list(merged.values()), from_api, api_failed=failed)
 
 
 def publish_latest_edition(

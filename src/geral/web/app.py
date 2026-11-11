@@ -191,7 +191,8 @@ def create_app(
         return page(request, "message.html.j2", status, title=title, text=text, **extra)
 
     def portal(request: Request, status: int = 200, **context) -> HTMLResponse:
-        counts = store.counts()
+        # The torcidas only: the edição geral is not one (scoreboard, totals, ticket number).
+        counts = {slug: n for slug, n in store.counts().items() if slug in listed}
         return page(
             request,
             "index.html.j2",
@@ -376,8 +377,15 @@ def create_app(
         welcomed = [team for team in new_teams if send_latest_edition(email, team)]
         if first_time:
             notify_owner(email, new_teams)
-        names = ", ".join(t.newsletter for t in (new_teams or teams_of(email)))
-        text = f"Pronto: você está na Geral e vai receber {names} antes e depois de cada jogo."
+        joined = new_teams or teams_of(email)
+        clubs_joined = [t for t in joined if t.slug != GENERAL_SLUG]
+        parts = []
+        if clubs_joined:
+            names = ", ".join(t.newsletter for t in clubs_joined)
+            parts.append(f"{names} antes e depois de cada jogo")
+        if len(clubs_joined) < len(joined):
+            parts.append(f"a {GENERAL_EDITION.newsletter} toda segunda de manhã")
+        text = f"Pronto: você está na Geral e vai receber {' e '.join(parts)}."
         if welcomed:
             text += " Mandamos a última edição para o seu e-mail para você já ir lendo."
         return message(request, "Inscrição confirmada!", text)
@@ -542,7 +550,7 @@ def create_app(
                 "Não reconhecemos esse link de palpite. Use a cartela de uma edição.",
                 status=400,
             )
-        club = catalog.get(team)
+        club = clubs.get(team)  # the bolão is the torcidas' only
         match = bolao.match(team, match_id) if club else None
         if match is None:
             return None, message(
@@ -634,7 +642,7 @@ def create_app(
 
     @app.get("/bolao/{team}", response_class=HTMLResponse)
     def ranking(request: Request, team: str, t: str = ""):
-        club = catalog.get(team)
+        club = clubs.get(team)  # the bolão is the torcidas' only
         if club is None:
             return message(request, "Torcida não encontrada", "Volte para a Geral.", status=404)
         email = (read_token(secret, "bet", t, now()) or read_legacy("bet", t)) if t else None
@@ -647,7 +655,7 @@ def create_app(
     def register_match(request: Request, team: str, match_id: str, match: BolaoMatchIn):
         if not authorized(request):
             return unauthorized()
-        if team not in catalog:
+        if team not in clubs:
             return unknown_team()
         bolao.upsert_match(team, match_id, match.opponent, match.home, match.kickoff)
         return Response(status_code=204)
@@ -685,10 +693,10 @@ def create_app(
             request,
             "craque.html.j2",
             edition=edition,
-            team=catalog.get(edition),
+            team=listed.get(edition),
             number=number,
             letters=len(craque.by_number(games, number).answer),
-            editions=[(slug, catalog.get(slug)) for slug in craque_editions()],
+            editions=[(slug, listed.get(slug)) for slug in craque_editions()],
             max_guesses=craque.MAX_GUESSES,
         )
 
@@ -721,7 +729,7 @@ def create_app(
             request,
             "onde_jogou.html.j2",
             edition=edition,
-            team=catalog.get(edition),
+            team=listed.get(edition),
             number=number,
             jogador=onde_jogou.by_number(players, number),
             # Tells the page the day's player changed (data update) without naming them.
@@ -736,7 +744,7 @@ def create_app(
                 ),
                 key=lambda c: (c["pais"], c["nome"]),
             ),
-            editions=[(slug, catalog.get(slug)) for slug in career_editions()],
+            editions=[(slug, listed.get(slug)) for slug in career_editions()],
             max_wrong=onde_jogou.MAX_WRONG,
         )
 
@@ -772,7 +780,7 @@ def create_app(
             request,
             "quem_e.html.j2",
             edition=edition,
-            team=catalog.get(edition),
+            team=listed.get(edition),
             number=number,
             jogador=jogador,
             clubes=data.clubes,
@@ -783,7 +791,7 @@ def create_app(
                 ({"id": j.wikidata, "nome": j.nome} for j in data.jogadores),
                 key=lambda p: p["nome"],
             ),
-            editions=[(slug, catalog.get(slug)) for slug in who_editions()],
+            editions=[(slug, listed.get(slug)) for slug in who_editions()],
             max_guesses=quem_e.MAX_GUESSES,
         )
 
