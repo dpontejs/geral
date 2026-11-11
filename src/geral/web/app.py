@@ -207,6 +207,11 @@ def create_app(
             career_state["pools"] = built  # published at once
         return career_state["pools"]
 
+    def given_clubs(edition: str) -> set[str]:
+        """The edition's own team, shown from the start ('geral' gives nothing)."""
+        team = listed.get(edition)
+        return onde_jogou.team_clubs(careers(), team.name) if team else set()
+
     def career_number() -> int:
         return max(1, onde_jogou.puzzle_number(now().astimezone(BRASILIA).date()))
 
@@ -674,6 +679,7 @@ def create_app(
             team=catalog.get(edition),
             number=number,
             jogador=onde_jogou.by_number(players, number),
+            given={qid: data.clubes[qid].nome for qid in given_clubs(edition)},
             clubs=sorted(
                 (
                     {"nome": c.nome, "apelidos": list(c.apelidos), "pais": c.pais}
@@ -697,7 +703,7 @@ def create_app(
                 return JSONResponse({"detail": f"Clube desconhecido: {text}"}, status_code=422)
             clubs.append(club)
         jogador = onde_jogou.by_number(players, number)
-        return onde_jogou.judge(data, jogador, clubs, body.desistiu)
+        return onde_jogou.judge(data, jogador, clubs, body.desistiu, given_clubs(edition))
 
     @app.get("/version.json")
     def version():

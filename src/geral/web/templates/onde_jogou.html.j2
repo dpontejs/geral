@@ -6,7 +6,7 @@
 <section class="jogo wall">
   <div class="wrap" id="oj" data-edition="{{ edition }}" data-number="{{ number }}" data-label="{{ label }}" data-player="{{ jogador.wikidata }}" data-max="{{ max_wrong }}">
     <h1>Onde jogou?</h1>
-    <p class="lead">Um jogador por dia, o mesmo para todo mundo. Diga por quais clubes ele passou: cada acerto acende as passagens daquele clube. Você pode errar {{ max_wrong }} vezes.</p>
+    <p class="lead">Um jogador por dia, o mesmo para todo mundo. Diga por quais clubes ele passou: cada acerto acende as passagens daquele clube. Você pode errar {{ max_wrong }} vezes.{% if team %} As passagens pelo {{ team.name }} já vêm acesas e não contam no placar.{% endif %}</p>
     <nav class="editions" aria-label="Edições">
       {% for slug, t in editions %}
       <a href="/jogos/onde-jogou{% if slug != 'geral' %}/{{ slug }}{% endif %}"{% if slug == edition %} aria-current="page"{% endif %}>{{ t.name if t else "Geral" }}</a>
@@ -17,7 +17,7 @@
       <span class="lamp meta">#{{ number }} · {{ label }}{% if jogador.posicao %} · {{ jogador.posicao }}{% endif %}</span>
       <span class="lamp player">{{ jogador.nome }}</span>
       <ol class="career" id="oj-slots">
-        {% for s in jogador.clubes %}<li class="slot"><span class="years">{{ s.inicio }}{% if s.fim is none %}–{% elif s.fim != s.inicio %}–{{ s.fim }}{% endif %}</span><span class="lamp blink" aria-label="clube escondido">?</span></li>
+        {% for s in jogador.clubes %}<li class="slot"><span class="years">{{ s.inicio }}{% if s.fim is none %}–{% elif s.fim != s.inicio %}–{{ s.fim }}{% endif %}</span>{% if s.clube in given %}<span class="slot-club given">{{ given[s.clube] }}</span>{% else %}<span class="lamp blink" aria-label="clube escondido">?</span>{% endif %}</li>
         {% endfor %}
       </ol>
     </div>

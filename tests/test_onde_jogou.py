@@ -1,6 +1,6 @@
 import pytest
 
-from geral.games.onde_jogou import Data, convert, judge, pool, resolve
+from geral.games.onde_jogou import Data, convert, judge, pool, resolve, team_clubs
 
 PLAYERS = [
     {"nome": "Romário", "wikidata": "Q1"},
@@ -192,3 +192,23 @@ def test_convert_keeps_the_club_country_with_fixes_first() -> None:
     assert data.clubes["Q100"].pais == "Brasil"
     assert data.clubes["Q108"].pais == "Itália (Florença)"
     assert data.clubes["Q112"].pais == "Outros"
+
+
+def test_team_edition_gives_the_team_stints_without_scoring_them(data) -> None:
+    romario = player(data, "Romário")
+    given = team_clubs(data, "Flamengo")
+
+    start = judge(data, romario, [], desistiu=False, dados=given)
+    done = judge(data, romario, ["Q100", "Q101", "Q104"], desistiu=False, dados=given)
+
+    assert given == {"Q103"}
+    assert [s.clube for s in start.slots] == [None, None, "Flamengo", None, "Flamengo", None]
+    assert [s.dado for s in start.slots] == [False, False, True, False, True, False]
+    assert start.achados == 0 and start.total == 3 and not start.over
+    assert done.solved and done.achados == 3
+
+
+def test_guessing_a_given_club_is_not_an_error(data) -> None:
+    verdict = judge(data, player(data, "Edmundo"), ["Q103"], desistiu=False, dados={"Q103"})
+
+    assert verdict.erros == [] and verdict.achados == 0

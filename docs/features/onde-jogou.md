@@ -9,6 +9,7 @@
 Terceiro joguinho da Geral, o primeiro de carreira: aparece um jogador principal (ídolo das
 torcidas ou craque brasileiro) e uma fileira de espaços com os anos de cada passagem; o torcedor
 digita clubes e cada acerto acende as passagens daquele clube. Três erros ou desistir encerram.
+Na edição de uma torcida, as passagens por aquele clube já vêm acesas e não contam no placar.
 O arquivo de carreiras também vai servir ao "Quem é?" (próximo PR).
 
 ## Fora de escopo
@@ -59,6 +60,7 @@ class ClubGuessesIn(BaseModel):
 - [x] `test_judge_ends_after_three_wrong_clubs_or_giving_up_and_reveals`.
 - [x] `test_judge_ignores_a_repeated_guess`.
 - [x] `test_team_edition_has_only_players_who_played_there`.
+- [x] `test_team_edition_gives_the_team_stints_without_scoring_them`.
 - [x] `test_api_rejects_unknown_club_without_counting_it`, `test_api_rejects_future_puzzle`.
 - [x] `test_game_page_does_not_leak_the_clubs`: a página mostra os anos, não os clubes do dia.
 - [x] `test_real_careers_are_sane`: todo jogador real tem 2+ clubes, anos crescentes, clubes conhecidos.

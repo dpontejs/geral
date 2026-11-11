@@ -91,8 +91,10 @@
   const picked = () => {
     // Club name -> "found" | "wrong", from the last verdict.
     const marks = new Map();
+    // The edition's own team comes lit from the page, before any guess.
+    document.querySelectorAll(".slot-club.given").forEach((s) => marks.set(s.textContent, "found"));
     if (!verdict) return marks;
-    verdict.slots.forEach((s) => s.achado && marks.set(s.clube, "found"));
+    verdict.slots.forEach((s) => (s.achado || s.dado) && marks.set(s.clube, "found"));
     verdict.erros.forEach((name) => marks.set(name, "wrong"));
     return marks;
   };
@@ -179,7 +181,8 @@
     verdict.slots.forEach((slot, i) => {
       if (!slot.clube) return;
       const shown = slots[i].lastElementChild;
-      shown.replaceWith(el("span", `slot-club${slot.achado ? " found" : " missed"}`, slot.clube));
+      const kind = slot.dado ? "given" : slot.achado ? "found" : "missed";
+      shown.replaceWith(el("span", `slot-club ${kind}`, slot.clube));
     });
     $("oj-wrong").textContent = verdict.erros.length
       ? `Errou (${verdict.erros.length} de ${max}): ${verdict.erros.join(", ")}`

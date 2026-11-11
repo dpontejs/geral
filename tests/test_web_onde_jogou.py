@@ -86,3 +86,14 @@ def test_game_page_ships_the_club_picker_with_countries(game) -> None:
 
     assert 'id="oj-club-data"' in page and "<datalist" not in page
     assert '"pais": "Brasil"' in page and '"nome": "Vasco"' in page
+
+
+def test_team_edition_shows_the_team_stints_from_the_start(game) -> None:
+    data, jogador = today("vasco")
+    vasco = [s for s in jogador.clubes if data.clubes[s.clube].nome == "Vasco"]
+
+    page = game.get("/jogos/onde-jogou/vasco").text
+    verdict = game.post(f"{API}/vasco/8", json={"palpites": ["Vasco"]}).json()
+
+    assert page.count('<span class="slot-club given">Vasco</span>') == len(vasco)
+    assert verdict["erros"] == [] and verdict["achados"] == 0

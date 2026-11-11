@@ -172,13 +172,17 @@ def resolve(data: Data, text: str) -> str | None:
     return data.index.get(normalize(text))
 
 
+def team_clubs(data: Data, name: str | None) -> set[str]:
+    """The club ids of a team, by its `teams.toml` name (none for an unknown name)."""
+    return {qid for qid, c in data.clubes.items() if name and c.nome == name}
+
+
 def pool(data: Data, edition: str, teams: dict[str, str]) -> list[Jogador]:
     """The edition's players in its fixed daily order; `teams` maps slug -> team name."""
     if edition == "geral":
         chosen = [j for j in data.jogadores if len(j.distintos) >= MIN_CLUBS["geral"]]
     else:
-        name = teams.get(edition)
-        clubs = {qid for qid, c in data.clubes.items() if name and c.nome == name}
+        clubs = team_clubs(data, teams.get(edition))
         chosen = [
             j
             for j in data.jogadores
@@ -199,8 +203,9 @@ def by_number(players: list[Jogador], number: int) -> Jogador:
 class Slot(BaseModel):
     inicio: int
     fim: int | None
-    clube: str | None  # shown once found, or when the game is over
+    clube: str | None  # shown once found, given, or when the game is over
     achado: bool
+    dado: bool = False  # the edition's own team: shown from the start, not scored
 
 
 class Verdict(BaseModel):
@@ -212,9 +217,16 @@ class Verdict(BaseModel):
     over: bool
 
 
-def judge(data: Data, jogador: Jogador, palpites: list[str], desistiu: bool) -> Verdict:
-    career = jogador.distintos
-    guesses = list(dict.fromkeys(palpites))  # a repeated guess counts once
+def judge(
+    data: Data,
+    jogador: Jogador,
+    palpites: list[str],
+    desistiu: bool,
+    dados: set[str] | frozenset[str] = frozenset(),
+) -> Verdict:
+    """`dados`: clubs given away (the team of the edition), shown and left out of the score."""
+    career = jogador.distintos - set(dados)
+    guesses = [q for q in dict.fromkeys(palpites) if q not in dados]  # a repeat counts once
     found = {q for q in guesses if q in career}
     wrong = [q for q in guesses if q not in career]
     solved = found == career
@@ -224,8 +236,13 @@ def judge(data: Data, jogador: Jogador, palpites: list[str], desistiu: bool) -> 
             Slot(
                 inicio=s.inicio,
                 fim=s.fim,
-                clube=data.clubes[s.clube].nome if s.clube in found or over else None,
+                clube=(
+                    data.clubes[s.clube].nome
+                    if s.clube in found or s.clube in dados or over
+                    else None
+                ),
                 achado=s.clube in found,
+                dado=s.clube in dados,
             )
             for s in jogador.clubes
         ],

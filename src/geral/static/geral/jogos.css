@@ -59,6 +59,7 @@
 .slot-club { font: 800 20px/1.1 var(--display); text-transform: uppercase; }
 .slot-club.found { color: #7BE38D; }
 .slot-club.missed { color: var(--concrete-lt); }
+.slot-club.given { color: var(--lamp); }
 
 /* Onde jogou?: club picker (search, countries, paged buttons). */
 .picker { display: flex; flex-direction: column; gap: 12px; background: var(--paper); border: 3px solid var(--ink); padding: 16px; }
