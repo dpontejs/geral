@@ -14,16 +14,17 @@ from datetime import UTC, datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import urlencode
 
-from fastapi import FastAPI, Request, Response
-from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
+from fastapi import FastAPI, Form, Request, Response
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from jinja2 import select_autoescape
-from pydantic import BaseModel
+from pydantic import AwareDatetime, BaseModel, Field
 
 from geral.config import Settings, get_settings
-from geral.send.resend_sender import UNSUBSCRIBE_PLACEHOLDER
+from geral.send.resend_sender import UNSUBSCRIBE_PLACEHOLDER, personalize
 from geral.teams import Team, load_teams
+from geral.web.bolao import TZ, BolaoStore
 from geral.web.mailer import Mailer, MailError, mailer_from_settings
 from geral.web.scoreboard import animation_svg
 from geral.web.store import RequestResult, SubscriberStore, normalize
@@ -42,6 +43,11 @@ EMAIL_RE = re.compile(
 CONFIRMATIONS_PER_DAY = 30  # global cap: protects the Resend quota and the domain reputation
 MAX_EMAIL_LENGTH = 254
 WELCOME_PREFIX = "Boas-vindas! "
+MIN_NICKNAME, MAX_NICKNAME = 3, 20
+SCORE_RE = re.compile(r"^(\d)-(\d)$")
+# Shown in every follower's e-mail: letters, digits, spaces, hyphens and apostrophes only (no
+# links, no line breaks).
+NICKNAME_RE = re.compile(r"^[\w' -]+$")
 STATIC = Path(__file__).resolve().parents[1] / "static"
 # The scoreboard clock: Brasília time, no daylight saving since 2019 (no tzdata in the image).
 BRASILIA = timezone(timedelta(hours=-3))
@@ -76,6 +82,23 @@ class EditionIn(BaseModel):
     text: str
 
 
+class BolaoMatchIn(BaseModel):
+    opponent: str
+    home: bool  # our team plays at home
+    kickoff: AwareDatetime  # compared with the page's clock: a naive time would break /palpite
+
+
+class BolaoResultIn(BaseModel):
+    our_goals: int = Field(ge=0)
+    their_goals: int = Field(ge=0)
+
+
+def parse_score(text: str) -> tuple[int, int] | None:
+    """'2-1' -> (2, 1); each side 0-9, anything else is None."""
+    found = SCORE_RE.match(text.strip())
+    return (int(found[1]), int(found[2])) if found else None
+
+
 def is_valid_email(email: str) -> bool:
     return len(email) <= MAX_EMAIL_LENGTH and EMAIL_RE.match(email) is not None
 
@@ -91,6 +114,7 @@ def create_app(
     mailer: Mailer | None = None,
     now: Callable[[], datetime] = lambda: datetime.now(UTC),
     teams: dict[str, Team] | None = None,
+    bolao: BolaoStore | None = None,
 ) -> FastAPI:
     settings = settings or get_settings()
     secret = settings.SUBSCRIBE_SECRET
@@ -98,7 +122,18 @@ def create_app(
         raise RuntimeError("SUBSCRIBE_SECRET is required to sign confirmation links")
     store = store or SubscriberStore(settings.SUBSCRIBERS_DB)
     mailer = mailer or mailer_from_settings(settings)
+    bolao = bolao or BolaoStore(store.path)  # same SQLite: the ranking joins the subscriptions
     catalog = teams if teams is not None else load_teams()
+    # Teams people can see and join; unlisted ones (moving in) still work for links and the API.
+    listed = {slug: team for slug, team in catalog.items() if team.listed}
+    legacy_team = catalog.get(settings.LEGACY_TEAM or "")
+    legacy_secret = settings.LEGACY_SUBSCRIBE_SECRET if legacy_team else None
+    legacy_hosts = {h.strip().lower() for h in settings.LEGACY_HOSTS.split(",") if h.strip()}
+
+    def read_legacy(purpose: str, token: str) -> str | None:
+        """E-mail in a token the moved-in app signed (its unsubscribe and bet links)."""
+        return read_token(legacy_secret, purpose, token, now()) if legacy_secret else None
+
     limiter = RateLimiter(SIGNUPS_PER_IP, SIGNUP_WINDOW)
     public_url = settings.PUBLIC_URL.rstrip("/")
 
@@ -119,20 +154,31 @@ def create_app(
             request,
             "index.html.j2",
             status,
-            teams=list(catalog.values()),
+            teams=list(listed.values()),
             editions=store.latest_editions(),
             counts=counts,
-            ranking=sorted(catalog.values(), key=lambda t: (-counts.get(t.slug, 0), t.newsletter)),
+            ranking=sorted(listed.values(), key=lambda t: (-counts.get(t.slug, 0), t.newsletter)),
             clock=now().astimezone(BRASILIA),
             **context,
         )
 
     app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+    if legacy_team:
+        # Old e-mails load the moved-in app's brand from the root of /static.
+        for name in ("logo-email.png", "icon-512.png", "og-image.png"):
+            path = STATIC / legacy_team.slug / name
+
+            @app.get(f"/static/{name}", include_in_schema=False)
+            def legacy_brand(path: Path = path):
+                return FileResponse(path, media_type="image/png")
+
     # Brands (mascot, e-mail logo, link preview) of the hub and of every team.
     app.mount("/static", StaticFiles(directory=STATIC), name="static")
 
     @app.api_route("/", methods=["GET", "HEAD"], response_class=HTMLResponse)
     def index(request: Request):
+        if request.url.hostname and request.url.hostname.lower() in legacy_hosts:
+            return RedirectResponse(f"{public_url}/", status_code=301)
         return portal(request)
 
     @app.get("/t/{team}", response_class=HTMLResponse)
@@ -147,7 +193,9 @@ def create_app(
                 "para receber a primeira.",
                 status=404,
             )
-        return HTMLResponse(edition.html.replace(UNSUBSCRIBE_PLACEHOLDER, f"{public_url}/"))
+        # A public page: no bet card (the links are personal) and no personal unsubscribe.
+        html = personalize(edition.html, None)
+        return HTMLResponse(html.replace(UNSUBSCRIBE_PLACEHOLDER, f"{public_url}/"))
 
     @app.get("/subscribe")
     def subscribe_reload():
@@ -162,7 +210,7 @@ def create_app(
     async def subscribe(request: Request):
         form = await request.form()
         email = normalize(str(form.get("email", "")))
-        chosen = [catalog[s] for s in dict.fromkeys(map(str, form.getlist("team"))) if s in catalog]
+        chosen = [listed[s] for s in dict.fromkeys(map(str, form.getlist("team"))) if s in listed]
         check_inbox = (
             "Confira seu e-mail",
             "Se o endereço estiver certo, você vai receber um link para confirmar a inscrição. "
@@ -262,6 +310,8 @@ def create_app(
                 html,
                 text,
                 link("/unsubscribe", unsubscribe_purpose(team.slug), email),
+                # The stored edition keeps the bolão card: the newcomer can bet before kickoff.
+                bet_token=make_token(secret, "bet", email, now()),
             )
         except MailError as e:
             logger.error("Welcome edition of %s failed: %s", team.slug, e)
@@ -277,7 +327,8 @@ def create_app(
             email = read_token(secret, unsubscribe_purpose(team.slug), token, now())
             if email is not None:
                 return email, team
-        return None
+        email = read_legacy("unsubscribe", token)  # the old app's list was one team
+        return (email, legacy_team) if email is not None else None
 
     def invalid_unsubscribe(request: Request) -> HTMLResponse:
         return message(
@@ -340,7 +391,11 @@ def create_app(
         if team not in catalog:
             return unknown_team()
         return [
-            {"email": email, "unsubscribe_url": link("/unsubscribe", f"unsubscribe:{team}", email)}
+            {
+                "email": email,
+                "unsubscribe_url": link("/unsubscribe", f"unsubscribe:{team}", email),
+                "bet_token": make_token(secret, "bet", email, now()),
+            }
             for email in store.active(team)
         ]
 
@@ -371,6 +426,147 @@ def create_app(
             )
         store.set_latest_edition(team, edition.subject, edition.html, edition.text, now())
         return Response(status_code=204)
+
+    # --- bolão ---------------------------------------------------------------------------------
+
+    def bettor(request: Request, token: str, team: str, match_id: str):
+        """(email, team, match) behind a bet link, or the error page to return instead."""
+        email = read_token(secret, "bet", token, now()) or read_legacy("bet", token)
+        if not team and legacy_team:
+            team = legacy_team.slug  # the old app's links carry no team
+        if email is None:
+            return None, message(
+                request,
+                "Link inválido",
+                "Não reconhecemos esse link de palpite. Use a cartela de uma edição.",
+                status=400,
+            )
+        club = catalog.get(team)
+        match = bolao.match(team, match_id) if club else None
+        if match is None:
+            return None, message(
+                request, "Jogo não encontrado", "Esse jogo não está no bolão.", status=404
+            )
+        subscriber = store.get(email)
+        if subscriber is None or subscriber.status != "active":
+            return None, message(
+                request,
+                "Inscrição inativa",
+                "O bolão é para quem está na Geral. Inscreva-se de novo para palpitar.",
+                status=403,
+            )
+        if team not in store.teams_of(email):
+            return None, message(
+                request,
+                "Bolão de outra torcida",
+                f"Esse bolão é de quem recebe a {club.newsletter}. Entre nessa torcida no portal "
+                "para palpitar.",
+                status=403,
+            )
+        return (email, club, match), None
+
+    def bet_page(request: Request, status: int = 200, **context) -> HTMLResponse:
+        return page(request, "palpite.html.j2", status, **context)
+
+    @app.get("/palpite", response_class=HTMLResponse)
+    def bet_form(request: Request, t: str = "", c: str = "", m: str = "", p: str = ""):
+        # GET only asks: e-mail scanners open every link, and must not place bets.
+        found, error = bettor(request, t, c, m)
+        if error:
+            return error
+        email, club, match = found
+        context = {"match": match, "team": club, "token": t, "nickname": bolao.nickname(email)}
+        if not bolao.is_open(club.slug, match.match_id, now()):
+            bet = bolao.bet(email, club.slug, m)
+            return bet_page(request, mode="closed", bet=bet, **context)
+        if not p:
+            return bet_page(request, mode="other", **context)
+        score = parse_score(p)
+        if score is None:
+            return message(request, "Placar inválido", "Escolha um placar da cartela.", status=400)
+        return bet_page(request, mode="confirm", score=score, **context)
+
+    @app.post("/palpite", response_class=HTMLResponse)
+    def place_bet(
+        request: Request,
+        t: str = Form(""),
+        c: str = Form(""),
+        m: str = Form(""),
+        p: str = Form(""),
+        ours: str = Form(""),
+        theirs: str = Form(""),
+        nickname: str = Form(""),
+    ):
+        found, error = bettor(request, t, c, m)
+        if error:
+            return error
+        email, club, match = found
+        score = parse_score(p or f"{ours}-{theirs}")
+        if score is None:
+            return message(request, "Placar inválido", "Escolha um placar da cartela.", status=400)
+        context = {"match": match, "team": club, "token": t, "score": score}
+        if not bolao.is_open(club.slug, match.match_id, now()):
+            bet = bolao.bet(email, club.slug, m)
+            return bet_page(request, 409, mode="closed", bet=bet, nickname=None, **context)
+        if bolao.nickname(email) is None:
+            nickname = nickname.strip()
+            problem = None
+            if not MIN_NICKNAME <= len(nickname) <= MAX_NICKNAME:
+                problem = f"O apelido precisa ter de {MIN_NICKNAME} a {MAX_NICKNAME} caracteres."
+            elif not NICKNAME_RE.match(nickname):
+                problem = "Use só letras, números, espaços, hífen e apóstrofo no apelido."
+            elif not bolao.set_nickname(email, nickname):
+                problem = "Esse apelido já é de outra pessoa. Escolha outro."
+            if problem:
+                return bet_page(
+                    request, 409, mode="confirm", nickname=None, problem=problem, **context
+                )
+        bolao.place_bet(email, club.slug, match.match_id, score, now())
+        return bet_page(request, mode="done", nickname=bolao.nickname(email), **context)
+
+    @app.get("/bolao")
+    def legacy_ranking(request: Request, t: str = ""):
+        if legacy_team is None:
+            return message(request, "Torcida não encontrada", "Volte para a Geral.", status=404)
+        query = f"?{urlencode({'t': t})}" if t else ""
+        return RedirectResponse(f"/bolao/{legacy_team.slug}{query}", status_code=301)
+
+    @app.get("/bolao/{team}", response_class=HTMLResponse)
+    def ranking(request: Request, team: str, t: str = ""):
+        club = catalog.get(team)
+        if club is None:
+            return message(request, "Torcida não encontrada", "Volte para a Geral.", status=404)
+        email = (read_token(secret, "bet", t, now()) or read_legacy("bet", t)) if t else None
+        me = bolao.nickname(email) if email else None
+        season = now().astimezone(TZ).year
+        rows = bolao.ranking(team, season)
+        return page(request, "bolao.html.j2", rows=rows, me=me, season=season, team=club)
+
+    @app.put("/api/teams/{team}/bolao/matches/{match_id}", status_code=204)
+    def register_match(request: Request, team: str, match_id: str, match: BolaoMatchIn):
+        if not authorized(request):
+            return unauthorized()
+        if team not in catalog:
+            return unknown_team()
+        bolao.upsert_match(team, match_id, match.opponent, match.home, match.kickoff)
+        return Response(status_code=204)
+
+    @app.get("/api/teams/{team}/bolao/matches/{match_id}/summary")
+    def preview_summary(request: Request, team: str, match_id: str, ours: int, theirs: int):
+        if not authorized(request):
+            return unauthorized()
+        if bolao.match(team, match_id) is None:
+            return JSONResponse({"detail": "unknown match"}, status_code=404)
+        return bolao.summary(team, match_id, (ours, theirs), persist=False)
+
+    @app.put("/api/teams/{team}/bolao/matches/{match_id}/result")
+    def report_result(request: Request, team: str, match_id: str, result: BolaoResultIn):
+        if not authorized(request):
+            return unauthorized()
+        if bolao.match(team, match_id) is None:
+            return JSONResponse({"detail": "unknown match"}, status_code=404)
+        score = (result.our_goals, result.their_goals)
+        return bolao.summary(team, match_id, score, persist=True)
 
     @app.get("/version.json")
     def version():

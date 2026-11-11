@@ -179,3 +179,36 @@ def test_sender_name_is_the_team_newsletter() -> None:
     sender = ResendSender.from_settings(settings, get_team("abc"))
 
     assert sender.sender == "Elefante News <news@geral.test>"
+
+
+def test_personalize_fills_token_or_drops_card() -> None:
+    from geral.send.resend_sender import BET_TOKEN_PLACEHOLDER, personalize
+
+    content = (
+        f"antes<!--bolao--><a href='/palpite?t={BET_TOKEN_PLACEHOLDER}&p=1-0'>1x0</a><!--/bolao-->"
+        f"<a href='/bolao/vasco?t={BET_TOKEN_PLACEHOLDER}'>ranking</a>depois"
+    )
+
+    with_token = personalize(content, "TOK")
+    without = personalize(content, None)
+
+    assert "/palpite?t=TOK&p=1-0" in with_token and "/bolao/vasco?t=TOK" in with_token
+    assert BET_TOKEN_PLACEHOLDER not in with_token + without
+    assert "palpite" not in without and "<!--bolao-->" not in without
+    assert "/bolao/vasco?t='" in without and without.startswith("antes")
+    assert without.endswith("depois")
+
+
+@respx.mock
+def test_each_recipient_gets_their_own_bet_token() -> None:
+    from geral.send.resend_sender import BET_TOKEN_PLACEHOLDER
+
+    route = respx.post(RESEND_BATCH_URL).mock(return_value=ok(2))
+    html = f"<!--bolao--><a href='/palpite?t={BET_TOKEN_PLACEHOLDER}'>x</a><!--/bolao-->{HTML}"
+    ana = Recipient("ana@x.com", ANA.unsubscribe_url, bet_token="ANA-BET")
+
+    make_sender().send("Assunto", html, TEXT, [ana, BOB])
+
+    first, second = json.loads(route.calls.last.request.content)
+    assert "/palpite?t=ANA-BET" in first["html"]
+    assert "palpite" not in second["html"]

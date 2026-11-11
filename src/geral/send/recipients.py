@@ -15,6 +15,7 @@ from tenacity import Retrying, retry_if_exception, stop_after_attempt, wait_expo
 from tenacity.wait import wait_base
 
 from geral.config import Settings
+from geral.models import BolaoSummary
 
 logger = logging.getLogger(__name__)
 
@@ -26,6 +27,7 @@ TIMEOUT = 15.0
 class Recipient:
     email: str
     unsubscribe_url: str
+    bet_token: str | None = None  # signs the bolão links; only page subscribers have one
 
 
 @dataclass(frozen=True)
@@ -37,6 +39,7 @@ class ResolvedRecipients:
 class _Subscriber(BaseModel):
     email: str
     unsubscribe_url: str
+    bet_token: str | None = None
 
 
 _subscribers = TypeAdapter(list[_Subscriber])
@@ -110,7 +113,7 @@ def resolve_recipients(
             for s in subscribers:
                 email = s.email.strip().lower()
                 # A subscriber's signed link beats the fixed list's mailto.
-                merged[email] = Recipient(email, s.unsubscribe_url)
+                merged[email] = Recipient(email, s.unsubscribe_url, s.bet_token)
     return ResolvedRecipients(list(merged.values()), from_api)
 
 
@@ -161,3 +164,66 @@ def latest_edition(
         return None
     response.raise_for_status()
     return LatestEdition.model_validate(response.json())
+
+
+def _bolao_url(settings: Settings, team: str, match_id: str, suffix: str = "") -> str:
+    base = settings.PUBLIC_URL.rstrip("/")
+    return f"{base}/api/teams/{team}/bolao/matches/{match_id}{suffix}"
+
+
+def _auth(settings: Settings) -> dict[str, str]:
+    return {"Authorization": f"Bearer {settings.SUBSCRIBERS_API_TOKEN}"}
+
+
+def register_match(
+    settings: Settings,
+    team: str,
+    match_id: str,
+    opponent: str,
+    home: bool,
+    kickoff: datetime,
+    client: httpx.Client | None = None,
+) -> None:
+    """Open the team's bolão for this match until kickoff. Raises httpx.HTTPError."""
+    response = (client or httpx.Client(timeout=TIMEOUT)).put(
+        _bolao_url(settings, team, match_id),
+        json={"opponent": opponent, "home": home, "kickoff": kickoff.isoformat()},
+        headers=_auth(settings),
+    )
+    response.raise_for_status()
+
+
+def report_result(
+    settings: Settings,
+    team: str,
+    match_id: str,
+    our_goals: int,
+    their_goals: int,
+    client: httpx.Client | None = None,
+) -> BolaoSummary:
+    """Store the final score (our side) and get the bolão summary. Raises httpx.HTTPError."""
+    response = (client or httpx.Client(timeout=TIMEOUT)).put(
+        _bolao_url(settings, team, match_id, "/result"),
+        json={"our_goals": our_goals, "their_goals": their_goals},
+        headers=_auth(settings),
+    )
+    response.raise_for_status()
+    return BolaoSummary.model_validate(response.json())
+
+
+def preview_summary(
+    settings: Settings,
+    team: str,
+    match_id: str,
+    our_goals: int,
+    their_goals: int,
+    client: httpx.Client | None = None,
+) -> BolaoSummary:
+    """The summary this score would give, without storing it (previews and dry runs)."""
+    response = (client or httpx.Client(timeout=TIMEOUT)).get(
+        _bolao_url(settings, team, match_id, "/summary"),
+        params={"ours": our_goals, "theirs": their_goals},
+        headers=_auth(settings),
+    )
+    response.raise_for_status()
+    return BolaoSummary.model_validate(response.json())

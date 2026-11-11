@@ -376,3 +376,9 @@ def test_match_without_boxscore_keeps_only_cards() -> None:
     match = make_client()._parse_match(summary, "bra.1")
 
     assert set(match.statistics) == {"Cartões amarelos", "Cartões vermelhos"}
+
+
+def test_next_match_carries_the_espn_event_id(espn: respx.MockRouter) -> None:
+    match = make_client().get_next_match(datetime(2026, 10, 14, tzinfo=TZ))
+
+    assert match is not None and match.match_id and match.match_id.isdigit()

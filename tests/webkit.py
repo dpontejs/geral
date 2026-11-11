@@ -30,10 +30,12 @@ class FakeMailer:
             raise MailError("Resend is down")
         self.sent.append((email, confirm_url, [t.slug for t in teams]))
 
-    def send_edition(self, email, team, subject, html, text, unsubscribe_url) -> None:
+    def send_edition(
+        self, email, team, subject, html, text, unsubscribe_url, bet_token=None
+    ) -> None:
         if self.fail_editions:
             raise MailError("Resend is down")
-        self.editions.append((email, team.slug, subject, html, text, unsubscribe_url))
+        self.editions.append((email, team.slug, subject, html, text, unsubscribe_url, bet_token))
 
     def send_notification(self, to, subject, text) -> None:
         self.notifications.append((to, subject, text))

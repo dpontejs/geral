@@ -94,6 +94,8 @@ def test_source_has_no_hardcoded_club() -> None:
         f"{path.relative_to(source)}:{n}"
         for path in source.rglob("*")
         if path.suffix in {".py", ".md", ".j2"}
+        # The importer reads the moved-in app's own schema (columns `flamengo_home`, `fla_goals`).
+        and path.name != "legacy.py"
         for n, line in enumerate(path.read_text(encoding="utf-8").splitlines(), 1)
         if re.search(r"flamengo|urubu|rubro-negr|mengão", line, re.IGNORECASE)
     ]
@@ -122,3 +124,20 @@ def test_unknown_team_exits_2_listing_valid_slugs(tmp_path) -> None:
 
     assert result.exit_code == 2
     assert "nautico" in result.output
+
+
+def test_flamengo_is_the_urubu_news_and_waits_hidden_for_the_switch() -> None:
+    flamengo = load_teams()["flamengo"]
+
+    assert flamengo.newsletter == "Urubu News" and flamengo.accent == "#A51C24"
+    assert flamengo.espn_id == 819 and "fifa.cwc" in flamengo.leagues
+    assert set(flamengo.other_sports) == {"Basquete", "Vôlei", "Futebol feminino"}
+    assert flamengo.listed is False
+    assert all(team.listed for slug, team in load_teams().items() if slug != "flamengo")
+
+
+def test_every_team_has_its_brand_files() -> None:
+    static = Path(__file__).parents[1] / "src" / "geral" / "static"
+    for slug in load_teams():
+        for name in ("icon-512.png", "logo-email.png", "og-image.png"):
+            assert (static / slug / name).exists(), f"{slug}/{name}"

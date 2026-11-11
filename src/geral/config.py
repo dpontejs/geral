@@ -27,6 +27,11 @@ class Settings(BaseSettings):
     SUBSCRIBERS_API_TOKEN: str | None = None  # protects /api/subscribers (and enables it in run)
     SUBSCRIBERS_DB: str = "data/subscribers.db"
     NOTIFY_EMAIL: str | None = None  # gets an e-mail whenever someone confirms a subscription
+    # A single-team app that moved in (docs/adr/0001): its sent e-mails keep working. Its tokens
+    # (signed with its secret) act on LEGACY_TEAM; its old hosts send the home page to the Geral.
+    LEGACY_TEAM: str | None = None
+    LEGACY_SUBSCRIBE_SECRET: str | None = None
+    LEGACY_HOSTS: str = ""  # comma-separated host names
 
     @field_validator("NEWSLETTER_RECIPIENTS")
     @classmethod

@@ -589,3 +589,104 @@ def test_pre_game_hides_outlook_and_where_to_watch_when_absent() -> None:
 
     for output in (html, text):
         assert "O que esperar" not in output and "Onde assistir" not in output
+
+
+PAGE = "https://geral.test"
+
+
+def bolao_pre_game() -> Newsletter:
+    n = pre_game()
+    n.edition.match_id = "401"
+    n.bolao_open = True
+    return n
+
+
+def between_markers(content: str) -> str:
+    return content[content.index("<!--bolao-->") : content.index("<!--/bolao-->")]
+
+
+def test_pre_game_card_has_16_score_links_inside_markers() -> None:
+    html, text = render(bolao_pre_game(), page_url=PAGE)
+
+    card = between_markers(html)
+    base = f"{PAGE}/palpite?t=BET-TOKEN-PLACEHOLDER&amp;c=flamengo&amp;m=401"
+    links = [f"p={f}-{o}" for f in range(4) for o in range(4)]
+    assert all(f'{base}&amp;{p}"' in card for p in links)
+    assert f'{base}"' in card  # outro placar
+    assert "Bolão" in card and "Goleada?" in card and "gols do Flamengo" in card
+    text_card = between_markers(text)
+    assert f"{PAGE}/palpite?t=BET-TOKEN-PLACEHOLDER&c=flamengo&m=401&p=1-0" in text_card
+
+
+def test_pre_game_card_needs_open_bolao_and_page() -> None:
+    closed = bolao_pre_game()
+    closed.bolao_open = False
+
+    assert "<!--bolao-->" not in render(closed, page_url=PAGE)[0]
+    assert "<!--bolao-->" not in render(bolao_pre_game())[0]
+
+
+def test_post_game_renders_exact_top5_and_titles() -> None:
+    from geral.models import BolaoSummary, RankRow
+
+    n = full_newsletter()
+    n.bolao = BolaoSummary(
+        our_goals=1,
+        their_goals=0,
+        exact=["Ana", "Bia"],
+        top=[RankRow(nickname=f"P{i}", points=10 - i, exact=1) for i in range(5)],
+        king="P0",
+        cold_foot="Zé",
+    )
+
+    html, text = render(n, page_url=PAGE)
+
+    for content in (html, text):
+        assert "Bolão" in content and "Ana, Bia" in content
+        assert all(f"P{i}" in content for i in range(5))
+        assert "Rei do Maracanã" in content and "Pé-frio da rodada" in content and "Zé" in content
+        assert f"{PAGE}/bolao/flamengo?t=BET-TOKEN-PLACEHOLDER" in content
+    assert "<!--bolao-->" not in html
+
+
+def test_post_game_board_says_when_nobody_nailed_it() -> None:
+    from geral.models import BolaoSummary
+
+    n = full_newsletter()
+    n.bolao = BolaoSummary(our_goals=1, their_goals=0, exact=[], top=[])
+
+    html, _ = render(n, page_url=PAGE)
+
+    assert "Ninguém cravou" in html
+    assert "Rei do Maracanã" not in html
+
+
+def test_fixed_list_sees_post_game_board_without_token() -> None:
+    from geral.models import BolaoSummary
+    from geral.send.resend_sender import personalize
+
+    n = full_newsletter()
+    n.bolao = BolaoSummary(our_goals=1, their_goals=0, exact=["Ana"], top=[])
+
+    html = personalize(render(n, page_url=PAGE)[0], None)
+
+    assert "Ana" in html and f'{PAGE}/bolao/flamengo?t="' in html
+
+
+def test_text_email_shows_no_bolao_markers() -> None:
+    from geral.send.resend_sender import personalize
+
+    _, text = render(bolao_pre_game(), page_url=PAGE)
+
+    filled = personalize(text, "TOK")
+    assert "<!--" not in filled and "/palpite?t=TOK" in filled
+    assert "<!--" not in personalize(text, None)
+
+
+def test_bolao_card_uses_the_team_name() -> None:
+    n = bolao_pre_game().model_copy(update={"team": get_team("nautico")})
+
+    html, _ = render(n, page_url=PAGE)
+
+    card = between_markers(html)
+    assert "gols do Náutico" in card and "c=nautico" in card and "Flamengo" not in card

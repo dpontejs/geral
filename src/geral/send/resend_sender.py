@@ -1,5 +1,6 @@
 import html as html_lib
 import logging
+import re
 import uuid
 from email.utils import formataddr, parseaddr
 
@@ -25,6 +26,10 @@ MAX_ATTEMPTS = 3
 TIMEOUT = 30.0
 # Rendered in place of the unsubscribe link, then swapped for each recipient's own link.
 UNSUBSCRIBE_PLACEHOLDER = "https://unsubscribe.invalid/recipient"
+# Same idea for the bolão links; without a token the <!--bolao--> card is dropped.
+BET_TOKEN_PLACEHOLDER = "BET-TOKEN-PLACEHOLDER"
+BOLAO_CARD = re.compile(r"<!--bolao-->.*?<!--/bolao-->", re.DOTALL)
+BOLAO_MARKER = re.compile(r"<!--/?bolao-->\n?")
 
 
 class SendError(Exception):
@@ -34,6 +39,14 @@ class SendError(Exception):
 def build_subject(newsletter: Newsletter) -> str:
     subject = f"{newsletter.team.newsletter} — {newsletter.edition.label}"
     return f"{subject}: {newsletter.headline}" if newsletter.headline else subject
+
+
+def personalize(content: str, bet_token: str | None) -> str:
+    """Fill the recipient's bet token, or drop the bet card for who has none."""
+    if bet_token is None:
+        content = BOLAO_CARD.sub("", content)
+    content = BOLAO_MARKER.sub("", content)  # the plain-text part would show them literally
+    return content.replace(BET_TOKEN_PLACEHOLDER, bet_token or "")
 
 
 def _is_retryable(error: BaseException) -> bool:
@@ -108,8 +121,10 @@ class ResendSender:
             "from": self.sender,
             "to": [recipient.email],
             "subject": subject,
-            "html": html.replace(UNSUBSCRIBE_PLACEHOLDER, html_lib.escape(url)),
-            "text": text.replace(UNSUBSCRIBE_PLACEHOLDER, url),
+            "html": personalize(html, recipient.bet_token).replace(
+                UNSUBSCRIBE_PLACEHOLDER, html_lib.escape(url)
+            ),
+            "text": personalize(text, recipient.bet_token).replace(UNSUBSCRIBE_PLACEHOLDER, url),
             "headers": headers,
         }
 
