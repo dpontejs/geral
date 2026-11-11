@@ -18,7 +18,7 @@ trocando só o parâmetro `--team`. É a base de todas as outras fatias do hub.
 ## Contratos
 
 ```python
-# src/resenha/teams.py — lê src/resenha/teams.toml
+# src/geral/teams.py — lê src/geral/teams.toml
 class Team(BaseModel):
     slug: str  # "botafogo"
     name: str  # "Botafogo"
@@ -34,7 +34,7 @@ def load_teams(path: Path | None = None) -> dict[str, Team]: ...
 def get_team(slug: str) -> Team: ...  # UnknownTeam com a lista de slugs válidos
 ```
 
-- CLI: `resenha preview --team <slug> [--edition ...] [--out ...]` e `resenha run --team <slug>`;
+- CLI: `geral preview --team <slug> [--edition ...] [--out ...]` e `geral run --team <slug>`;
   slug desconhecido sai com código 2 e lista os válidos.
 - Prompts e templates recebem `team` no contexto; nenhum texto fixo de Flamengo/Urubu.
 - Filtro "Brasil afora" exclui notícias com o nome do **próprio** time no título.
@@ -55,8 +55,8 @@ def get_team(slug: str) -> Team: ...  # UnknownTeam com a lista de slugs válido
 
 ```bash
 uv run ruff check . && uv run pytest
-uv run resenha preview --team botafogo --out out/botafogo.html   # abrir no navegador
-uv run resenha preview --team palmeiras --out out/palmeiras.html
+uv run geral preview --team botafogo --out out/botafogo.html   # abrir no navegador
+uv run geral preview --team palmeiras --out out/palmeiras.html
 ```
 
 ## Riscos e dúvidas abertas

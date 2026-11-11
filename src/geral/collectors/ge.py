@@ -7,8 +7,8 @@ from zoneinfo import ZoneInfo
 import httpx
 from selectolax.lexbor import LexborHTMLParser
 
-from resenha.collectors.base import create_http_client
-from resenha.models import Article
+from geral.collectors.base import create_http_client
+from geral.models import Article
 
 logger = logging.getLogger(__name__)
 

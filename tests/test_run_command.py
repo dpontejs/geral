@@ -9,13 +9,13 @@ from fakes import FakeLLMClient
 from pydantic import BaseModel
 from typer.testing import CliRunner
 
-import resenha.__main__ as cli
-from resenha import pipeline
-from resenha.config import get_settings
-from resenha.models import Article, MatchStats, StandingRow, TeamMoment
-from resenha.send.resend_sender import RESEND_BATCH_URL as RESEND_URL
-from resenha.send.resend_sender import UNSUBSCRIBE_PLACEHOLDER
-from resenha.summarizer.pipeline import (
+import geral.__main__ as cli
+from geral import pipeline
+from geral.config import get_settings
+from geral.models import Article, MatchStats, StandingRow, TeamMoment
+from geral.send.resend_sender import RESEND_BATCH_URL as RESEND_URL
+from geral.send.resend_sender import UNSUBSCRIBE_PLACEHOLDER
+from geral.summarizer.pipeline import (
     AnalysisResponse,
     GroupResponse,
     IntroResponse,
@@ -197,7 +197,7 @@ def test_run_writes_report_to_github_step_summary(env, tmp_path) -> None:
     def collect(edition, settings):
         import logging
 
-        logging.getLogger("resenha.collectors.ge").warning("ge fora do ar")
+        logging.getLogger("geral.collectors.ge").warning("ge fora do ar")
         return [ARTICLE]
 
     env.setattr(pipeline, "collect_articles", collect)
@@ -293,7 +293,7 @@ def test_run_survives_subscribers_api_failure(env, tmp_path, monkeypatch) -> Non
     respx.get("https://news.test/api/latest-edition").mock(return_value=httpx.Response(404))
     get_settings.cache_clear()
     use(env, [ARTICLE], MATCH)
-    monkeypatch.setattr("resenha.send.recipients.FETCH_ATTEMPTS", 1)
+    monkeypatch.setattr("geral.send.recipients.FETCH_ATTEMPTS", 1)
     respx.get(API).mock(side_effect=httpx.ConnectError("vps down"))
     respx.put("https://news.test/api/latest-edition").mock(side_effect=httpx.ConnectError("down"))
     route = respx.post(RESEND_URL).mock(return_value=sent(["e1"]))
@@ -492,7 +492,7 @@ def test_run_with_note_adds_the_box_and_prefixes_the_subject(env) -> None:
 
 @respx.mock
 def test_post_without_finished_match_sends_nothing(env, monkeypatch) -> None:
-    from resenha.schedule import Fixture
+    from geral.schedule import Fixture
 
     use(env, [ARTICLE], None)
     game = Fixture(

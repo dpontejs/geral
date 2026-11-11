@@ -8,17 +8,17 @@ import respx
 from fakes import FLAMENGO
 from tenacity import wait_none
 
-from resenha.config import Settings
-from resenha.models import Edition, Newsletter
-from resenha.send.recipients import Recipient
-from resenha.send.resend_sender import (
+from geral.config import Settings
+from geral.models import Edition, Newsletter
+from geral.send.recipients import Recipient
+from geral.send.resend_sender import (
     RESEND_BATCH_URL,
     UNSUBSCRIBE_PLACEHOLDER,
     ResendSender,
     SendError,
     build_subject,
 )
-from resenha.teams import get_team
+from geral.teams import get_team
 
 TZ = ZoneInfo("America/Sao_Paulo")
 EDITION = Edition(
@@ -174,8 +174,8 @@ def test_failure_after_a_sent_batch_says_how_many_went_out() -> None:
 
 
 def test_sender_name_is_the_team_newsletter() -> None:
-    settings = Settings(NEWSLETTER_FROM="Qualquer <news@resenha.test>")
+    settings = Settings(NEWSLETTER_FROM="Qualquer <news@geral.test>")
 
     sender = ResendSender.from_settings(settings, get_team("abc"))
 
-    assert sender.sender == "Elefante News <news@resenha.test>"
+    assert sender.sender == "Elefante News <news@geral.test>"

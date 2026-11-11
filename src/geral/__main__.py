@@ -10,34 +10,34 @@ import typer
 from rich.console import Console
 from rich.table import Table
 
-from resenha import __version__, pipeline
-from resenha.config import get_settings
-from resenha.edition import edition_from_slot, resolve_match_edition
-from resenha.models import Edition, Newsletter
-from resenha.render.renderer import render
-from resenha.report import ProblemCollector, RunReport
-from resenha.schedule import LABELS, TZ, Fixture, Slot, label_of, plan
-from resenha.schedule import due as due_slot
-from resenha.send.recipients import (
+from geral import __version__, pipeline
+from geral.config import get_settings
+from geral.edition import edition_from_slot, resolve_match_edition
+from geral.models import Edition, Newsletter
+from geral.render.renderer import render
+from geral.report import ProblemCollector, RunReport
+from geral.schedule import LABELS, TZ, Fixture, Slot, label_of, plan
+from geral.schedule import due as due_slot
+from geral.send.recipients import (
     LatestEdition,
     latest_edition,
     publish_latest_edition,
     resolve_recipients,
 )
-from resenha.send.resend_sender import (
+from geral.send.resend_sender import (
     UNSUBSCRIBE_PLACEHOLDER,
     ResendSender,
     SendError,
     build_subject,
 )
-from resenha.stats.espn import ESPNStatsClient, StatsUnavailable
-from resenha.stats.table import standings_window
-from resenha.summarizer.client import LLMError
-from resenha.teams import Team, UnknownTeam, get_team
+from geral.stats.espn import ESPNStatsClient, StatsUnavailable
+from geral.stats.table import standings_window
+from geral.summarizer.client import LLMError
+from geral.teams import Team, UnknownTeam, get_team
 
-logger = logging.getLogger("resenha.run")
+logger = logging.getLogger("geral.run")
 
-app = typer.Typer(help="Resenha: one football newsletter per team", no_args_is_help=True)
+app = typer.Typer(help="Geral: one football newsletter per team", no_args_is_help=True)
 
 TeamOption = Annotated[str, typer.Option("--team", help="Team slug from teams.toml (e.g. vasco)")]
 
@@ -56,13 +56,13 @@ DateOption = Annotated[
 
 @app.callback()
 def main() -> None:
-    """Resenha CLI root callback."""
+    """Geral CLI root callback."""
 
 
 @app.command()
 def version() -> None:
-    """Print the resenha version."""
-    typer.echo(f"resenha v{__version__}")
+    """Print the geral version."""
+    typer.echo(f"geral v{__version__}")
 
 
 @app.command()

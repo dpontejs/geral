@@ -1,7 +1,7 @@
 from typer.testing import CliRunner
 
-from resenha import __version__
-from resenha.__main__ import app
+from geral import __version__
+from geral.__main__ import app
 
 runner = CliRunner()
 
@@ -13,4 +13,4 @@ def test_version() -> None:
 def test_cli_version() -> None:
     result = runner.invoke(app, ["version"])
     assert result.exit_code == 0
-    assert "resenha v0.1.0" in result.stdout
+    assert "geral v0.1.0" in result.stdout

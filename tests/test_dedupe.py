@@ -6,8 +6,8 @@ import httpx
 import respx
 from fakes import FLAMENGO
 
-from resenha.models import Article
-from resenha.processing.dedupe import (
+from geral.models import Article
+from geral.processing.dedupe import (
     GOOGLE_NEWS_BATCHEXECUTE_URL,
     dedupe,
     is_relevant,

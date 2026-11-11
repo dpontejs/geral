@@ -1,6 +1,6 @@
 import pytest
 
-from resenha.config import Settings, get_settings
+from geral.config import Settings, get_settings
 
 
 @pytest.fixture(autouse=True)
@@ -21,7 +21,7 @@ def isolated_settings(monkeypatch: pytest.MonkeyPatch, tmp_path) -> None:
 @pytest.fixture(autouse=True)
 def no_espn_calendar(monkeypatch: pytest.MonkeyPatch) -> None:
     """The CLI plans editions from ESPN's calendar; tests start from an empty one, offline."""
-    import resenha.__main__ as cli
+    import geral.__main__ as cli
 
     monkeypatch.setattr(cli, "_fixtures", lambda team, settings, now: [])
 
@@ -31,8 +31,8 @@ def flamengo_in_catalog(monkeypatch: pytest.MonkeyPatch) -> None:
     """The CLI tests come from the Urubu News: `--team flamengo` is the test-only team."""
     from fakes import FLAMENGO
 
-    import resenha.__main__ as cli
-    from resenha.teams import get_team
+    import geral.__main__ as cli
+    from geral.teams import get_team
 
     monkeypatch.setattr(
         cli, "get_team", lambda slug: FLAMENGO if slug == "flamengo" else get_team(slug)

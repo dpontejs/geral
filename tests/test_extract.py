@@ -6,8 +6,8 @@ import httpx
 import pytest
 import respx
 
-from resenha.models import Article
-from resenha.processing.extract import (
+from geral.models import Article
+from geral.processing.extract import (
     MAX_CONTENT_CHARS,
     DomainRateLimiter,
     extract_articles,

@@ -6,8 +6,8 @@ from zoneinfo import ZoneInfo
 import httpx
 from dateutil.parser import isoparse
 
-from resenha.collectors.base import DEFAULT_TIMEOUT
-from resenha.models import (
+from geral.collectors.base import DEFAULT_TIMEOUT
+from geral.models import (
     FormResult,
     MatchEvent,
     MatchPreview,
@@ -17,8 +17,8 @@ from resenha.models import (
     StandingRow,
     TeamMoment,
 )
-from resenha.schedule import Fixture
-from resenha.teams import LEAGUES, Team
+from geral.schedule import Fixture
+from geral.teams import LEAGUES, Team
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +30,7 @@ class StatsUnavailable(Exception):
 ESPN_SITE_URL = "https://site.api.espn.com/apis/site/v2/sports/soccer"
 ESPN_STANDINGS_URL = "https://site.api.espn.com/apis/v2/sports/soccer"
 # ESPN's WAF rejects the collectors' User-Agent (the "(+contato@...)" part) with 403.
-ESPN_USER_AGENT = "resenha/0.1"
+ESPN_USER_AGENT = "geral/0.1"
 
 FIXTURES_LOOKBACK = timedelta(days=7)  # a match played last week may still have its post-game due
 POSTPONED = {"STATUS_POSTPONED", "STATUS_CANCELED", "STATUS_ABANDONED"}

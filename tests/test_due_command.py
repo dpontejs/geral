@@ -4,10 +4,10 @@ from zoneinfo import ZoneInfo
 import pytest
 from typer.testing import CliRunner
 
-import resenha.__main__ as cli
-from resenha.schedule import Fixture
-from resenha.send.recipients import LatestEdition
-from resenha.stats.espn import StatsUnavailable
+import geral.__main__ as cli
+from geral.schedule import Fixture
+from geral.send.recipients import LatestEdition
+from geral.stats.espn import StatsUnavailable
 
 TZ = ZoneInfo("America/Sao_Paulo")
 BAHIA = Fixture(
@@ -90,7 +90,7 @@ def no_build(*args, **kwargs):
 
 
 def test_run_auto_without_due_slot_exits_without_building(calendar) -> None:
-    from resenha import pipeline
+    from geral import pipeline
 
     calendar.setattr(cli, "_now", lambda: datetime(2026, 10, 18, 10, 0, tzinfo=TZ))
     calendar.setattr(pipeline, "build_newsletter", no_build)
@@ -102,7 +102,7 @@ def test_run_auto_without_due_slot_exits_without_building(calendar) -> None:
 
 
 def test_run_auto_without_calendar_exits_without_building(calendar) -> None:
-    from resenha import pipeline
+    from geral import pipeline
 
     def down(team, settings, now):
         raise StatsUnavailable("espn down")
@@ -117,7 +117,7 @@ def test_run_auto_without_calendar_exits_without_building(calendar) -> None:
 
 
 def test_run_auto_resolves_the_due_slot(calendar) -> None:
-    from resenha import pipeline
+    from geral import pipeline
 
     seen = {}
 

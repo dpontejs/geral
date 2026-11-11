@@ -1,6 +1,6 @@
 import logging
 
-from resenha.report import ProblemCollector, RunReport
+from geral.report import ProblemCollector, RunReport
 
 
 def test_report_markdown_lists_counts_problems_and_outcome() -> None:
@@ -19,7 +19,7 @@ def test_report_markdown_lists_counts_problems_and_outcome() -> None:
         output_tokens=1200,
         recipients=3,
         subscribers=2,
-        problems=["WARNING resenha.processing.extract: Failed to extract content from x"],
+        problems=["WARNING geral.processing.extract: Failed to extract content from x"],
         outcome="enviada (id=abc)",
     )
 
@@ -45,7 +45,7 @@ def test_report_without_problems_says_so() -> None:
 
 
 def test_problem_collector_captures_warnings_and_errors_only() -> None:
-    logger = logging.getLogger("resenha.test")
+    logger = logging.getLogger("geral.test")
     with ProblemCollector() as problems:
         logger.info("tudo certo")
         logger.warning("fonte fora do ar")
@@ -53,6 +53,6 @@ def test_problem_collector_captures_warnings_and_errors_only() -> None:
     logger.warning("depois do bloco")
 
     assert problems.messages == [
-        "WARNING resenha.test: fonte fora do ar",
-        "ERROR resenha.test: falhou resumo",
+        "WARNING geral.test: fonte fora do ar",
+        "ERROR geral.test: falhou resumo",
     ]

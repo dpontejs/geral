@@ -7,8 +7,8 @@ import httpx
 from rapidfuzz import fuzz
 from rapidfuzz.utils import default_process
 
-from resenha.models import Article
-from resenha.teams import Team
+from geral.models import Article
+from geral.teams import Team
 
 logger = logging.getLogger(__name__)
 

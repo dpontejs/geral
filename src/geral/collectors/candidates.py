@@ -12,10 +12,10 @@ from html import unescape
 import feedparser
 import httpx
 
-from resenha.collectors.base import create_http_client
-from resenha.collectors.google_news import GoogleNewsCollector, google_news_url
-from resenha.models import Article
-from resenha.teams import Team
+from geral.collectors.base import create_http_client
+from geral.collectors.google_news import GoogleNewsCollector, google_news_url
+from geral.models import Article
+from geral.teams import Team
 
 logger = logging.getLogger(__name__)
 

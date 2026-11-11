@@ -1,5 +1,5 @@
 [project]
-name = "resenha"
+name = "geral"
 version = "0.1.0"
 description = "Hub de newsletters de futebol brasileiro, uma por time"
 readme = "README.md"
@@ -33,7 +33,7 @@ dev = [
 ]
 
 [project.scripts]
-resenha = "resenha.__main__:app"
+geral = "geral.__main__:app"
 
 [build-system]
 requires = ["hatchling"]
@@ -50,4 +50,4 @@ select = ["E", "F", "I", "UP", "B"]
 testpaths = ["tests"]
 
 [tool.ruff.lint.isort]
-known-first-party = ["resenha"]
+known-first-party = ["geral"]

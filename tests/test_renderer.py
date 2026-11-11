@@ -4,7 +4,7 @@ from zoneinfo import ZoneInfo
 
 from fakes import FLAMENGO
 
-from resenha.models import (
+from geral.models import (
     Article,
     Brief,
     Edition,
@@ -18,8 +18,8 @@ from resenha.models import (
     TeamMoment,
     Topic,
 )
-from resenha.render.renderer import _stat_shares, render, source_label, team_colors
-from resenha.teams import get_team
+from geral.render.renderer import _stat_shares, render, source_label, team_colors
+from geral.teams import get_team
 
 TZ = ZoneInfo("America/Sao_Paulo")
 EDITION = Edition(
@@ -490,7 +490,7 @@ def test_render_without_note_has_no_box() -> None:
 def pre_game(
     lineups: str = "", tips: list[str] | None = None, outlook: str = "", broadcast: str = ""
 ) -> Newsletter:
-    from resenha.models import Edition, FormResult, MatchPreview, NextMatch
+    from geral.models import Edition, FormResult, MatchPreview, NextMatch
 
     def result(r: str, score: str, opponent: str) -> FormResult:
         return FormResult(

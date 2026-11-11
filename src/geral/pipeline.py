@@ -6,10 +6,10 @@ from typing import Protocol
 
 import httpx
 
-from resenha.collectors.base import Collector, create_http_client, get_collectors
-from resenha.collectors.candidates import BrazilCollector, ExtrasCollector
-from resenha.config import Settings, get_settings
-from resenha.models import (
+from geral.collectors.base import Collector, create_http_client, get_collectors
+from geral.collectors.candidates import BrazilCollector, ExtrasCollector
+from geral.config import Settings, get_settings
+from geral.models import (
     Article,
     Edition,
     MatchPreview,
@@ -19,13 +19,13 @@ from resenha.models import (
     StandingRow,
     TeamMoment,
 )
-from resenha.processing.dedupe import dedupe, is_relevant
-from resenha.processing.extract import DomainRateLimiter, extract_articles
-from resenha.report import RunReport
-from resenha.send.recipients import mailto_unsubscribe
-from resenha.stats.espn import ESPNStatsClient
-from resenha.summarizer.client import LLMClient, LLMError, get_llm_client
-from resenha.summarizer.pipeline import (
+from geral.processing.dedupe import dedupe, is_relevant
+from geral.processing.extract import DomainRateLimiter, extract_articles
+from geral.report import RunReport
+from geral.send.recipients import mailto_unsubscribe
+from geral.stats.espn import ESPNStatsClient
+from geral.summarizer.client import LLMClient, LLMError, get_llm_client
+from geral.summarizer.pipeline import (
     MAX_TOPICS,
     EditionSummary,
     PreviewResponse,
@@ -33,7 +33,7 @@ from resenha.summarizer.pipeline import (
     write_analysis,
     write_preview,
 )
-from resenha.teams import Team
+from geral.teams import Team
 
 logger = logging.getLogger(__name__)
 
@@ -88,7 +88,7 @@ ROUND_TIPS_QUERY = '"Palpite ge"'  # ge's pundits' picks for every Brasileirão 
 
 def collect_match_articles(edition: Edition, match: NextMatch, team: Team) -> list[Article]:
     """Google News searches for this match's tips and line-ups, from three days before the send."""
-    from resenha.collectors.google_news import GoogleNewsCollector, google_news_url
+    from geral.collectors.google_news import GoogleNewsCollector, google_news_url
 
     home, away = (team.name, match.opponent) if match.is_home else (match.opponent, team.name)
     window = edition.model_copy(

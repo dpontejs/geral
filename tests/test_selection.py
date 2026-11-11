@@ -4,8 +4,8 @@ from zoneinfo import ZoneInfo
 from fakes import FLAMENGO, FakeLLMClient
 from pydantic import BaseModel
 
-from resenha.models import Article, Brief
-from resenha.summarizer.pipeline import (
+from geral.models import Article, Brief
+from geral.summarizer.pipeline import (
     BRAZIL_PICKS,
     LEARN_MORE_PICKS,
     GroupResponse,

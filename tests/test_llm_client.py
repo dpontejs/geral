@@ -8,8 +8,8 @@ from google.genai import errors
 from pydantic import BaseModel
 from tenacity import wait_none
 
-from resenha.config import Settings
-from resenha.summarizer.client import GeminiClient, LLMError, get_llm_client, retry_delay
+from geral.config import Settings
+from geral.summarizer.client import GeminiClient, LLMError, get_llm_client, retry_delay
 
 GENERATE_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-test:generateContent"
 

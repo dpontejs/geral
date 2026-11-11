@@ -12,10 +12,10 @@ from tenacity import (
 )
 from tenacity.wait import wait_base
 
-from resenha.config import Settings
-from resenha.models import Newsletter
-from resenha.send.recipients import Recipient
-from resenha.teams import Team
+from geral.config import Settings
+from geral.models import Newsletter
+from geral.send.recipients import Recipient
+from geral.teams import Team
 
 logger = logging.getLogger(__name__)
 

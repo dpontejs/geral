@@ -7,7 +7,7 @@ import httpx
 import respx
 from fakes import FLAMENGO
 
-from resenha.collectors.candidates import (
+from geral.collectors.candidates import (
     BRAZIL_LIMIT,
     EXTRA_LIMIT,
     GE_FOOTBALL_RSS_URL,
@@ -16,7 +16,7 @@ from resenha.collectors.candidates import (
     ExtrasCollector,
     brazil_query,
 )
-from resenha.collectors.google_news import google_news_url
+from geral.collectors.google_news import google_news_url
 
 FIXTURES = Path(__file__).parent / "fixtures"
 TZ = ZoneInfo("America/Sao_Paulo")

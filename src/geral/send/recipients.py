@@ -14,7 +14,7 @@ from pydantic import BaseModel, TypeAdapter, ValidationError
 from tenacity import Retrying, retry_if_exception, stop_after_attempt, wait_exponential
 from tenacity.wait import wait_base
 
-from resenha.config import Settings
+from geral.config import Settings
 
 logger = logging.getLogger(__name__)
 

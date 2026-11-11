@@ -5,7 +5,7 @@ from pathlib import Path
 from jinja2 import Environment, FileSystemLoader, StrictUndefined
 from pydantic import BaseModel, Field
 
-from resenha.models import (
+from geral.models import (
     Article,
     Brief,
     MatchPreview,
@@ -14,8 +14,8 @@ from resenha.models import (
     TeamMoment,
     Topic,
 )
-from resenha.summarizer.client import LLMClient, LLMError
-from resenha.teams import Team
+from geral.summarizer.client import LLMClient, LLMError
+from geral.teams import Team
 
 logger = logging.getLogger(__name__)
 

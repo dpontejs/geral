@@ -5,9 +5,9 @@ import pytest
 from fakes import FLAMENGO, FakeLLMClient
 from pydantic import BaseModel
 
-from resenha.models import Article, MatchStats, Topic
-from resenha.summarizer.client import LLMError
-from resenha.summarizer.pipeline import (
+from geral.models import Article, MatchStats, Topic
+from geral.summarizer.client import LLMError
+from geral.summarizer.pipeline import (
     MAX_TOPICS,
     GroupResponse,
     IntroResponse,
@@ -207,8 +207,8 @@ def test_group_failure_propagates() -> None:
 
 
 def test_write_analysis_prompt_has_stats_events_and_form() -> None:
-    from resenha.models import FormResult, MatchEvent, PlayerRanking, TeamMoment
-    from resenha.summarizer.pipeline import AnalysisResponse, write_analysis
+    from geral.models import FormResult, MatchEvent, PlayerRanking, TeamMoment
+    from geral.summarizer.pipeline import AnalysisResponse, write_analysis
 
     match = LAST_MATCH.model_copy(
         update={
@@ -278,7 +278,7 @@ def test_group_prompt_has_no_published_block_without_history() -> None:
 
 
 def test_pre_game_group_prompt_focuses_on_the_next_match() -> None:
-    from resenha.models import NextMatch
+    from geral.models import NextMatch
 
     bahia = NextMatch(
         opponent="Bahia",
@@ -296,8 +296,8 @@ def test_pre_game_group_prompt_focuses_on_the_next_match() -> None:
 
 
 def test_preview_reads_the_match_section_of_a_long_round_article() -> None:
-    from resenha.models import NextMatch
-    from resenha.summarizer.pipeline import PreviewResponse, write_preview
+    from geral.models import NextMatch
+    from geral.summarizer.pipeline import PreviewResponse, write_preview
 
     round_tips = make_article(
         9,
@@ -331,8 +331,8 @@ def test_summary_prompt_keeps_each_article_to_4000_chars() -> None:
 
 
 def test_preview_reads_up_to_twelve_articles_and_accepts_pundit_polls() -> None:
-    from resenha.models import NextMatch
-    from resenha.summarizer.pipeline import PreviewResponse, write_preview
+    from geral.models import NextMatch
+    from geral.summarizer.pipeline import PreviewResponse, write_preview
 
     articles = [make_article(i, f"Texto {i}") for i in range(1, 14)]
     bahia = NextMatch(
@@ -350,8 +350,8 @@ def test_preview_reads_up_to_twelve_articles_and_accepts_pundit_polls() -> None:
 
 
 def test_preview_puts_articles_about_this_match_first() -> None:
-    from resenha.models import NextMatch
-    from resenha.summarizer.pipeline import PreviewResponse, write_preview
+    from geral.models import NextMatch
+    from geral.summarizer.pipeline import PreviewResponse, write_preview
 
     other_games = [
         make_article(i, f"Outro jogo {i}").model_copy(
@@ -376,8 +376,8 @@ def test_preview_puts_articles_about_this_match_first() -> None:
 
 
 def test_preview_keeps_the_round_tips_ahead_of_other_games() -> None:
-    from resenha.models import NextMatch
-    from resenha.summarizer.pipeline import PreviewResponse, write_preview
+    from geral.models import NextMatch
+    from geral.summarizer.pipeline import PreviewResponse, write_preview
 
     noise = [
         make_article(i, f"Outro {i}").model_copy(

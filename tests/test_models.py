@@ -2,7 +2,7 @@ from datetime import UTC, datetime
 
 from fakes import FLAMENGO
 
-from resenha.models import (
+from geral.models import (
     Article,
     Edition,
     MatchEvent,

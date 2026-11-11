@@ -1,6 +1,6 @@
 import pytest
 
-from resenha.config import Settings, get_settings
+from geral.config import Settings, get_settings
 
 
 def test_settings_defaults() -> None:

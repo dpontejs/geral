@@ -6,10 +6,10 @@ import respx
 from fakes import FLAMENGO
 from typer.testing import CliRunner
 
-from resenha import pipeline
-from resenha.__main__ import app
-from resenha.models import Article, Edition
-from resenha.processing.extract import DomainRateLimiter
+from geral import pipeline
+from geral.__main__ import app
+from geral.models import Article, Edition
+from geral.processing.extract import DomainRateLimiter
 
 TZ = ZoneInfo("America/Sao_Paulo")
 EDITION = Edition(

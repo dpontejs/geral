@@ -5,8 +5,8 @@ from zoneinfo import ZoneInfo
 def test_resolve_match_edition_picks_slot_of_that_day() -> None:
     from datetime import date
 
-    from resenha.edition import resolve_match_edition
-    from resenha.schedule import Fixture
+    from geral.edition import resolve_match_edition
+    from geral.schedule import Fixture
 
     tz = ZoneInfo("America/Sao_Paulo")
     bahia = Fixture(
@@ -34,7 +34,7 @@ def test_resolve_match_edition_picks_slot_of_that_day() -> None:
 def test_resolve_match_edition_still_finds_a_slot_already_sent_that_day() -> None:
     from datetime import date
 
-    from resenha.edition import resolve_match_edition
+    from geral.edition import resolve_match_edition
 
     tz = ZoneInfo("America/Sao_Paulo")
     sent_today = datetime(2026, 10, 26, 8, 5, tzinfo=tz)

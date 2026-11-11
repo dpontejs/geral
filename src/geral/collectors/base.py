@@ -3,10 +3,10 @@ from typing import Protocol
 
 import httpx
 
-from resenha.models import Article
-from resenha.teams import Team
+from geral.models import Article
+from geral.teams import Team
 
-USER_AGENT = "resenha/0.1 (+contato@resenha.local)"
+USER_AGENT = "geral/0.1 (+contato@geral.local)"
 DEFAULT_TIMEOUT = 15.0
 
 
@@ -31,8 +31,8 @@ class Collector(Protocol):
 
 def get_collectors(team: Team) -> list[Collector]:
     """The team's news collectors."""
-    from resenha.collectors.ge import GECollector
-    from resenha.collectors.google_news import GoogleNewsCollector, google_news_url
+    from geral.collectors.ge import GECollector
+    from geral.collectors.google_news import GoogleNewsCollector, google_news_url
 
     return [
         GoogleNewsCollector(rss_url=google_news_url(team.news_query)),

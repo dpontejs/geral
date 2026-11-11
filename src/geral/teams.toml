@@ -1,6 +1,6 @@
 # Team catalog. A new team is a new entry here: check `espn_id` on
 # https://site.api.espn.com/apis/site/v2/sports/soccer/<league>/teams and `ge_url` in the browser.
-# `leagues` are the ESPN league codes tracked (names in resenha.teams.LEAGUES); `league` is the
+# `leagues` are the ESPN league codes tracked (names in geral.teams.LEAGUES); `league` is the
 # one whose table, campaign and rankings go in the e-mail (none when ESPN has no table). `accent` must read well on white and under white text.
 
 [vasco]

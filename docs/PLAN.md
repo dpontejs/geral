@@ -1,7 +1,7 @@
-# Resenha — Plano do Projeto
+# Geral — Plano do Projeto
 
-> "Resenha" é **nome provisório** (pacote Python `resenha`). Trocar o nome é um `sed` enquanto o
-> projeto é pequeno.
+> **Geral** era o setor popular do Maracanã antigo, onde toda torcida se misturava: um hub de
+> todas as torcidas, com a "edição geral" do futebol brasileiro. Pacote Python `geral`.
 
 Hub de newsletters de futebol brasileiro, feito por diversão: a prioridade é criatividade e
 torcida engajada, não negócio. Base técnica: a Urubu News (`~/flamengo-news`), que já resolve
@@ -37,7 +37,7 @@ Mesma forma da Urubu News, com o time virando parâmetro:
 
 ```mermaid
 flowchart LR
-    CAT["teams.toml (catálogo)"] --> RUN["resenha run --team <slug>"]
+    CAT["teams.toml (catálogo)"] --> RUN["geral run --team <slug>"]
     RUN --> COL["Collectors (Google News, ge por time)"]
     RUN --> STATS["ESPN (team id do catálogo)"]
     COL --> SUM["Resumo (Gemini)"]
@@ -47,9 +47,9 @@ flowchart LR
     WEB["App FastAPI + SQLite na VPS"] -->|/api/subscribers?team=| SEND
 ```
 
-- **Catálogo de times** em `src/resenha/teams.toml`: `slug`, nome, apelido da torcida, ESPN id,
+- **Catálogo de times** em `src/geral/teams.toml`: `slug`, nome, apelido da torcida, ESPN id,
   slug do ge, termos de busca do Google News, cores, competições. Time novo = uma entrada nova.
-- **Agenda por time**: a lógica de edições guiada por jogos (`resenha.schedule`) roda por time; o
+- **Agenda por time**: a lógica de edições guiada por jogos (`geral.schedule`) roda por time; o
   `due` devolve a lista de (time, edição) vencidas.
 - **Web**: um app só (inscrição, ranking, palpites, pedidos), SQLite em volume Docker, atrás do
   Caddy na VPS (`infra`), como a Urubu News.
@@ -76,4 +76,5 @@ Gemini (`google-genai`), ESPN (API pública), Jinja2 + `premailer`, Resend, Fast
 |---|---|---|
 | 2026-11-10 | Repositório novo, começando por uma **cópia** do código da Urubu News generalizada por time (sem pacote compartilhado) | a Urubu News segue estável e com identidade própria; um pacote comum só vale a pena se os dois continuarem evoluindo juntos |
 | 2026-11-10 | Times num catálogo `teams.toml` versionado, não no banco | time novo exige configurar e verificar fontes à mão; o pedido de time só conta votos |
+| 2026-11-10 | Nome do hub: **Geral** (antes "Resenha", provisório) | o setor do Maracanã onde todas as torcidas se misturavam; cada newsletter é uma torcida dentro da Geral |
 | 2026-11-10 | Fóruns por último | login, moderação e spam custam mais que todo o resto junto |

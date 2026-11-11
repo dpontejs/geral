@@ -3,9 +3,9 @@ from zoneinfo import ZoneInfo
 
 from typer.testing import CliRunner
 
-import resenha.__main__ as cli
-from resenha.models import MatchEvent, MatchStats, NextMatch, StandingRow
-from resenha.stats.table import standings_window
+import geral.__main__ as cli
+from geral.models import MatchEvent, MatchStats, NextMatch, StandingRow
+from geral.stats.table import standings_window
 
 TZ = ZoneInfo("America/Sao_Paulo")
 

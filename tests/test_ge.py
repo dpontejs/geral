@@ -6,9 +6,9 @@ import httpx
 import pytest
 import respx
 
-from resenha.collectors.base import get_collectors
-from resenha.collectors.ge import GECollector
-from resenha.teams import get_team
+from geral.collectors.base import get_collectors
+from geral.collectors.ge import GECollector
+from geral.teams import get_team
 
 FIXTURES = Path(__file__).parent / "fixtures"
 FIXTURE_PATH = FIXTURES / "ge_flamengo.html"

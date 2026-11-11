@@ -13,8 +13,8 @@ import httpx
 import trafilatura
 from dateutil.parser import isoparse
 
-from resenha.models import Article
-from resenha.processing.dedupe import (
+from geral.models import Article
+from geral.processing.dedupe import (
     GOOGLE_NEWS_HOST,
     normalize_url,
     resolve_google_news_url,

@@ -48,10 +48,10 @@ cabe nele); sem a opção, o recorte segue o desenho (o elefante do ABC sai do c
 do Nano Banana em `brand_src/` (fora do git):
 
 ```bash
-python scripts/make_brand.py brand_src/vasco.jpg src/resenha/static/vasco Almirante News "#141414" "#6B6B6B" Vasco --circle
-python scripts/make_brand.py brand_src/palmeiras.jpg src/resenha/static/palmeiras Porco News "#006437" "#1C1C1C" Palmeiras --circle
-python scripts/make_brand.py brand_src/abc.jpg src/resenha/static/abc Elefante News "#141414" "#6B6B6B" ABC
-python scripts/make_brand.py brand_src/nautico.jpg src/resenha/static/nautico Timbu News "#C60000" "#1C1C1C" Náutico --circle
+python scripts/make_brand.py brand_src/vasco.jpg src/geral/static/vasco Almirante News "#141414" "#6B6B6B" Vasco --circle
+python scripts/make_brand.py brand_src/palmeiras.jpg src/geral/static/palmeiras Porco News "#006437" "#1C1C1C" Palmeiras --circle
+python scripts/make_brand.py brand_src/abc.jpg src/geral/static/abc Elefante News "#141414" "#6B6B6B" ABC
+python scripts/make_brand.py brand_src/nautico.jpg src/geral/static/nautico Timbu News "#C60000" "#1C1C1C" Náutico --circle
 ```
 
 ## Prompts (Nano Banana)
@@ -93,7 +93,7 @@ Valores por time:
 ## Verificação ponta a ponta
 
 ```bash
-uv run resenha preview --team nautico --edition post --date 2026-11-08 --open
+uv run geral preview --team nautico --edition post --date 2026-11-08 --open
 ```
 
 ## Riscos e dúvidas abertas

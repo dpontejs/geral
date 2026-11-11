@@ -513,7 +513,7 @@ wheels = [
 ]
 
 [[package]]
-name = "resenha"
+name = "geral"
 version = "0.1.0"
 source = { editable = "." }
 dependencies = [

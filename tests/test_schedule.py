@@ -3,7 +3,7 @@ from zoneinfo import ZoneInfo
 
 import pytest
 
-from resenha.schedule import Fixture, Slot, due, label_of, plan
+from geral.schedule import Fixture, Slot, due, label_of, plan
 
 TZ = ZoneInfo("America/Sao_Paulo")
 UTC = ZoneInfo("UTC")

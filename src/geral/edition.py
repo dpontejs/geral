@@ -2,8 +2,8 @@
 
 from datetime import date, datetime, time
 
-from resenha.models import Edition
-from resenha.schedule import TZ, Fixture, Kind, Slot, plan
+from geral.models import Edition
+from geral.schedule import TZ, Fixture, Kind, Slot, plan
 
 
 def edition_from_slot(slot: Slot) -> Edition:

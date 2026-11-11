@@ -5,10 +5,10 @@ from fakes import FLAMENGO, FakeLLMClient
 from pydantic import BaseModel
 from typer.testing import CliRunner
 
-import resenha.__main__ as cli
-from resenha import pipeline
-from resenha.config import Settings
-from resenha.models import (
+import geral.__main__ as cli
+from geral import pipeline
+from geral.config import Settings
+from geral.models import (
     Article,
     Edition,
     FormResult,
@@ -19,8 +19,8 @@ from resenha.models import (
     StandingRow,
     TeamMoment,
 )
-from resenha.summarizer.client import LLMError
-from resenha.summarizer.pipeline import (
+from geral.summarizer.client import LLMError
+from geral.summarizer.pipeline import (
     AnalysisResponse,
     GroupResponse,
     IntroResponse,

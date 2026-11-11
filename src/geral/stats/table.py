@@ -1,4 +1,4 @@
-from resenha.models import StandingRow
+from geral.models import StandingRow
 
 
 def standings_window(rows: list[StandingRow], radius: int = 2) -> list[StandingRow]:

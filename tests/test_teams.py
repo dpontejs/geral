@@ -6,10 +6,10 @@ import pytest
 from pydantic import ValidationError
 from typer.testing import CliRunner
 
-from resenha.__main__ import app
-from resenha.models import NextMatch
-from resenha.summarizer.pipeline import render_prompt
-from resenha.teams import Team, UnknownTeam, get_team, load_teams
+from geral.__main__ import app
+from geral.models import NextMatch
+from geral.summarizer.pipeline import render_prompt
+from geral.teams import Team, UnknownTeam, get_team, load_teams
 
 HEX = re.compile(r"^#[0-9A-Fa-f]{6}$")
 
@@ -89,7 +89,7 @@ def test_team_is_frozen():
 
 def test_source_has_no_hardcoded_club() -> None:
     # Every club-specific word comes from teams.toml; the code and prompts are generic.
-    source = Path(__file__).parents[1] / "src" / "resenha"
+    source = Path(__file__).parents[1] / "src" / "geral"
     leftovers = [
         f"{path.relative_to(source)}:{n}"
         for path in source.rglob("*")

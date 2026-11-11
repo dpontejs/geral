@@ -3,7 +3,7 @@ from typing import Literal
 
 from pydantic import BaseModel, Field
 
-from resenha.teams import Team
+from geral.teams import Team
 
 
 class Article(BaseModel):

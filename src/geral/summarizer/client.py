@@ -17,7 +17,7 @@ from tenacity import (
 )
 from tenacity.wait import wait_base
 
-from resenha.config import Settings, get_settings
+from geral.config import Settings, get_settings
 
 logger = logging.getLogger(__name__)
 

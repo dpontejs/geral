@@ -5,8 +5,8 @@ import pytest
 import respx
 from tenacity import wait_none
 
-from resenha.config import Settings
-from resenha.send.recipients import (
+from geral.config import Settings
+from geral.send.recipients import (
     Recipient,
     latest_edition,
     publish_latest_edition,
@@ -144,7 +144,7 @@ def test_latest_edition_subject_raises_on_error() -> None:
 
 
 def test_latest_edition_topic_titles_come_from_the_news_section() -> None:
-    from resenha.send.recipients import LatestEdition
+    from geral.send.recipients import LatestEdition
 
     text = (
         "URUBU NEWS\n\n== Notícias ==\n\n* Empate em La Plata\nResumo.\n  - ge: https://x\n\n"

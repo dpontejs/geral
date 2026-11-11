@@ -2,8 +2,8 @@ from collections.abc import Callable
 
 from pydantic import BaseModel
 
-from resenha.summarizer.client import LLMClient
-from resenha.teams import Team
+from geral.summarizer.client import LLMClient
+from geral.teams import Team
 
 # The tests (and their saved pages) come from the Urubu News, so they run as Flamengo.
 FLAMENGO = Team(

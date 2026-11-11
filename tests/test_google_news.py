@@ -6,9 +6,9 @@ import httpx
 import pytest
 import respx
 
-from resenha.collectors.base import get_collectors
-from resenha.collectors.google_news import GoogleNewsCollector, google_news_url
-from resenha.teams import get_team
+from geral.collectors.base import get_collectors
+from geral.collectors.google_news import GoogleNewsCollector, google_news_url
+from geral.teams import get_team
 
 FIXTURE_PATH = Path(__file__).parent / "fixtures" / "google_news.xml"
 GOOGLE_NEWS_RSS_URL = google_news_url("Flamengo futebol")

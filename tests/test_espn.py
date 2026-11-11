@@ -8,15 +8,15 @@ import pytest
 import respx
 from fakes import FLAMENGO
 
-from resenha.models import MatchEvent, StandingRow
-from resenha.stats.espn import (
+from geral.models import MatchEvent, StandingRow
+from geral.stats.espn import (
     ESPN_SITE_URL,
     ESPN_STANDINGS_URL,
     ESPNStatsClient,
     StatsUnavailable,
     standings_gap,
 )
-from resenha.teams import get_team
+from geral.teams import get_team
 
 FIXTURES = Path(__file__).parent / "fixtures" / "espn"
 TZ = ZoneInfo("America/Sao_Paulo")
@@ -179,7 +179,7 @@ def test_errors_return_none_or_empty() -> None:
 
 @respx.mock
 def test_default_client_uses_user_agent_accepted_by_espn() -> None:
-    # ESPN's WAF answers 403 to "resenha/0.1 (+contato@...)", the collectors' User-Agent.
+    # ESPN's WAF answers 403 to "geral/0.1 (+contato@...)", the collectors' User-Agent.
     route = respx.get(url__startswith=ESPN_SITE_URL).mock(
         return_value=httpx.Response(200, json={"events": []})
     )
@@ -187,7 +187,7 @@ def test_default_client_uses_user_agent_accepted_by_espn() -> None:
     ESPNStatsClient(FLAMENGO).get_next_match(datetime(2026, 10, 14, tzinfo=TZ))
 
     user_agent = route.calls.last.request.headers["User-Agent"]
-    assert user_agent.startswith("resenha/")
+    assert user_agent.startswith("geral/")
     assert "@" not in user_agent
 
 
