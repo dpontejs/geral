@@ -1,0 +1,380 @@
+{
+ "edicao": {
+  "data_inicio": "2026-01-10",
+  "data_fim": "2026-03-21",
+  "nome": "Campeonato Potiguar 2026",
+  "regulamento": "Na primeira fase, as 8 equipes jogam no sistema de pontos corridos em turno único. Dois primeiros colocados vão direto à Semifinal, times de 3º a 6º colocados se classificam para a Segunda fase, e os dois últimos são rebaixados. Em caso de igualdade na pontuação, são critérios de desempate: 1) mais vitórias; 2) melhor saldo de gols; 3) mais gols pró; 4) confronto direto (entre dois times); 5) menos cartões vermelhos; 6) menos cartões amarelos; 7) sorteio. Segunda fase, Semifinal e Final são disputadas no sistema mata-mata em jogos de ida e volta. Em caso de igualdade na pontuação, são critérios de desempate: 1) melhor saldo de gols no confronto; 2) disputa de pênaltis.",
+  "localizacao": "Brasil, Rio Grande do Norte"
+ },
+ "fase": {
+  "tipo": {
+   "tipo_id": "1",
+   "descricao": "Pontos Corridos"
+  },
+  "disclaimer": "O América-RN perdeu 18 pontos devido aos três jogos em que relacionou o atleta irregular Elias, que participou do Campeonato apresentando contrato amador.\r\nJá o Potyguar Seridoense perdeu 15 pontos ao relacionar os atletas irregulares Fabrício e Toró, com contratos amadores, em quatro partidas.",
+  "slug": "primeira-fase-potiguar-2026"
+ },
+ "faixas_classificacao": [
+  {
+   "cor": "#0000ff",
+   "id": 4804,
+   "nome": "Semifinal"
+  },
+  {
+   "cor": "#ff0000",
+   "id": 4805,
+   "nome": "Rebaixados"
+  },
+  {
+   "cor": "#00ffff",
+   "id": 4819,
+   "nome": "Segunda fase"
+  }
+ ],
+ "classificacao": [
+  {
+   "ordem": 1,
+   "variacao": 1,
+   "pontos": 17,
+   "nome_popular": "América-RN",
+   "sigla": "ARN",
+   "vitorias": 5,
+   "escudo": "https://s.sde.globo.com/media/organizations/2023/06/07/AmericaFC-RN.svg",
+   "equipe_id": 351,
+   "aproveitamento": 80.0,
+   "jogos": 7,
+   "derrotas": 0,
+   "faixa_classificacao_cor": "#0000ff",
+   "faixa_classificacao": {
+    "cor": "#0000ff"
+   },
+   "ultimos_jogos": [
+    "v",
+    "e",
+    "v",
+    "e",
+    "v"
+   ],
+   "saldo_gols": 13,
+   "gols_pro": 16,
+   "gols_contra": 3,
+   "empates": 2
+  },
+  {
+   "ordem": 2,
+   "variacao": -1,
+   "pontos": 15,
+   "nome_popular": "ABC",
+   "sigla": "ABC",
+   "vitorias": 4,
+   "escudo": "https://s.sde.globo.com/media/organizations/2022/11/14/ABC-RN.svg",
+   "equipe_id": 350,
+   "aproveitamento": 71.0,
+   "jogos": 7,
+   "derrotas": 0,
+   "faixa_classificacao_cor": "#0000ff",
+   "faixa_classificacao": {
+    "cor": "#0000ff"
+   },
+   "ultimos_jogos": [
+    "v",
+    "e",
+    "v",
+    "e",
+    "e"
+   ],
+   "saldo_gols": 11,
+   "gols_pro": 16,
+   "gols_contra": 5,
+   "empates": 3
+  },
+  {
+   "ordem": 3,
+   "variacao": 0,
+   "pontos": 14,
+   "nome_popular": "QFC",
+   "sigla": "QFC",
+   "vitorias": 4,
+   "escudo": "https://s.sde.globo.com/media/organizations/2025/07/25/escudos-01-77006.svg",
+   "equipe_id": 9356,
+   "aproveitamento": 66.0,
+   "jogos": 7,
+   "derrotas": 1,
+   "faixa_classificacao_cor": "#00ffff",
+   "faixa_classificacao": {
+    "cor": "#00ffff"
+   },
+   "ultimos_jogos": [
+    "e",
+    "v",
+    "d",
+    "v",
+    "e"
+   ],
+   "saldo_gols": 9,
+   "gols_pro": 14,
+   "gols_contra": 5,
+   "empates": 2
+  },
+  {
+   "ordem": 4,
+   "variacao": 0,
+   "pontos": 14,
+   "nome_popular": "Potiguar de Mossoró",
+   "sigla": "POT",
+   "vitorias": 4,
+   "escudo": "https://s.sde.globo.com/media/organizations/2019/01/11/Potiguar_de_Mossoró-RN.svg",
+   "equipe_id": 353,
+   "aproveitamento": 66.0,
+   "jogos": 7,
+   "derrotas": 1,
+   "faixa_classificacao_cor": "#00ffff",
+   "faixa_classificacao": {
+    "cor": "#00ffff"
+   },
+   "ultimos_jogos": [
+    "e",
+    "v",
+    "v",
+    "e",
+    "v"
+   ],
+   "saldo_gols": 4,
+   "gols_pro": 7,
+   "gols_contra": 3,
+   "empates": 2
+  },
+  {
+   "ordem": 5,
+   "variacao": 1,
+   "pontos": 5,
+   "nome_popular": "Laguna",
+   "sigla": "LAG",
+   "vitorias": 1,
+   "escudo": "https://s.sde.globo.com/media/organizations/2024/12/31/laguna-fc-svg-74583.svg",
+   "equipe_id": 9206,
+   "aproveitamento": 23.0,
+   "jogos": 7,
+   "derrotas": 4,
+   "faixa_classificacao_cor": "#00ffff",
+   "faixa_classificacao": {
+    "cor": "#00ffff"
+   },
+   "ultimos_jogos": [
+    "d",
+    "v",
+    "d",
+    "e",
+    "e"
+   ],
+   "saldo_gols": -5,
+   "gols_pro": 12,
+   "gols_contra": 17,
+   "empates": 2
+  },
+  {
+   "ordem": 6,
+   "variacao": -1,
+   "pontos": 5,
+   "nome_popular": "Santa Cruz de Natal",
+   "sigla": "STC",
+   "vitorias": 1,
+   "escudo": "https://s.sde.globo.com/media/organizations/2024/02/23/santa-cruz-rn-svg.svg",
+   "equipe_id": 4421,
+   "aproveitamento": 23.0,
+   "jogos": 7,
+   "derrotas": 4,
+   "faixa_classificacao_cor": "#00ffff",
+   "faixa_classificacao": {
+    "cor": "#00ffff"
+   },
+   "ultimos_jogos": [
+    "d",
+    "d",
+    "e",
+    "e",
+    "d"
+   ],
+   "saldo_gols": -10,
+   "gols_pro": 9,
+   "gols_contra": 19,
+   "empates": 2
+  },
+  {
+   "ordem": 7,
+   "variacao": 0,
+   "pontos": 4,
+   "nome_popular": "Potyguar Seridoense",
+   "sigla": "PSE",
+   "vitorias": 1,
+   "escudo": "https://s.sde.globo.com/media/organizations/2024/01/04/potyguar-escudo-svg-66235.svg",
+   "equipe_id": 2560,
+   "aproveitamento": 19.0,
+   "jogos": 7,
+   "derrotas": 5,
+   "faixa_classificacao_cor": "#ff0000",
+   "faixa_classificacao": {
+    "cor": "#ff0000"
+   },
+   "ultimos_jogos": [
+    "v",
+    "d",
+    "d",
+    "d",
+    "e"
+   ],
+   "saldo_gols": -11,
+   "gols_pro": 8,
+   "gols_contra": 19,
+   "empates": 1
+  },
+  {
+   "ordem": 8,
+   "variacao": 0,
+   "pontos": 2,
+   "nome_popular": "Globo FC",
+   "sigla": "GLO",
+   "vitorias": 0,
+   "escudo": "https://s.sde.globo.com/media/organizations/2023/05/01/GloboFC2020.svg",
+   "equipe_id": 3741,
+   "aproveitamento": 9.0,
+   "jogos": 7,
+   "derrotas": 5,
+   "faixa_classificacao_cor": "#ff0000",
+   "faixa_classificacao": {
+    "cor": "#ff0000"
+   },
+   "ultimos_jogos": [
+    "d",
+    "d",
+    "e",
+    "e",
+    "d"
+   ],
+   "saldo_gols": -11,
+   "gols_pro": 7,
+   "gols_contra": 18,
+   "empates": 2
+  }
+ ],
+ "lista_jogos": [
+  {
+   "id": 347392,
+   "data_realizacao": "2026-02-07T16:00",
+   "hora_realizacao": "16:00",
+   "placar_oficial_visitante": 1,
+   "placar_oficial_mandante": 3,
+   "placar_penaltis_visitante": null,
+   "placar_penaltis_mandante": null,
+   "equipes": {
+    "mandante": {
+     "id": 353,
+     "nome_popular": "Potiguar de Mossoró",
+     "sigla": "POT",
+     "escudo": "https://s.sde.globo.com/media/organizations/2019/01/11/Potiguar_de_Mossoró-RN.svg"
+    },
+    "visitante": {
+     "id": 3741,
+     "nome_popular": "Globo FC",
+     "sigla": "GLO",
+     "escudo": "https://s.sde.globo.com/media/organizations/2023/05/01/GloboFC2020.svg"
+    }
+   },
+   "sede": {
+    "nome_popular": "Fião"
+   },
+   "transmissao": null,
+   "jogo_ja_comecou": true
+  },
+  {
+   "id": 347395,
+   "data_realizacao": "2026-02-07T16:00",
+   "hora_realizacao": "16:00",
+   "placar_oficial_visitante": 1,
+   "placar_oficial_mandante": 1,
+   "placar_penaltis_visitante": null,
+   "placar_penaltis_mandante": null,
+   "equipes": {
+    "mandante": {
+     "id": 350,
+     "nome_popular": "ABC",
+     "sigla": "ABC",
+     "escudo": "https://s.sde.globo.com/media/organizations/2022/11/14/ABC-RN.svg"
+    },
+    "visitante": {
+     "id": 9356,
+     "nome_popular": "QFC",
+     "sigla": "QFC",
+     "escudo": "https://s.sde.globo.com/media/organizations/2025/07/25/escudos-01-77006.svg"
+    }
+   },
+   "sede": {
+    "nome_popular": "Frasqueirão"
+   },
+   "transmissao": null,
+   "jogo_ja_comecou": true
+  },
+  {
+   "id": 347393,
+   "data_realizacao": "2026-02-08T16:00",
+   "hora_realizacao": "16:00",
+   "placar_oficial_visitante": 0,
+   "placar_oficial_mandante": 3,
+   "placar_penaltis_visitante": null,
+   "placar_penaltis_mandante": null,
+   "equipes": {
+    "mandante": {
+     "id": 351,
+     "nome_popular": "América-RN",
+     "sigla": "ARN",
+     "escudo": "https://s.sde.globo.com/media/organizations/2023/06/07/AmericaFC-RN.svg"
+    },
+    "visitante": {
+     "id": 4421,
+     "nome_popular": "Santa Cruz de Natal",
+     "sigla": "STC",
+     "escudo": "https://s.sde.globo.com/media/organizations/2024/02/23/santa-cruz-rn-svg.svg"
+    }
+   },
+   "sede": {
+    "nome_popular": "Arena das Dunas"
+   },
+   "transmissao": null,
+   "jogo_ja_comecou": true
+  },
+  {
+   "id": 347394,
+   "data_realizacao": "2026-02-08T16:00",
+   "hora_realizacao": "16:00",
+   "placar_oficial_visitante": 2,
+   "placar_oficial_mandante": 2,
+   "placar_penaltis_visitante": null,
+   "placar_penaltis_mandante": null,
+   "equipes": {
+    "mandante": {
+     "id": 9206,
+     "nome_popular": "Laguna",
+     "sigla": "LAG",
+     "escudo": "https://s.sde.globo.com/media/organizations/2024/12/31/laguna-fc-svg-74583.svg"
+    },
+    "visitante": {
+     "id": 2560,
+     "nome_popular": "Potyguar Seridoense",
+     "sigla": "PSE",
+     "escudo": "https://s.sde.globo.com/media/organizations/2024/01/04/potyguar-escudo-svg-66235.svg"
+    }
+   },
+   "sede": {
+    "nome_popular": "Frasqueirão"
+   },
+   "transmissao": null,
+   "jogo_ja_comecou": true
+  }
+ ],
+ "lista_jogos_unica": true,
+ "lista_tipo_unica": true,
+ "rodada": {
+  "atual": 7,
+  "ultima": 7
+ }
+}

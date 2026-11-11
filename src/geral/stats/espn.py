@@ -206,7 +206,11 @@ class ESPNStatsClient:
         if not form and standing is None and not rankings:
             return None
         return TeamMoment(
-            form=form, standing=standing, gap=standings_gap(standings), rankings=rankings
+            form=form,
+            standing=standing,
+            gap=standings_gap(standings),
+            rankings=rankings,
+            league=self.team.league_name,
         )
 
     def get_standings(self, league: str | None = None) -> list[StandingRow]:

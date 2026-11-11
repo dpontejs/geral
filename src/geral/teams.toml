@@ -44,9 +44,13 @@ ge_url = "https://ge.globo.com/rn/futebol/times/abc/"
 news_query = '"ABC" futebol Natal'
 keywords = ["abc", "abecedista", "abecedistas", "alvinegro potiguar"]
 accent = "#141414"
-# Série D 2026, promoted to Série C 2027. ESPN covers neither: those matches come without
-# stats, and there is no table (sources for C/D under research).
+# Série D 2026, promoted to Série C 2027. ESPN covers neither nor the Potiguar: those matches,
+# the table and the form come from ge's table API (docs/features/dados-serie-c.md).
 leagues = ["bra.copa_do_nordeste", "bra.copa_do_brazil"]
+ge_id = 350
+[abc.ge_tables]
+"Série C" = "https://ge.globo.com/futebol/brasileirao-serie-c/"
+"Potiguar" = "https://ge.globo.com/rn/futebol/campeonato-potiguar/"
 
 [nautico]
 sender = "timbu"

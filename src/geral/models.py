@@ -147,6 +147,7 @@ class TeamMoment(BaseModel):
     standing: StandingRow | None = None
     gap: str | None = None
     rankings: list[PlayerRanking] = Field(default_factory=list)
+    league: str | None = None  # the table's competition, for the "Campanha" line
 
 
 class Edition(BaseModel):

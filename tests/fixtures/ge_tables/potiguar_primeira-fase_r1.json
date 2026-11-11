@@ -1,0 +1,114 @@
+[
+ {
+  "id": 347369,
+  "data_realizacao": "2026-01-10T16:00",
+  "hora_realizacao": "16:00",
+  "placar_oficial_visitante": 1,
+  "placar_oficial_mandante": 4,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 351,
+    "nome_popular": "América-RN",
+    "sigla": "ARN",
+    "escudo": "https://s.sde.globo.com/media/organizations/2023/06/07/AmericaFC-RN.svg"
+   },
+   "visitante": {
+    "id": 2560,
+    "nome_popular": "Potyguar Seridoense",
+    "sigla": "PSE",
+    "escudo": "https://s.sde.globo.com/media/organizations/2024/01/04/potyguar-escudo-svg-66235.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Arena América"
+  },
+  "transmissao": null,
+  "jogo_ja_comecou": true
+ },
+ {
+  "id": 347370,
+  "data_realizacao": "2026-01-11T15:00",
+  "hora_realizacao": "15:00",
+  "placar_oficial_visitante": 1,
+  "placar_oficial_mandante": 0,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 3741,
+    "nome_popular": "Globo FC",
+    "sigla": "GLO",
+    "escudo": "https://s.sde.globo.com/media/organizations/2023/05/01/GloboFC2020.svg"
+   },
+   "visitante": {
+    "id": 9356,
+    "nome_popular": "QFC",
+    "sigla": "QFC",
+    "escudo": "https://s.sde.globo.com/media/organizations/2025/07/25/escudos-01-77006.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Barrettão (RN)"
+  },
+  "transmissao": null,
+  "jogo_ja_comecou": true
+ },
+ {
+  "id": 347368,
+  "data_realizacao": "2026-01-11T15:30",
+  "hora_realizacao": "15:30",
+  "placar_oficial_visitante": 1,
+  "placar_oficial_mandante": 0,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 4421,
+    "nome_popular": "Santa Cruz de Natal",
+    "sigla": "STC",
+    "escudo": "https://s.sde.globo.com/media/organizations/2024/02/23/santa-cruz-rn-svg.svg"
+   },
+   "visitante": {
+    "id": 353,
+    "nome_popular": "Potiguar de Mossoró",
+    "sigla": "POT",
+    "escudo": "https://s.sde.globo.com/media/organizations/2019/01/11/Potiguar_de_Mossoró-RN.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Domição"
+  },
+  "transmissao": null,
+  "jogo_ja_comecou": true
+ },
+ {
+  "id": 347371,
+  "data_realizacao": "2026-01-11T16:00",
+  "hora_realizacao": "16:00",
+  "placar_oficial_visitante": 0,
+  "placar_oficial_mandante": 2,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 350,
+    "nome_popular": "ABC",
+    "sigla": "ABC",
+    "escudo": "https://s.sde.globo.com/media/organizations/2022/11/14/ABC-RN.svg"
+   },
+   "visitante": {
+    "id": 9206,
+    "nome_popular": "Laguna",
+    "sigla": "LAG",
+    "escudo": "https://s.sde.globo.com/media/organizations/2024/12/31/laguna-fc-svg-74583.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Frasqueirão"
+  },
+  "transmissao": null,
+  "jogo_ja_comecou": true
+ }
+]

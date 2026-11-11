@@ -1,0 +1,198 @@
+[
+ {
+  "id": 351845,
+  "data_realizacao": "2026-05-23T15:00",
+  "hora_realizacao": "15:00",
+  "placar_oficial_visitante": 0,
+  "placar_oficial_mandante": 0,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 1305,
+    "nome_popular": "Sousa",
+    "sigla": "SOU",
+    "escudo": "https://s.sde.globo.com/media/organizations/2023/05/01/Sousa.svg"
+   },
+   "visitante": {
+    "id": 345,
+    "nome_popular": "Central",
+    "sigla": "CEN",
+    "escudo": "https://s.sde.globo.com/media/organizations/2023/08/28/central-sc.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Marizão (PB)"
+  },
+  "transmissao": {
+   "label": "saiba como foi",
+   "url": "https://ge.globo.com/pb/futebol/brasileirao-serie-d/jogo/23-05-2026/sousa-central.ghtml",
+   "broadcast": {
+    "id": "ENCERRADA",
+    "label": "saiba como foi"
+   }
+  },
+  "jogo_ja_comecou": true
+ },
+ {
+  "id": 351841,
+  "data_realizacao": "2026-05-23T17:00",
+  "hora_realizacao": "17:00",
+  "placar_oficial_visitante": 1,
+  "placar_oficial_mandante": 3,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 355,
+    "nome_popular": "Ferroviário",
+    "sigla": "FAC",
+    "escudo": "https://s.sde.globo.com/media/organizations/2023/05/01/Ferroviário.svg"
+   },
+   "visitante": {
+    "id": 4290,
+    "nome_popular": "Altos",
+    "sigla": "ALT",
+    "escudo": "https://s.sde.globo.com/media/organizations/2024/10/15/alsvg.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Presidente Vargas (CE)"
+  },
+  "transmissao": {
+   "label": "saiba como foi",
+   "url": "https://ge.globo.com/pi/futebol/brasileirao-serie-d/jogo/23-05-2026/ferroviario-altos.ghtml",
+   "broadcast": {
+    "id": "ENCERRADA",
+    "label": "saiba como foi"
+   }
+  },
+  "jogo_ja_comecou": true
+ },
+ {
+  "id": 351843,
+  "data_realizacao": "2026-05-23T17:00",
+  "hora_realizacao": "17:00",
+  "placar_oficial_visitante": 1,
+  "placar_oficial_mandante": 0,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 358,
+    "nome_popular": "Piauí",
+    "sigla": "PIA",
+    "escudo": "https://s.sde.globo.com/media/organizations/2026/04/10/PEC_SVG.svg"
+   },
+   "visitante": {
+    "id": 2979,
+    "nome_popular": "Fluminense-PI",
+    "sigla": "FPI",
+    "escudo": "https://s.sde.globo.com/media/organizations/2023/05/01/FluminenseECpiaui.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Albertão"
+  },
+  "transmissao": {
+   "label": "saiba como foi",
+   "url": "https://ge.globo.com/pi/futebol/brasileirao-serie-d/jogo/23-05-2026/piaui-fluminense-pi.ghtml",
+   "broadcast": {
+    "id": "ENCERRADA",
+    "label": "saiba como foi"
+   }
+  },
+  "jogo_ja_comecou": true
+ },
+ {
+  "id": 351844,
+  "data_realizacao": "2026-05-24T16:00",
+  "hora_realizacao": "16:00",
+  "placar_oficial_visitante": 1,
+  "placar_oficial_mandante": 1,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 350,
+    "nome_popular": "ABC",
+    "sigla": "ABC",
+    "escudo": "https://s.sde.globo.com/media/organizations/2022/11/14/ABC-RN.svg"
+   },
+   "visitante": {
+    "id": 351,
+    "nome_popular": "América-RN",
+    "sigla": "ARN",
+    "escudo": "https://s.sde.globo.com/media/organizations/2023/06/07/AmericaFC-RN.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Frasqueirão"
+  },
+  "transmissao": {
+   "label": "saiba como foi",
+   "url": "https://ge.globo.com/rn/futebol/brasileirao-serie-d/jogo/24-05-2026/abc-america-rn.ghtml",
+   "broadcast": {
+    "id": "ENCERRADA",
+    "label": "saiba como foi"
+   }
+  },
+  "jogo_ja_comecou": true
+ },
+ {
+  "id": 351846,
+  "data_realizacao": "2026-05-25T15:00",
+  "hora_realizacao": "15:00",
+  "placar_oficial_visitante": 1,
+  "placar_oficial_mandante": 1,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 9206,
+    "nome_popular": "Laguna",
+    "sigla": "LAG",
+    "escudo": "https://s.sde.globo.com/media/organizations/2024/12/31/laguna-fc-svg-74583.svg"
+   },
+   "visitante": {
+    "id": 5659,
+    "nome_popular": "Maguary",
+    "sigla": "AAM",
+    "escudo": "https://s.sde.globo.com/media/organizations/2024/01/16/maguary-svg_YAXCUMP.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Frasqueirão"
+  },
+  "transmissao": null,
+  "jogo_ja_comecou": true
+ },
+ {
+  "id": 351842,
+  "data_realizacao": "2026-05-26T16:00",
+  "hora_realizacao": "16:00",
+  "placar_oficial_visitante": 3,
+  "placar_oficial_mandante": 0,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 4732,
+    "nome_popular": "Atlético-CE",
+    "sigla": "ATL",
+    "escudo": "https://s.sde.globo.com/media/organizations/2023/05/01/Atlético_Cearense.svg"
+   },
+   "visitante": {
+    "id": 9142,
+    "nome_popular": "Tirol",
+    "sigla": "TIR",
+    "escudo": "https://s.sde.globo.com/media/organizations/2024/12/14/tirol-ce-svg.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Domingão"
+  },
+  "transmissao": null,
+  "jogo_ja_comecou": true
+ }
+]

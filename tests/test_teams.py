@@ -140,3 +140,27 @@ def test_every_team_has_its_brand_files() -> None:
     for slug in load_teams():
         for name in ("icon-512.png", "logo-email.png", "og-image.png"):
             assert (static / slug / name).exists(), f"{slug}/{name}"
+
+
+def test_ge_tables_require_ge_id():
+    with pytest.raises(ValidationError, match="ge_id"):
+        Team(
+            slug="abc",
+            name="ABC",
+            newsletter="Elefante News",
+            fans="abecedistas",
+            espn_id=9965,
+            ge_url="https://ge.globo.com/rn/futebol/times/abc/",
+            news_query="ABC",
+            keywords=("abc",),
+            accent="#141414",
+            leagues=("bra.copa_do_nordeste",),
+            ge_tables={"Potiguar": "https://ge.globo.com/rn/futebol/campeonato-potiguar/"},
+        )
+
+
+def test_abc_follows_serie_c_and_potiguar_on_ge():
+    abc = load_teams()["abc"]
+
+    assert abc.ge_id == 350
+    assert set(abc.ge_tables) == {"Série C", "Potiguar"}

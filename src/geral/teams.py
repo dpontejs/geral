@@ -51,6 +51,10 @@ class Team(BaseModel):
     # Sender mailbox (before the @; the domain comes from NEWSLETTER_FROM). One per newsletter so
     # each has its own avatar in Gmail (a Google account per address, created by the owner).
     sender: str | None = None
+    # ge's table API, for competitions ESPN does not cover (Série C/D, state leagues):
+    # the team's `equipe_id` there and name in the newsletter -> championship page on ge.
+    ge_id: int | None = Field(default=None, gt=0)
+    ge_tables: dict[str, str] = Field(default_factory=dict)
 
     @field_validator("accent")
     @classmethod
@@ -66,6 +70,8 @@ class Team(BaseModel):
             raise ValueError(f"unknown ESPN leagues {unknown}; add them to LEAGUES")
         if self.league and self.league not in self.leagues:
             raise ValueError(f"league {self.league!r} must be one of leagues")
+        if self.ge_tables and self.ge_id is None:
+            raise ValueError("ge_tables needs the team's ge_id")
         return self
 
     @property
