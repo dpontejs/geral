@@ -212,3 +212,32 @@ def test_guessing_a_given_club_is_not_an_error(data) -> None:
     verdict = judge(data, player(data, "Edmundo"), ["Q103"], desistiu=False, dados={"Q103"})
 
     assert verdict.erros == [] and verdict.achados == 0
+
+
+def test_convert_swaps_a_stint_that_ends_before_it_starts() -> None:
+    rows = [row("Q2", "Q113", "Independiente Medellín", "2017", "2015")]
+
+    edmundo = player(Data.from_dict(convert(PLAYERS, rows, {})), "Edmundo")
+
+    assert [(s.inicio, s.fim) for s in edmundo.clubes] == [(2015, 2017)]
+
+
+def test_convert_prefers_the_known_end_of_duplicate_statements() -> None:
+    rows = [
+        row("Q2", "Q107", "Sport Club Corinthians Paulista", "2010", "2011"),
+        row("Q2", "Q107", "Sport Club Corinthians Paulista", "2010", ""),
+    ]
+
+    edmundo = player(Data.from_dict(convert(PLAYERS, rows, {})), "Edmundo")
+
+    assert [(s.inicio, s.fim) for s in edmundo.clubes] == [(2010, 2011)]
+
+
+def test_real_club_names_are_unique() -> None:
+    from collections import Counter
+
+    from geral.games.onde_jogou import load, normalize
+
+    names = Counter(normalize(c.nome) for c in load().clubes.values())
+
+    assert [n for n, k in names.items() if k > 1] == []

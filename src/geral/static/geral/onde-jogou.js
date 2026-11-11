@@ -202,9 +202,22 @@
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ palpites: day.palpites, desistiu: day.desistiu }),
     });
-    if (!response.ok) throw new Error(`HTTP ${response.status}`);
+    if (!response.ok) {
+      const problem = new Error(`HTTP ${response.status}`);
+      problem.status = response.status;
+      throw problem;
+    }
     verdict = await response.json();
     render();
+  };
+
+  // Saved picks the server no longer knows (a club renamed during the day): start today over.
+  const restart = () => {
+    day = { number, player, palpites: [], desistiu: false };
+    verdict = null;
+    write(KEY, day);
+    form.hidden = false;
+    error("A lista de clubes mudou e o jogo de hoje recomeçou.");
   };
 
   const play = async (change, undo) => {
@@ -216,9 +229,12 @@
       await judge();
       write(KEY, day);
       error("");
-    } catch {
-      undo();
-      error("Não deu para conferir agora. Tente de novo.");
+    } catch (problem) {
+      if (problem.status === 422) restart();
+      else {
+        undo();
+        error("Não deu para conferir agora. Tente de novo.");
+      }
     } finally {
       busy = false;
       drawResults();
@@ -274,8 +290,10 @@
   drawResults();
   if (day.palpites.length || day.desistiu) {
     form.hidden = true; // until we know whether today's game is over
-    judge().catch(() => {
+    judge().catch((problem) => {
+      if (problem.status === 422) restart();
       form.hidden = false;
+      drawResults();
     });
   }
 })();

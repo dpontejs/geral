@@ -97,3 +97,9 @@ def test_team_edition_shows_the_team_stints_from_the_start(game) -> None:
 
     assert page.count('<span class="slot-club given">Vasco</span>') == len(vasco)
     assert verdict["erros"] == [] and verdict["achados"] == 0
+
+
+def test_game_page_does_not_link_the_player_answer(game) -> None:
+    data, jogador = today()
+
+    assert jogador.wikidata not in game.get("/jogos/onde-jogou").text

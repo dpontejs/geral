@@ -51,7 +51,8 @@ def _year(value: str) -> int | None:
 def convert(players: list[dict], rows: list[dict], fixes: dict[str, dict]) -> dict:
     """Wikidata rows (one per career statement) -> the compact careers file."""
     names = {p["wikidata"]: p["nome"] for p in players}
-    stints: dict[str, set[tuple[str, int, int | None]]] = {qid: set() for qid in names}
+    # player -> (club, start) -> end; duplicate statements keep the known (latest) end.
+    stints: dict[str, dict[tuple[str, int], int | None]] = {qid: {} for qid in names}
     positions: dict[str, str] = {}
     labels: dict[str, set[str]] = {}
     shown: dict[str, str] = {}
@@ -67,7 +68,15 @@ def convert(players: list[dict], rows: list[dict], fixes: dict[str, dict]) -> di
         ignored = fixes.get(club, {}).get("ignorar", False)  # e.g. a country listed as a club
         if r["national"] or ignored or NOT_A_CLUB.search(label) or start is None:
             continue
-        stints[qid].add((club, start, _year(r["end"])))
+        end = _year(r["end"])
+        if end is not None and end < start:  # swapped dates in the source
+            start, end = end, start
+        known = stints[qid].get((club, start))
+        stints[qid][(club, start)] = (
+            max(e for e in (known, end) if e is not None)
+            if (known is not None or end is not None)
+            else None
+        )
         labels.setdefault(club, set()).update(x for x in (label, r.get("clubShort", "")) if x)
         shown.setdefault(club, r.get("clubShort") or label)
         if r.get("country"):
@@ -76,7 +85,8 @@ def convert(players: list[dict], rows: list[dict], fixes: dict[str, dict]) -> di
     jogadores = []
     for qid, nome in names.items():
         merged: list[list] = []
-        for club, start, end in sorted(stints[qid], key=lambda s: (s[1], s[2] or 9999)):
+        career = [(club, start, end) for (club, start), end in stints[qid].items()]
+        for club, start, end in sorted(career, key=lambda s: (s[1], s[2] or 9999)):
             if merged and merged[-1][0] == club:  # back-to-back stints at the same club
                 last = merged[-1][2]
                 merged[-1][2] = None if last is None or end is None else max(last, end)

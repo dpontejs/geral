@@ -4,6 +4,7 @@ Run with `uvicorn geral.web.app:create_app --factory`. Behind Caddy, start uvico
 `--proxy-headers` so the rate limit sees the visitor's IP.
 """
 
+import hashlib
 import hmac
 import logging
 import os
@@ -679,6 +680,10 @@ def create_app(
             team=catalog.get(edition),
             number=number,
             jogador=onde_jogou.by_number(players, number),
+            # Tells the page the day's player changed (data update) without naming them.
+            player_key=hashlib.sha256(
+                f"{secret}:{onde_jogou.by_number(players, number).wikidata}".encode()
+            ).hexdigest()[:12],
             given={qid: data.clubes[qid].nome for qid in given_clubs(edition)},
             clubs=sorted(
                 (

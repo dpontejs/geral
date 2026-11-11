@@ -327,3 +327,6 @@ apelidos = ["Football Club Internazionale Milano", "Internazionale", "Inter Mila
 [Q19353]
 nome = "Anji"
 apelidos = ["FC Anji Makhachkala", "Anzhi"]
+
+[Q1492]
+ignorar = true  # a cidade de Barcelona, listada como clube na carreira do Valdivia
