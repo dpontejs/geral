@@ -44,16 +44,29 @@ def test_confirm_email_uses_the_pitch_stripe_and_turf_button() -> None:
 
 
 def test_general_edition_wears_the_pitch() -> None:
-    from geral.general import GENERAL_EDITION
-    from geral.general.render import COLORS
+    from fakes import FakeLLMClient
+    from test_general_edition import END, START, WEEKS, responder
 
-    template = (ROOT / "render" / "templates" / "general.html.j2").read_text()
+    from geral.general import GENERAL_EDITION
+    from geral.general.edition import build_general
+    from geral.general.render import COLORS, render_general
+
+    html, _ = render_general(build_general(START, END, WEEKS, FakeLLMClient(responder)))
 
     assert GENERAL_EDITION.accent == "#1F7A3D"
-    assert COLORS["turf"] == "#0E3320" and COLORS["pitch"] == "#1F7A3D"
-    assert ".serie-name { background-color: {{ turf }}" in template
-    assert 'background-color: {{ pitch }};">&nbsp;' in template
     assert "#8E8B84" not in COLORS.values()
+    # CSS is inlined: each series header and the stripe under the logo carry the colour.
+    assert re.search(r'bgcolor="#0E3320">S\u00e9rie A<', html)
+    assert "background-color: #1F7A3D;" in html
+
+
+def test_small_text_on_the_striped_grass_gets_a_shadow_to_stay_readable(client) -> None:
+    page = client.get("/").text
+    css = JOGOS_CSS.read_text()
+
+    assert re.search(r"\.intervalo\.wall \.head p \{[^}]*text-shadow", page)
+    for rule in (".how", ".credit", ".guess label", ".tries .n"):
+        assert re.search(re.escape(rule) + r" \{[^}]*text-shadow", css), rule
 
 
 def test_the_middle_is_a_marked_field(client) -> None:

@@ -41,6 +41,8 @@
   --pitch-2: #248A46;
   --chalk: rgba(255, 255, 255, .7);
   --on-pitch: #F1F5EC;
+  /* small light text on the striped grass: a dark halo keeps it readable on the lighter stripe */
+  --on-grass: 0 1px 2px var(--turf), 0 0 6px rgba(14, 51, 32, .6);
   --wash: #D3E2C6; /* the field away from the stands: plain grass, marked in white */
   --display: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
   --stencil: "Big Shoulders Stencil Display", "Big Shoulders Display", Impact, sans-serif;
@@ -158,7 +160,7 @@ section.block .wrap { padding-block: 8px 52px; }
 .intervalo.wall .wrap { padding-bottom: 64px; }
 .intervalo.wall::before { display: none; } /* the circle would cross the intro text */
 .intervalo.wall h2 { color: #fff; text-shadow: 4px 4px 0 var(--turf); }
-.intervalo.wall .head p { color: var(--on-pitch); }
+.intervalo.wall .head p { color: var(--on-pitch); text-shadow: var(--on-grass); }
 .intervalo .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); grid-auto-rows: 1fr; gap: 14px; }
 .mini { padding: 20px; display: flex; flex-direction: column; gap: 12px; color: #D9D4C8; border: 8px solid var(--turf); min-width: 0; }
 .mini .lamp.tag { font-size: 15px; opacity: .75; }

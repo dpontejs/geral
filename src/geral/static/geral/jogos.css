@@ -13,7 +13,7 @@
 .match .team, .match .goals { font-size: clamp(15px, 5.4vw, 60px); white-space: nowrap; }
 .match .team { overflow: hidden; text-overflow: ellipsis; }
 .guess { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
-.guess label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; color: var(--paper); }
+.guess label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; color: var(--paper); text-shadow: var(--on-grass); }
 .guess input { width: 96px; font: 900 40px/1 var(--display); text-align: center; padding: 8px; border: 3px solid var(--ink); background: var(--paper); color: var(--ink); }
 .guess .x { font: 900 40px/1 var(--display); color: var(--paper); padding-bottom: 12px; }
 .guess input::-webkit-outer-spin-button, .guess input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
@@ -22,7 +22,7 @@
 .guess .btn:hover { background: var(--lamp); color: var(--ink); }
 .tries { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 .tries li { display: grid; grid-template-columns: 40px 1fr 1fr; gap: 8px; align-items: center; }
-.tries .n { font: 800 18px/1 var(--display); color: var(--paper); }
+.tries .n { font: 800 18px/1 var(--display); color: var(--paper); text-shadow: var(--on-grass); }
 .cell { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 14px; border: 3px solid var(--ink); font: 900 30px/1 var(--display); }
 .cell small { font: 700 14px/1 var(--body); text-transform: uppercase; letter-spacing: .06em; }
 .cell.certo { background: #2F7D3A; color: #fff; }
@@ -36,8 +36,8 @@
 .result .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
 .stats { display: flex; flex-wrap: wrap; gap: 18px; font-weight: 600; }
 .stats b { font: 900 30px/1 var(--display); display: block; }
-.how { color: var(--paper); font-size: 15px; max-width: 60ch; margin: 0; }
-.credit { font-size: 13px; color: var(--paper); margin: 0; }
+.how { color: var(--paper); font-size: 15px; max-width: 60ch; margin: 0; text-shadow: var(--on-grass); }
+.credit { font-size: 13px; color: var(--paper); margin: 0; text-shadow: var(--on-grass); }
 [hidden] { display: none !important; }
 
 /* Craque do dia: one lamp tile per letter. */
