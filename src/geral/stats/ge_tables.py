@@ -10,7 +10,6 @@ import json
 import logging
 import re
 from collections.abc import Callable
-from dataclasses import dataclass
 from datetime import date, datetime, time, timedelta
 from zoneinfo import ZoneInfo
 
@@ -19,52 +18,22 @@ import httpx
 from geral.collectors.base import create_http_client
 from geral.models import FormResult, MatchPreview, MatchStats, NextMatch, StandingRow, TeamMoment
 from geral.schedule import Fixture
+from geral.stats import ge_context
 from geral.stats.cbf import CBFGoals
 from geral.stats.espn import FIXTURES_LOOKBACK, FORM_SIZE, StatsUnavailable, standings_gap
+from geral.stats.ge_models import Competition, Game
 from geral.teams import Team
 
 logger = logging.getLogger(__name__)
 
 GE_TABLES_API = "https://api.globoesporte.globo.com/tabela"
 LEAGUE_PREFIX = "ge:"
-MATCH_LENGTH = timedelta(hours=2, minutes=15)  # after this, a match with a score is over
 NO_SHOW = timedelta(hours=3)  # not started this long after kickoff, no score: postponed
 MAX_ROUNDS = 40
 POINTS, KNOCKOUT, GROUPS = "1", "2", "3"  # fase.tipo.tipo_id
 
 TUUID = re.compile(r'tUUID:\s*"([0-9a-f-]{36})"')
 PHASES = re.compile(r'"fases_navegacao":(\[[^\]]*\])')
-
-
-@dataclass(frozen=True)
-class Game:
-    id: int
-    competition: str
-    kickoff: datetime
-    time_valid: bool
-    home: str
-    away: str
-    home_id: int
-    away_id: int
-    home_goals: int | None
-    away_goals: int | None
-    venue: str | None
-    started: bool = False  # ge's `jogo_ja_comecou`
-    home_penalties: int | None = None
-    away_penalties: int | None = None
-
-    def involves(self, team_id: int) -> bool:
-        return team_id in (self.home_id, self.away_id)
-
-    def finished(self, now: datetime) -> bool:
-        return self.home_goals is not None and self.kickoff + MATCH_LENGTH <= now
-
-
-@dataclass(frozen=True)
-class Competition:
-    name: str
-    games: list[Game]
-    table: dict | None  # the current phase's classification, when it is a points phase
 
 
 class GETablesClient:
@@ -171,18 +140,12 @@ class GETablesClient:
             competition = self._competition(league.removeprefix(LEAGUE_PREFIX))
         else:
             competition = self._latest_competition()
-        if competition is None or competition.table is None:
+        if competition is None or not competition.groups:
             return []
-        table = competition.table
-        groups = table.get("grupos") or [{"classificacao": table.get("classificacao", [])}]
-        try:
-            for group in groups:
-                rows = [self._standing(entry) for entry in group["classificacao"]]
-                if any(r.is_ours for r in rows):
-                    self.table_name = competition.name
-                    return sorted(rows, key=lambda r: r.position)
-        except (KeyError, TypeError, ValueError) as e:
-            logger.warning("Failed to parse ge table for %s: %s", competition.name, e)
+        for rows in competition.groups:
+            if any(r.is_ours for r in rows):
+                self.table_name = competition.name
+                return sorted(rows, key=lambda r: r.position)
         return []
 
     def get_moment(self, end: datetime, standings: list[StandingRow]) -> TeamMoment | None:
@@ -256,12 +219,15 @@ class GETablesClient:
         tuuid = TUUID.search(page.text)
         phases = PHASES.search(page.text)
         if tuuid is None or phases is None:
-            raise ValueError(f"no tUUID or phases on {page_url}")
+            context = ge_context.read_context(page.text)
+            if context is None:
+                raise ValueError(f"no tUUID, phases or tabela-context on {page_url}")
+            return ge_context.load(context, name, self._client, self.team_id, self.tz)
         navigation = json.loads(phases.group(1))
         current = next((i for i, p in enumerate(navigation) if p.get("atual")), len(navigation) - 1)
 
         games: dict[int, Game] = {}
-        table = None
+        groups = None
         # Later phases too: their first matches must be planned before ge makes them current.
         for index, phase in enumerate(navigation):
             base = f"{GE_TABLES_API}/{tuuid.group(1)}/fase/{phase['slug']}"
@@ -273,7 +239,7 @@ class GETablesClient:
                 logger.info("Skipping ge phase %s, not published yet: %s", phase["slug"], e)
                 continue
             if index == current and data["fase"]["tipo"]["tipo_id"] != KNOCKOUT:
-                table = data
+                groups = self._groups(data, name)
             for item in raw:
                 try:
                     game = self._game(item, name)
@@ -282,7 +248,15 @@ class GETablesClient:
                     continue
                 if game is not None:
                     games[game.id] = game
-        return Competition(name=name, games=list(games.values()), table=table)
+        return Competition(name=name, games=list(games.values()), groups=groups)
+
+    def _groups(self, data: dict, name: str) -> list[list[StandingRow]] | None:
+        groups = data.get("grupos") or [{"classificacao": data.get("classificacao", [])}]
+        try:
+            return [[self._standing(entry) for entry in g["classificacao"]] for g in groups]
+        except (KeyError, TypeError, ValueError) as e:
+            logger.warning("Failed to parse ge table for %s: %s", name, e)
+            return None
 
     def _phase(self, base: str) -> tuple[dict, list[dict]]:
         """The phase's classification and its games, from the knockout ties or the rounds."""
@@ -345,7 +319,9 @@ class GETablesClient:
     def _fixture(self, game: Game, now: datetime) -> Fixture:
         # ge has no "postponed": a match that never started hours after its time was put off.
         no_show = game.kickoff + NO_SHOW + (timedelta() if game.time_valid else timedelta(days=1))
-        if game.kickoff > now:
+        if game.canceled:
+            state = "postponed"
+        elif game.kickoff > now:
             state = "pre"
         elif game.finished(now):
             state = "post"

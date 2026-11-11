@@ -837,3 +837,26 @@ def test_post_game_result_only_for_the_edition_match(env, monkeypatch) -> None:
 
     assert result.exit_code == 0, result.output
     assert not writes.called
+
+
+@respx.mock
+def test_rerun_of_the_same_edition_does_not_hide_its_own_topics(env, monkeypatch) -> None:
+    enable_subscriptions(env)
+    use(env, [ARTICLE], MATCH)
+    llm = FakeLLMClient(respond)
+    monkeypatch.setattr(pipeline, "get_llm_client", lambda settings: llm)
+    same = {
+        "subject": "Urubu News — Notícias — 12/10/2026: x",
+        "published_at": "2026-10-12T08:05:00-03:00",
+        "text": "== Notícias ==\n\n* Assunto desta edição\nResumo.\n",
+    }
+    respx.get(PUBLISH).mock(return_value=httpx.Response(200, json=same))
+    respx.post(RESEND_URL).mock(return_value=sent(["e1"]))
+    respx.put(PUBLISH).mock(return_value=httpx.Response(204))
+
+    result = CliRunner().invoke(
+        cli.app, ["run", "--team", "flamengo", "--edition", "news", "--date", "2026-10-12"]
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Assunto desta edição" not in llm.prompts[0]
