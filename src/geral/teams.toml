@@ -67,6 +67,10 @@ keywords = ["náutico", "nautico", "timbu", "alvirrubro", "alvirrubros"]
 accent = "#C60000"
 leagues = ["bra.2", "bra.copa_do_nordeste", "bra.copa_do_brazil"]
 league = "bra.2"
+# ESPN has no Pernambucano; the Náutico joins it in the second stage (Frevo).
+ge_id = 343
+[nautico.ge_tables]
+"Pernambucano" = "https://ge.globo.com/pe/futebol/campeonato-pernambucano/"
 
 # The Urubu News, moved in from its own app (docs/adr/0001, docs/features/urubu-na-geral.md):
 # its subscribers, bolão and old links live in the Geral since the switch.
