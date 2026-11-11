@@ -1,0 +1,314 @@
+{
+ "grupos": [
+  "GRUPO D01",
+  "GRUPO D02",
+  "GRUPO D03",
+  "GRUPO D04",
+  "GRUPO D05",
+  "GRUPO D06",
+  "GRUPO D07",
+  "GRUPO D08"
+ ],
+ "jogos": [
+  {
+   "grupo": "GRUPO D01",
+   "jogo": [
+    {
+     "id_jogo": "835066",
+     "num_jogo": "585",
+     "rodada": "2",
+     "grupo": "GRUPO D01",
+     "mandante": {
+      "id": "20091",
+      "nome": "Ferroviário",
+      "url_escudo": "https://conteudo.cbf.com.br/clubes/20091/escudo.jpg",
+      "gols": "1",
+      "panaltis": "0",
+      "atletas": [],
+      "alteracoes": []
+     },
+     "visitante": {
+      "id": "20101",
+      "nome": "Goiatuba",
+      "url_escudo": "https://conteudo.cbf.com.br/clubes/20101/escudo.jpg",
+      "gols": "2",
+      "panaltis": "0",
+      "atletas": [],
+      "alteracoes": []
+     },
+     "local": "Presidente Vargas - Fortaleza - CE",
+     "campeonato": "Campeonato Brasileiro",
+     "data": " 26/07/2026",
+     "hora": "17:00",
+     "qtd_alteracoes_jogo": 0,
+     "documentos": [],
+     "arbitros": [],
+     "penalidades": [
+      {
+       "id": "91593",
+       "tipo": "GOL",
+       "resultado": "NR",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20101/escudo.jpg",
+       "clube": "Goiatuba - GO",
+       "clube_id": "20101",
+       "atleta_nome": "Vinícius Oliveira Melo da Hora",
+       "atleta_apelido": "Vini Hora",
+       "atleta_camisa": "11",
+       "atleta_id": "764254",
+       "tempo_jogo": "2",
+       "minutos": "10:00"
+      },
+      {
+       "id": "91592",
+       "tipo": "GOL",
+       "resultado": "NR",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20091/escudo.jpg",
+       "clube": "Ferroviário - CE",
+       "clube_id": "20091",
+       "atleta_nome": "Fernando de Deus Rocha",
+       "atleta_apelido": "Fernando Portel",
+       "atleta_camisa": "15",
+       "atleta_id": "541818",
+       "tempo_jogo": "2",
+       "minutos": "31:00"
+      },
+      {
+       "id": "91595",
+       "tipo": "GOL",
+       "resultado": "NR",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20101/escudo.jpg",
+       "clube": "Goiatuba - GO",
+       "clube_id": "20101",
+       "atleta_nome": "Roger Henrique Alves Reis",
+       "atleta_apelido": "ROGER",
+       "atleta_camisa": "14",
+       "atleta_id": "599870",
+       "tempo_jogo": "2",
+       "minutos": "38:00"
+      },
+      {
+       "id": "433290",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20091/escudo.jpg",
+       "clube": "Ferroviário - CE",
+       "clube_id": "20091",
+       "atleta_nome": "Thomas Luciano Trindade Lopes Mathias",
+       "atleta_apelido": "Thomas",
+       "atleta_camisa": "19",
+       "atleta_id": "555280",
+       "tempo_jogo": "TN2",
+       "minutos": "43:00"
+      },
+      {
+       "id": "433294",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20091/escudo.jpg",
+       "clube": "Ferroviário - CE",
+       "clube_id": "20091",
+       "atleta_nome": "Fernando de Deus Rocha",
+       "atleta_apelido": "Fernando Portel",
+       "atleta_camisa": "15",
+       "atleta_id": "541818",
+       "tempo_jogo": "TN2",
+       "minutos": "43:00"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "grupo": "GRUPO D03",
+   "jogo": [
+    {
+     "id_jogo": "835068",
+     "num_jogo": "587",
+     "rodada": "2",
+     "grupo": "GRUPO D03",
+     "mandante": {
+      "id": "20042",
+      "nome": "Abc F. C.",
+      "url_escudo": "https://conteudo.cbf.com.br/clubes/20042/escudo.jpg",
+      "gols": "4",
+      "panaltis": "0",
+      "atletas": [],
+      "alteracoes": []
+     },
+     "visitante": {
+      "id": "21725",
+      "nome": "Luverdense",
+      "url_escudo": "https://conteudo.cbf.com.br/clubes/21725/escudo.jpg",
+      "gols": "1",
+      "panaltis": "0",
+      "atletas": [],
+      "alteracoes": []
+     },
+     "local": "Arena das Dunas - Natal - RN",
+     "campeonato": "Campeonato Brasileiro",
+     "data": " 26/07/2026",
+     "hora": "17:00",
+     "qtd_alteracoes_jogo": 0,
+     "documentos": [],
+     "arbitros": [],
+     "penalidades": [
+      {
+       "id": "91596",
+       "tipo": "GOL",
+       "resultado": "NR",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20042/escudo.jpg",
+       "clube": "Abc F. C. - RN",
+       "clube_id": "20042",
+       "atleta_nome": "Igor Ruan Sousa dos Santos",
+       "atleta_apelido": "Igor Bahia",
+       "atleta_camisa": "9",
+       "atleta_id": "390675",
+       "tempo_jogo": "1",
+       "minutos": "11:00"
+      },
+      {
+       "id": "91597",
+       "tipo": "GOL",
+       "resultado": "NR",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20042/escudo.jpg",
+       "clube": "Abc F. C. - RN",
+       "clube_id": "20042",
+       "atleta_nome": "Wallyson Ricardo Maciel Monteiro",
+       "atleta_apelido": "Wallyson",
+       "atleta_camisa": "11",
+       "atleta_id": "174194",
+       "tempo_jogo": "1",
+       "minutos": "23:00"
+      },
+      {
+       "id": "91599",
+       "tipo": "GOL",
+       "resultado": "NR",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/21725/escudo.jpg",
+       "clube": "Luverdense - MT",
+       "clube_id": "21725",
+       "atleta_nome": "Douglas Alexandre Santos da Silva",
+       "atleta_apelido": "Douglas",
+       "atleta_camisa": "8",
+       "atleta_id": "588260",
+       "tempo_jogo": "1",
+       "minutos": "33:00"
+      },
+      {
+       "id": "91598",
+       "tipo": "GOL",
+       "resultado": "NR",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20042/escudo.jpg",
+       "clube": "Abc F. C. - RN",
+       "clube_id": "20042",
+       "atleta_nome": "Bruno Vitor Ribeiro Rodrigues",
+       "atleta_apelido": "Brunao",
+       "atleta_camisa": "99",
+       "atleta_id": "449652",
+       "tempo_jogo": "2",
+       "minutos": "29:00"
+      },
+      {
+       "id": "91600",
+       "tipo": "GOL",
+       "resultado": "NR",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20042/escudo.jpg",
+       "clube": "Abc F. C. - RN",
+       "clube_id": "20042",
+       "atleta_nome": "Bruno Vitor Ribeiro Rodrigues",
+       "atleta_apelido": "Brunao",
+       "atleta_camisa": "99",
+       "atleta_id": "449652",
+       "tempo_jogo": "2",
+       "minutos": "31:00"
+      },
+      {
+       "id": "433295",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20042/escudo.jpg",
+       "clube": "Abc F. C. - RN",
+       "clube_id": "20042",
+       "atleta_nome": "Jhosefer Raphael Januario",
+       "atleta_apelido": "Jhosefer",
+       "atleta_camisa": "7",
+       "atleta_id": "628314",
+       "tempo_jogo": "TN1",
+       "minutos": "28:00"
+      },
+      {
+       "id": "433297",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/21725/escudo.jpg",
+       "clube": "Luverdense - MT",
+       "clube_id": "21725",
+       "atleta_nome": "Hitalo Teixeira Mota",
+       "atleta_apelido": "Hitalo",
+       "atleta_camisa": "7",
+       "atleta_id": "605776",
+       "tempo_jogo": "TN1",
+       "minutos": "40:00"
+      },
+      {
+       "id": "433296",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20042/escudo.jpg",
+       "clube": "Abc F. C. - RN",
+       "clube_id": "20042",
+       "atleta_nome": "Wellington Carvalho dos Santos",
+       "atleta_apelido": "Wellington Carvalho",
+       "atleta_camisa": "3",
+       "atleta_id": "307674",
+       "tempo_jogo": "TN2",
+       "minutos": "10:00"
+      },
+      {
+       "id": "433298",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/21725/escudo.jpg",
+       "clube": "Luverdense - MT",
+       "clube_id": "21725",
+       "atleta_nome": "Pedro Gomes Bortoluzo",
+       "atleta_apelido": "Pedro",
+       "atleta_camisa": "9",
+       "atleta_id": "374319",
+       "tempo_jogo": "TN2",
+       "minutos": "16:00"
+      },
+      {
+       "id": "433299",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/21725/escudo.jpg",
+       "clube": "Luverdense - MT",
+       "clube_id": "21725",
+       "atleta_nome": "Emerson Christian Adolfo",
+       "atleta_apelido": "Emerson Mineiro",
+       "atleta_camisa": "21",
+       "atleta_id": "512526",
+       "tempo_jogo": "TN2",
+       "minutos": "24:00"
+      },
+      {
+       "id": "433300",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/21725/escudo.jpg",
+       "clube": "Luverdense - MT",
+       "clube_id": "21725",
+       "atleta_nome": "Thiago Gabriel Ribeiro Lima",
+       "atleta_apelido": "THIAGO",
+       "atleta_camisa": "6",
+       "atleta_id": "634184",
+       "tempo_jogo": "TN2",
+       "minutos": "29:00"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -118,6 +118,7 @@
           </td>
         </tr></table>
       </td></tr>
+      {% if m.home_penalties is not none %}<tr><td class="match-info" align="center"><strong>Pênaltis: {{ m.home_penalties }} x {{ m.away_penalties }}</strong></td></tr>{% endif %}
       <tr><td class="match-info" align="center">{{ m.competition }} · {{ m.date | when }}{% if m.venue %} · {{ m.venue }}{% endif %}</td></tr>
       {% set goals = m.events | selectattr("type", "equalto", "goal") | list %}
       {% if goals %}

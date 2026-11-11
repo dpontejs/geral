@@ -55,6 +55,10 @@ class Team(BaseModel):
     # the team's `equipe_id` there and name in the newsletter -> championship page on ge.
     ge_id: int | None = Field(default=None, gt=0)
     ge_tables: dict[str, str] = Field(default_factory=dict)
+    # Goal scorers from the CBF site (national competitions only): the team's `clube_id` there
+    # and ge table name -> championship path, e.g. "campeonato-brasileiro/serie-c".
+    cbf_id: int | None = Field(default=None, gt=0)
+    cbf_tables: dict[str, str] = Field(default_factory=dict)
 
     @field_validator("accent")
     @classmethod
@@ -72,6 +76,10 @@ class Team(BaseModel):
             raise ValueError(f"league {self.league!r} must be one of leagues")
         if self.ge_tables and self.ge_id is None:
             raise ValueError("ge_tables needs the team's ge_id")
+        if self.cbf_tables and self.cbf_id is None:
+            raise ValueError("cbf_tables needs the team's cbf_id")
+        if unknown := set(self.cbf_tables) - set(self.ge_tables):
+            raise ValueError(f"cbf_tables {sorted(unknown)} must be ge_tables names")
         return self
 
     @property

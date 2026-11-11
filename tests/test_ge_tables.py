@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import date, datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
@@ -7,6 +7,7 @@ import httpx
 import pytest
 import respx
 
+from geral.models import MatchEvent
 from geral.stats.espn import StatsUnavailable
 from geral.stats.ge_tables import GE_TABLES_API, GETablesClient
 from geral.teams import Team
@@ -198,7 +199,7 @@ def test_ge_moment_form_newest_first(ge) -> None:
     moment = client.get_moment(datetime(2026, 3, 22, tzinfo=TZ), [])
 
     assert moment is not None
-    assert [f.score for f in moment.form] == ["1-1", "1-1", "3-1", "3-1", "1-1"]
+    assert [f.score for f in moment.form] == ["1-1 (2-4 pên.)", "1-1", "3-1", "3-1", "1-1"]
     assert [f.result for f in moment.form] == ["E", "E", "V", "V", "E"]
     assert moment.form[0].opponent == "América-RN"
     assert moment.form[0].competition == "Potiguar"
@@ -360,3 +361,63 @@ def test_ge_unexpected_error_in_fixtures_is_unavailable(ge, monkeypatch) -> None
 
     with pytest.raises(StatsUnavailable):
         client.get_fixtures(datetime(2026, 1, 1, tzinfo=TZ))
+
+
+def test_ge_last_match_carries_the_shootout(ge) -> None:
+    match = make_client().get_last_match(
+        datetime(2026, 3, 15, tzinfo=TZ), datetime(2026, 3, 22, 8, 0, tzinfo=TZ)
+    )
+
+    assert (match.home_penalties, match.away_penalties) == (2, 4)
+
+
+def test_ge_form_shows_the_shootout(ge) -> None:
+    moment = make_client().get_moment(datetime(2026, 3, 22, tzinfo=TZ), [])
+
+    assert moment.form[0].score == "1-1 (2-4 pên.)"
+    assert moment.form[1].score == "1-1"
+
+
+class FakeGoals:
+    def __init__(self) -> None:
+        self.calls = []
+
+    def goals(self, path, day, team_id, ours, theirs):
+        self.calls.append((path, day, team_id, ours, theirs))
+        return [MatchEvent(minute=34, team=ours, player="Wallyson", type="goal", detail="Pênalti")]
+
+
+def test_ge_last_match_gets_goals_from_cbf_when_configured(ge) -> None:
+    team = ABC.model_copy(update={"cbf_id": 20042, "cbf_tables": {"Potiguar": "estaduais/rn"}})
+    fake = FakeGoals()
+    client = GETablesClient(team, client=httpx.Client(), goals=fake,
+                            clock=lambda: datetime(2026, 3, 22, 12, 0, tzinfo=TZ))  # fmt: skip
+
+    match = client.get_last_match(
+        datetime(2026, 3, 15, tzinfo=TZ), datetime(2026, 3, 22, tzinfo=TZ)
+    )
+
+    assert fake.calls == [("estaduais/rn", date(2026, 3, 21), 20042, "ABC", "América-RN")]
+    assert [e.player for e in match.events] == ["Wallyson"]
+
+
+def test_ge_last_match_without_cbf_table_has_no_goal_lookup(ge) -> None:
+    fake = FakeGoals()
+    client = GETablesClient(ABC, client=httpx.Client(), goals=fake,
+                            clock=lambda: datetime(2026, 3, 22, 12, 0, tzinfo=TZ))  # fmt: skip
+
+    match = client.get_last_match(
+        datetime(2026, 3, 15, tzinfo=TZ), datetime(2026, 3, 22, tzinfo=TZ)
+    )
+
+    assert fake.calls == [] and match.events == []
+
+
+def test_ge_one_sided_shootout_is_dropped(ge) -> None:
+    mock_final(ge, lambda g: g.update(placar_penaltis_visitante=None))
+
+    match = make_client().get_last_match(
+        datetime(2026, 3, 15, tzinfo=TZ), datetime(2026, 3, 22, 8, 0, tzinfo=TZ)
+    )
+
+    assert (match.home_penalties, match.away_penalties) == (None, None)

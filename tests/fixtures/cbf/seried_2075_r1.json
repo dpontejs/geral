@@ -1,0 +1,258 @@
+{
+ "grupos": [
+  "GRUPO D01",
+  "GRUPO D02",
+  "GRUPO D03",
+  "GRUPO D04",
+  "GRUPO D05",
+  "GRUPO D06",
+  "GRUPO D07",
+  "GRUPO D08"
+ ],
+ "jogos": [
+  {
+   "grupo": "GRUPO D01",
+   "jogo": [
+    {
+     "id_jogo": "835058",
+     "num_jogo": "577",
+     "rodada": "1",
+     "grupo": "GRUPO D01",
+     "mandante": {
+      "id": "20101",
+      "nome": "Goiatuba",
+      "url_escudo": "https://conteudo.cbf.com.br/clubes/20101/escudo.jpg",
+      "gols": "3",
+      "panaltis": "0",
+      "atletas": [],
+      "alteracoes": []
+     },
+     "visitante": {
+      "id": "20091",
+      "nome": "Ferroviário",
+      "url_escudo": "https://conteudo.cbf.com.br/clubes/20091/escudo.jpg",
+      "gols": "0",
+      "panaltis": "0",
+      "atletas": [],
+      "alteracoes": []
+     },
+     "local": "Divino Garcia Rosa - Goiatuba - GO",
+     "campeonato": "Campeonato Brasileiro",
+     "data": " 18/07/2026",
+     "hora": "18:30",
+     "qtd_alteracoes_jogo": 0,
+     "documentos": [],
+     "arbitros": [],
+     "penalidades": [
+      {
+       "id": "91375",
+       "tipo": "GOL",
+       "resultado": "NR",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20101/escudo.jpg",
+       "clube": "Goiatuba - GO",
+       "clube_id": "20101",
+       "atleta_nome": "Julio Vitor Souza Ferreira",
+       "atleta_apelido": "Julio Vitor",
+       "atleta_camisa": "7",
+       "atleta_id": "440225",
+       "tempo_jogo": "1",
+       "minutos": "19:00"
+      },
+      {
+       "id": "91376",
+       "tipo": "GOL",
+       "resultado": "NR",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20101/escudo.jpg",
+       "clube": "Goiatuba - GO",
+       "clube_id": "20101",
+       "atleta_nome": "Thalles Gabriel Morais dos Reis",
+       "atleta_apelido": "Thalles",
+       "atleta_camisa": "10",
+       "atleta_id": "428831",
+       "tempo_jogo": "2",
+       "minutos": "20:00"
+      },
+      {
+       "id": "91378",
+       "tipo": "GOL",
+       "resultado": "NR",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20101/escudo.jpg",
+       "clube": "Goiatuba - GO",
+       "clube_id": "20101",
+       "atleta_nome": "Guilherme Silva Sales",
+       "atleta_apelido": "Guilherme Sales",
+       "atleta_camisa": "17",
+       "atleta_id": "622038",
+       "tempo_jogo": "2",
+       "minutos": "32:00"
+      },
+      {
+       "id": "432890",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20101/escudo.jpg",
+       "clube": "Goiatuba - GO",
+       "clube_id": "20101",
+       "atleta_nome": "Daniel de Pauli Oliveira",
+       "atleta_apelido": "Daniel",
+       "atleta_camisa": "5",
+       "atleta_id": "459004",
+       "tempo_jogo": "TN1",
+       "minutos": "27:00"
+      },
+      {
+       "id": "432892",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20091/escudo.jpg",
+       "clube": "Ferroviário - CE",
+       "clube_id": "20091",
+       "atleta_nome": "Pedro Henrique Gomes Costa Ferreira",
+       "atleta_apelido": "Pedrinho",
+       "atleta_camisa": "6",
+       "atleta_id": "548254",
+       "tempo_jogo": "TN1",
+       "minutos": "37:00"
+      },
+      {
+       "id": "432891",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20101/escudo.jpg",
+       "clube": "Goiatuba - GO",
+       "clube_id": "20101",
+       "atleta_nome": "Thalles Gabriel Morais dos Reis",
+       "atleta_apelido": "Thalles",
+       "atleta_camisa": "10",
+       "atleta_id": "428831",
+       "tempo_jogo": "TN2",
+       "minutos": "20:00"
+      },
+      {
+       "id": "432893",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20091/escudo.jpg",
+       "clube": "Ferroviário - CE",
+       "clube_id": "20091",
+       "atleta_nome": "Iago Fabricio Goncalves dos Reis",
+       "atleta_apelido": "Iago Fabricio",
+       "atleta_camisa": "4",
+       "atleta_id": "456932",
+       "tempo_jogo": "TN2",
+       "minutos": "39:00"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "grupo": "GRUPO D03",
+   "jogo": [
+    {
+     "id_jogo": "835060",
+     "num_jogo": "579",
+     "rodada": "1",
+     "grupo": "GRUPO D03",
+     "mandante": {
+      "id": "21725",
+      "nome": "Luverdense",
+      "url_escudo": "https://conteudo.cbf.com.br/clubes/21725/escudo.jpg",
+      "gols": "0",
+      "panaltis": "0",
+      "atletas": [],
+      "alteracoes": []
+     },
+     "visitante": {
+      "id": "20042",
+      "nome": "Abc F. C.",
+      "url_escudo": "https://conteudo.cbf.com.br/clubes/20042/escudo.jpg",
+      "gols": "0",
+      "panaltis": "0",
+      "atletas": [],
+      "alteracoes": []
+     },
+     "local": "Passo das Emas - Lucas do Rio Verde - MT",
+     "campeonato": "Campeonato Brasileiro",
+     "data": " 18/07/2026",
+     "hora": "19:00",
+     "qtd_alteracoes_jogo": 0,
+     "documentos": [],
+     "arbitros": [],
+     "penalidades": [
+      {
+       "id": "432897",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20042/escudo.jpg",
+       "clube": "Abc F. C. - RN",
+       "clube_id": "20042",
+       "atleta_nome": "Luiz Fernando Ferreira de Souza",
+       "atleta_apelido": "Luiz Fernando",
+       "atleta_camisa": "18",
+       "atleta_id": "404134",
+       "tempo_jogo": "TN1",
+       "minutos": "18:00"
+      },
+      {
+       "id": "432898",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20042/escudo.jpg",
+       "clube": "Abc F. C. - RN",
+       "clube_id": "20042",
+       "atleta_nome": "Wellington Carvalho dos Santos",
+       "atleta_apelido": "Wellington Carvalho",
+       "atleta_camisa": "3",
+       "atleta_id": "307674",
+       "tempo_jogo": "TN1",
+       "minutos": "41:00"
+      },
+      {
+       "id": "432895",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/21725/escudo.jpg",
+       "clube": "Luverdense - MT",
+       "clube_id": "21725",
+       "atleta_nome": "Hitalo Teixeira Mota",
+       "atleta_apelido": "Hitalo",
+       "atleta_camisa": "7",
+       "atleta_id": "605776",
+       "tempo_jogo": "TN2",
+       "minutos": "15:00"
+      },
+      {
+       "id": "432896",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/21725/escudo.jpg",
+       "clube": "Luverdense - MT",
+       "clube_id": "21725",
+       "atleta_nome": "Gustavo Alexandria Silva",
+       "atleta_apelido": "Gustavo Silva",
+       "atleta_camisa": "3",
+       "atleta_id": "305613",
+       "tempo_jogo": "TN2",
+       "minutos": "31:00"
+      },
+      {
+       "id": "432894",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/21725/escudo.jpg",
+       "clube": "Luverdense - MT",
+       "clube_id": "21725",
+       "atleta_nome": "Thiago Gabriel Ribeiro Lima",
+       "atleta_apelido": "THIAGO",
+       "atleta_camisa": "6",
+       "atleta_id": "634184",
+       "tempo_jogo": "TN2",
+       "minutos": "4:00"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

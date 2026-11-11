@@ -1,0 +1,254 @@
+{
+ "grupos": [
+  "GRUPO E01",
+  "GRUPO E02",
+  "GRUPO E03",
+  "GRUPO E04"
+ ],
+ "jogos": [
+  {
+   "grupo": "GRUPO E01",
+   "jogo": [
+    {
+     "id_jogo": "835101",
+     "num_jogo": "597",
+     "rodada": "2",
+     "grupo": "GRUPO E01",
+     "mandante": {
+      "id": "20098",
+      "nome": "Gama",
+      "url_escudo": "https://conteudo.cbf.com.br/clubes/20098/escudo.jpg",
+      "gols": "4",
+      "panaltis": "0",
+      "atletas": [],
+      "alteracoes": []
+     },
+     "visitante": {
+      "id": "20319",
+      "nome": "São José",
+      "url_escudo": "https://conteudo.cbf.com.br/clubes/20319/escudo.jpg",
+      "gols": "0",
+      "panaltis": "0",
+      "atletas": [],
+      "alteracoes": []
+     },
+     "local": "Valmir Bezerra - Gama - DF",
+     "campeonato": "Campeonato Brasileiro",
+     "data": " 16/08/2026",
+     "hora": "16:00",
+     "qtd_alteracoes_jogo": 0,
+     "documentos": [],
+     "arbitros": [],
+     "penalidades": [
+      {
+       "id": "92230",
+       "tipo": "GOL",
+       "resultado": "NR",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20098/escudo.jpg",
+       "clube": "Gama - DF",
+       "clube_id": "20098",
+       "atleta_nome": "Willian Pontes de Araújo Júnior",
+       "atleta_apelido": "Willian Jr.",
+       "atleta_camisa": "10",
+       "atleta_id": "532317",
+       "tempo_jogo": "1",
+       "minutos": "11:00"
+      },
+      {
+       "id": "92231",
+       "tipo": "GOL",
+       "resultado": "NR",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20098/escudo.jpg",
+       "clube": "Gama - DF",
+       "clube_id": "20098",
+       "atleta_nome": "Darlan Silva Dutra",
+       "atleta_apelido": "DARLAN",
+       "atleta_camisa": "3",
+       "atleta_id": "699062",
+       "tempo_jogo": "1",
+       "minutos": "18:00"
+      },
+      {
+       "id": "92232",
+       "tipo": "GOL",
+       "resultado": "NR",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20098/escudo.jpg",
+       "clube": "Gama - DF",
+       "clube_id": "20098",
+       "atleta_nome": "Luiz Felipe Clemente de Almeida",
+       "atleta_apelido": "Clemente",
+       "atleta_camisa": "11",
+       "atleta_id": "639695",
+       "tempo_jogo": "1",
+       "minutos": "45:00"
+      },
+      {
+       "id": "92233",
+       "tipo": "GOL",
+       "resultado": "NR",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20098/escudo.jpg",
+       "clube": "Gama - DF",
+       "clube_id": "20098",
+       "atleta_nome": "Kennedy Lucas Cordeiro Nunes",
+       "atleta_apelido": "Kannedy",
+       "atleta_camisa": "77",
+       "atleta_id": "403512",
+       "tempo_jogo": "2",
+       "minutos": "29:00"
+      },
+      {
+       "id": "434384",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20098/escudo.jpg",
+       "clube": "Gama - DF",
+       "clube_id": "20098",
+       "atleta_nome": "Luiz Felipe Clemente de Almeida",
+       "atleta_apelido": "Clemente",
+       "atleta_camisa": "11",
+       "atleta_id": "639695",
+       "tempo_jogo": "TN1",
+       "minutos": "31:00"
+      },
+      {
+       "id": "434385",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20319/escudo.jpg",
+       "clube": "São José - RS",
+       "clube_id": "20319",
+       "atleta_nome": "Keverton Resende Marcolino",
+       "atleta_apelido": "Keverton",
+       "atleta_camisa": "5",
+       "atleta_id": "524372",
+       "tempo_jogo": "TN1",
+       "minutos": "38:00"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "grupo": "GRUPO E03",
+   "jogo": [
+    {
+     "id_jogo": "835103",
+     "num_jogo": "599",
+     "rodada": "2",
+     "grupo": "GRUPO E03",
+     "mandante": {
+      "id": "20042",
+      "nome": "Abc F. C.",
+      "url_escudo": "https://conteudo.cbf.com.br/clubes/20042/escudo.jpg",
+      "gols": "1",
+      "panaltis": "0",
+      "atletas": [],
+      "alteracoes": []
+     },
+     "visitante": {
+      "id": "20050",
+      "nome": "Nacional",
+      "url_escudo": "https://conteudo.cbf.com.br/clubes/20050/escudo.jpg",
+      "gols": "0",
+      "panaltis": "0",
+      "atletas": [],
+      "alteracoes": []
+     },
+     "local": "Arena das Dunas - Natal - RN",
+     "campeonato": "Campeonato Brasileiro",
+     "data": " 16/08/2026",
+     "hora": "17:00",
+     "qtd_alteracoes_jogo": 0,
+     "documentos": [],
+     "arbitros": [],
+     "penalidades": [
+      {
+       "id": "92236",
+       "tipo": "GOL",
+       "resultado": "PN",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20042/escudo.jpg",
+       "clube": "Abc F. C. - RN",
+       "clube_id": "20042",
+       "atleta_nome": "Wallyson Ricardo Maciel Monteiro",
+       "atleta_apelido": "Wallyson",
+       "atleta_camisa": "11",
+       "atleta_id": "174194",
+       "tempo_jogo": "1",
+       "minutos": "34:00"
+      },
+      {
+       "id": "434394",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20050/escudo.jpg",
+       "clube": "Nacional - AM",
+       "clube_id": "20050",
+       "atleta_nome": "Gabriel Carneiro de Araujo",
+       "atleta_apelido": "Gabriel Recife",
+       "atleta_camisa": "13",
+       "atleta_id": "523373",
+       "tempo_jogo": "TN1",
+       "minutos": "2:00"
+      },
+      {
+       "id": "434391",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20042/escudo.jpg",
+       "clube": "Abc F. C. - RN",
+       "clube_id": "20042",
+       "atleta_nome": "Jhosefer Raphael Januario",
+       "atleta_apelido": "Jhosefer",
+       "atleta_camisa": "7",
+       "atleta_id": "628314",
+       "tempo_jogo": "TN1",
+       "minutos": "37:00"
+      },
+      {
+       "id": "434392",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20042/escudo.jpg",
+       "clube": "Abc F. C. - RN",
+       "clube_id": "20042",
+       "atleta_nome": "Rikelmi Valentim dos Santos",
+       "atleta_apelido": "Rikelmi",
+       "atleta_camisa": "27",
+       "atleta_id": "464560",
+       "tempo_jogo": "TN1",
+       "minutos": "43:00"
+      },
+      {
+       "id": "434393",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20042/escudo.jpg",
+       "clube": "Abc F. C. - RN",
+       "clube_id": "20042",
+       "atleta_nome": "Edson Felipe da Cruz",
+       "atleta_apelido": "Edson Felipe",
+       "atleta_camisa": "5",
+       "atleta_id": "291843",
+       "tempo_jogo": "TN2",
+       "minutos": "27:00"
+      },
+      {
+       "id": "434395",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20050/escudo.jpg",
+       "clube": "Nacional - AM",
+       "clube_id": "20050",
+       "atleta_nome": "Michel Custodio Goncalves de Sousa",
+       "atleta_apelido": "Michel",
+       "atleta_camisa": "3",
+       "atleta_id": "545664",
+       "tempo_jogo": "TN2",
+       "minutos": "8:00"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

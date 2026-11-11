@@ -15,7 +15,8 @@
 
 == Última partida ==
 {{ m.home }} {{ m.home_goals }} x {{ m.away_goals }} {{ m.away }}
-{{ m.competition }} · {{ m.date | when }}{% if m.venue %} · {{ m.venue }}{% endif %}
+{% if m.home_penalties is not none %}Pênaltis: {{ m.home_penalties }} x {{ m.away_penalties }}
+{% endif %}{{ m.competition }} · {{ m.date | when }}{% if m.venue %} · {{ m.venue }}{% endif %}
 
 {% for e in m.events if e.type == "goal" %}
 ⚽ {{ e | minute }} {{ e.player }}{% if e.detail %} ({{ e.detail }}){% endif %} — {{ e.team }}

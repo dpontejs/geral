@@ -19,6 +19,7 @@ import httpx
 from geral.collectors.base import create_http_client
 from geral.models import FormResult, MatchPreview, MatchStats, NextMatch, StandingRow, TeamMoment
 from geral.schedule import Fixture
+from geral.stats.cbf import CBFGoals
 from geral.stats.espn import FIXTURES_LOOKBACK, FORM_SIZE, StatsUnavailable, standings_gap
 from geral.teams import Team
 
@@ -49,6 +50,8 @@ class Game:
     away_goals: int | None
     venue: str | None
     started: bool = False  # ge's `jogo_ja_comecou`
+    home_penalties: int | None = None
+    away_penalties: int | None = None
 
     def involves(self, team_id: int) -> bool:
         return team_id in (self.home_id, self.away_id)
@@ -71,6 +74,7 @@ class GETablesClient:
         client: httpx.Client | None = None,
         tz_name: str = "America/Sao_Paulo",
         clock: Callable[[], datetime] | None = None,
+        goals: CBFGoals | None = None,
     ) -> None:
         if team.ge_id is None:
             raise ValueError(f"{team.slug} has no ge_id")
@@ -79,6 +83,7 @@ class GETablesClient:
         self.tz = ZoneInfo(tz_name)
         self._client = client or create_http_client()
         self._clock = clock or (lambda: datetime.now(self.tz))
+        self._goals = goals or CBFGoals(self._client)
         self._competitions: dict[str, Competition | None] = {}
         self.table_name: str | None = None
 
@@ -111,6 +116,13 @@ class GETablesClient:
             return None
         game = max(played, key=lambda g: g.kickoff)
         is_home = game.home_id == self.team_id
+        ours, theirs = (game.home, game.away) if is_home else (game.away, game.home)
+        cbf_path = self.team.cbf_tables.get(game.competition)
+        events = (
+            self._goals.goals(cbf_path, game.kickoff.date(), self.team.cbf_id, ours, theirs)
+            if cbf_path and self.team.cbf_id
+            else []
+        )
         return MatchStats(
             fixture_id=game.id,
             competition=game.competition,
@@ -119,8 +131,11 @@ class GETablesClient:
             away=game.away,
             home_goals=game.home_goals,
             away_goals=game.away_goals,
+            home_penalties=game.home_penalties,
+            away_penalties=game.away_penalties,
             venue=game.venue,
             is_home=is_home,
+            events=events,
             # ge only publishes SVG crests, which Gmail does not show: ours comes from ESPN.
             home_logo=self.team.logo if is_home else None,
             away_logo=None if is_home else self.team.logo,
@@ -306,6 +321,7 @@ class GETablesClient:
         at = time.fromisoformat(hour) if hour else time(0, 0)
         kickoff = datetime.combine(date.fromisoformat(day[:10]), at, tzinfo=self.tz)
         home, away = item["equipes"]["mandante"], item["equipes"]["visitante"]
+        pens = (item.get("placar_penaltis_mandante"), item.get("placar_penaltis_visitante"))
         if not (isinstance(home["nome_popular"], str) and isinstance(away["nome_popular"], str)):
             raise ValueError("a side without name")
         return Game(
@@ -321,6 +337,9 @@ class GETablesClient:
             away_goals=item.get("placar_oficial_visitante"),
             venue=(item.get("sede") or {}).get("nome_popular"),
             started=bool(item.get("jogo_ja_comecou")),
+            # Both sides or none: a half shoot-out would print "3 x None".
+            home_penalties=pens[0] if None not in pens else None,
+            away_penalties=pens[1] if None not in pens else None,
         )
 
     def _fixture(self, game: Game, now: datetime) -> Fixture:
@@ -362,10 +381,15 @@ class GETablesClient:
             (game.home_goals, game.away_goals) if at_home else (game.away_goals, game.home_goals)
         )
         result = "V" if goals_for > goals_against else "D" if goals_for < goals_against else "E"
+        score = f"{goals_for}-{goals_against}"
+        if game.home_penalties is not None and game.away_penalties is not None:
+            pens = (game.home_penalties, game.away_penalties)
+            pens_for, pens_against = pens if at_home else pens[::-1]
+            score += f" ({pens_for}-{pens_against} pên.)"
         return FormResult(
             result=result,
             opponent=game.away if at_home else game.home,
-            score=f"{goals_for}-{goals_against}",
+            score=score,
             competition=game.competition,
             date=game.kickoff,
         )

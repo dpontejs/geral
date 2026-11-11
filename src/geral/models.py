@@ -68,6 +68,8 @@ class MatchStats(BaseModel):
     away: str
     home_goals: int
     away_goals: int
+    home_penalties: int | None = None  # shoot-out, when the tie went to penalties
+    away_penalties: int | None = None
     venue: str | None = None
     is_home: bool = True  # our team played at home
     home_logo: str | None = None

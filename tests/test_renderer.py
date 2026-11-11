@@ -703,3 +703,37 @@ def test_render_table_and_campaign_use_the_table_competition() -> None:
 
     assert "Classificação · Série C" in html
     assert "Campanha na Série C" in html
+
+
+def test_render_shows_the_shootout() -> None:
+    newsletter = full_newsletter()
+    newsletter.last_match = newsletter.last_match.model_copy(
+        update={"home_goals": 1, "away_goals": 1, "home_penalties": 2, "away_penalties": 4}
+    )
+
+    html, text = render(newsletter)
+
+    assert "Pênaltis: 2 x 4" in html
+    assert "Pênaltis: 2 x 4" in text
+
+
+def test_render_without_shootout_has_no_penalties_line() -> None:
+    html, text = render(full_newsletter())
+
+    assert "Pênaltis" not in html and "Pênaltis" not in text
+
+
+def test_prompts_tell_the_model_about_the_shootout() -> None:
+    from geral.summarizer.pipeline import render_prompt
+
+    match = full_newsletter().last_match.model_copy(
+        update={"home_goals": 1, "away_goals": 1, "home_penalties": 2, "away_penalties": 4}
+    )
+
+    intro = render_prompt(
+        "intro", team=FLAMENGO, last_match=match, topics=[], label="Pós-jogo", next_match=None
+    )
+    analysis = render_prompt("analysis", team=FLAMENGO, m=match, goals=[], cards=[], moment=None)
+
+    assert "pênaltis 2 x 4" in intro
+    assert "pênaltis 2 x 4" in analysis

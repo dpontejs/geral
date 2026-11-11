@@ -9,7 +9,7 @@ Regras:
 - Use a forma recente e a tabela para dar contexto (sequência, distância na classificação).
 - Não repita o placar na primeira frase; o leitor já o vê logo acima.
 
-Partida: {{ m.home }} {{ m.home_goals }} x {{ m.away_goals }} {{ m.away }} ({{ m.competition }})
+Partida: {{ m.home }} {{ m.home_goals }} x {{ m.away_goals }} {{ m.away }} ({{ m.competition }}{% if m.home_penalties is not none %}, pênaltis {{ m.home_penalties }} x {{ m.away_penalties }}{% endif %})
 {% if goals %}Gols:
 {% for e in goals %}- {{ e.minute }}'{% if e.extra_minute %}+{{ e.extra_minute }}{% endif %} {{ e.player }} ({{ e.team }}){% if e.detail %} — {{ e.detail }}{% endif %}
 
