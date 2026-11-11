@@ -1,0 +1,43 @@
+GERAL — {{ e.label | upper }}
+
+{{ e.headline }}
+{% if e.intro %}
+
+{{ e.intro }}
+{% endif %}
+{% for s in e.series %}{% set w = s.week %}
+
+== {{ s.name | upper }} ==
+{% if s.summary %}
+{{ s.summary }}
+{% endif %}
+{% if w.phase %}
+Fase: {{ w.phase }}
+{% endif %}
+{% if w.results %}
+
+Resultados:
+{% for g in w.results %}
+{{ g.home }} {{ g.home_goals }} x {{ g.away_goals }} {{ g.away }}{% if g.home_penalties is not none %} (pênaltis {{ g.home_penalties }} x {{ g.away_penalties }}){% endif %}
+
+{% endfor %}
+{% endif %}
+{% if w.table_top %}
+
+Tabela:
+{% for r in w.table_top + w.table_bottom %}
+{{ r.position }}º {{ r.team }} — {{ r.points }} pts
+{% endfor %}
+{% endif %}
+{% if s.picks %}
+
+Notícias:
+{% for a in s.picks %}
+* {{ a.title }}: {{ a.url }}
+{% endfor %}
+{% endif %}
+{% endfor %}
+
+Geral · o futebol brasileiro da semana. Dados e notícias: ge.
+{% if unsubscribe_url %}Sair: {{ unsubscribe_url }}
+{% endif %}

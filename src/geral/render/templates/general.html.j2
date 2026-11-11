@@ -1,0 +1,78 @@
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Geral — {{ e.label }}</title>
+<style>
+  body { margin: 0; padding: 0; background-color: {{ paper }}; color: {{ ink }}; }
+  .font { font-family: Arial, Helvetica, sans-serif; }
+  .wrap { max-width: 600px; }
+  .kicker { font-size: 12px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; color: {{ concrete }}; }
+  .headline { font-size: 26px; line-height: 1.2; font-weight: 800; margin: 6px 0 12px 0; }
+  .intro { font-size: 16px; line-height: 1.55; margin: 0; }
+  .serie { background-color: #FFFFFF; border: 2px solid {{ ink }}; }
+  .serie-name { background-color: {{ ink }}; color: {{ paper }}; font-size: 15px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; padding: 8px 14px; }
+  .serie-body { padding: 14px; }
+  .summary { font-size: 15px; line-height: 1.5; margin: 0 0 12px 0; }
+  .label { font-size: 11px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: {{ concrete }}; margin: 12px 0 6px 0; }
+  .result td { font-size: 14px; padding: 4px 0; border-bottom: 1px solid #EEEEEE; }
+  .score { font-weight: 800; white-space: nowrap; padding: 4px 8px; }
+  .pens { font-size: 12px; color: {{ concrete }}; }
+  .table td { font-size: 13px; padding: 3px 4px; }
+  .gap td { font-size: 12px; color: {{ concrete }}; text-align: center; }
+  .phase { display: inline-block; background-color: {{ ticket }}; font-size: 12px; font-weight: 800; padding: 3px 8px; }
+  .news { margin: 0 0 8px 0; font-size: 14px; line-height: 1.4; }
+  .news a { color: {{ ink }}; font-weight: 700; }
+  .foot { font-size: 12px; color: {{ concrete }}; line-height: 1.5; }
+  .foot a { color: {{ concrete }}; }
+</style>
+</head>
+<body>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: {{ paper }};"><tr><td align="center" style="padding: 20px 12px;">
+<table role="presentation" class="wrap font" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr><td align="center" style="padding-bottom: 14px;">
+    {% if logo_url %}<img src="{{ logo_url }}" alt="Geral" width="120" style="display: block; border: 0; margin: 0 auto;">{% else %}<span style="font-size: 32px; font-weight: 900; letter-spacing: 3px;">GERAL</span>{% endif %}
+  </td></tr>
+  <tr><td style="padding: 0 4px 18px 4px;">
+    <p class="kicker" style="margin: 0;">{{ e.label }}</p>
+    <h1 class="headline">{{ e.headline }}</h1>
+    {% if e.intro %}<p class="intro">{{ e.intro }}</p>{% endif %}
+  </td></tr>
+  {% for s in e.series %}{% set w = s.week %}
+  <tr><td style="padding-bottom: 16px;">
+    <table role="presentation" class="serie" width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td class="serie-name">{{ s.name }}</td></tr>
+      <tr><td class="serie-body">
+        {% if s.summary %}<p class="summary">{{ s.summary }}</p>{% endif %}
+        {% if w.phase %}<span class="phase">{{ w.phase }}</span>{% endif %}
+        {% if w.results %}
+        <p class="label">Resultados</p>
+        <table role="presentation" class="result" width="100%" cellpadding="0" cellspacing="0" border="0">
+          {% for g in w.results %}
+          <tr><td align="right" width="42%">{{ g.home }}</td><td class="score" align="center">{{ g.home_goals }} x {{ g.away_goals }}</td><td width="42%">{{ g.away }}{% if g.home_penalties is not none %} <span class="pens">Pênaltis {{ g.home_penalties }} x {{ g.away_penalties }}</span>{% endif %}</td></tr>
+          {% endfor %}
+        </table>
+        {% endif %}
+        {% if w.table_top %}
+        <p class="label">Tabela</p>
+        <table role="presentation" class="table" width="100%" cellpadding="0" cellspacing="0" border="0">
+          {% for r in w.table_top %}<tr><td width="28">{{ r.position }}º</td><td>{{ r.team }}</td><td align="right"><b>{{ r.points }}</b> pts · {{ r.played }} j</td></tr>{% endfor %}
+          {% if w.table_bottom %}<tr class="gap"><td colspan="3">···</td></tr>
+          {% for r in w.table_bottom %}<tr><td width="28">{{ r.position }}º</td><td>{{ r.team }}</td><td align="right"><b>{{ r.points }}</b> pts · {{ r.played }} j</td></tr>{% endfor %}{% endif %}
+        </table>
+        {% endif %}
+        {% if s.picks %}
+        <p class="label">Notícias</p>
+        {% for a in s.picks %}<p class="news"><a href="{{ a.url }}">{{ a.title }}</a></p>{% endfor %}
+        {% endif %}
+      </td></tr>
+    </table>
+  </td></tr>
+  {% endfor %}
+  <tr><td class="foot" align="center" style="padding-top: 8px;">
+    Geral · o futebol brasileiro da semana, da Série A à D. Dados e notícias: ge.{% if unsubscribe_url %}<br><a href="{{ unsubscribe_url }}">Sair da edição geral</a>{% endif %}
+  </td></tr>
+</table>
+</td></tr></table>
+</body>
+</html>

@@ -145,8 +145,13 @@ def render(
         "unsubscribe_url": unsubscribe_url,
         "subscribe_url": subscribe_url,
     }
-    html = _env.get_template("newsletter.html.j2").render(**context)
-    text = _env.get_template("newsletter.txt.j2").render(**context)
+    return render_pair("newsletter", context)
+
+
+def render_pair(name: str, context: dict) -> tuple[str, str]:
+    """`<name>.html.j2` with inlined CSS and `<name>.txt.j2`, from the e-mail templates."""
+    html = _env.get_template(f"{name}.html.j2").render(**context)
+    text = _env.get_template(f"{name}.txt.j2").render(**context)
     inlined = Premailer(
         html,
         keep_style_tags=False,

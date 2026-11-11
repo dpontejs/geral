@@ -1,7 +1,7 @@
 # Edição geral por série (parte 4)
 
 - **Data:** 2026-11-11
-- **Status:** proposta
+- **Status:** 4a implementada (aguardando PR)
 - **ADRs:** —
 
 ## Objetivo
@@ -42,14 +42,14 @@ brasileiro, e não de uma torcida.
 
 ## Critérios de aceite (como testes)
 
-- [ ] `test_load_competition_matches_the_team_client`: o carregador solto devolve os mesmos jogos.
-- [ ] `test_collect_week_results_in_the_window_only` (respx, Série D de 2026 gravada).
-- [ ] `test_collect_week_table_cut_to_top_and_bottom` e `test_collect_week_knockout_shows_the_phase`.
-- [ ] `test_collect_week_skips_series_without_games_or_news` e `..._one_series_failing_is_skipped`.
-- [ ] `test_general_summary_prompt_lists_results_tables_and_numbered_news`.
-- [ ] `test_build_general_keeps_results_when_the_llm_fails`.
-- [ ] `test_render_general_has_each_series_results_table_and_picked_news`.
-- [ ] `test_edicao_geral_preview_writes_html_without_sending` e `test_edicao_geral_send_uses_recipients`.
+- [x] `test_load_competition_matches_the_team_client`: o carregador solto devolve os mesmos jogos.
+- [x] `test_collect_week_results_in_the_window_only` (respx, Série D de 2026 gravada).
+- [x] `test_collect_week_table_cut_to_top_and_bottom` e `test_collect_week_knockout_shows_the_phase`.
+- [x] `test_collect_week_skips_series_without_games_or_news` e `..._one_series_failing_is_skipped`.
+- [x] `test_general_summary_prompt_lists_results_tables_and_numbered_news`.
+- [x] `test_build_general_keeps_results_when_the_llm_fails`.
+- [x] `test_render_general_has_each_series_results_table_and_picked_news`.
+- [x] `test_edicao_geral_preview_writes_html_without_sending` e `test_edicao_geral_send_uses_recipients`.
 
 ## Verificação ponta a ponta
 
@@ -60,4 +60,5 @@ uv run geral edicao-geral --date 2026-11-09 --out out/geral.html   # abrir no na
 
 ## Riscos e dúvidas abertas
 
-- ~4 páginas + fases + rodadas do ge por edição (Série A: 38 rodadas): uma vez por semana, ok.
+- ~4 páginas + fases + rodadas do ge + até 12 páginas de feed por série: cerca de 1 minuto, uma vez por semana.
+- Tabela de corte: `cut_table` mostra a tabela inteira até 10 times (a página fala em G4/Z4 a partir daí).
