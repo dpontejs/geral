@@ -15,7 +15,8 @@ Ordem de execução. Cada fatia vira um PR; a página da fatia fica em `docs/fea
 - [x] Servir as marcas em `/static/<time>/` e usá-las no cabeçalho da newsletter (`logo_url`)
 - [x] Edição guardada por torcida: cada envio real publica a última edição daquela torcida; quem se inscreve recebe a última de cada torcida escolhida (boas-vindas)
 - [x] `/api/subscribers?team=<slug>` e envio só para quem assina a torcida
-- [ ] `geral due` devolvendo as edições vencidas de todas as torcidas com inscrito ativo, e disparo pela VPS
+- [x] Portal no ar em https://geral.diegoponte.dev (imagem no GHCR, stack no `infra`, auto-deploy)
+- [ ] `geral due --all` + workflow por torcida (`docs/features/agenda-automatica.md`) e disparo pela VPS
 - [x] Decidir cota do LLM: chave paga (ver PLAN §5)
 
 ## Fatia 2a — A Urubu News entra na Geral (`docs/adr/0001-geral-assume-a-urubu-news.md`)

@@ -33,7 +33,8 @@ from geral.send.resend_sender import (
 from geral.stats.espn import ESPNStatsClient, StatsUnavailable
 from geral.stats.table import standings_window
 from geral.summarizer.client import LLMError
-from geral.teams import Team, UnknownTeam, get_team
+from geral.teams import Team, UnknownTeam, get_team, load_teams
+from geral.web.store import SubscriberStore
 
 logger = logging.getLogger("geral.run")
 
@@ -184,24 +185,54 @@ def preview(
 
 
 @app.command()
-def due(team: TeamOption) -> None:
-    """Print the team's edition due now as "kind<TAB>YYYY-MM-DD<TAB>label", or nothing."""
+def due(
+    team: Annotated[str | None, typer.Option("--team", help="One team (slug)")] = None,
+    all_teams: Annotated[
+        bool, typer.Option("--all", help="Every team with subscribers (on the page's server)")
+    ] = False,
+) -> None:
+    """Print the edition due now: "kind<TAB>YYYY-MM-DD<TAB>label" for --team, one
+    "slug<TAB>kind<TAB>YYYY-MM-DD<TAB>label" line per team for --all; nothing when none is due."""
     _setup_logging()
-    club = _team(team)
+    if (team is None) == (not all_teams):
+        typer.echo("Use --team <slug> ou --all.", err=True)
+        raise typer.Exit(code=2)
     settings = get_settings()
     now = _now()
+    if not all_teams:
+        club = _team(team)
+        slot = _due_slot(club, settings, now, _latest(settings, club))
+        if slot is not None:
+            typer.echo(f"{slot.kind}\t{slot.send_at:%Y-%m-%d}\t{slot.label}")
+        return
+    # Runs next to the page (VPS): subscribers and each team's last edition come from its database.
+    store = SubscriberStore(settings.SUBSCRIBERS_DB)
+    counts = store.counts()
+    for club in load_teams().values():
+        if not counts.get(club.slug):
+            continue  # no subscriber: no edition, no Gemini cost
+        edition = store.latest_edition(club.slug)
+        latest = (
+            LatestEdition(subject=edition.subject, published_at=edition.published_at)
+            if edition
+            else None
+        )
+        slot = _due_slot(club, settings, now, latest)
+        if slot is not None:
+            typer.echo(f"{club.slug}\t{slot.kind}\t{slot.send_at:%Y-%m-%d}\t{slot.label}")
+
+
+def _due_slot(club: Team, settings, now: datetime, latest: LatestEdition | None) -> Slot | None:
+    """The slot due now for one team; an unknown calendar (ESPN down) means nothing is due."""
     try:
         fixtures = _fixtures(club, settings, now)
     except StatsUnavailable as e:
-        logger.error("Calendar unavailable, nothing is due: %s", e)
-        return
-    latest = _latest(settings, club)
+        logger.error("Calendar of %s unavailable, nothing is due: %s", club.slug, e)
+        return None
     sent_at, sent_label = (
         (latest.published_at, label_of(latest.subject)) if latest else (None, None)
     )
-    slot = due_slot(plan(fixtures, now, sent_at, sent_label), now)
-    if slot is not None:
-        typer.echo(f"{slot.kind}\t{slot.send_at:%Y-%m-%d}\t{slot.label}")
+    return due_slot(plan(fixtures, now, sent_at, sent_label), now)
 
 
 @app.command()
@@ -235,6 +266,12 @@ def run(
 
     with ProblemCollector() as problems:
         try:
+            # Resolved before building: a team nobody follows costs no collection, no Gemini.
+            resolved_recipients = resolve_recipients(settings, club.slug)
+            if not resolved_recipients.recipients and not settings.DRY_RUN:
+                report.outcome = "nada a enviar: sem inscritos"
+                typer.echo(f"{resolved.label}: nada a enviar, sem inscritos na {club.newsletter}.")
+                return
             newsletter = pipeline.build_newsletter(
                 resolved,
                 club,
@@ -274,7 +311,6 @@ def run(
                 text.replace(UNSUBSCRIBE_PLACEHOLDER, mailto), encoding="utf-8"
             )
 
-            resolved_recipients = resolve_recipients(settings, club.slug)
             recipients = resolved_recipients.recipients
             report.recipients = len(recipients)
             report.subscribers = resolved_recipients.from_api
@@ -399,13 +435,6 @@ def _resolve(team: Team, edition: str, date: datetime | None) -> Edition:
         typer.echo(f"Nenhuma edição {LABELS[edition]} prevista em {day:%d/%m/%Y}.")
         raise typer.Exit(code=1)
     return resolved
-
-
-def _due(fixtures: list[Fixture], now: datetime, latest: LatestEdition | None) -> Slot | None:
-    """The slot due now, planned from the real last send (and its label, against reschedules)."""
-    if latest is None:
-        return due_slot(plan(fixtures, now, None), now)
-    return due_slot(plan(fixtures, now, latest.published_at, label_of(latest.subject)), now)
 
 
 def _now() -> datetime:

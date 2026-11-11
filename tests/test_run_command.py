@@ -587,3 +587,25 @@ def test_e_mail_header_uses_the_public_logo_only_on_https(monkeypatch) -> None:
 
     assert https == "https://geral.example/static/vasco/logo-email.png"
     assert local is None
+
+
+@respx.mock
+def test_run_without_recipients_does_not_build(env, monkeypatch) -> None:
+    env.setenv("SUBSCRIBERS_API_TOKEN", "tok")
+    env.setenv("PUBLIC_URL", "https://news.test")
+    env.setenv("NEWSLETTER_RECIPIENTS", "")
+    respx.get("https://news.test/api/teams/flamengo/latest-edition").mock(
+        return_value=httpx.Response(404)
+    )
+    respx.get(API, params={"team": "flamengo"}).mock(return_value=httpx.Response(200, json=[]))
+
+    def no_build(*args, **kwargs):
+        raise AssertionError("must not collect news or call the model without recipients")
+
+    monkeypatch.setattr(pipeline, "build_newsletter", no_build)
+    args = ["run", "--team", "flamengo", "--edition", "news", "--date", "2026-10-12"]
+
+    result = CliRunner().invoke(cli.app, args)
+
+    assert result.exit_code == 0, result.output
+    assert "sem inscritos" in result.output
