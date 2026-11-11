@@ -182,3 +182,38 @@ def test_edicao_geral_with_nothing_this_week_sends_nothing(monkeypatch, tmp_path
 
     assert result.exit_code == 0
     assert "Nada na semana" in result.output
+
+
+def test_build_general_matches_series_names_loosely() -> None:
+    def loose(prompt, schema):
+        return {
+            "headline": "H",
+            "series": [{"name": "serie a", "summary": "Resumo da A.", "picks": [1]}],
+        }
+
+    edition = build_general(START, END, WEEKS, FakeLLMClient(loose))
+
+    assert edition.series[0].summary == "Resumo da A."
+
+
+def test_build_general_without_an_llm_keeps_results() -> None:
+    edition = build_general(START, END, WEEKS, None)
+
+    assert edition.headline == "O futebol brasileiro da semana"
+    assert edition.series[0].week.results
+
+
+def test_edicao_geral_without_gemini_key_still_builds(monkeypatch, tmp_path) -> None:
+    def no_key(settings):
+        raise LLMError("GEMINI_API_KEY is not set")
+
+    monkeypatch.setattr(cli, "collect_week", lambda start, end: WEEKS)
+    monkeypatch.setattr(cli, "get_llm_client", no_key)
+    out = tmp_path / "g.html"
+
+    result = CliRunner().invoke(
+        cli.app, ["edicao-geral", "--date", "2026-11-09", "--out", str(out)]
+    )
+
+    assert result.exit_code == 0, result.output
+    assert "Flamengo 2 x 1 Palmeiras" in out.with_suffix(".txt").read_text()

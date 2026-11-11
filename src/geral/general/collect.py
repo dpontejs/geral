@@ -16,7 +16,7 @@ from geral.stats.ge_tables import load_competition
 
 logger = logging.getLogger(__name__)
 
-MAX_NEWS = 8
+MAX_NEWS = 30  # candidates for the Gemini, spread over the week (the e-mail shows 3 per série)
 FEED_PAGES = 12  # a série's feed is busy: three pages are about two days of the Série A
 EDGE = 4  # rows on each end of a long table (G4, Z4)
 WHOLE_TABLE = 10  # up to this, the whole table
@@ -39,12 +39,20 @@ def cut_table(rows: list[StandingRow]) -> tuple[list[StandingRow], list[Standing
     return ordered[:EDGE], ordered[-EDGE:]
 
 
+def spread(news: list[Article], n: int) -> list[Article]:
+    """`n` stories evenly spaced through the list (newest first), so every day is there."""
+    if len(news) <= n:
+        return news
+    return [news[round(i * (len(news) - 1) / (n - 1))] for i in range(n)]
+
+
 def collect_week(
     start: datetime,
     end: datetime,
     series: dict[str, str] | None = None,
     client: httpx.Client | None = None,
     tz: ZoneInfo | None = None,
+    now: datetime | None = None,
 ) -> list[SerieWeek]:
     """Séries with a result or a story in [start, end); a série that fails is left out.
 
@@ -53,10 +61,11 @@ def collect_week(
     series = series if series is not None else SERIES
     client = client or create_http_client()
     tz = tz or ZoneInfo("America/Sao_Paulo")
+    now = now or datetime.now(tz)
     weeks, failed = [], 0
     for name, page in series.items():
         try:
-            week = _serie_week(name, page, start, end, client, tz)
+            week = _serie_week(name, page, start, end, client, tz, now)
         except Exception as e:
             logger.warning("Edição geral: %s left out: %s", name, e)
             failed += 1
@@ -69,11 +78,17 @@ def collect_week(
 
 
 def _serie_week(
-    name: str, page: str, start: datetime, end: datetime, client: httpx.Client, tz: ZoneInfo
+    name: str,
+    page: str,
+    start: datetime,
+    end: datetime,
+    client: httpx.Client,
+    tz: ZoneInfo,
+    now: datetime,
 ) -> SerieWeek:
     competition = load_competition(client, name, page, tz)
     results = sorted(
-        (g for g in competition.games if _over_in(g, start, end)), key=lambda g: g.kickoff
+        (g for g in competition.games if _over_in(g, start, end, now)), key=lambda g: g.kickoff
     )
     week = SerieWeek(name=name, results=results)
     if competition.phase_kind == "points" and competition.groups and len(competition.groups) == 1:
@@ -84,14 +99,14 @@ def _serie_week(
         start, end
     )
     news = [a for a in news if start <= a.published_at < end]
-    week.news = sorted(news, key=lambda a: a.published_at, reverse=True)[:MAX_NEWS]
+    week.news = spread(sorted(news, key=lambda a: a.published_at, reverse=True), MAX_NEWS)
     return week
 
 
-def _over_in(game: Game, start: datetime, end: datetime) -> bool:
-    return (
-        game.home_goals is not None
-        and game.away_goals is not None
-        and start <= game.kickoff < end
-        and game.kickoff + MATCH_LENGTH <= end
-    )
+def _over_in(game: Game, start: datetime, end: datetime, now: datetime) -> bool:
+    """Over (score and its time gone by, before now: a run ahead of time skips live scores)."""
+    if game.home_goals is None or game.away_goals is None:
+        return False
+    if not game.time_valid:  # 00:00 of its day: count it by the date, never twice
+        return start.date() <= game.kickoff.date() < end.date() and game.kickoff.date() < now.date()
+    return start <= game.kickoff < end and game.kickoff + MATCH_LENGTH <= min(end, now)

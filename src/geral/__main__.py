@@ -564,7 +564,12 @@ def edicao_geral(
     if not weeks:
         typer.echo(f"Nada na semana até {end:%d/%m/%Y}: edição geral não gerada.")
         return
-    edition = build_general(start, end, weeks, get_llm_client(settings))
+    try:
+        llm = get_llm_client(settings)
+    except LLMError as e:  # no key: the edition goes without the texts
+        logger.error("Edição geral without the Gemini: %s", e)
+        llm = None
+    edition = build_general(start, end, weeks, llm)
     logo = f"{settings.PUBLIC_URL.rstrip('/')}/static/geral/logo-email.png"
     html, text = render_general(
         edition,

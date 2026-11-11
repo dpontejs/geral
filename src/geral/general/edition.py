@@ -11,6 +11,7 @@ from geral.models import Article
 from geral.schedule import TZ
 from geral.summarizer.client import LLMClient, LLMError
 from geral.summarizer.pipeline import render_prompt
+from geral.web.team_requests import team_key
 
 logger = logging.getLogger(__name__)
 
@@ -66,18 +67,22 @@ def week_window(day: date) -> tuple[datetime, datetime]:
 
 
 def build_general(
-    start: datetime, end: datetime, weeks: list[SerieWeek], llm: LLMClient
+    start: datetime, end: datetime, weeks: list[SerieWeek], llm: LLMClient | None
 ) -> GeneralEdition:
-    """Ask the Gemini for the texts; if it fails, the edition keeps results and tables."""
-    try:
-        summary = llm.generate_json(render_prompt("geral", weeks=weeks), GeneralSummary)
-    except LLMError as e:
-        logger.error("Edição geral without texts, the LLM failed: %s", e)
-        summary = GeneralSummary(headline=FALLBACK_HEADLINE)
-    by_name = {s.name: s for s in summary.series}
+    """Ask the Gemini for the texts; without it (or if it fails) results and tables remain."""
+    summary = GeneralSummary(headline=FALLBACK_HEADLINE)
+    if llm is not None:
+        try:
+            summary = llm.generate_json(render_prompt("geral", weeks=weeks), GeneralSummary)
+        except LLMError as e:
+            logger.error("Edição geral without texts, the LLM failed: %s", e)
+    # "Série A", "serie a", "SÉRIE A": the model may not copy the name exactly.
+    by_name = {team_key(s.name): s for s in summary.series}
     sections = []
     for week in weeks:
-        texts = by_name.get(week.name)
+        texts = by_name.get(team_key(week.name))
+        if texts is None and summary.series:
+            logger.warning("Edição geral: no text for %s from the model", week.name)
         picks = _picks(texts.picks, week.news) if texts else []
         sections.append(
             GeneralSection(

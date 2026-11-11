@@ -118,7 +118,7 @@ def test_collect_week_news_from_the_series_page_feed(ge) -> None:
     )  # fmt: skip
 
     assert potiguar.results == []
-    assert 1 <= len(potiguar.news) <= 8
+    assert 1 <= len(potiguar.news) <= 30
     dates = [a.published_at for a in potiguar.news]
     assert dates == sorted(dates, reverse=True)
     assert all(datetime(2026, 11, 4, 8, tzinfo=TZ) <= d < datetime(2026, 11, 11, 8, tzinfo=TZ)
@@ -180,3 +180,50 @@ def test_collect_week_reads_more_feed_pages_than_a_team(ge) -> None:
     from geral.general.collect import FEED_PAGES
 
     assert FEED_PAGES > MAX_FEED_PAGES
+
+
+def test_collect_week_counts_only_matches_over_before_now(ge) -> None:
+    # Run on Saturday evening for the next Monday: the 21/03 final (16h) is over, so it counts;
+    # a run at 17h of the same day would still see it under way.
+    weeks = collect_week(
+        datetime(2026, 3, 16, 8, tzinfo=TZ), datetime(2026, 3, 23, 8, tzinfo=TZ),
+        series={"Potiguar": POTIGUAR_PAGE}, client=httpx.Client(), tz=TZ,
+        now=datetime(2026, 3, 21, 17, 0, tzinfo=TZ),
+    )  # fmt: skip
+
+    assert [g.id for g in weeks[0].results] == [350925]
+
+
+def test_untimed_match_on_a_monday_counts_in_that_week() -> None:
+    from geral.general.collect import _over_in
+    from geral.stats.ge_models import Game
+
+    monday = Game(
+        id=1, competition="Série A", kickoff=datetime(2026, 11, 9, 0, 0, tzinfo=TZ),
+        time_valid=False, home="A", away="B", home_id=1, away_id=2, home_goals=1,
+        away_goals=0, venue=None,
+    )  # fmt: skip
+    this_week = (datetime(2026, 11, 9, 8, tzinfo=TZ), datetime(2026, 11, 16, 8, tzinfo=TZ))
+    last_week = (datetime(2026, 11, 2, 8, tzinfo=TZ), datetime(2026, 11, 9, 8, tzinfo=TZ))
+
+    assert _over_in(monday, *this_week, now=this_week[1])
+    assert not _over_in(monday, *last_week, now=last_week[1])
+
+
+def test_spread_news_covers_the_whole_week() -> None:
+    from geral.general.collect import spread
+    from geral.models import Article
+
+    news = [
+        Article(url=f"https://ge.globo.com/{i}", title=f"n{i}", source="ge",
+                published_at=datetime(2026, 11, 2 + i // 10, 9, i % 10, tzinfo=TZ))
+        for i in range(70)
+    ]  # fmt: skip
+
+    picked = spread(sorted(news, key=lambda a: a.published_at, reverse=True), 30)
+
+    assert len(picked) == 30
+    days = {a.published_at.day for a in picked}
+    assert days == set(range(2, 9))
+    dates = [a.published_at for a in picked]
+    assert dates == sorted(dates, reverse=True)
