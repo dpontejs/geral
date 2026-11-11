@@ -141,3 +141,10 @@ def test_unlisted_team_is_hidden_from_portal_and_signup(store, mailer, clock) ->
 
     assert "Timbu News" not in page and 'value="nautico"' not in page
     assert signup.status_code == 400 and store.get("ana@x.com") is None
+
+
+def test_portal_clock_never_breaks_between_hours_and_minutes(client) -> None:
+    # The drawn colon is an element of its own: without nowrap a narrow column split "17:04".
+    page = client.get("/").text
+
+    assert re.search(r"\.clock \{[^}]*white-space: nowrap", page)
