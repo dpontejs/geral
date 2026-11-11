@@ -1,7 +1,7 @@
 # Edição geral por série (parte 4)
 
 - **Data:** 2026-11-11
-- **Status:** 4a implementada (aguardando PR)
+- **Status:** 4a entregue (PR #27); 4b implementada (aguardando PR)
 - **ADRs:** —
 
 ## Objetivo
@@ -39,6 +39,21 @@ brasileiro, e não de uma torcida.
 - CLI: `geral edicao-geral [--date AAAA-MM-DD] [--out arquivo.html] [--send]`: sem `--send`,
   só gera a prévia; com `--send`, envia para `NEWSLETTER_RECIPIENTS`.
 - Banco: nada novo.
+
+### 4b — inscrição e envio toda segunda
+
+- No portal, `geral` é mais uma entrada do catálogo web (`geral.general.GENERAL_EDITION`, montada
+  no código, fora do `teams.toml`): inscrição (opção "Edição geral" no ingresso), confirmação,
+  descadastro só dela, `/t/geral`, `/api/subscribers?team=geral`, edição guardada e boas-vindas
+  com texto próprio. Fica fora do placar, da lista de torcidas, dos joguinhos e do "Já tem!".
+- `geral due --all`: com inscrito na edição geral, a linha `geral<TAB>news<TAB>AAAA-MM-DD<TAB>
+  Edição geral — DD/MM/AAAA` das 8h às 11h da segunda, se a edição da semana ainda não saiu.
+  O gatilho da VPS (`infra`) não muda.
+- `geral edicao-geral --send`: destinatários pela API (`team=geral`) mais a lista fixa, link de
+  descadastro de cada um, e publica a edição no portal depois do envio real. `--skip-if-sent`
+  não refaz a edição da semana; sem inscritos, para antes de coletar.
+- Workflow `newsletter.yml`: `team=geral` roda `edicao-geral --send` (com `--date` e
+  `--skip-if-sent` quando vierem).
 
 ## Critérios de aceite (como testes)
 

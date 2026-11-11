@@ -40,6 +40,7 @@
           {% for team in teams %}
           <label class="pick" style="--c: {{ team.accent }}"><input type="checkbox" id="p-{{ team.slug }}" name="team" value="{{ team.slug }}"{% if team.slug in picked %} checked{% endif %}><img src="/static/{{ team.slug }}/icon-512.png" alt="">{{ team.newsletter | replace(" News", "") }}</label>
           {% endfor %}
+          {% if general %}<label class="pick" style="--c: {{ general.accent }}"><input type="checkbox" id="p-{{ general.slug }}" name="team" value="{{ general.slug }}"{% if general.slug in picked %} checked{% endif %}><img src="/static/{{ general.slug }}/icon-512.png" alt="">{{ general.newsletter }}</label>{% endif %}
         </div>
         <div class="row">
           <label class="field" for="email">Seu e-mail<input id="email" name="email" type="email" placeholder="voce@email.com" autocomplete="email" value="{{ email or '' }}" required></label>
@@ -116,12 +117,12 @@
         <p>Palpite com um clique no e-mail do pré-jogo. Quem acerta mais leva a torcida no placar.</p>
         <span class="go soon">Em breve</span>
       </div>
-      <div class="board mini">
-        <span class="lamp tag">Em breve</span>
+      <a class="board mini play-card" href="{% if editions.get('geral') %}/t/geral{% else %}#signup{% endif %}">
+        <span class="lamp tag">Nova · toda segunda</span>
         <span class="lamp title">Edição geral</span>
-        <p>Toda segunda, o futebol brasileiro da semana numa edição só: resultados, tabela e o que importa, da Série A aos estaduais.</p>
-        <span class="go soon">Em breve</span>
-      </div>
+        <p>Toda segunda, o futebol brasileiro da semana numa edição só: resultados, tabela e o que importa, da Série A à D. Assine no ingresso.</p>
+        <span class="go">{% if editions.get('geral') %}Ler a última →{% else %}Assinar ↑{% endif %}</span>
+      </a>
       <a class="board mini play-card" href="/pedir">
         <span class="lamp tag">Peça a sua</span>
         <span class="lamp title">Seu time?</span>

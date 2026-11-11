@@ -14,8 +14,9 @@ from rich.table import Table
 from geral import __version__, pipeline
 from geral.config import get_settings
 from geral.edition import edition_from_slot, resolve_match_edition
+from geral.general import GENERAL_EDITION, GENERAL_SLUG
 from geral.general.collect import collect_week
-from geral.general.edition import build_general, week_window
+from geral.general.edition import build_general, due_general, general_label, week_window
 from geral.general.render import render_general
 from geral.models import Edition, Newsletter
 from geral.render.renderer import render
@@ -24,7 +25,6 @@ from geral.schedule import DEFAULT_WINDOW, LABELS, TZ, Fixture, Slot, label_of, 
 from geral.schedule import due as due_slot
 from geral.send.recipients import (
     LatestEdition,
-    Recipient,
     latest_edition,
     mailto_unsubscribe,
     preview_summary,
@@ -234,6 +234,11 @@ def due(
         slot = _due_slot(club, settings, now, latest)
         if slot is not None:
             typer.echo(f"{club.slug}\t{slot.kind}\t{slot.send_at:%Y-%m-%d}\t{slot.label}")
+    if counts.get(GENERAL_SLUG):  # the edição geral: Mondays at 8h, for its subscribers
+        edition = store.latest_edition(GENERAL_SLUG)
+        monday = due_general(now, edition.subject if edition else None)
+        if monday is not None:
+            typer.echo(f"{GENERAL_SLUG}\tnews\t{monday:%Y-%m-%d}\t{general_label(monday)}")
 
 
 def _due_slot(club: Team, settings, now: datetime, latest: LatestEdition | None) -> Slot | None:
@@ -553,13 +558,32 @@ def edicao_geral(
         Path | None, typer.Option(help="HTML file (default: out/geral-<date>.html)")
     ] = None,
     send: Annotated[
-        bool, typer.Option("--send", help="Send to NEWSLETTER_RECIPIENTS (respects DRY_RUN)")
+        bool,
+        typer.Option("--send", help="Send to its subscribers and the fixed list (DRY_RUN holds)"),
+    ] = False,
+    skip_if_sent: Annotated[
+        bool, typer.Option("--skip-if-sent", help="Do nothing if this week's edition went out")
     ] = False,
 ) -> None:
-    """Build the edição geral (Série A to D) of a Monday; --send mails the fixed list."""
+    """Build the edição geral (Série A to D) of a Monday; --send mails it and publishes it."""
     _setup_logging()
     settings = get_settings()
     start, end = week_window((date or _now()).date())
+    label = general_label(end.date())
+    if skip_if_sent and _already_sent(settings, GENERAL_EDITION, label):
+        typer.echo(f"{label}: já saiu, nada a fazer.")
+        return
+    recipients = None
+    if send:
+        resolved = resolve_recipients(settings, GENERAL_SLUG)
+        if resolved.api_failed and not settings.DRY_RUN:
+            # Once a week: better a retry (the VPS dispatches it again) than the fixed list only.
+            typer.echo(f"{label}: lista de inscritos indisponível, envio cancelado.", err=True)
+            raise typer.Exit(code=1)
+        recipients = resolved.recipients
+        if not recipients and not settings.DRY_RUN:
+            typer.echo(f"{label}: nada a enviar, sem inscritos na edição geral.")
+            return
     weeks = collect_week(start, end)
     if not weeks:
         typer.echo(f"Nada na semana até {end:%d/%m/%Y}: edição geral não gerada.")
@@ -582,20 +606,28 @@ def edicao_geral(
     path.write_text(html.replace(UNSUBSCRIBE_PLACEHOLDER, mailto), encoding="utf-8")
     path.with_suffix(".txt").write_text(text.replace(UNSUBSCRIBE_PLACEHOLDER, mailto), "utf-8")
     typer.echo(f"{edition.subject}\ncópia em {path}")
-    if not send:
+    if recipients is None:
         return
     _, address = parseaddr(settings.NEWSLETTER_FROM)
     sender = ResendSender(
         settings.RESEND_API_KEY, formataddr(("Geral", address)), dry_run=settings.DRY_RUN
     )
-    recipients = [Recipient(email, mailto) for email in settings.NEWSLETTER_RECIPIENTS]
     try:
         sender.send(edition.subject, html, text, recipients)
     except SendError as e:
         typer.echo(f"Envio falhou: {e}", err=True)
         raise typer.Exit(code=1) from e
-    outcome = "não enviada (DRY_RUN)" if settings.DRY_RUN else "enviada"
-    typer.echo(f"{edition.label}: {outcome} para {len(recipients)} destinatários.")
+    if settings.DRY_RUN:
+        typer.echo(f"{edition.label}: não enviada (DRY_RUN), {len(recipients)} destinatários.")
+        return
+    typer.echo(f"{edition.label}: enviada para {len(recipients)} destinatários.")
+    if settings.SUBSCRIBERS_API_TOKEN:  # new subscribers get it in the welcome e-mail
+        try:
+            publish_latest_edition(settings, GENERAL_SLUG, edition.subject, html, text)
+        except httpx.HTTPError as e:
+            # Sent but not on the page: say it loudly, or a manual retry would send it again.
+            typer.echo(f"{edition.label}: enviada, mas não publicada no portal: {e}", err=True)
+            raise typer.Exit(code=1) from e
 
 
 def _setup_logging() -> None:

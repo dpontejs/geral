@@ -43,7 +43,7 @@ Ordem de execução. Cada fatia vira um PR; a página da fatia fica em `docs/fea
 
 ## Fatia 4 — Edição geral por série (`docs/features/edicao-geral.md`)
 - [x] 4a: montar a edição geral (resultados, tabela e notícias da Série A à D pelo ge, textos do Gemini) e `geral edicao-geral` com prévia e envio para a lista fixa
-- [ ] 4b: inscrição "Edição geral" no portal, edição guardada e envio toda segunda aos inscritos
+- [x] 4b: inscrição "Edição geral" no portal, edição guardada e envio toda segunda aos inscritos
 
 ## Fatia 5 — Cartola simples (o bolão por torcida já vem na 2a)
 
