@@ -2,36 +2,55 @@
 {% set picked = picked if picked is defined else [] %}
 {% set total = counts.values() | sum %}
 {% block content %}
-<section class="hero">
+<section class="hero wall" id="placar">
   <div class="wrap">
-    <div>
-      <span class="eyebrow">Newsletters de futebol, uma por torcida</span>
-      <h1 style="margin-top:12px">Todas as torcidas numa <span>Geral</span> só</h1>
-      <p class="lead">Notícias do seu time antes e depois de cada jogo, resumidas por IA, com placar, estatísticas e tabela. Escolha a sua torcida, ou várias, e receba por e-mail.</p>
-      <div class="stats">
-        <div>{{ teams | length }}<small>torcidas</small></div>
-        <div>{{ total }}<small>na Geral</small></div>
+    <h1>Todas as torcidas<br>numa Geral só</h1>
+    <div class="scoreboard">
+      <div class="board play">{{ scoreboard_animation() | safe }}</div>
+      <div class="board clockbox">
+        <time class="clock" datetime="{{ clock.isoformat(timespec='minutes') }}">{{ clock.strftime("%H:%M") }}</time>
+        <span class="bar" aria-hidden="true"></span>
+        <span class="lamp total">{{ total }}</span>
+        <small class="lamp">na Geral</small>
+      </div>
+      <div class="board">
+        <ol class="ranking" aria-label="Placar da Geral: inscritos por torcida">
+          {% for team in ranking %}
+          <li><span class="dot" style="--c: {{ team.accent }}" aria-hidden="true"></span><span class="name">{{ team.newsletter | replace(" News", "") }}</span><span class="n">{{ counts.get(team.slug, 0) }}</span></li>
+          {% endfor %}
+        </ol>
       </div>
     </div>
-
-    <form class="ticket" method="post" action="/subscribe" id="signup">
-      <div class="top"><h2>Ingresso</h2><span>Setor Geral · grátis</span></div>
-      {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
-      <label class="field" for="email">Seu e-mail</label>
-      <input id="email" name="email" type="email" placeholder="voce@email.com" autocomplete="email" value="{{ email or '' }}" required>
-      <div class="hidden-field" aria-hidden="true"><label for="website">Não preencha</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
-      <div class="picks" role="group" aria-label="Torcidas">
-        {% for team in teams %}
-        <label class="pick" style="--c: {{ team.accent }}"><input type="checkbox" id="p-{{ team.slug }}" name="team" value="{{ team.slug }}"{% if team.slug in picked %} checked{% endif %}><img src="/static/{{ team.slug }}/icon-512.png" alt="">{{ team.newsletter | replace(" News", "") }}</label>
-        {% endfor %}
-      </div>
-      <button class="btn" type="submit">Entrar na Geral</button>
-      <p class="fine">Você confirma pelo e-mail e sai com um clique, de cada torcida ou de tudo.</p>
-    </form>
+    <p class="lead">Uma newsletter por torcida, antes e depois de cada jogo: notícias resumidas por IA, placar, estatísticas e tabela. O placar aí em cima conta quem já entrou na Geral.</p>
   </div>
 </section>
 
-<div class="rule" aria-hidden="true"></div>
+<section class="signup">
+  <div class="wrap">
+    <form class="ticket" method="post" action="/subscribe" id="signup">
+      <div class="stub">
+        <h2>Ingresso<br>Geral</h2>
+        <span>Grátis · em pé · sai quando quiser</span>
+        <span class="serial" aria-hidden="true">Nº {{ "%06d" | format(total + 1) }}</span>
+      </div>
+      <div class="body">
+        <h3>Escolha suas torcidas</h3>
+        {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+        <div class="hidden-field" aria-hidden="true"><label for="website">Não preencha</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
+        <div class="picks" role="group" aria-label="Torcidas">
+          {% for team in teams %}
+          <label class="pick" style="--c: {{ team.accent }}"><input type="checkbox" id="p-{{ team.slug }}" name="team" value="{{ team.slug }}"{% if team.slug in picked %} checked{% endif %}><img src="/static/{{ team.slug }}/icon-512.png" alt="">{{ team.newsletter | replace(" News", "") }}</label>
+          {% endfor %}
+        </div>
+        <div class="row">
+          <label class="field" for="email">Seu e-mail<input id="email" name="email" type="email" placeholder="voce@email.com" autocomplete="email" value="{{ email or '' }}" required></label>
+          <button class="btn" type="submit">Passar na roleta</button>
+        </div>
+        <p class="fine">Você confirma pelo e-mail e sai com um clique, de cada torcida ou de tudo.</p>
+      </div>
+    </form>
+  </div>
+</section>
 
 <section class="block" id="torcidas">
   <div class="wrap">
@@ -42,83 +61,60 @@
     <div class="torcidas">
       {% for team in teams %}{% set ed = editions.get(team.slug) %}
       <article class="torcida" style="--c: {{ team.accent }}">
-        <div class="face"><img src="/static/{{ team.slug }}/icon-512.png" alt="Mascote da {{ team.newsletter }}"><div><h3>{{ team.newsletter }}</h3><div class="club">{{ team.name }}{% if team.league_name %} · {{ team.league_name }}{% endif %}</div></div></div>
-        <div class="last">
-          {% if ed %}{% set rest = ed.subject.split(" — ", 1)[-1] %}{% set label, _, headline = rest.partition(": ") %}
-          <span class="eyebrow">{{ label }}</span><p>{{ headline or label }}</p>
-          {% else %}
-          <span class="eyebrow">Em breve</span><p>Primeira edição em breve</p>
-          {% endif %}
-        </div>
-        <div class="foot"><span>{{ counts.get(team.slug, 0) }} na Geral</span>{% if ed %}<a href="/t/{{ team.slug }}">Ler</a>{% endif %}</div>
+        <img src="/static/{{ team.slug }}/icon-512.png" alt="Mascote da {{ team.newsletter }}">
+        <div><h3>{{ team.newsletter }}</h3><div class="club">{{ team.name }}{% if team.league_name %} · {{ team.league_name }}{% endif %}</div></div>
+        {% if ed %}{% set rest = ed.subject.split(" — ", 1)[-1] %}{% set label, _, headline = rest.partition(": ") %}
+        <p class="last"><b>{{ label }}</b>{{ headline or label }}</p>
+        {% else %}
+        <p class="last"><b>Em breve</b>Primeira edição em breve</p>
+        {% endif %}
+        <div class="foot"><span>{{ counts.get(team.slug, 0) }} na Geral</span>{% if ed %}<a href="/t/{{ team.slug }}">Ler a edição</a>{% endif %}</div>
       </article>
       {% endfor %}
     </div>
   </div>
 </section>
 
-<section class="block why" id="por-que-geral">
-  <div class="wrap why-grid">
+<section class="why" id="por-que-geral">
+  <div class="wrap">
     <img src="/static/geral/icon-512.png" alt="O geraldino, de radinho de pilha no ouvido, comemorando um gol">
-    <div>
-      <span class="eyebrow">Por que Geral?</span>
-      <h2>O lugar onde toda torcida cabia</h2>
+    <div class="text">
+      <h2>Por que Geral?</h2>
       <p>No Maracanã antigo, a Geral era o setor mais popular do estádio: o ingresso mais barato, todo mundo em pé, colado no gramado. Ali se misturavam torcedores de todos os times, e quem ficava ali ganhou nome próprio: o geraldino, quase sempre com o radinho de pilha colado no ouvido.</p>
       <p>A Geral acabou na reforma do estádio, mas a ideia continua boa. Aqui, cada torcida tem a sua newsletter, e todas dividem o mesmo lugar.</p>
     </div>
   </div>
 </section>
 
-<section class="block waiting" id="enquanto">
-  <div class="wrap">
+<section class="block intervalo" id="intervalo">
+  <div class="wrap" style="padding-top:52px">
     <div class="head">
-      <h2>Seu time ainda não chegou?</h2>
-      <p>Logo dá para pedir a sua torcida. Enquanto ela não nasce, a Geral vai ter lugar pra você.</p>
+      <h2>Intervalo</h2>
+      <p>Enquanto a bola não rola: joguinhos, a edição da semana e o pedido do seu time.</p>
     </div>
-    <div class="wait-grid">
-      <div class="card request soon">
-        <span class="eyebrow" style="color:var(--concrete-lt)">Em breve</span>
-        <h3>Peça seu time</h3>
-        <p>Quando juntar torcida, a gente monta a newsletter e te avisa.</p>
+    <div class="grid">
+      <div class="board mini">
+        <span class="lamp tag">Em breve</span>
+        <span class="lamp title">7 a 0</span>
+        <span class="lamp big blink" aria-hidden="true">? × ?</span>
+        <p>Adivinhe o placar de um jogo histórico em sete tentativas.</p>
       </div>
-      <div class="card soon">
-        <span class="eyebrow">Em breve · toda segunda</span>
-        <h3>Edição geral</h3>
+      <div class="board mini">
+        <span class="lamp tag">Em breve</span>
+        <span class="lamp title">Bolão</span>
+        <p>Palpite com um clique no e-mail do pré-jogo. Quem acerta mais leva a torcida no placar.</p>
+      </div>
+      <div class="board mini">
+        <span class="lamp tag">Em breve · toda segunda</span>
+        <span class="lamp title">Edição geral</span>
         <p>O futebol brasileiro da semana numa edição só: resultados, tabela e o que importa, da Série A à D.</p>
         <div class="series"><span>SÉRIE A</span><span>B</span><span>C</span><span>D</span><span>ESTADUAIS</span></div>
       </div>
-      <div class="card soon">
-        <span class="eyebrow">Em breve</span>
-        <h3>7 a 0</h3>
-        <div class="quiz">? × ?</div>
-        <p>Adivinhe o placar de um jogo histórico em sete tentativas.</p>
+      <div class="board mini">
+        <span class="lamp tag">Em breve</span>
+        <span class="lamp title">Seu time?</span>
+        <p>Peça a sua torcida. Quando juntar gente, a gente acende a newsletter e te avisa.</p>
       </div>
-      <div class="card soon">
-        <span class="eyebrow">Em breve</span>
-        <h3>Bolão da Geral</h3>
-        <p>Palpite com um clique no e-mail do pré-jogo. Quem acerta mais leva a torcida no placar.</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<section class="block" id="placar">
-  <div class="wrap placar-wrap">
-    <div>
-      <span class="eyebrow">Placar da Geral</span>
-      <h2 style="font-size:clamp(30px,4.5vw,46px);margin-top:10px">Qual torcida enche mais a Geral?</h2>
-      <p class="note" style="margin-top:14px">O placar conta quem está inscrito em cada torcida. Com o bolão, ele vai somar também os pontos: <b>a torcida que mais acerta sobe</b>.</p>
-    </div>
-    <div class="placar">
-      <table>
-        <caption>Atualiza a cada inscrição confirmada</caption>
-        <thead><tr><th>#</th><th>Torcida</th><th style="text-align:right">Na Geral</th></tr></thead>
-        <tbody>
-          {% for team in ranking %}
-          <tr><td class="pos">{{ loop.index }}</td><td><span class="dot" style="--c: {{ team.accent }}"></span>{{ team.newsletter | replace(" News", "") }}</td><td class="n">{{ counts.get(team.slug, 0) }}</td></tr>
-          {% endfor %}
-        </tbody>
-      </table>
     </div>
   </div>
 </section>
