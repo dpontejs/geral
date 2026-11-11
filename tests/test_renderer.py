@@ -360,11 +360,7 @@ def email_header(html: str) -> str:
 def test_render_header_uses_the_brand_logo_not_the_crest() -> None:
     # The Urubu News way: the newsletter has its own mascot; the crest is match data only.
     logo = "https://urubunews.diegoponte.dev/static/logo-email.png"
-    newsletter = full_newsletter().model_copy(
-        update={"team": FLAMENGO.model_copy(update={"brand_logo": logo})}
-    )
-
-    html, text = render(newsletter)
+    html, text = render(full_newsletter(), logo_url=logo)
 
     header = email_header(html)
     assert re.search(rf'<img src="{re.escape(logo)}" alt="Urubu News"', header)

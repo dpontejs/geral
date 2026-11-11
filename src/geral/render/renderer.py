@@ -127,6 +127,7 @@ def render(
     newsletter: Newsletter,
     unsubscribe_url: str | None = None,
     subscribe_url: str | None = None,
+    logo_url: str | None = None,
     note: str | None = None,
 ) -> tuple[str, str]:
     """Render the newsletter as (html with inlined CSS, plain text); `note` adds a box."""
@@ -135,6 +136,8 @@ def render(
         "team": newsletter.team,
         **team_colors(newsletter.team.accent),
         "note": note,
+        # The newsletter's own mascot logo; never the club crest. None: the name in text.
+        "logo_url": logo_url,
         "standings": standings_window(newsletter.standings),
         "unsubscribe_url": unsubscribe_url,
         "subscribe_url": subscribe_url,

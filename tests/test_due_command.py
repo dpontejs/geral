@@ -26,7 +26,7 @@ LAST_SENT = datetime(2026, 10, 16, 19, 11, tzinfo=TZ)
 def calendar(monkeypatch):
     monkeypatch.setattr(cli, "_fixtures", lambda team, settings, now: [BAHIA])
     latest = LatestEdition(subject="Urubu News — Novidades: algo", published_at=LAST_SENT)
-    monkeypatch.setattr(cli, "_latest", lambda settings: latest)
+    monkeypatch.setattr(cli, "_latest", lambda settings, team: latest)
     return monkeypatch
 
 
@@ -77,7 +77,7 @@ def test_due_does_not_repeat_the_edition_just_sent(calendar) -> None:
         published_at=datetime(2026, 10, 18, 12, 31, tzinfo=TZ),
     )
     calendar.setattr(cli, "_fixtures", lambda team, settings, now: [moved])
-    calendar.setattr(cli, "_latest", lambda settings: sent)
+    calendar.setattr(cli, "_latest", lambda settings, team: sent)
     calendar.setattr(cli, "_now", lambda: datetime(2026, 10, 18, 13, 5, tzinfo=TZ))
 
     result = CliRunner().invoke(cli.app, ["due", "--team", "flamengo"])

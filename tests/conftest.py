@@ -1,6 +1,8 @@
 import pytest
+from webkit import Clock, FakeMailer, make_client
 
 from geral.config import Settings, get_settings
+from geral.web.store import SubscriberStore
 
 
 @pytest.fixture(autouse=True)
@@ -37,3 +39,26 @@ def flamengo_in_catalog(monkeypatch: pytest.MonkeyPatch) -> None:
     monkeypatch.setattr(
         cli, "get_team", lambda slug: FLAMENGO if slug == "flamengo" else get_team(slug)
     )
+
+
+# --- web app ---------------------------------------------------------------------------------
+
+
+@pytest.fixture
+def store(tmp_path) -> SubscriberStore:
+    return SubscriberStore(tmp_path / "subscribers.db")
+
+
+@pytest.fixture
+def mailer() -> FakeMailer:
+    return FakeMailer()
+
+
+@pytest.fixture
+def clock() -> Clock:
+    return Clock()
+
+
+@pytest.fixture
+def client(store, mailer, clock):
+    return make_client(store, mailer, clock)

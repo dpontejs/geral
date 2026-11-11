@@ -13,12 +13,13 @@ O escudo continua só no placar, como dado da partida.
 ## Fora de escopo
 
 - Identidade do hub (nome, logo, página): depende da escolha do nome (ver `docs/PLAN.md`).
-- Servir as imagens: entra com o site do hub (fatia 2). Até lá, `brand_logo` fica vazio e o
-  cabeçalho mostra o nome em texto.
+- Servir as imagens: o portal da Geral serve `/static/<slug>/` (parte 2.1). O `run` usa
+  `{PUBLIC_URL}/static/<slug>/logo-email.png` só quando `PUBLIC_URL` é https; senão o cabeçalho
+  mostra o nome em texto.
 
 ## Contratos
 
-- `teams.toml`: `brand_logo` (URL absoluta da `logo-email.png`) e `accent` (cor da marca).
+- `teams.toml`: `accent` (cor da marca). A logo vai como `render(..., logo_url=...)`.
 - Arquivos por time, no mesmo formato da Urubu News, em `static/<slug>/`:
   - `logo-email.png`: 640×255, exibida a 320×127, mascote + nome, sobre fundo papel `#F4EFE6`;
   - `icon-512.png`: só o mascote num círculo, transparente fora dele (favicon, avatar);
@@ -86,8 +87,8 @@ Valores por time:
 
 ## Critérios de aceite (como testes)
 
-- [x] `test_render_header_uses_the_brand_logo_not_the_crest`: com `brand_logo`, o cabeçalho tem a logo e nenhum escudo.
-- [x] `test_render_header_without_logo_shows_the_name_only`: sem `brand_logo`, só o nome em texto.
+- [x] `test_render_header_uses_the_brand_logo_not_the_crest`: com `logo_url`, o cabeçalho tem a logo e nenhum escudo.
+- [x] `test_render_header_without_logo_shows_the_name_only`: sem `logo_url`, só o nome em texto.
 - [x] `test_render_uses_team_name_and_colors`: nome e cor de destaque do time no e-mail.
 
 ## Verificação ponta a ponta
@@ -100,4 +101,4 @@ uv run geral preview --team nautico --edition post --date 2026-11-08 --open
 
 - "Porco" e "Timbu" são apelidos de torcida; "Almirante" e "Elefante" também. Vale uma busca no
   INPI antes de investir na marca, como anotado para a Urubu News.
-- Hospedagem das imagens: até o site do hub existir, não há URL pública para `brand_logo`.
+- As imagens dependem do portal da Geral no ar; com imagens bloqueadas, aparece o `alt`.

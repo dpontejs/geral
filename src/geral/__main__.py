@@ -165,13 +165,14 @@ def preview(
     resolved = _resolve(club, edition, date)
     settings = get_settings()
     newsletter = pipeline.build_newsletter(
-        resolved, club, settings, published_topics=_published_topics(settings)
+        resolved, club, settings, published_topics=_published_topics(settings, club)
     )
     html_path = out or Path("out") / f"{club.slug}-{resolved.end:%Y-%m-%d}.html"
     html_path.parent.mkdir(parents=True, exist_ok=True)
     html, text = render(
         newsletter,
         unsubscribe_url=pipeline.unsubscribe_url(settings),
+        logo_url=_brand_logo(settings, club),
         note=note,
     )
 
@@ -194,7 +195,7 @@ def due(team: TeamOption) -> None:
     except StatsUnavailable as e:
         logger.error("Calendar unavailable, nothing is due: %s", e)
         return
-    latest = _latest(settings)
+    latest = _latest(settings, club)
     sent_at, sent_label = (
         (latest.published_at, label_of(latest.subject)) if latest else (None, None)
     )
@@ -222,7 +223,7 @@ def run(
     resolved = _resolve(club, edition, date)
     settings = get_settings()
     report = RunReport(edition=f"{club.newsletter} — {resolved.label}", outcome="interrompida")
-    if skip_if_sent and _already_sent(settings, resolved.label):
+    if skip_if_sent and _already_sent(settings, club, resolved.label):
         report.outcome = "já enviada por outro disparo"
         typer.echo(f"{resolved.label}: já enviada, nada a fazer.")
         _publish_report(report)
@@ -240,7 +241,7 @@ def run(
                 settings,
                 llm=llm,
                 report=report,
-                published_topics=_published_topics(settings),
+                published_topics=_published_topics(settings, club),
             )
             _fill_report(report, newsletter)
             if resolved.kind == "post" and newsletter.last_match is None:
@@ -260,6 +261,7 @@ def run(
                     newsletter,
                     unsubscribe_url=UNSUBSCRIBE_PLACEHOLDER,
                     subscribe_url=subscribe,
+                    logo_url=_brand_logo(settings, club),
                     note=note,
                 )
 
@@ -272,7 +274,7 @@ def run(
                 text.replace(UNSUBSCRIBE_PLACEHOLDER, mailto), encoding="utf-8"
             )
 
-            resolved_recipients = resolve_recipients(settings)
+            resolved_recipients = resolve_recipients(settings, club.slug)
             recipients = resolved_recipients.recipients
             report.recipients = len(recipients)
             report.subscribers = resolved_recipients.from_api
@@ -290,7 +292,9 @@ def run(
             if ids and settings.SUBSCRIBERS_API_TOKEN:
                 try:
                     plain_html, plain_text = render_edition(None) if note else (html, text)
-                    publish_latest_edition(settings, plain_subject, plain_html, plain_text)
+                    publish_latest_edition(
+                        settings, club.slug, plain_subject, plain_html, plain_text
+                    )
                 except httpx.HTTPError as e:
                     logger.warning(
                         "Could not publish the latest edition for new subscribers: %s", e
@@ -309,16 +313,29 @@ def run(
             _publish_report(report)
 
 
-def _already_sent(settings, label: str) -> bool:
+def _already_sent(settings, team: Team, label: str) -> bool:
     """Whether the page's latest edition is this one; unknown counts as not sent."""
     if not settings.SUBSCRIBERS_API_TOKEN:
         return False
     try:
-        edition = latest_edition(settings)
+        edition = latest_edition(settings, team.slug)
     except (httpx.HTTPError, ValueError) as e:
         logger.warning("Could not check whether the edition was already sent: %s", e)
         return False
     return edition is not None and f"— {label}" in edition.subject
+
+
+STATIC = Path(__file__).parent / "static"
+
+
+def _brand_logo(settings, team: Team) -> str | None:
+    """The newsletter logo served by the Geral page; only on a public (https) page, since a
+    local one does not load in mail clients. Without it the header shows the name in text."""
+    if not settings.PUBLIC_URL.startswith("https://"):
+        return None
+    if not (STATIC / team.slug / "logo-email.png").exists():
+        return None
+    return f"{settings.PUBLIC_URL.rstrip('/')}/static/{team.slug}/logo-email.png"
 
 
 def _fill_report(report: RunReport, newsletter: Newsletter) -> None:
@@ -365,7 +382,7 @@ def _resolve(team: Team, edition: str, date: datetime | None) -> Edition:
     except StatsUnavailable as e:
         typer.echo(f"Agenda da ESPN indisponível: {e}")
         raise typer.Exit(code=0 if edition == "auto" else 1) from e
-    latest = _latest(settings)
+    latest = _latest(settings, team)
     if edition == "auto":
         sent_at, sent_label = (
             (latest.published_at, label_of(latest.subject)) if latest else (None, None)
@@ -400,18 +417,18 @@ def _fixtures(team: Team, settings, now: datetime) -> list[Fixture]:
     return client.get_fixtures(now)
 
 
-def _published_topics(settings) -> list[str]:
+def _published_topics(settings, team: Team) -> list[str]:
     """Topics of the edition already sent, so the model does not repeat them."""
-    latest = _latest(settings)
+    latest = _latest(settings, team)
     return latest.topic_titles if latest else []
 
 
-def _latest(settings) -> LatestEdition | None:
+def _latest(settings, team: Team) -> LatestEdition | None:
     """The page's latest edition (subject, send time); unknown (no token, page down) is None."""
     if not settings.SUBSCRIBERS_API_TOKEN:
         return None
     try:
-        return latest_edition(settings)
+        return latest_edition(settings, team.slug)
     except (httpx.HTTPError, ValueError) as e:
         logger.warning("Could not read the latest edition, planning without it: %s", e)
         return None
