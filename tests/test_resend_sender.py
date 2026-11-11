@@ -178,7 +178,7 @@ def test_sender_name_is_the_team_newsletter() -> None:
 
     sender = ResendSender.from_settings(settings, get_team("abc"))
 
-    assert sender.sender == "Elefante News <news@geral.test>"
+    assert sender.sender == "Elefante News <elefante@geral.test>"
 
 
 def test_personalize_fills_token_or_drops_card() -> None:
@@ -212,3 +212,18 @@ def test_each_recipient_gets_their_own_bet_token() -> None:
     first, second = json.loads(route.calls.last.request.content)
     assert "/palpite?t=ANA-BET" in first["html"]
     assert "palpite" not in second["html"]
+
+
+def test_each_newsletter_has_its_own_sender_address() -> None:
+    settings = Settings(NEWSLETTER_FROM="news@geral.test")
+    slugs = ("vasco", "palmeiras", "abc", "nautico", "flamengo")
+
+    senders = {s: ResendSender.from_settings(settings, get_team(s)).sender for s in slugs}
+
+    assert senders == {
+        "vasco": "Almirante News <almirante@geral.test>",
+        "palmeiras": "Porco News <porco@geral.test>",
+        "abc": "Elefante News <elefante@geral.test>",
+        "nautico": "Timbu News <timbu@geral.test>",
+        "flamengo": "Urubu News <news@geral.test>",  # the old readers keep its avatar
+    }

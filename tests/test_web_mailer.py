@@ -27,7 +27,7 @@ def test_confirmation_is_from_the_geral_and_lists_the_chosen_newsletters() -> No
     payload = json.loads(route.calls.last.request.content)
     assert route.calls.last.request.headers["Authorization"] == "Bearer re_test"
     assert payload["to"] == ["ana@example.com"]
-    assert payload["from"] == "Geral <news@example.com>"
+    assert payload["from"] == "Geral <geral@example.com>"
     assert payload["subject"] == "Confirme sua inscrição na Geral"
     assert (
         '<img src="https://geral.test/static/geral/logo-email.png" alt="Geral"' in payload["html"]
@@ -70,7 +70,7 @@ def test_edition_goes_from_the_team_newsletter_with_the_personal_unsubscribe_lin
     )
 
     [email] = json.loads(route.calls.last.request.content)
-    assert email["from"] == "Porco News <news@example.com>"
+    assert email["from"] == "Porco News <porco@example.com>"
     assert email["to"] == ["ana@example.com"]
     assert f'href="{unsubscribe}"' in email["html"]
     assert email["headers"]["List-Unsubscribe-Post"] == "List-Unsubscribe=One-Click"

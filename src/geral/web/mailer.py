@@ -18,6 +18,7 @@ logger = logging.getLogger(__name__)
 RESEND_URL = "https://api.resend.com/emails"
 SUBJECT = "Confirme sua inscrição na Geral"
 HUB_NAME = "Geral"
+HUB_MAILBOX = "geral"  # confirmations and notices: geral@<domain>, with the Geral's own avatar
 TEMPLATES = Path(__file__).parent / "templates"
 
 
@@ -51,6 +52,7 @@ class ResendConfirmationMailer:
     ) -> None:
         self.api_key = api_key
         self.address = parseaddr(sender)[1]
+        self.hub_address = f"{HUB_MAILBOX}@{self.address.rpartition('@')[2]}"
         self.public_url = public_url.rstrip("/")
         self._client = client or httpx.Client(timeout=15.0)
 
@@ -70,7 +72,7 @@ class ResendConfirmationMailer:
         context = {"confirm_url": confirm_url, "public_url": self.public_url, "teams": teams}
         sent = self._post(
             {
-                "from": formataddr((HUB_NAME, self.address)),
+                "from": formataddr((HUB_NAME, self.hub_address)),
                 "to": [email],
                 "subject": SUBJECT,
                 "html": _env.get_template("email/confirm.html.j2").render(context),
@@ -92,7 +94,7 @@ class ResendConfirmationMailer:
         """A team's latest edition to a new subscriber, same path as the newsletter run."""
         sender = ResendSender(
             self.api_key,
-            formataddr((team.newsletter, self.address)),
+            formataddr((team.newsletter, team.sender_address(self.address))),
             dry_run=False,
             client=self._client,
         )
@@ -105,7 +107,7 @@ class ResendConfirmationMailer:
         """Plain-text notice to the owner (new subscriber)."""
         self._post(
             {
-                "from": formataddr((HUB_NAME, self.address)),
+                "from": formataddr((HUB_NAME, self.hub_address)),
                 "to": [to],
                 "subject": subject,
                 "text": text,
