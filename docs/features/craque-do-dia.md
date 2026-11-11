@@ -76,5 +76,5 @@ uv run pytest && uv run uvicorn geral.web.app:create_app --factory
 ## Riscos e dúvidas abertas
 
 - Curadoria: o primeiro rascunho das listas é meu e pode errar época, posição ou fato (mais no ABC
-  e no Náutico). As listas passam pela revisão do Diego antes do merge.
+  e no Náutico). As listas passam pela revisão do dev antes do merge.
 - Cola: como no "Quanto foi?", seis chutes revelam a resposta. Aceito.
