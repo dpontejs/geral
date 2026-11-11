@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Confirme sua inscrição na Geral</title></head>
+<body style="margin:0;padding:0;background-color:#EFE4CC;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#EFE4CC;">
+<tr><td align="center" style="padding:16px 8px;">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background-color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1E1E1E;">
+  <tr><td style="background-color:#EFE4CC;padding:16px 24px 12px 24px;">
+    <img src="{{ public_url }}/static/geral/logo-email.png" alt="Geral" width="320" height="127" style="display:block;border:0;color:#1E1E1E;font-size:26px;font-weight:800;">
+  </td></tr>
+  <tr><td style="background-color:#8E8B84;height:5px;line-height:5px;font-size:5px;">&nbsp;</td></tr>
+  <tr><td style="padding:24px;">
+    <p style="font-size:22px;font-weight:800;margin:0 0 12px 0;color:#1E1E1E;">Falta só um clique</p>
+    <p style="font-size:15px;line-height:1.55;margin:0 0 12px 0;color:#222222;">Confirme seu e-mail para entrar na Geral e receber, antes e depois de cada jogo:</p>
+    <ul style="font-size:15px;line-height:1.6;margin:0 0 20px 0;padding-left:20px;color:#222222;">
+      {% for team in teams %}<li><strong style="color:{{ team.accent }};">{{ team.newsletter }}</strong> ({{ team.name }})</li>{% endfor %}
+    </ul>
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td style="background-color:#1E1E1E;">
+      <a href="{{ confirm_url }}" style="display:inline-block;padding:12px 22px;color:#EFE4CC;font-size:16px;font-weight:800;text-decoration:none;">Entrar na Geral</a>
+    </td></tr></table>
+    <p style="font-size:13px;line-height:1.5;margin:20px 0 0 0;color:#6B6B6B;">O link vale por 7 dias. Se não foi você que pediu, é só ignorar este e-mail: sem confirmação, você não entra na lista.</p>
+  </td></tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>
