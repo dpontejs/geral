@@ -15,7 +15,7 @@ from pathlib import Path
 from urllib.parse import urlencode
 
 from fastapi import FastAPI, Form, Request, Response
-from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
+from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from jinja2 import select_autoescape
@@ -124,6 +124,16 @@ def create_app(
     mailer = mailer or mailer_from_settings(settings)
     bolao = bolao or BolaoStore(store.path)  # same SQLite: the ranking joins the subscriptions
     catalog = teams if teams is not None else load_teams()
+    # Teams people can see and join; unlisted ones (moving in) still work for links and the API.
+    listed = {slug: team for slug, team in catalog.items() if team.listed}
+    legacy_team = catalog.get(settings.LEGACY_TEAM or "")
+    legacy_secret = settings.LEGACY_SUBSCRIBE_SECRET if legacy_team else None
+    legacy_hosts = {h.strip().lower() for h in settings.LEGACY_HOSTS.split(",") if h.strip()}
+
+    def read_legacy(purpose: str, token: str) -> str | None:
+        """E-mail in a token the moved-in app signed (its unsubscribe and bet links)."""
+        return read_token(legacy_secret, purpose, token, now()) if legacy_secret else None
+
     limiter = RateLimiter(SIGNUPS_PER_IP, SIGNUP_WINDOW)
     public_url = settings.PUBLIC_URL.rstrip("/")
 
@@ -144,20 +154,31 @@ def create_app(
             request,
             "index.html.j2",
             status,
-            teams=list(catalog.values()),
+            teams=list(listed.values()),
             editions=store.latest_editions(),
             counts=counts,
-            ranking=sorted(catalog.values(), key=lambda t: (-counts.get(t.slug, 0), t.newsletter)),
+            ranking=sorted(listed.values(), key=lambda t: (-counts.get(t.slug, 0), t.newsletter)),
             clock=now().astimezone(BRASILIA),
             **context,
         )
 
     app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+    if legacy_team:
+        # Old e-mails load the moved-in app's brand from the root of /static.
+        for name in ("logo-email.png", "icon-512.png", "og-image.png"):
+            path = STATIC / legacy_team.slug / name
+
+            @app.get(f"/static/{name}", include_in_schema=False)
+            def legacy_brand(path: Path = path):
+                return FileResponse(path, media_type="image/png")
+
     # Brands (mascot, e-mail logo, link preview) of the hub and of every team.
     app.mount("/static", StaticFiles(directory=STATIC), name="static")
 
     @app.api_route("/", methods=["GET", "HEAD"], response_class=HTMLResponse)
     def index(request: Request):
+        if request.url.hostname and request.url.hostname.lower() in legacy_hosts:
+            return RedirectResponse(f"{public_url}/", status_code=301)
         return portal(request)
 
     @app.get("/t/{team}", response_class=HTMLResponse)
@@ -189,7 +210,7 @@ def create_app(
     async def subscribe(request: Request):
         form = await request.form()
         email = normalize(str(form.get("email", "")))
-        chosen = [catalog[s] for s in dict.fromkeys(map(str, form.getlist("team"))) if s in catalog]
+        chosen = [listed[s] for s in dict.fromkeys(map(str, form.getlist("team"))) if s in listed]
         check_inbox = (
             "Confira seu e-mail",
             "Se o endereço estiver certo, você vai receber um link para confirmar a inscrição. "
@@ -306,7 +327,8 @@ def create_app(
             email = read_token(secret, unsubscribe_purpose(team.slug), token, now())
             if email is not None:
                 return email, team
-        return None
+        email = read_legacy("unsubscribe", token)  # the old app's list was one team
+        return (email, legacy_team) if email is not None else None
 
     def invalid_unsubscribe(request: Request) -> HTMLResponse:
         return message(
@@ -409,7 +431,9 @@ def create_app(
 
     def bettor(request: Request, token: str, team: str, match_id: str):
         """(email, team, match) behind a bet link, or the error page to return instead."""
-        email = read_token(secret, "bet", token, now())
+        email = read_token(secret, "bet", token, now()) or read_legacy("bet", token)
+        if not team and legacy_team:
+            team = legacy_team.slug  # the old app's links carry no team
         if email is None:
             return None, message(
                 request,
@@ -500,12 +524,19 @@ def create_app(
         bolao.place_bet(email, club.slug, match.match_id, score, now())
         return bet_page(request, mode="done", nickname=bolao.nickname(email), **context)
 
+    @app.get("/bolao")
+    def legacy_ranking(request: Request, t: str = ""):
+        if legacy_team is None:
+            return message(request, "Torcida não encontrada", "Volte para a Geral.", status=404)
+        query = f"?{urlencode({'t': t})}" if t else ""
+        return RedirectResponse(f"/bolao/{legacy_team.slug}{query}", status_code=301)
+
     @app.get("/bolao/{team}", response_class=HTMLResponse)
     def ranking(request: Request, team: str, t: str = ""):
         club = catalog.get(team)
         if club is None:
             return message(request, "Torcida não encontrada", "Volte para a Geral.", status=404)
-        email = read_token(secret, "bet", t, now()) if t else None
+        email = (read_token(secret, "bet", t, now()) or read_legacy("bet", t)) if t else None
         me = bolao.nickname(email) if email else None
         season = now().astimezone(TZ).year
         rows = bolao.ranking(team, season)

@@ -113,3 +113,11 @@ def test_team_page_drops_the_bet_card(client) -> None:
     page = client.get("/t/vasco").text
 
     assert "palpite" not in page and BET_TOKEN_PLACEHOLDER not in page
+
+
+def test_unlisted_team_is_hidden_from_portal_and_signup(client, store, mailer) -> None:
+    page = client.get("/").text
+    signup = client.post("/subscribe", data={"email": "ana@x.com", "team": ["flamengo"]})
+
+    assert "Urubu News" not in page and 'value="flamengo"' not in page
+    assert signup.status_code == 400 and store.get("ana@x.com") is None

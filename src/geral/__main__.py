@@ -37,6 +37,7 @@ from geral.stats.espn import ESPNStatsClient, StatsUnavailable
 from geral.stats.table import standings_window
 from geral.summarizer.client import LLMError
 from geral.teams import Team, UnknownTeam, get_team, load_teams
+from geral.web.legacy import import_single_team
 from geral.web.store import SubscriberStore
 
 logger = logging.getLogger("geral.run")
@@ -214,8 +215,8 @@ def due(
     store = SubscriberStore(settings.SUBSCRIBERS_DB)
     counts = store.counts()
     for club in load_teams().values():
-        if not counts.get(club.slug):
-            continue  # no subscriber: no edition, no Gemini cost
+        if not club.listed or not counts.get(club.slug):
+            continue  # hidden (moving in) or nobody follows it: no edition, no Gemini cost
         edition = store.latest_edition(club.slug)
         latest = (
             LatestEdition(subject=edition.subject, published_at=edition.published_at)
@@ -375,6 +376,27 @@ def run(
                 report.output_tokens = usage.output_tokens
             report.problems = problems.messages
             _publish_report(report)
+
+
+@app.command("import-legacy")
+def import_legacy(
+    source: Annotated[Path, typer.Argument(help="SQLite of the single-team app moving in")],
+    team: TeamOption,
+) -> None:
+    """Bring a single-team app's subscribers, last edition and bolão in as one team (idempotent).
+
+    Runs next to the page (the Geral's SUBSCRIBERS_DB)."""
+    _setup_logging()
+    club = _team(team)
+    settings = get_settings()
+    report = import_single_team(source, club.slug, Path(settings.SUBSCRIBERS_DB))
+    typer.echo(
+        f"{club.newsletter}: {report.subscribers} inscritos, {report.matches} jogos e "
+        f"{report.bets} palpites do bolão; edição {'importada' if report.edition else 'mantida'}."
+    )
+    if report.nickname_conflicts:
+        conflicts = ", ".join(report.nickname_conflicts)
+        typer.echo(f"Apelidos já usados na Geral (ficaram sem apelido): {conflicts}")
 
 
 def _bolao(newsletter: Newsletter, settings, team: Team, write: bool) -> None:
