@@ -1,7 +1,7 @@
 # A Urubu News entra na Geral (parte 2a)
 
 - **Data:** 2026-11-11
-- **Status:** proposta
+- **Status:** PR 1 (bolão por torcida) implementado; PRs 2 e 3 a fazer
 - **ADRs:** `docs/adr/0001-geral-assume-a-urubu-news.md`
 
 ## Objetivo
@@ -46,7 +46,7 @@ ninguém recebe edição em dobro. O bolão passa a valer para todas as torcidas
 
 ## Critérios de aceite (como testes)
 
-- [ ] Bolão: os 16 testes da Urubu portados com `team` (`test_bet_get_does_not_record`, `test_points_exact_5_diff_3_outcome_2_miss_0`, `test_result_summary_is_idempotent`, ...) e mais:
+- [x] Bolão: os 16 testes da Urubu portados com `team` (`test_bet_get_does_not_record`, `test_points_exact_5_diff_3_outcome_2_miss_0`, `test_result_summary_is_idempotent`, ...) e mais:
   `test_bet_requires_following_that_team`, `test_same_match_two_teams_have_separate_bolaos` (Vasco x Palmeiras), `test_nickname_is_unique_across_teams`.
 - [ ] `test_unlisted_team_is_hidden_from_portal_signup_and_due_all`
 - [ ] `test_legacy_unsubscribe_token_leaves_flamengo_only`, `test_legacy_one_click_post`
