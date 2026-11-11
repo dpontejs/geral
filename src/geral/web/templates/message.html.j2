@@ -1,0 +1,22 @@
+{% extends "base.html.j2" %}
+{% block title %}{{ title }} · Geral{% endblock %}
+{% block content %}
+<section class="msg">
+  <div class="wrap">
+    <h1>{{ title }}</h1>
+    <p>{{ text }}</p>
+    {% if unsubscribe_token %}
+    <form method="post" action="/unsubscribe?token={{ unsubscribe_token | urlencode }}">
+      <button type="submit" class="btn">{% if team %}Sair da {{ team.newsletter }}{% else %}Sim, quero sair{% endif %}</button>
+    </form>
+    {% if team %}
+    <form method="post" action="/unsubscribe?token={{ unsubscribe_token | urlencode }}&amp;all=1" style="margin-top:10px">
+      <button type="submit" class="btn secondary">Sair de todas as torcidas</button>
+    </form>
+    {% endif %}
+    {% else %}
+    <a class="btn" href="/" style="width:auto;text-decoration:none">Voltar para a Geral</a>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
