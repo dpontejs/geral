@@ -1,7 +1,7 @@
 # Portal da Geral e inscrição por torcida (parte 2.1)
 
 - **Data:** 2026-11-10
-- **Status:** proposta
+- **Status:** implementada (aguardando PR)
 - **ADRs:** `docs/adr/0001-geral-assume-a-urubu-news.md` (a Urubu entra depois, na parte 2a)
 
 ## Objetivo
@@ -47,20 +47,20 @@ GET  /health, /version.json
 
 ## Critérios de aceite (como testes)
 
-- [ ] `test_subscribe_with_two_teams_creates_pending_subscriptions_and_sends_one_confirmation`
-- [ ] `test_subscribe_rejects_no_team_or_unknown_team` (400, nada gravado nem enviado)
-- [ ] `test_subscribe_same_page_for_active_email` e `test_honeypot_and_rate_limit` (portados)
-- [ ] `test_confirm_activates_teams_and_welcomes_with_each_latest_edition` (uma boas-vindas por torcida com edição; sem edição, nada)
-- [ ] `test_confirm_twice_does_not_welcome_again`
-- [ ] `test_active_subscriber_adding_a_team_needs_confirmation` (a torcida nova fica pendente até o clique)
-- [ ] `test_team_unsubscribe_leaves_the_other_teams` e `test_last_team_out_unsubscribes_the_email`
-- [ ] `test_unsubscribe_get_does_not_unsubscribe` e `test_one_click_post_unsubscribes_from_that_team`
-- [ ] `test_team_token_cannot_unsubscribe_another_team`
-- [ ] `test_api_subscribers_lists_only_active_in_that_team_and_requires_token`
-- [ ] `test_latest_edition_is_kept_per_team`
-- [ ] `test_portal_lists_catalog_teams_with_last_edition_and_counts`
-- [ ] `test_team_page_shows_latest_edition_without_personal_links`
-- [ ] `test_run_sends_only_to_that_team_and_publishes_its_edition`
+- [x] `test_subscribe_with_two_teams_creates_pending_subscriptions_and_sends_one_confirmation`
+- [x] `test_subscribe_rejects_no_team_or_unknown_team` (400, nada gravado nem enviado)
+- [x] `test_subscribe_same_page_for_active_email` e `test_honeypot_and_rate_limit` (portados)
+- [x] `test_confirm_activates_teams_and_welcomes_with_each_latest_edition` (uma boas-vindas por torcida com edição; sem edição, nada)
+- [x] `test_confirm_twice_does_not_welcome_again`
+- [x] `test_active_subscriber_adding_a_team_needs_confirmation` (a torcida nova fica pendente até o clique)
+- [x] `test_team_unsubscribe_leaves_the_other_teams` e `test_last_team_out_unsubscribes_the_email`
+- [x] `test_unsubscribe_get_does_not_unsubscribe` e `test_one_click_post_unsubscribes_from_that_team`
+- [x] `test_team_token_cannot_unsubscribe_another_team`
+- [x] `test_api_subscribers_lists_only_active_in_that_team_and_requires_token`
+- [x] `test_latest_edition_is_kept_per_team`
+- [x] `test_portal_lists_catalog_teams_with_last_edition_and_counts`
+- [x] `test_team_page_shows_latest_edition_without_personal_links`
+- [x] `test_run_sends_only_to_that_team_and_publishes_its_edition`
 
 ## Verificação ponta a ponta
 

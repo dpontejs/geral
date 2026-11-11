@@ -10,11 +10,11 @@ Ordem de execução. Cada fatia vira um PR; a página da fatia fica em `docs/fea
 - [x] T5: CLI `geral preview --team <slug>` e `geral run --team <slug>`
 
 ## Fatia 2 — Portal e inscrição por torcida
-- [ ] Portar o app web da Urubu News (inscrição com confirmação, descadastro, boas-vindas, edição guardada) com `team` em tudo: um e-mail, várias torcidas; descadastro por torcida e geral
-- [ ] Página inicial no visual do rascunho aprovado (https://claude.ai/artifact/4TwD5bpDS9NBmFoN6onH5b): torcidas, ingresso, "seu time ainda não chegou?", placar
-- [ ] Servir as marcas em `/static/<time>/` e preencher `brand_logo` no `teams.toml`
-- [ ] Edição guardada por torcida: cada envio real publica a última edição daquela torcida; quem se inscreve recebe a última de cada torcida escolhida (boas-vindas)
-- [ ] `/api/subscribers?team=<slug>` e envio só para quem assina a torcida
+- [x] Portar o app web da Urubu News (inscrição com confirmação, descadastro, boas-vindas, edição guardada) com `team` em tudo: um e-mail, várias torcidas; descadastro por torcida e geral
+- [x] Página inicial no visual do rascunho aprovado (https://claude.ai/artifact/4TwD5bpDS9NBmFoN6onH5b): torcidas, ingresso, "seu time ainda não chegou?", placar
+- [x] Servir as marcas em `/static/<time>/` e usá-las no cabeçalho da newsletter (`logo_url`)
+- [x] Edição guardada por torcida: cada envio real publica a última edição daquela torcida; quem se inscreve recebe a última de cada torcida escolhida (boas-vindas)
+- [x] `/api/subscribers?team=<slug>` e envio só para quem assina a torcida
 - [ ] `geral due` devolvendo as edições vencidas de todas as torcidas com inscrito ativo, e disparo pela VPS
 - [x] Decidir cota do LLM: chave paga (ver PLAN §5)
 

@@ -54,14 +54,21 @@ def _retryable(error: BaseException) -> bool:
     return isinstance(error, httpx.TransportError)
 
 
+def _team_edition_url(settings: Settings, team: str) -> str:
+    return settings.PUBLIC_URL.rstrip("/") + f"/api/teams/{team}/latest-edition"
+
+
 def fetch_subscribers(
-    settings: Settings, client: httpx.Client, wait: wait_base
+    settings: Settings, team: str, client: httpx.Client, wait: wait_base
 ) -> list[_Subscriber]:
+    """Active subscribers of one team, each with that team's unsubscribe link."""
     url = settings.PUBLIC_URL.rstrip("/") + "/api/subscribers"
 
     def get() -> httpx.Response:
         response = client.get(
-            url, headers={"Authorization": f"Bearer {settings.SUBSCRIBERS_API_TOKEN}"}
+            url,
+            params={"team": team},
+            headers={"Authorization": f"Bearer {settings.SUBSCRIBERS_API_TOKEN}"},
         )
         response.raise_for_status()
         return response
@@ -77,10 +84,11 @@ def fetch_subscribers(
 
 def resolve_recipients(
     settings: Settings,
+    team: str,
     client: httpx.Client | None = None,
     wait: wait_base | None = None,
 ) -> ResolvedRecipients:
-    """Fixed list + API subscribers, once each. If the API fails, only the fixed list."""
+    """Fixed list + the team's API subscribers, once each. If the API fails, only the fixed list."""
     mailto = mailto_unsubscribe(settings)
     merged: dict[str, Recipient] = {}
     for email in settings.NEWSLETTER_RECIPIENTS:
@@ -91,6 +99,7 @@ def resolve_recipients(
         try:
             subscribers = fetch_subscribers(
                 settings,
+                team,
                 client or httpx.Client(timeout=TIMEOUT),
                 wait or wait_exponential(multiplier=2, max=20),
             )
@@ -107,13 +116,14 @@ def resolve_recipients(
 
 def publish_latest_edition(
     settings: Settings,
+    team: str,
     subject: str,
     html: str,
     text: str,
     client: httpx.Client | None = None,
 ) -> None:
-    """PUT the edition (unsubscribe placeholder included) to the page. Raises httpx.HTTPError."""
-    url = settings.PUBLIC_URL.rstrip("/") + "/api/latest-edition"
+    """PUT the team's edition (unsubscribe placeholder included). Raises httpx.HTTPError."""
+    url = _team_edition_url(settings, team)
     response = (client or httpx.Client(timeout=TIMEOUT)).put(
         url,
         json={"subject": subject, "html": html, "text": text},
@@ -139,9 +149,11 @@ class LatestEdition(BaseModel):
         return titles
 
 
-def latest_edition(settings: Settings, client: httpx.Client | None = None) -> LatestEdition | None:
-    """Subject and send time of the page's last edition, None if none. Raises httpx.HTTPError."""
-    url = settings.PUBLIC_URL.rstrip("/") + "/api/latest-edition"
+def latest_edition(
+    settings: Settings, team: str, client: httpx.Client | None = None
+) -> LatestEdition | None:
+    """Subject and send time of the team's last edition, None if none. Raises httpx.HTTPError."""
+    url = _team_edition_url(settings, team)
     response = (client or httpx.Client(timeout=TIMEOUT)).get(
         url, headers={"Authorization": f"Bearer {settings.SUBSCRIBERS_API_TOKEN}"}
     )

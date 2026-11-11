@@ -27,12 +27,12 @@ def settings(token: str | None = "api-token", recipients: str = "dono@x.com") ->
 
 
 def resolve(s: Settings):
-    return resolve_recipients(s, client=httpx.Client(), wait=wait_none())
+    return resolve_recipients(s, "flamengo", client=httpx.Client(), wait=wait_none())
 
 
 @respx.mock
 def test_without_api_token_uses_only_the_fixed_list() -> None:
-    route = respx.get(API)
+    route = respx.get(API, params={"team": "flamengo"})
 
     result = resolve(settings(token=None, recipients="dono@x.com, outro@x.com"))
 
@@ -46,7 +46,7 @@ def test_without_api_token_uses_only_the_fixed_list() -> None:
 
 @respx.mock
 def test_merges_fixed_list_with_subscribers_without_repeating() -> None:
-    route = respx.get(API).mock(
+    route = respx.get(API, params={"team": "flamengo"}).mock(
         return_value=httpx.Response(
             200,
             json=[
@@ -68,7 +68,7 @@ def test_merges_fixed_list_with_subscribers_without_repeating() -> None:
 
 @respx.mock
 def test_api_failure_falls_back_to_the_fixed_list(caplog) -> None:
-    route = respx.get(API).mock(return_value=httpx.Response(503))
+    route = respx.get(API, params={"team": "flamengo"}).mock(return_value=httpx.Response(503))
 
     with caplog.at_level("ERROR"):
         result = resolve(settings())
@@ -81,25 +81,31 @@ def test_api_failure_falls_back_to_the_fixed_list(caplog) -> None:
 
 @respx.mock
 def test_unauthorized_or_malformed_response_falls_back(caplog) -> None:
-    respx.get(API).mock(return_value=httpx.Response(401))
+    respx.get(API, params={"team": "flamengo"}).mock(return_value=httpx.Response(401))
     assert resolve(settings()).from_api == 0
 
-    respx.get(API).mock(return_value=httpx.Response(200, json={"oops": True}))
+    respx.get(API, params={"team": "flamengo"}).mock(
+        return_value=httpx.Response(200, json={"oops": True})
+    )
     assert resolve(settings()).recipients == [Recipient("dono@x.com", MAILTO)]
 
 
 @respx.mock
 def test_network_error_falls_back() -> None:
-    respx.get(API).mock(side_effect=httpx.ConnectError("down"))
+    respx.get(API, params={"team": "flamengo"}).mock(side_effect=httpx.ConnectError("down"))
 
     assert resolve(settings()).recipients == [Recipient("dono@x.com", MAILTO)]
 
 
 @respx.mock
 def test_publish_latest_edition_puts_it_with_the_token() -> None:
-    route = respx.put("https://news.test/api/latest-edition").mock(return_value=httpx.Response(204))
+    route = respx.put("https://news.test/api/teams/flamengo/latest-edition").mock(
+        return_value=httpx.Response(204)
+    )
 
-    publish_latest_edition(settings(), "Assunto", "<p>h</p>", "t", client=httpx.Client())
+    publish_latest_edition(
+        settings(), "flamengo", "Assunto", "<p>h</p>", "t", client=httpx.Client()
+    )
 
     request = route.calls.last.request
     assert request.headers["Authorization"] == "Bearer api-token"
@@ -108,20 +114,22 @@ def test_publish_latest_edition_puts_it_with_the_token() -> None:
 
 @respx.mock
 def test_publish_latest_edition_raises_on_error() -> None:
-    respx.put("https://news.test/api/latest-edition").mock(return_value=httpx.Response(401))
+    respx.put("https://news.test/api/teams/flamengo/latest-edition").mock(
+        return_value=httpx.Response(401)
+    )
 
     with pytest.raises(httpx.HTTPStatusError):
-        publish_latest_edition(settings(), "A", "h", "t", client=httpx.Client())
+        publish_latest_edition(settings(), "flamengo", "A", "h", "t", client=httpx.Client())
 
 
 @respx.mock
 def test_latest_edition_reads_subject_and_send_time_with_the_token() -> None:
     body = {"subject": "Urubu News — Notícias", "published_at": "2026-10-16T19:11:00-03:00"}
-    route = respx.get("https://news.test/api/latest-edition").mock(
+    route = respx.get("https://news.test/api/teams/flamengo/latest-edition").mock(
         return_value=httpx.Response(200, json=body)
     )
 
-    edition = latest_edition(settings(), client=httpx.Client())
+    edition = latest_edition(settings(), "flamengo", client=httpx.Client())
 
     assert edition.subject == "Urubu News — Notícias"
     assert edition.published_at.isoformat() == "2026-10-16T19:11:00-03:00"
@@ -130,17 +138,21 @@ def test_latest_edition_reads_subject_and_send_time_with_the_token() -> None:
 
 @respx.mock
 def test_latest_edition_subject_is_none_when_nothing_was_published() -> None:
-    respx.get("https://news.test/api/latest-edition").mock(return_value=httpx.Response(404))
+    respx.get("https://news.test/api/teams/flamengo/latest-edition").mock(
+        return_value=httpx.Response(404)
+    )
 
-    assert latest_edition(settings(), client=httpx.Client()) is None
+    assert latest_edition(settings(), "flamengo", client=httpx.Client()) is None
 
 
 @respx.mock
 def test_latest_edition_subject_raises_on_error() -> None:
-    respx.get("https://news.test/api/latest-edition").mock(return_value=httpx.Response(500))
+    respx.get("https://news.test/api/teams/flamengo/latest-edition").mock(
+        return_value=httpx.Response(500)
+    )
 
     with pytest.raises(httpx.HTTPStatusError):
-        latest_edition(settings(), client=httpx.Client())
+        latest_edition(settings(), "flamengo", client=httpx.Client())
 
 
 def test_latest_edition_topic_titles_come_from_the_news_section() -> None:

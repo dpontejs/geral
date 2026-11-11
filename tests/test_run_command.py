@@ -258,16 +258,20 @@ def test_run_sends_to_api_subscribers_with_one_click_unsubscribe(env, tmp_path) 
     env.setenv("GITHUB_STEP_SUMMARY", str(summary))
     env.setenv("SUBSCRIBERS_API_TOKEN", "api-token")
     env.setenv("PUBLIC_URL", "https://news.test")
-    respx.get("https://news.test/api/latest-edition").mock(return_value=httpx.Response(404))
+    respx.get("https://news.test/api/teams/flamengo/latest-edition").mock(
+        return_value=httpx.Response(404)
+    )
     get_settings.cache_clear()
     use(env, [ARTICLE], MATCH)
-    respx.get(API).mock(
+    respx.get(API, params={"team": "flamengo"}).mock(
         return_value=httpx.Response(
             200, json=[{"email": "ana@y.com", "unsubscribe_url": "https://news.test/u?token=A"}]
         )
     )
     route = respx.post(RESEND_URL).mock(return_value=sent(["e1", "e2"]))
-    respx.put("https://news.test/api/latest-edition").mock(return_value=httpx.Response(204))
+    respx.put("https://news.test/api/teams/flamengo/latest-edition").mock(
+        return_value=httpx.Response(204)
+    )
 
     result = CliRunner().invoke(
         cli.app, ["run", "--team", "flamengo", "--edition", "news", "--date", "2026-10-12"]
@@ -290,12 +294,16 @@ def test_run_survives_subscribers_api_failure(env, tmp_path, monkeypatch) -> Non
     env.setenv("GITHUB_STEP_SUMMARY", str(summary))
     env.setenv("SUBSCRIBERS_API_TOKEN", "api-token")
     env.setenv("PUBLIC_URL", "https://news.test")
-    respx.get("https://news.test/api/latest-edition").mock(return_value=httpx.Response(404))
+    respx.get("https://news.test/api/teams/flamengo/latest-edition").mock(
+        return_value=httpx.Response(404)
+    )
     get_settings.cache_clear()
     use(env, [ARTICLE], MATCH)
     monkeypatch.setattr("geral.send.recipients.FETCH_ATTEMPTS", 1)
-    respx.get(API).mock(side_effect=httpx.ConnectError("vps down"))
-    respx.put("https://news.test/api/latest-edition").mock(side_effect=httpx.ConnectError("down"))
+    respx.get(API, params={"team": "flamengo"}).mock(side_effect=httpx.ConnectError("vps down"))
+    respx.put("https://news.test/api/teams/flamengo/latest-edition").mock(
+        side_effect=httpx.ConnectError("down")
+    )
     route = respx.post(RESEND_URL).mock(return_value=sent(["e1"]))
 
     result = CliRunner().invoke(
@@ -310,14 +318,14 @@ def test_run_survives_subscribers_api_failure(env, tmp_path, monkeypatch) -> Non
     assert "vps down" in report
 
 
-PUBLISH = "https://news.test/api/latest-edition"
+PUBLISH = "https://news.test/api/teams/flamengo/latest-edition"
 
 
 def enable_subscriptions(env) -> None:
     env.setenv("SUBSCRIBERS_API_TOKEN", "api-token")
     env.setenv("PUBLIC_URL", "https://news.test")
     get_settings.cache_clear()
-    respx.get(API).mock(return_value=httpx.Response(200, json=[]))
+    respx.get(API, params={"team": "flamengo"}).mock(return_value=httpx.Response(200, json=[]))
     respx.get(PUBLISH).mock(return_value=httpx.Response(404))
 
 
@@ -505,7 +513,7 @@ def test_post_without_finished_match_sends_nothing(env, monkeypatch) -> None:
         away="Flamengo",
     )
     monkeypatch.setattr(cli, "_fixtures", lambda team, settings, now: [game])
-    monkeypatch.setattr(cli, "_latest", lambda settings: None)
+    monkeypatch.setattr(cli, "_latest", lambda settings, team: None)
     resend = respx.post(RESEND_URL)
 
     result = CliRunner().invoke(
@@ -538,3 +546,44 @@ def test_run_tells_the_model_what_the_previous_edition_covered(env, monkeypatch)
 
     assert result.exit_code == 0, result.output
     assert "- Velho assunto" in llm.prompts[0]
+
+
+@respx.mock
+def test_run_sends_only_to_that_team_and_publishes_its_edition(env) -> None:
+    env.setenv("SUBSCRIBERS_API_TOKEN", "tok")
+    env.setenv("PUBLIC_URL", "https://news.test")
+    env.setenv("NEWSLETTER_RECIPIENTS", "")
+    use(env, [ARTICLE], MATCH)
+    respx.get("https://news.test/api/teams/flamengo/latest-edition").mock(
+        return_value=httpx.Response(404)
+    )
+    team_list = respx.get(API, params={"team": "flamengo"}).mock(
+        return_value=httpx.Response(
+            200, json=[{"email": "ana@y.com", "unsubscribe_url": "https://news.test/u?token=A"}]
+        )
+    )
+    publish = respx.put("https://news.test/api/teams/flamengo/latest-edition").mock(
+        return_value=httpx.Response(204)
+    )
+    resend = respx.post(RESEND_URL).mock(return_value=sent(["e1"]))
+
+    result = CliRunner().invoke(
+        cli.app, ["run", "--team", "flamengo", "--edition", "news", "--date", "2026-10-12"]
+    )
+
+    assert result.exit_code == 0, result.output
+    assert team_list.called and publish.called
+    assert [e["to"] for e in json.loads(resend.calls.last.request.content)] == [["ana@y.com"]]
+
+
+def test_e_mail_header_uses_the_public_logo_only_on_https(monkeypatch) -> None:
+    from geral.teams import get_team
+
+    monkeypatch.setenv("PUBLIC_URL", "https://geral.example")
+    https = cli._brand_logo(get_settings(), get_team("vasco"))
+    monkeypatch.setenv("PUBLIC_URL", "http://localhost:8000")
+    get_settings.cache_clear()
+    local = cli._brand_logo(get_settings(), get_team("vasco"))
+
+    assert https == "https://geral.example/static/vasco/logo-email.png"
+    assert local is None
