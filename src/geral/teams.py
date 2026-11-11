@@ -48,6 +48,9 @@ class Team(BaseModel):
     other_sports: dict[str, str] = Field(default_factory=dict)  # name -> Google News query
     # False: in the catalog but not on the portal, the sign-up or `due --all` (a team moving in).
     listed: bool = True
+    # Sender mailbox (before the @; the domain comes from NEWSLETTER_FROM). One per newsletter so
+    # each has its own avatar in Gmail (a Google account per address, created by the owner).
+    sender: str | None = None
 
     @field_validator("accent")
     @classmethod
@@ -68,6 +71,12 @@ class Team(BaseModel):
     @property
     def league_name(self) -> str | None:
         return LEAGUES[self.league] if self.league else None
+
+    def sender_address(self, base: str) -> str:
+        """`almirante@<base's domain>`; the base address itself when the team has no mailbox."""
+        if not self.sender:
+            return base
+        return f"{self.sender}@{base.rpartition('@')[2]}"
 
     @property
     def logo(self) -> str:

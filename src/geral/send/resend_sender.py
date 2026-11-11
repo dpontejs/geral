@@ -83,7 +83,7 @@ class ResendSender:
         _, address = parseaddr(settings.NEWSLETTER_FROM)
         return cls(
             api_key=settings.RESEND_API_KEY,
-            sender=formataddr((team.newsletter, address)),
+            sender=formataddr((team.newsletter, team.sender_address(address))),
             dry_run=settings.DRY_RUN,
         )
 

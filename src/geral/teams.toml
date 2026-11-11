@@ -4,6 +4,7 @@
 # one whose table, campaign and rankings go in the e-mail (none when ESPN has no table). `accent` must read well on white and under white text.
 
 [vasco]
+sender = "almirante"
 name = "Vasco"
 newsletter = "Almirante News"
 fans = "vascaínos"
@@ -19,6 +20,7 @@ league = "bra.1"
 "Basquete" = '"Vasco" basquete OR NBB'
 
 [palmeiras]
+sender = "porco"
 name = "Palmeiras"
 newsletter = "Porco News"
 fans = "palmeirenses"
@@ -33,6 +35,7 @@ league = "bra.1"
 "Futebol feminino" = '"Palmeiras" futebol feminino'
 
 [abc]
+sender = "elefante"
 name = "ABC"
 newsletter = "Elefante News"
 fans = "abecedistas"
@@ -46,6 +49,7 @@ accent = "#141414"
 leagues = ["bra.copa_do_nordeste", "bra.copa_do_brazil"]
 
 [nautico]
+sender = "timbu"
 name = "Náutico"
 newsletter = "Timbu News"
 fans = "alvirrubros"
@@ -60,6 +64,7 @@ league = "bra.2"
 # The Urubu News, moving in from its own app (docs/adr/0001). Hidden (`listed = false`: not on
 # the portal, the sign-up or `due --all`) until the switch, when its subscribers are imported.
 [flamengo]
+sender = "news"
 name = "Flamengo"
 newsletter = "Urubu News"
 fans = "rubro-negros"
