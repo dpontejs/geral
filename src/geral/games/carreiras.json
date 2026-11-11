@@ -1,0 +1,5943 @@
+{
+ "clubes": {
+  "Q101859": {
+   "nome": "VfL Wolfsburg",
+   "apelidos": []
+  },
+  "Q1024337": {
+   "nome": "Club Social y Deportivo Comunicaciones",
+   "apelidos": []
+  },
+  "Q102720": {
+   "nome": "Hertha BSC",
+   "apelidos": []
+  },
+  "Q10292310": {
+   "nome": "Grêmio Mangaratibense",
+   "apelidos": []
+  },
+  "Q10300": {
+   "nome": "Rayo Vallecano de Madrid",
+   "apelidos": []
+  },
+  "Q10308": {
+   "nome": "Real Zaragoza",
+   "apelidos": []
+  },
+  "Q10315": {
+   "nome": "Real Sociedad de Fútbol",
+   "apelidos": []
+  },
+  "Q10329": {
+   "nome": "Sevilla",
+   "apelidos": [
+    "Sevilha",
+    "Sevilla Fútbol Club"
+   ]
+  },
+  "Q10333": {
+   "nome": "Valencia",
+   "apelidos": [
+    "Valencia Club de Fútbol",
+    "Valência"
+   ]
+  },
+  "Q1044651": {
+   "nome": "Vegalta Sendai",
+   "apelidos": []
+  },
+  "Q1045524": {
+   "nome": "Montedio Yamagata",
+   "apelidos": []
+  },
+  "Q1047535": {
+   "nome": "Kyoto Sanga F.C.",
+   "apelidos": []
+  },
+  "Q104761": {
+   "nome": "Bayer Leverkusen",
+   "apelidos": [
+    "Bayer 04 Leverkusen",
+    "Leverkusen"
+   ]
+  },
+  "Q104770": {
+   "nome": "1. Fußball-Club Köln 01/07",
+   "apelidos": []
+  },
+  "Q10512": {
+   "nome": "Elche Club de Fútbol",
+   "apelidos": []
+  },
+  "Q1056948": {
+   "nome": "Lekhwiya Sports Club",
+   "apelidos": []
+  },
+  "Q105853": {
+   "nome": "Karlsruher Sport-Club Mühlburg-Phönix",
+   "apelidos": []
+  },
+  "Q107337028": {
+   "nome": "Al-Ittifaq F. C.",
+   "apelidos": []
+  },
+  "Q1128631": {
+   "nome": "Leeds United Association Football Club",
+   "apelidos": []
+  },
+  "Q1130849": {
+   "nome": "Liverpool",
+   "apelidos": [
+    "Liverpool Football Club"
+   ]
+  },
+  "Q1133475": {
+   "nome": "Guarani",
+   "apelidos": [
+    "Guarani Futebol Clube"
+   ]
+  },
+  "Q1137993": {
+   "nome": "Radnički Niš",
+   "apelidos": []
+  },
+  "Q1143000": {
+   "nome": "Club Universidad Nacional",
+   "apelidos": []
+  },
+  "Q11938": {
+   "nome": "PSV",
+   "apelidos": [
+    "PSV Eindhoven"
+   ]
+  },
+  "Q120064": {
+   "nome": "Luftëtari Gjirokastër",
+   "apelidos": []
+  },
+  "Q12236": {
+   "nome": "Real Racing Club de Santander",
+   "apelidos": []
+  },
+  "Q127921": {
+   "nome": "Club Deportivo Jorge Wilstermann",
+   "apelidos": []
+  },
+  "Q128446": {
+   "nome": "Porto",
+   "apelidos": [
+    "FC Porto",
+    "Futebol Clube do Porto"
+   ]
+  },
+  "Q130521": {
+   "nome": "Guangzhou Football Club",
+   "apelidos": []
+  },
+  "Q131209": {
+   "nome": "Fußballklub Austria Wien",
+   "apelidos": []
+  },
+  "Q131499": {
+   "nome": "Benfica",
+   "apelidos": [
+    "Sport Lisboa e Benfica"
+   ]
+  },
+  "Q132885": {
+   "nome": "Olympique de Marseille",
+   "apelidos": [
+    "Marseille",
+    "Marselha",
+    "Olympique de Marselha"
+   ]
+  },
+  "Q13391": {
+   "nome": "U.S. Lecce",
+   "apelidos": []
+  },
+  "Q1349814": {
+   "nome": "Ravenna Calcio",
+   "apelidos": []
+  },
+  "Q1368488": {
+   "nome": "Yokohama Flügels",
+   "apelidos": []
+  },
+  "Q141688": {
+   "nome": "Anorthosis Famagusta FC",
+   "apelidos": []
+  },
+  "Q1422": {
+   "nome": "Juventus",
+   "apelidos": [
+    "Juventus Football Club"
+   ]
+  },
+  "Q1422177": {
+   "nome": "Paulista Futebol Clube",
+   "apelidos": []
+  },
+  "Q1458264": {
+   "nome": "Portuguesa Fútbol Club",
+   "apelidos": []
+  },
+  "Q1492": {
+   "nome": "Barcelona",
+   "apelidos": []
+  },
+  "Q1508285": {
+   "nome": "Paysandu Sport Club",
+   "apelidos": []
+  },
+  "Q1513287": {
+   "nome": "Vila Nova Futebol Clube",
+   "apelidos": []
+  },
+  "Q15214308": {
+   "nome": "Orlando City Soccer Club",
+   "apelidos": []
+  },
+  "Q1543": {
+   "nome": "Milan",
+   "apelidos": [
+    "AC Milan",
+    "Associazione Calcio Milan"
+   ]
+  },
+  "Q1570132": {
+   "nome": "CF Lobos de la BUAP",
+   "apelidos": []
+  },
+  "Q15789": {
+   "nome": "Bayern de Munique",
+   "apelidos": [
+    "Bayern",
+    "Bayern Munich",
+    "Bayern München"
+   ]
+  },
+  "Q1675356": {
+   "nome": "Itumbiara Esporte Clube",
+   "apelidos": []
+  },
+  "Q16838244": {
+   "nome": "Odisha FC",
+   "apelidos": []
+  },
+  "Q16839398": {
+   "nome": "Football Club Goa",
+   "apelidos": []
+  },
+  "Q16844931": {
+   "nome": "Club Internacional de Fútbol Miami",
+   "apelidos": []
+  },
+  "Q16844935": {
+   "nome": "Miami United Football Club",
+   "apelidos": []
+  },
+  "Q16932": {
+   "nome": "Kashima Antlers",
+   "apelidos": []
+  },
+  "Q1703589": {
+   "nome": "Sociedade Esportiva e Recreativa Caxias do Sul",
+   "apelidos": []
+  },
+  "Q170703": {
+   "nome": "Club Atlético Boca Juniors",
+   "apelidos": []
+  },
+  "Q172476": {
+   "nome": "Bordeaux",
+   "apelidos": [
+    "Football Club des Girondins de Bordeaux",
+    "Girondins de Bordeaux"
+   ]
+  },
+  "Q172969": {
+   "nome": "Shakhtar Donetsk",
+   "apelidos": [
+    "Futbolniy Klub Shakhtar",
+    "Shakhtar"
+   ]
+  },
+  "Q173009": {
+   "nome": "Estrela Vermelha de Belgrado",
+   "apelidos": []
+  },
+  "Q17442894": {
+   "nome": "Pafos FC",
+   "apelidos": []
+  },
+  "Q17479": {
+   "nome": "Flamengo",
+   "apelidos": [
+    "CR Flamengo",
+    "Clube de Regatas do Flamengo"
+   ]
+  },
+  "Q17497": {
+   "nome": "FC Dinamo Moscou",
+   "apelidos": []
+  },
+  "Q17594408": {
+   "nome": "Chennaiyin Football Club",
+   "apelidos": []
+  },
+  "Q179075": {
+   "nome": "Futbolniy Klub Dynamo Kyiv",
+   "apelidos": []
+  },
+  "Q180305": {
+   "nome": "Association Sportive de Monaco Football Club",
+   "apelidos": []
+  },
+  "Q18318": {
+   "nome": "Garforth Town Association Football Club",
+   "apelidos": []
+  },
+  "Q1857213": {
+   "nome": "Uberlândia Esporte Clube",
+   "apelidos": []
+  },
+  "Q18640": {
+   "nome": "Club de Gimnasia y Esgrima La Plata",
+   "apelidos": []
+  },
+  "Q18656": {
+   "nome": "Manchester United Football Club",
+   "apelidos": []
+  },
+  "Q18708": {
+   "nome": "Fulham Football Club",
+   "apelidos": []
+  },
+  "Q18711": {
+   "nome": "Aston Villa Football Club",
+   "apelidos": []
+  },
+  "Q18741": {
+   "nome": "Tottenham",
+   "apelidos": [
+    "Tottenham Hotspur",
+    "Tottenham Hotspur Football Club"
+   ]
+  },
+  "Q18747": {
+   "nome": "West Ham",
+   "apelidos": [
+    "West Ham United",
+    "West Ham United Football Club"
+   ]
+  },
+  "Q188277": {
+   "nome": "Cruzeiro",
+   "apelidos": [
+    "Cruzeiro Esporte Clube"
+   ]
+  },
+  "Q1886": {
+   "nome": "Atalanta Bergamasca Calcio",
+   "apelidos": []
+  },
+  "Q188841": {
+   "nome": "Fortaleza",
+   "apelidos": [
+    "Fortaleza Esporte Clube"
+   ]
+  },
+  "Q1893": {
+   "nome": "Bologna Football Club 1909",
+   "apelidos": []
+  },
+  "Q1900225": {
+   "nome": "12 de Octubre Football Club",
+   "apelidos": []
+  },
+  "Q192071": {
+   "nome": "Football Club de Nantes",
+   "apelidos": []
+  },
+  "Q19353": {
+   "nome": "FC Anji Makhachkala",
+   "apelidos": []
+  },
+  "Q19509": {
+   "nome": "Rennes",
+   "apelidos": [
+    "Stade Rennais",
+    "Stade Rennais Football Club"
+   ]
+  },
+  "Q19516": {
+   "nome": "Lille Olympique Sporting Club Métropole",
+   "apelidos": []
+  },
+  "Q19521": {
+   "nome": "Association Sportive de Saint-Étienne Loire",
+   "apelidos": []
+  },
+  "Q19628": {
+   "nome": "Olympiacos",
+   "apelidos": [
+    "Olympiacos FC",
+    "Olympiakos"
+   ]
+  },
+  "Q198032": {
+   "nome": "Bahia",
+   "apelidos": [
+    "ECB",
+    "Esporte Clube Bahia"
+   ]
+  },
+  "Q2005514": {
+   "nome": "Toros Neza Fútbol Club",
+   "apelidos": []
+  },
+  "Q201584": {
+   "nome": "AEK Atenas",
+   "apelidos": []
+  },
+  "Q2018179": {
+   "nome": "Olaria Atlético Clube",
+   "apelidos": []
+  },
+  "Q2035444": {
+   "nome": "Joinville",
+   "apelidos": [
+    "Joinville Esporte Clube"
+   ]
+  },
+  "Q2037": {
+   "nome": "Associazione Calcio Chievo Verona",
+   "apelidos": []
+  },
+  "Q204220": {
+   "nome": "Red Bull New York",
+   "apelidos": []
+  },
+  "Q204357": {
+   "nome": "Los Angeles Galaxy",
+   "apelidos": []
+  },
+  "Q204675": {
+   "nome": "Portuguesa",
+   "apelidos": [
+    "Associação Portuguesa de Desportos"
+   ]
+  },
+  "Q2052": {
+   "nome": "Fiorentina",
+   "apelidos": [
+    "ACF Fiorentina"
+   ]
+  },
+  "Q2074": {
+   "nome": "Genoa",
+   "apelidos": [
+    "Genoa Cricket and Football Club"
+   ]
+  },
+  "Q211401": {
+   "nome": "União Desportiva de Leiria",
+   "apelidos": []
+  },
+  "Q2116855": {
+   "nome": "Universidad de Los Andes Fútbol Club",
+   "apelidos": []
+  },
+  "Q216510": {
+   "nome": "Clube de Futebol Os Belenenses",
+   "apelidos": []
+  },
+  "Q218334": {
+   "nome": "Figueirense",
+   "apelidos": [
+    "Figueirense Futebol Clube"
+   ]
+  },
+  "Q218883": {
+   "nome": "Urawa Red Diamonds",
+   "apelidos": []
+  },
+  "Q219098": {
+   "nome": "Sport",
+   "apelidos": [
+    "Sport Club do Recife",
+    "Sport Recife"
+   ]
+  },
+  "Q219120": {
+   "nome": "Associação Atlética Ponte Preta",
+   "apelidos": []
+  },
+  "Q219235": {
+   "nome": "Association du Servette Football Club",
+   "apelidos": []
+  },
+  "Q219703": {
+   "nome": "Boavista Futebol Clube",
+   "apelidos": []
+  },
+  "Q221695": {
+   "nome": "Grêmio",
+   "apelidos": [
+    "Gremio",
+    "Grêmio Foot-Ball Porto Alegrense"
+   ]
+  },
+  "Q223450": {
+   "nome": "Vitória Sport Clube",
+   "apelidos": []
+  },
+  "Q223620": {
+   "nome": "Deportivo Alavés",
+   "apelidos": []
+  },
+  "Q22707": {
+   "nome": "TSG 1899 Hoffenheim",
+   "apelidos": []
+  },
+  "Q2301143": {
+   "nome": "Xi Măng Hải Phòng FC",
+   "apelidos": []
+  },
+  "Q2329137": {
+   "nome": "União São João Esporte Clube",
+   "apelidos": []
+  },
+  "Q2332493": {
+   "nome": "Botafogo Futebol Clube",
+   "apelidos": []
+  },
+  "Q2340403": {
+   "nome": "Bauru Atlético Clube",
+   "apelidos": []
+  },
+  "Q2341011": {
+   "nome": "Associação Atlética Portuguesa",
+   "apelidos": []
+  },
+  "Q2419887": {
+   "nome": "Mogi Mirim Esporte Clube",
+   "apelidos": []
+  },
+  "Q247731": {
+   "nome": "Kaizer Chiefs Football Club",
+   "apelidos": []
+  },
+  "Q248782": {
+   "nome": "Barcelona Sporting Club",
+   "apelidos": []
+  },
+  "Q249643": {
+   "nome": "Liga Deportiva Universitaria de Quito",
+   "apelidos": []
+  },
+  "Q249662": {
+   "nome": "Nagoya Grampus",
+   "apelidos": []
+  },
+  "Q2508225": {
+   "nome": "Esporte Clube São José",
+   "apelidos": []
+  },
+  "Q2508289": {
+   "nome": "Rio Branco Atlético Clube",
+   "apelidos": []
+  },
+  "Q2552872": {
+   "nome": "Clube do Remo",
+   "apelidos": []
+  },
+  "Q2553450": {
+   "nome": "Volta Redonda Futebol Clube",
+   "apelidos": []
+  },
+  "Q2590133": {
+   "nome": "Guaratinguetá Futebol Ltda.",
+   "apelidos": []
+  },
+  "Q2627402": {
+   "nome": "Esporte Clube Noroeste",
+   "apelidos": []
+  },
+  "Q2641": {
+   "nome": "Napoli",
+   "apelidos": [
+    "Nápoles",
+    "Società Sportiva Calcio Napoli"
+   ]
+  },
+  "Q2656570": {
+   "nome": "Boavista Sport Club",
+   "apelidos": []
+  },
+  "Q2662116": {
+   "nome": "Campo Grande Atlético Clube",
+   "apelidos": []
+  },
+  "Q2663081": {
+   "nome": "Friburguense Atlético Clube",
+   "apelidos": []
+  },
+  "Q2693": {
+   "nome": "Parma",
+   "apelidos": [
+    "Parma Calcio 1913"
+   ]
+  },
+  "Q270995": {
+   "nome": "Atlético-MG",
+   "apelidos": [
+    "Atlético Mineiro",
+    "Clube Atlético Mineiro",
+    "Galo"
+   ]
+  },
+  "Q2710": {
+   "nome": "Pescara",
+   "apelidos": [
+    "Pescara Calcio"
+   ]
+  },
+  "Q2714": {
+   "nome": "Watford Football Club",
+   "apelidos": []
+  },
+  "Q2735045": {
+   "nome": "Ferroviária-ES",
+   "apelidos": [
+    "Associação Desportiva Ferroviária Vale do Rio Doce"
+   ]
+  },
+  "Q2739": {
+   "nome": "Roma",
+   "apelidos": [
+    "AS Roma",
+    "Associazione Sportiva Roma"
+   ]
+  },
+  "Q2742586": {
+   "nome": "Grêmio Esportivo Juventus",
+   "apelidos": []
+  },
+  "Q274465": {
+   "nome": "Vitória",
+   "apelidos": [
+    "ECV",
+    "Esporte Clube Vitória"
+   ]
+  },
+  "Q2760357": {
+   "nome": "Club 9 de Octubre",
+   "apelidos": []
+  },
+  "Q276533": {
+   "nome": "Racing Club",
+   "apelidos": []
+  },
+  "Q2768": {
+   "nome": "Torino Football Club",
+   "apelidos": []
+  },
+  "Q2798": {
+   "nome": "Udinese Calcio",
+   "apelidos": []
+  },
+  "Q283545": {
+   "nome": "Al-Sadd",
+   "apelidos": [
+    "Al-Sadd Sports Club"
+   ]
+  },
+  "Q283767": {
+   "nome": "Al-Wahda Sports Cultural Club",
+   "apelidos": []
+  },
+  "Q2868221": {
+   "nome": "Associação Atlética Francana",
+   "apelidos": []
+  },
+  "Q2868235": {
+   "nome": "Associação Desportiva Cabofriense",
+   "apelidos": []
+  },
+  "Q289613": {
+   "nome": "Associazione Calcio Pisa 1909",
+   "apelidos": []
+  },
+  "Q289707": {
+   "nome": "Associazione Calcio Reggiana 1919",
+   "apelidos": []
+  },
+  "Q290940": {
+   "nome": "São Caetano",
+   "apelidos": [
+    "Associação Desportiva São Caetano"
+   ]
+  },
+  "Q29108": {
+   "nome": "FC Zenit São Petersburgo",
+   "apelidos": []
+  },
+  "Q296050": {
+   "nome": "AO Kavala",
+   "apelidos": []
+  },
+  "Q3058500": {
+   "nome": "Esporte Clube Internacional de Lages",
+   "apelidos": []
+  },
+  "Q3084434": {
+   "nome": "Grupo Desportivo de Ribeirão",
+   "apelidos": []
+  },
+  "Q309480": {
+   "nome": "Al-Ittihad",
+   "apelidos": []
+  },
+  "Q3241573": {
+   "nome": "Linhares Esporte Clube",
+   "apelidos": []
+  },
+  "Q3241574": {
+   "nome": "Linhares Futebol Clube",
+   "apelidos": []
+  },
+  "Q324589": {
+   "nome": "Club Atlético Lanús",
+   "apelidos": []
+  },
+  "Q32494": {
+   "nome": "Fußball-Club Gelsenkirchen-Schalke 04",
+   "apelidos": []
+  },
+  "Q330143": {
+   "nome": "Sydney Football Club",
+   "apelidos": []
+  },
+  "Q332524": {
+   "nome": "Atlético Junior",
+   "apelidos": []
+  },
+  "Q332527": {
+   "nome": "Corporación Deportiva Independiente Medellín",
+   "apelidos": []
+  },
+  "Q3334769": {
+   "nome": "Nacional Fast Clube",
+   "apelidos": []
+  },
+  "Q3345324": {
+   "nome": "Nova Iguaçu",
+   "apelidos": [
+    "Nova Iguaçu Futebol Clube"
+   ]
+  },
+  "Q3354098": {
+   "nome": "Operário Futebol Clube Ltda.",
+   "apelidos": []
+  },
+  "Q338285": {
+   "nome": "América-MG",
+   "apelidos": [
+    "América Futebol Clube (Minas Gerais)",
+    "América Mineiro"
+   ]
+  },
+  "Q3487431": {
+   "nome": "Sociedade Desportiva Serra Futebol Clube",
+   "apelidos": []
+  },
+  "Q354059": {
+   "nome": "Adelaide United",
+   "apelidos": [
+    "Adelaide United Football Club"
+   ]
+  },
+  "Q3554893": {
+   "nome": "Vasco da Gama Futebol Clube",
+   "apelidos": []
+  },
+  "Q3590749": {
+   "nome": "Paraguay Olympic football team",
+   "apelidos": []
+  },
+  "Q35933": {
+   "nome": "Corinthians",
+   "apelidos": [
+    "Sport Club Corinthians Paulista"
+   ]
+  },
+  "Q372599": {
+   "nome": "Sivasspor",
+   "apelidos": []
+  },
+  "Q374069": {
+   "nome": "Avaí",
+   "apelidos": [
+    "Avaí Futebol Clube"
+   ]
+  },
+  "Q375697": {
+   "nome": "Sociedade Esportiva do Gama",
+   "apelidos": []
+  },
+  "Q3813348": {
+   "nome": "Comercial Futebol Clube",
+   "apelidos": []
+  },
+  "Q38568": {
+   "nome": "São Paulo",
+   "apelidos": [
+    "São Paulo FC",
+    "São Paulo Futebol Clube"
+   ]
+  },
+  "Q4120643": {
+   "nome": "Persma Manado",
+   "apelidos": []
+  },
+  "Q424943": {
+   "nome": "Al-Ahli (Emirados Árabes Unidos)",
+   "apelidos": []
+  },
+  "Q428211": {
+   "nome": "Al-Gharafa",
+   "apelidos": [
+    "Al-Gharafa Sports Club"
+   ]
+  },
+  "Q429998": {
+   "nome": "Bacabal Esporte Clube",
+   "apelidos": []
+  },
+  "Q4512": {
+   "nome": "Verein für Bewegungsspiele Stuttgart 1893",
+   "apelidos": []
+  },
+  "Q459090": {
+   "nome": "América do México",
+   "apelidos": [
+    "Club América",
+    "Club de Fútbol América"
+   ]
+  },
+  "Q463147": {
+   "nome": "America-RJ",
+   "apelidos": [
+    "America Football Club"
+   ]
+  },
+  "Q4749635": {
+   "nome": "América Futebol Clube (Três Rios)",
+   "apelidos": []
+  },
+  "Q478317": {
+   "nome": "Coritiba",
+   "apelidos": [
+    "Coritiba Foot Ball Club"
+   ]
+  },
+  "Q4817902": {
+   "nome": "Serrano Foot Ball Club",
+   "apelidos": []
+  },
+  "Q482262": {
+   "nome": "América-RN",
+   "apelidos": [
+    "América Futebol Clube (Rio Grande do Norte)"
+   ]
+  },
+  "Q482764": {
+   "nome": "Al-Nassr",
+   "apelidos": []
+  },
+  "Q483020": {
+   "nome": "PSG",
+   "apelidos": [
+    "Paris Saint-Germain"
+   ]
+  },
+  "Q4859851": {
+   "nome": "Barcelona Esporte Clube",
+   "apelidos": []
+  },
+  "Q4863138": {
+   "nome": "Barra Mansa Futebol Clube",
+   "apelidos": []
+  },
+  "Q495299": {
+   "nome": "Galatasaray",
+   "apelidos": [
+    "Galatasaray Spor Kulübü"
+   ]
+  },
+  "Q501245": {
+   "nome": "Venezia F.C.",
+   "apelidos": []
+  },
+  "Q5014111": {
+   "nome": "Vasco",
+   "apelidos": [
+    "CR Vasco da Gama",
+    "Club de Regatas Vasco da Gama",
+    "Vasco da Gama"
+   ]
+  },
+  "Q50602": {
+   "nome": "Manchester City",
+   "apelidos": [
+    "City",
+    "Manchester City Football Club"
+   ]
+  },
+  "Q506832": {
+   "nome": "Athletico-PR",
+   "apelidos": [
+    "Athletico Paranaense",
+    "Atlético Paranaense",
+    "Club Athletico Paranaense"
+   ]
+  },
+  "Q508440": {
+   "nome": "Santa Cruz",
+   "apelidos": [
+    "Santa Cruz Futebol Clube"
+   ]
+  },
+  "Q5136150": {
+   "nome": "Club Atlético Villa San Carlos",
+   "apelidos": []
+  },
+  "Q515178": {
+   "nome": "Deportivo Pereira",
+   "apelidos": []
+  },
+  "Q51974": {
+   "nome": "Hamburger SV",
+   "apelidos": []
+  },
+  "Q51976": {
+   "nome": "Werder Bremen",
+   "apelidos": []
+  },
+  "Q522566": {
+   "nome": "Brasiliense Futebol Clube",
+   "apelidos": []
+  },
+  "Q525573": {
+   "nome": "Società Sportiva Murata",
+   "apelidos": []
+  },
+  "Q537552": {
+   "nome": "Tianjin Jinmen Tiger Football Club",
+   "apelidos": []
+  },
+  "Q5399143": {
+   "nome": "Esporte Clube Tupy",
+   "apelidos": []
+  },
+  "Q541744": {
+   "nome": "Red Bull Bragantino",
+   "apelidos": []
+  },
+  "Q564216": {
+   "nome": "Shanghai Port",
+   "apelidos": [
+    "Shanghai Port Football Club",
+    "Shanghai SIPG"
+   ]
+  },
+  "Q572957": {
+   "nome": "Alianza Lima",
+   "apelidos": [
+    "Club Alianza Lima"
+   ]
+  },
+  "Q5794": {
+   "nome": "Everton Football Club",
+   "apelidos": []
+  },
+  "Q586787": {
+   "nome": "Consadole Sapporo",
+   "apelidos": []
+  },
+  "Q603023": {
+   "nome": "Club Deportivo Universidad César Vallejo",
+   "apelidos": []
+  },
+  "Q603101": {
+   "nome": "Club Nacional",
+   "apelidos": []
+  },
+  "Q604581": {
+   "nome": "Club Sporting Cristal",
+   "apelidos": []
+  },
+  "Q606210": {
+   "nome": "Querétaro Fútbol Club",
+   "apelidos": []
+  },
+  "Q60785879": {
+   "nome": "A.S. Excelsior",
+   "apelidos": []
+  },
+  "Q620499": {
+   "nome": "Tokyo Verdy",
+   "apelidos": []
+  },
+  "Q622432": {
+   "nome": "Rio Ave Futebol Clube",
+   "apelidos": []
+  },
+  "Q628763": {
+   "nome": "Football Club Bunyodkor",
+   "apelidos": []
+  },
+  "Q630279": {
+   "nome": "Sanfrecce Hiroshima",
+   "apelidos": []
+  },
+  "Q633223": {
+   "nome": "León",
+   "apelidos": [
+    "Club León"
+   ]
+  },
+  "Q642291": {
+   "nome": "Football Club Dallas",
+   "apelidos": []
+  },
+  "Q646135": {
+   "nome": "New York Cosmos",
+   "apelidos": []
+  },
+  "Q646596": {
+   "nome": "Puebla Fútbol Club",
+   "apelidos": []
+  },
+  "Q6601875": {
+   "nome": "Fenerbahçe",
+   "apelidos": [
+    "Fenerbahçe Spor Kulübü"
+   ]
+  },
+  "Q666059": {
+   "nome": "Borussia Fulda",
+   "apelidos": []
+  },
+  "Q668": {
+   "nome": "Índia",
+   "apelidos": []
+  },
+  "Q693297": {
+   "nome": "Kabuscorp Sport Clube do Palanca",
+   "apelidos": []
+  },
+  "Q704": {
+   "nome": "Lyon",
+   "apelidos": [
+    "Olympique Lyonnais"
+   ]
+  },
+  "Q7156": {
+   "nome": "Barcelona",
+   "apelidos": [
+    "Barça",
+    "FC Barcelona",
+    "Futbol Club Barcelona"
+   ]
+  },
+  "Q7159367": {
+   "nome": "Pedrabranca Futebol Clube",
+   "apelidos": []
+  },
+  "Q719439": {
+   "nome": "Club Social de Deportes Rangers de Talca",
+   "apelidos": []
+  },
+  "Q721560": {
+   "nome": "Corporación Club Deportivo Universidad de Concepción",
+   "apelidos": []
+  },
+  "Q725367": {
+   "nome": "Shanghai Shenhua",
+   "apelidos": []
+  },
+  "Q736937": {
+   "nome": "Pachuca Club de Fútbol",
+   "apelidos": []
+  },
+  "Q738423": {
+   "nome": "Gamba Osaka",
+   "apelidos": []
+  },
+  "Q73965": {
+   "nome": "Al-Hilal",
+   "apelidos": []
+  },
+  "Q739701": {
+   "nome": "Associação Desportiva Confiança",
+   "apelidos": []
+  },
+  "Q73971": {
+   "nome": "Clube Náutico Capibaribe",
+   "apelidos": []
+  },
+  "Q7419428": {
+   "nome": "Santa Cruz Recreativo Esporte Clube",
+   "apelidos": []
+  },
+  "Q749603": {
+   "nome": "São José Esporte Clube",
+   "apelidos": []
+  },
+  "Q75729": {
+   "nome": "Sporting Clube de Portugal",
+   "apelidos": []
+  },
+  "Q7579313": {
+   "nome": "Sport Club Barueri",
+   "apelidos": []
+  },
+  "Q768253": {
+   "nome": "Club de Fútbol Monterrey",
+   "apelidos": []
+  },
+  "Q777267": {
+   "nome": "Clube de Regatas Guará",
+   "apelidos": []
+  },
+  "Q788363": {
+   "nome": "Bangu",
+   "apelidos": [
+    "Bangu Atlético Clube"
+   ]
+  },
+  "Q80845": {
+   "nome": "Internacional",
+   "apelidos": [
+    "Inter",
+    "Sport Club Internacional"
+   ]
+  },
+  "Q80897": {
+   "nome": "Colón",
+   "apelidos": [
+    "Club Atlético Colón"
+   ]
+  },
+  "Q80955": {
+   "nome": "Santos",
+   "apelidos": [
+    "Santos FC",
+    "Santos Futebol Clube"
+   ]
+  },
+  "Q80958": {
+   "nome": "Botafogo",
+   "apelidos": [
+    "Botafogo de Futebol e Regatas",
+    "Clube Botafogo de Futebol e Regatas"
+   ]
+  },
+  "Q80964": {
+   "nome": "Palmeiras",
+   "apelidos": [
+    "SE Palmeiras",
+    "Sociedade Esportiva Palmeiras"
+   ]
+  },
+  "Q80987": {
+   "nome": "Fluminense",
+   "apelidos": [
+    "Fluminense Football Club"
+   ]
+  },
+  "Q812720": {
+   "nome": "Al Ain Football Club",
+   "apelidos": []
+  },
+  "Q816779": {
+   "nome": "Goiás",
+   "apelidos": [
+    "Goiás Esporte Clube"
+   ]
+  },
+  "Q81888": {
+   "nome": "Amsterdamsche Football Club Ajax",
+   "apelidos": []
+  },
+  "Q823384": {
+   "nome": "Shimizu S-Pulse",
+   "apelidos": []
+  },
+  "Q838534": {
+   "nome": "Paraná",
+   "apelidos": [
+    "Paraná Clube"
+   ]
+  },
+  "Q844238": {
+   "nome": "Defensor Sporting Club",
+   "apelidos": []
+  },
+  "Q844271": {
+   "nome": "Vissel Kobe",
+   "apelidos": []
+  },
+  "Q844931": {
+   "nome": "Kashiwa Reysol",
+   "apelidos": []
+  },
+  "Q848642": {
+   "nome": "Club Libertad",
+   "apelidos": []
+  },
+  "Q849823": {
+   "nome": "Tigres de la Universidad Autónoma de Nuevo León",
+   "apelidos": []
+  },
+  "Q853053": {
+   "nome": "Club Atlético Chacarita Juniors",
+   "apelidos": []
+  },
+  "Q855401": {
+   "nome": "Júbilo Iwata",
+   "apelidos": []
+  },
+  "Q857938": {
+   "nome": "İstanbul Büyükşehir Belediyespor",
+   "apelidos": []
+  },
+  "Q8682": {
+   "nome": "Real Madrid",
+   "apelidos": [
+    "Real Madrid Club de Fútbol"
+   ]
+  },
+  "Q8701": {
+   "nome": "Atlético de Madrid",
+   "apelidos": [
+    "Atlético Madrid",
+    "Club Atlético de Madrid"
+   ]
+  },
+  "Q8723": {
+   "nome": "Real Betis Balompié",
+   "apelidos": []
+  },
+  "Q874016": {
+   "nome": "Kawasaki Frontale",
+   "apelidos": []
+  },
+  "Q8749": {
+   "nome": "Celta de Vigo",
+   "apelidos": [
+    "Celta",
+    "Real Club Celta de Vigo"
+   ]
+  },
+  "Q8760": {
+   "nome": "Deportivo La Coruña",
+   "apelidos": [
+    "Deportivo",
+    "La Coruña",
+    "Real Club Deportivo de A Coruña"
+   ]
+  },
+  "Q8780": {
+   "nome": "Espanyol",
+   "apelidos": [
+    "Reial Club Deportiu Espanyol de Barcelona"
+   ]
+  },
+  "Q8823": {
+   "nome": "Levante Unión Deportiva",
+   "apelidos": []
+  },
+  "Q8835": {
+   "nome": "Real Club Deportivo Mallorca",
+   "apelidos": []
+  },
+  "Q910444": {
+   "nome": "Club Ferro Carril Oeste",
+   "apelidos": []
+  },
+  "Q910453": {
+   "nome": "Juventude",
+   "apelidos": [
+    "Esporte Clube Juventude"
+   ]
+  },
+  "Q914086": {
+   "nome": "Club Cerro Porteño",
+   "apelidos": []
+  },
+  "Q9616": {
+   "nome": "Chelsea",
+   "apelidos": [
+    "Chelsea Football Club"
+   ]
+  },
+  "Q9617": {
+   "nome": "Arsenal",
+   "apelidos": [
+    "Arsenal Football Club"
+   ]
+  },
+  "Q966183": {
+   "nome": "Oeste Futebol Clube",
+   "apelidos": []
+  },
+  "Q972741": {
+   "nome": "Fort Lauderdale Strikers",
+   "apelidos": []
+  }
+ },
+ "jogadores": [
+  {
+   "wikidata": "Q550019",
+   "nome": "Roberto Dinamite",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q5014111",
+     "inicio": 1971,
+     "fim": 1979
+    },
+    {
+     "clube": "Q7156",
+     "inicio": 1979,
+     "fim": 1980
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 1980,
+     "fim": 1989
+    },
+    {
+     "clube": "Q204675",
+     "inicio": 1989,
+     "fim": 1990
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 1990,
+     "fim": 1990
+    },
+    {
+     "clube": "Q2662116",
+     "inicio": 1991,
+     "fim": 1991
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 1992,
+     "fim": 1993
+    }
+   ]
+  },
+  {
+   "wikidata": "Q178649",
+   "nome": "Romário",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q5014111",
+     "inicio": 1985,
+     "fim": 1988
+    },
+    {
+     "clube": "Q11938",
+     "inicio": 1988,
+     "fim": 1993
+    },
+    {
+     "clube": "Q7156",
+     "inicio": 1993,
+     "fim": 1995
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 1995,
+     "fim": 1996
+    },
+    {
+     "clube": "Q10333",
+     "inicio": 1996,
+     "fim": 1997
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 1997,
+     "fim": 1999
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 2000,
+     "fim": 2002
+    },
+    {
+     "clube": "Q80987",
+     "inicio": 2002,
+     "fim": 2004
+    },
+    {
+     "clube": "Q283545",
+     "inicio": 2003,
+     "fim": 2003
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 2005,
+     "fim": 2006
+    },
+    {
+     "clube": "Q972741",
+     "inicio": 2006,
+     "fim": 2006
+    },
+    {
+     "clube": "Q354059",
+     "inicio": 2006,
+     "fim": 2006
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 2007,
+     "fim": 2007
+    },
+    {
+     "clube": "Q463147",
+     "inicio": 2009,
+     "fim": 2009
+    }
+   ]
+  },
+  {
+   "wikidata": "Q203451",
+   "nome": "Juninho Pernambucano",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q219098",
+     "inicio": 1992,
+     "fim": 1995
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 1995,
+     "fim": 2001
+    },
+    {
+     "clube": "Q704",
+     "inicio": 2001,
+     "fim": 2009
+    },
+    {
+     "clube": "Q428211",
+     "inicio": 2009,
+     "fim": 2011
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 2011,
+     "fim": 2012
+    },
+    {
+     "clube": "Q204220",
+     "inicio": 2013,
+     "fim": 2013
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 2013,
+     "fim": 2014
+    }
+   ]
+  },
+  {
+   "wikidata": "Q204825",
+   "nome": "Bebeto",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q274465",
+     "inicio": 1983,
+     "fim": 1983
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 1983,
+     "fim": 1989
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 1989,
+     "fim": 1991
+    },
+    {
+     "clube": "Q8760",
+     "inicio": 1992,
+     "fim": 1996
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 1996,
+     "fim": 1996
+    },
+    {
+     "clube": "Q10329",
+     "inicio": 1997,
+     "fim": 1997
+    },
+    {
+     "clube": "Q274465",
+     "inicio": 1997,
+     "fim": 1997
+    },
+    {
+     "clube": "Q188277",
+     "inicio": 1997,
+     "fim": 1997
+    },
+    {
+     "clube": "Q80958",
+     "inicio": 1998,
+     "fim": 1999
+    },
+    {
+     "clube": "Q2005514",
+     "inicio": 1999,
+     "fim": 1999
+    },
+    {
+     "clube": "Q274465",
+     "inicio": 2000,
+     "fim": 2000
+    },
+    {
+     "clube": "Q16932",
+     "inicio": 2000,
+     "fim": 2000
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 2001,
+     "fim": 2002
+    },
+    {
+     "clube": "Q309480",
+     "inicio": 2002,
+     "fim": 2002
+    }
+   ]
+  },
+  {
+   "wikidata": "Q181139",
+   "nome": "Ramon Menezes",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q188277",
+     "inicio": 1989,
+     "fim": 1993
+    },
+    {
+     "clube": "Q274465",
+     "inicio": 1993,
+     "fim": 1993
+    },
+    {
+     "clube": "Q198032",
+     "inicio": 1993,
+     "fim": 1994
+    },
+    {
+     "clube": "Q274465",
+     "inicio": 1994,
+     "fim": 1995
+    },
+    {
+     "clube": "Q104761",
+     "inicio": 1995,
+     "fim": 1996
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 1996,
+     "fim": 1999
+    },
+    {
+     "clube": "Q270995",
+     "inicio": 2000,
+     "fim": 2002
+    },
+    {
+     "clube": "Q80987",
+     "inicio": 2001,
+     "fim": 2001
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 2002,
+     "fim": 2002
+    },
+    {
+     "clube": "Q620499",
+     "inicio": 2003,
+     "fim": 2003
+    },
+    {
+     "clube": "Q80987",
+     "inicio": 2004,
+     "fim": 2004
+    },
+    {
+     "clube": "Q80958",
+     "inicio": 2005,
+     "fim": 2005
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 2006,
+     "fim": 2006
+    },
+    {
+     "clube": "Q506832",
+     "inicio": 2007,
+     "fim": 2007
+    },
+    {
+     "clube": "Q428211",
+     "inicio": 2007,
+     "fim": 2007
+    },
+    {
+     "clube": "Q274465",
+     "inicio": 2008,
+     "fim": 2010
+    },
+    {
+     "clube": "Q2035444",
+     "inicio": 2011,
+     "fim": 2012
+    },
+    {
+     "clube": "Q1703589",
+     "inicio": 2012,
+     "fim": 2012
+    },
+    {
+     "clube": "Q2868235",
+     "inicio": 2013,
+     "fim": 2013
+    }
+   ]
+  },
+  {
+   "wikidata": "Q350756",
+   "nome": "Luizão",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q838534",
+     "inicio": 1993,
+     "fim": 1993
+    },
+    {
+     "clube": "Q1133475",
+     "inicio": 1993,
+     "fim": 1995
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 1995,
+     "fim": 1997
+    },
+    {
+     "clube": "Q8760",
+     "inicio": 1997,
+     "fim": 1998
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 1998,
+     "fim": 1999
+    },
+    {
+     "clube": "Q35933",
+     "inicio": 1999,
+     "fim": 2002
+    },
+    {
+     "clube": "Q221695",
+     "inicio": 2002,
+     "fim": 2002
+    },
+    {
+     "clube": "Q102720",
+     "inicio": 2002,
+     "fim": 2004
+    },
+    {
+     "clube": "Q80958",
+     "inicio": 2004,
+     "fim": 2004
+    },
+    {
+     "clube": "Q38568",
+     "inicio": 2005,
+     "fim": 2005
+    },
+    {
+     "clube": "Q249662",
+     "inicio": 2005,
+     "fim": 2005
+    },
+    {
+     "clube": "Q80955",
+     "inicio": 2005,
+     "fim": 2006
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 2006,
+     "fim": 2007
+    },
+    {
+     "clube": "Q290940",
+     "inicio": 2007,
+     "fim": 2008
+    },
+    {
+     "clube": "Q2590133",
+     "inicio": 2009,
+     "fim": 2009
+    }
+   ]
+  },
+  {
+   "wikidata": "Q181128",
+   "nome": "Donizete",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q80987",
+     "inicio": 1987,
+     "fim": 1989
+    },
+    {
+     "clube": "Q221695",
+     "inicio": 1990,
+     "fim": 1991
+    },
+    {
+     "clube": "Q541744",
+     "inicio": 1992,
+     "fim": 1994
+    },
+    {
+     "clube": "Q38568",
+     "inicio": 1995,
+     "fim": 1995
+    },
+    {
+     "clube": "Q188277",
+     "inicio": 1996,
+     "fim": 1997
+    },
+    {
+     "clube": "Q274465",
+     "inicio": 1998,
+     "fim": 1998
+    },
+    {
+     "clube": "Q188277",
+     "inicio": 1999,
+     "fim": 2000
+    },
+    {
+     "clube": "Q218883",
+     "inicio": 2001,
+     "fim": 2001
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 2001,
+     "fim": 2001
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 2001,
+     "fim": 2001
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 2001,
+     "fim": 2002
+    },
+    {
+     "clube": "Q604581",
+     "inicio": 2003,
+     "fim": 2003
+    }
+   ]
+  },
+  {
+   "wikidata": "Q311872",
+   "nome": "Philippe Coutinho",
+   "posicao": "Winger",
+   "clubes": [
+    {
+     "clube": "Q5014111",
+     "inicio": 2009,
+     "fim": 2010
+    },
+    {
+     "clube": "Q8780",
+     "inicio": 2012,
+     "fim": 2012
+    },
+    {
+     "clube": "Q1130849",
+     "inicio": 2013,
+     "fim": 2018
+    },
+    {
+     "clube": "Q7156",
+     "inicio": 2018,
+     "fim": 2022
+    },
+    {
+     "clube": "Q15789",
+     "inicio": 2019,
+     "fim": 2020
+    },
+    {
+     "clube": "Q18711",
+     "inicio": 2022,
+     "fim": 2025
+    },
+    {
+     "clube": "Q1056948",
+     "inicio": 2023,
+     "fim": 2024
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 2024,
+     "fim": 2026
+    },
+    {
+     "clube": "Q80955",
+     "inicio": 2026,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q378526",
+   "nome": "Dedé",
+   "posicao": "Defesa central",
+   "clubes": [
+    {
+     "clube": "Q2553450",
+     "inicio": 2008,
+     "fim": 2009
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 2009,
+     "fim": 2013
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 2013,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q316836",
+   "nome": "Nenê",
+   "posicao": "Wing half",
+   "clubes": [
+    {
+     "clube": "Q1422177",
+     "inicio": 1999,
+     "fim": 2001
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 2001,
+     "fim": 2003
+    },
+    {
+     "clube": "Q80955",
+     "inicio": 2002,
+     "fim": 2004
+    },
+    {
+     "clube": "Q8835",
+     "inicio": 2003,
+     "fim": 2004
+    },
+    {
+     "clube": "Q223620",
+     "inicio": 2004,
+     "fim": 2006
+    },
+    {
+     "clube": "Q8749",
+     "inicio": 2006,
+     "fim": 2007
+    },
+    {
+     "clube": "Q180305",
+     "inicio": 2007,
+     "fim": 2010
+    },
+    {
+     "clube": "Q8780",
+     "inicio": 2008,
+     "fim": 2009
+    },
+    {
+     "clube": "Q483020",
+     "inicio": 2010,
+     "fim": 2013
+    },
+    {
+     "clube": "Q428211",
+     "inicio": 2013,
+     "fim": 2015
+    },
+    {
+     "clube": "Q18747",
+     "inicio": 2015,
+     "fim": 2015
+    },
+    {
+     "clube": "Q3554893",
+     "inicio": 2015,
+     "fim": null
+    },
+    {
+     "clube": "Q38568",
+     "inicio": 2015,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q10394490",
+   "nome": "Yago Pikachu",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q1508285",
+     "inicio": 2012,
+     "fim": 2015
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 2016,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q39079181",
+   "nome": "Paulinho",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q104761",
+     "inicio": 2018,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q65718359",
+   "nome": "Talles Magno",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q5014111",
+     "inicio": 2019,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q3761170",
+   "nome": "Germán Cano",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q324589",
+     "inicio": 2008,
+     "fim": 2009
+    },
+    {
+     "clube": "Q853053",
+     "inicio": 2009,
+     "fim": 2010
+    },
+    {
+     "clube": "Q324589",
+     "inicio": 2010,
+     "fim": 2010
+    },
+    {
+     "clube": "Q80897",
+     "inicio": 2011,
+     "fim": 2011
+    },
+    {
+     "clube": "Q515178",
+     "inicio": 2011,
+     "fim": 2011
+    },
+    {
+     "clube": "Q603101",
+     "inicio": 2012,
+     "fim": 2012
+    },
+    {
+     "clube": "Q736937",
+     "inicio": 2015,
+     "fim": 2016
+    },
+    {
+     "clube": "Q633223",
+     "inicio": 2016,
+     "fim": null
+    },
+    {
+     "clube": "Q332527",
+     "inicio": 2017,
+     "fim": 2015
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 2019,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q106171073",
+   "nome": "Andrey Santos",
+   "posicao": "",
+   "clubes": []
+  },
+  {
+   "wikidata": "Q15146754",
+   "nome": "Pablo Vegetti",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q5136150",
+     "inicio": 2012,
+     "fim": 2013
+    },
+    {
+     "clube": "Q719439",
+     "inicio": 2013,
+     "fim": 2014
+    },
+    {
+     "clube": "Q910444",
+     "inicio": 2014,
+     "fim": 2014
+    },
+    {
+     "clube": "Q18640",
+     "inicio": 2014,
+     "fim": 2015
+    },
+    {
+     "clube": "Q80897",
+     "inicio": 2015,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q376247",
+   "nome": "Dimitri Payet",
+   "posicao": "Attacking midfielder",
+   "clubes": [
+    {
+     "clube": "Q60785879",
+     "inicio": 2004,
+     "fim": 2005
+    },
+    {
+     "clube": "Q192071",
+     "inicio": 2005,
+     "fim": 2007
+    },
+    {
+     "clube": "Q19521",
+     "inicio": 2007,
+     "fim": 2011
+    },
+    {
+     "clube": "Q19516",
+     "inicio": 2011,
+     "fim": 2013
+    },
+    {
+     "clube": "Q132885",
+     "inicio": 2013,
+     "fim": 2015
+    },
+    {
+     "clube": "Q18747",
+     "inicio": 2015,
+     "fim": 2017
+    },
+    {
+     "clube": "Q132885",
+     "inicio": 2017,
+     "fim": 2023
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 2023,
+     "fim": 2025
+    }
+   ]
+  },
+  {
+   "wikidata": "Q1509622",
+   "nome": "Geovani",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q2735045",
+     "inicio": 1981,
+     "fim": 1983
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 1983,
+     "fim": 1989
+    },
+    {
+     "clube": "Q849823",
+     "inicio": 1989,
+     "fim": 1989
+    },
+    {
+     "clube": "Q1893",
+     "inicio": 1989,
+     "fim": 1991
+    },
+    {
+     "clube": "Q105853",
+     "inicio": 1990,
+     "fim": 1991
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 1992,
+     "fim": 1993
+    },
+    {
+     "clube": "Q849823",
+     "inicio": 1993,
+     "fim": 1994
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 1995,
+     "fim": 1996
+    },
+    {
+     "clube": "Q2735045",
+     "inicio": 1997,
+     "fim": 1997
+    },
+    {
+     "clube": "Q3241573",
+     "inicio": 1998,
+     "fim": 1998
+    },
+    {
+     "clube": "Q3241574",
+     "inicio": 1998,
+     "fim": 1998
+    },
+    {
+     "clube": "Q3487431",
+     "inicio": 1999,
+     "fim": 1999
+    },
+    {
+     "clube": "Q2735045",
+     "inicio": 2000,
+     "fim": 2000
+    },
+    {
+     "clube": "Q2508289",
+     "inicio": 2001,
+     "fim": 2001
+    },
+    {
+     "clube": "Q5399143",
+     "inicio": 2001,
+     "fim": 2002
+    }
+   ]
+  },
+  {
+   "wikidata": "Q355742",
+   "nome": "Ademir da Guia",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q788363",
+     "inicio": 1960,
+     "fim": 1961
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 1962,
+     "fim": 1977
+    }
+   ]
+  },
+  {
+   "wikidata": "Q195426",
+   "nome": "Evair",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q1133475",
+     "inicio": 1985,
+     "fim": 1988
+    },
+    {
+     "clube": "Q1886",
+     "inicio": 1988,
+     "fim": 1991
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 1991,
+     "fim": 1994
+    },
+    {
+     "clube": "Q1368488",
+     "inicio": 1995,
+     "fim": 1996
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 1997,
+     "fim": 1997
+    },
+    {
+     "clube": "Q270995",
+     "inicio": 1997,
+     "fim": 1997
+    },
+    {
+     "clube": "Q204675",
+     "inicio": 1998,
+     "fim": 1998
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 1999,
+     "fim": 1999
+    },
+    {
+     "clube": "Q816779",
+     "inicio": 2000,
+     "fim": 2000
+    },
+    {
+     "clube": "Q38568",
+     "inicio": 2000,
+     "fim": 2000
+    },
+    {
+     "clube": "Q478317",
+     "inicio": 2001,
+     "fim": 2002
+    },
+    {
+     "clube": "Q816779",
+     "inicio": 2002,
+     "fim": 2002
+    },
+    {
+     "clube": "Q218334",
+     "inicio": 2003,
+     "fim": 2003
+    }
+   ]
+  },
+  {
+   "wikidata": "Q204555",
+   "nome": "Zinho",
+   "posicao": "Wing half",
+   "clubes": [
+    {
+     "clube": "Q17479",
+     "inicio": 1986,
+     "fim": 1992
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 1992,
+     "fim": 1994
+    },
+    {
+     "clube": "Q1368488",
+     "inicio": 1995,
+     "fim": 1997
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 1997,
+     "fim": 1999
+    },
+    {
+     "clube": "Q221695",
+     "inicio": 2000,
+     "fim": 2002
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 2002,
+     "fim": 2003
+    },
+    {
+     "clube": "Q188277",
+     "inicio": 2003,
+     "fim": 2003
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 2004,
+     "fim": 2005
+    },
+    {
+     "clube": "Q3345324",
+     "inicio": 2005,
+     "fim": 2005
+    },
+    {
+     "clube": "Q972741",
+     "inicio": 2005,
+     "fim": 2007
+    }
+   ]
+  },
+  {
+   "wikidata": "Q483577",
+   "nome": "Rivaldo",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q1422177",
+     "inicio": 1989,
+     "fim": 1990
+    },
+    {
+     "clube": "Q508440",
+     "inicio": 1991,
+     "fim": 1992
+    },
+    {
+     "clube": "Q2419887",
+     "inicio": 1992,
+     "fim": 1994
+    },
+    {
+     "clube": "Q35933",
+     "inicio": 1993,
+     "fim": 1994
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 1994,
+     "fim": 1996
+    },
+    {
+     "clube": "Q8760",
+     "inicio": 1996,
+     "fim": 1997
+    },
+    {
+     "clube": "Q7156",
+     "inicio": 1997,
+     "fim": 2002
+    },
+    {
+     "clube": "Q1543",
+     "inicio": 2002,
+     "fim": 2003
+    },
+    {
+     "clube": "Q188277",
+     "inicio": 2004,
+     "fim": 2004
+    },
+    {
+     "clube": "Q19628",
+     "inicio": 2004,
+     "fim": 2007
+    },
+    {
+     "clube": "Q201584",
+     "inicio": 2007,
+     "fim": 2008
+    },
+    {
+     "clube": "Q628763",
+     "inicio": 2008,
+     "fim": 2010
+    },
+    {
+     "clube": "Q38568",
+     "inicio": 2011,
+     "fim": 2011
+    },
+    {
+     "clube": "Q693297",
+     "inicio": 2012,
+     "fim": 2012
+    },
+    {
+     "clube": "Q290940",
+     "inicio": 2013,
+     "fim": 2013
+    },
+    {
+     "clube": "Q2419887",
+     "inicio": 2014,
+     "fim": 2015
+    }
+   ]
+  },
+  {
+   "wikidata": "Q178683",
+   "nome": "Cafu",
+   "posicao": "Lateral",
+   "clubes": [
+    {
+     "clube": "Q38568",
+     "inicio": 1990,
+     "fim": 1994
+    },
+    {
+     "clube": "Q910453",
+     "inicio": 1995,
+     "fim": 1995
+    },
+    {
+     "clube": "Q10308",
+     "inicio": 1995,
+     "fim": 1995
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 1995,
+     "fim": 1997
+    },
+    {
+     "clube": "Q2739",
+     "inicio": 1997,
+     "fim": 2003
+    },
+    {
+     "clube": "Q1543",
+     "inicio": 2003,
+     "fim": 2008
+    }
+   ]
+  },
+  {
+   "wikidata": "Q47489",
+   "nome": "Djalminha",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q17479",
+     "inicio": 1989,
+     "fim": 1993
+    },
+    {
+     "clube": "Q1133475",
+     "inicio": 1993,
+     "fim": 1995
+    },
+    {
+     "clube": "Q823384",
+     "inicio": 1994,
+     "fim": 1994
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 1996,
+     "fim": 1997
+    },
+    {
+     "clube": "Q8760",
+     "inicio": 1997,
+     "fim": 2004
+    },
+    {
+     "clube": "Q131209",
+     "inicio": 2002,
+     "fim": 2003
+    },
+    {
+     "clube": "Q459090",
+     "inicio": 2004,
+     "fim": 2004
+    }
+   ]
+  },
+  {
+   "wikidata": "Q342474",
+   "nome": "Marcos",
+   "posicao": "Goleiro",
+   "clubes": [
+    {
+     "clube": "Q80964",
+     "inicio": 1992,
+     "fim": 2012
+    }
+   ]
+  },
+  {
+   "wikidata": "Q264228",
+   "nome": "Francisco Arce",
+   "posicao": "Lateral",
+   "clubes": [
+    {
+     "clube": "Q914086",
+     "inicio": 1989,
+     "fim": 1994
+    },
+    {
+     "clube": "Q3590749",
+     "inicio": 1992,
+     "fim": 1992
+    },
+    {
+     "clube": "Q221695",
+     "inicio": 1994,
+     "fim": 1998
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 1998,
+     "fim": 2002
+    },
+    {
+     "clube": "Q738423",
+     "inicio": 2003,
+     "fim": 2003
+    },
+    {
+     "clube": "Q848642",
+     "inicio": 2004,
+     "fim": 2005
+    },
+    {
+     "clube": "Q1900225",
+     "inicio": 2006,
+     "fim": 2006
+    }
+   ]
+  },
+  {
+   "wikidata": "Q507815",
+   "nome": "Alex",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q478317",
+     "inicio": 1995,
+     "fim": 1997
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 1997,
+     "fim": 2000
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 2000,
+     "fim": 2000
+    },
+    {
+     "clube": "Q2693",
+     "inicio": 2000,
+     "fim": 2002
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 2001,
+     "fim": 2001
+    },
+    {
+     "clube": "Q188277",
+     "inicio": 2001,
+     "fim": 2001
+    },
+    {
+     "clube": "Q2693",
+     "inicio": 2002,
+     "fim": 2002
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 2002,
+     "fim": 2002
+    },
+    {
+     "clube": "Q188277",
+     "inicio": 2002,
+     "fim": 2004
+    },
+    {
+     "clube": "Q6601875",
+     "inicio": 2004,
+     "fim": 2012
+    },
+    {
+     "clube": "Q478317",
+     "inicio": 2013,
+     "fim": 2014
+    }
+   ]
+  },
+  {
+   "wikidata": "Q360782",
+   "nome": "Jorge Valdivia",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q721560",
+     "inicio": 2003,
+     "fim": 2003
+    },
+    {
+     "clube": "Q10300",
+     "inicio": 2003,
+     "fim": 2004
+    },
+    {
+     "clube": "Q1492",
+     "inicio": 2003,
+     "fim": 2006
+    },
+    {
+     "clube": "Q10300",
+     "inicio": 2004,
+     "fim": 2004
+    },
+    {
+     "clube": "Q219235",
+     "inicio": 2004,
+     "fim": 2005
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 2006,
+     "fim": 2008
+    },
+    {
+     "clube": "Q812720",
+     "inicio": 2008,
+     "fim": 2010
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 2010,
+     "fim": 2015
+    },
+    {
+     "clube": "Q283767",
+     "inicio": 2015,
+     "fim": 2017
+    },
+    {
+     "clube": "Q332524",
+     "inicio": 2015,
+     "fim": null
+    },
+    {
+     "clube": "Q1492",
+     "inicio": 2017,
+     "fim": 2006
+    }
+   ]
+  },
+  {
+   "wikidata": "Q2063693",
+   "nome": "Fernando Prass",
+   "posicao": "Goleiro",
+   "clubes": [
+    {
+     "clube": "Q221695",
+     "inicio": 1998,
+     "fim": 1999
+    },
+    {
+     "clube": "Q2868221",
+     "inicio": 2000,
+     "fim": 2000
+    },
+    {
+     "clube": "Q1513287",
+     "inicio": 2001,
+     "fim": 2001
+    },
+    {
+     "clube": "Q478317",
+     "inicio": 2002,
+     "fim": 2005
+    },
+    {
+     "clube": "Q211401",
+     "inicio": 2005,
+     "fim": 2009
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 2009,
+     "fim": 2012
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 2013,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q19708656",
+   "nome": "Gabriel Jesus",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q80964",
+     "inicio": 2015,
+     "fim": 2017
+    },
+    {
+     "clube": "Q50602",
+     "inicio": 2017,
+     "fim": 2022
+    },
+    {
+     "clube": "Q9617",
+     "inicio": 2022,
+     "fim": 2026
+    },
+    {
+     "clube": "Q7156",
+     "inicio": 2026,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q1341709",
+   "nome": "Dudu",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q188277",
+     "inicio": 2009,
+     "fim": 2011
+    },
+    {
+     "clube": "Q478317",
+     "inicio": 2010,
+     "fim": 2010
+    },
+    {
+     "clube": "Q179075",
+     "inicio": 2011,
+     "fim": 2014
+    },
+    {
+     "clube": "Q221695",
+     "inicio": 2014,
+     "fim": 2015
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 2015,
+     "fim": null
+    },
+    {
+     "clube": "Q1056948",
+     "inicio": 2020,
+     "fim": 2021
+    },
+    {
+     "clube": "Q188277",
+     "inicio": 2025,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q8040741",
+   "nome": "Weverton",
+   "posicao": "Goleiro",
+   "clubes": [
+    {
+     "clube": "Q2552872",
+     "inicio": 2006,
+     "fim": 2007
+    },
+    {
+     "clube": "Q35933",
+     "inicio": 2007,
+     "fim": 2009
+    },
+    {
+     "clube": "Q966183",
+     "inicio": 2009,
+     "fim": 2009
+    },
+    {
+     "clube": "Q482262",
+     "inicio": 2009,
+     "fim": 2009
+    },
+    {
+     "clube": "Q2332493",
+     "inicio": 2010,
+     "fim": 2010
+    },
+    {
+     "clube": "Q204675",
+     "inicio": 2010,
+     "fim": 2012
+    },
+    {
+     "clube": "Q506832",
+     "inicio": 2012,
+     "fim": 2017
+    }
+   ]
+  },
+  {
+   "wikidata": "Q1033783",
+   "nome": "Gustavo Gómez",
+   "posicao": "Defesa central",
+   "clubes": [
+    {
+     "clube": "Q848642",
+     "inicio": 2011,
+     "fim": 2014
+    },
+    {
+     "clube": "Q170703",
+     "inicio": 2016,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q10552615",
+   "nome": "Deyverson",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q10292310",
+     "inicio": 2011,
+     "fim": 2012
+    },
+    {
+     "clube": "Q216510",
+     "inicio": 2013,
+     "fim": 2015
+    },
+    {
+     "clube": "Q104770",
+     "inicio": 2015,
+     "fim": 2015
+    },
+    {
+     "clube": "Q8823",
+     "inicio": 2015,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q101230488",
+   "nome": "Breno Lopes",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q2742586",
+     "inicio": 2016,
+     "fim": 2016
+    },
+    {
+     "clube": "Q2035444",
+     "inicio": 2016,
+     "fim": 2018
+    },
+    {
+     "clube": "Q218334",
+     "inicio": 2019,
+     "fim": 2019
+    },
+    {
+     "clube": "Q910453",
+     "inicio": 2019,
+     "fim": 2020
+    },
+    {
+     "clube": "Q506832",
+     "inicio": 2020,
+     "fim": 2020
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 2020,
+     "fim": 2024
+    },
+    {
+     "clube": "Q188841",
+     "inicio": 2024,
+     "fim": 2026
+    },
+    {
+     "clube": "Q478317",
+     "inicio": 2026,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q27443365",
+   "nome": "Raphael Veiga",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q478317",
+     "inicio": 2016,
+     "fim": 2016
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 2017,
+     "fim": null
+    },
+    {
+     "clube": "Q506832",
+     "inicio": 2018,
+     "fim": 2018
+    },
+    {
+     "clube": "Q459090",
+     "inicio": 2026,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q28748046",
+   "nome": "Rony",
+   "posicao": "Atacante",
+   "clubes": []
+  },
+  {
+   "wikidata": "Q110644260",
+   "nome": "Endrick",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q80964",
+     "inicio": 2022,
+     "fim": 2024
+    },
+    {
+     "clube": "Q8682",
+     "inicio": 2024,
+     "fim": null
+    },
+    {
+     "clube": "Q704",
+     "inicio": 2025,
+     "fim": 2026
+    }
+   ]
+  },
+  {
+   "wikidata": "Q316436",
+   "nome": "César Sampaio",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q80955",
+     "inicio": 1986,
+     "fim": 1991
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 1991,
+     "fim": 1994
+    },
+    {
+     "clube": "Q1368488",
+     "inicio": 1995,
+     "fim": 1998
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 1999,
+     "fim": 2000
+    },
+    {
+     "clube": "Q8760",
+     "inicio": 2000,
+     "fim": 2001
+    },
+    {
+     "clube": "Q35933",
+     "inicio": 2001,
+     "fim": 2001
+    },
+    {
+     "clube": "Q844931",
+     "inicio": 2002,
+     "fim": 2002
+    },
+    {
+     "clube": "Q630279",
+     "inicio": 2003,
+     "fim": 2004
+    },
+    {
+     "clube": "Q38568",
+     "inicio": 2004,
+     "fim": 2004
+    },
+    {
+     "clube": "Q4120643",
+     "inicio": 2006,
+     "fim": 2006
+    }
+   ]
+  },
+  {
+   "wikidata": "Q350761",
+   "nome": "Mazinho",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q7419428",
+     "inicio": 1983,
+     "fim": 1985
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 1985,
+     "fim": 1990
+    },
+    {
+     "clube": "Q13391",
+     "inicio": 1990,
+     "fim": 1991
+    },
+    {
+     "clube": "Q2052",
+     "inicio": 1991,
+     "fim": 1992
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 1992,
+     "fim": 1994
+    },
+    {
+     "clube": "Q10333",
+     "inicio": 1994,
+     "fim": 1996
+    },
+    {
+     "clube": "Q8749",
+     "inicio": 1996,
+     "fim": 2000
+    },
+    {
+     "clube": "Q10512",
+     "inicio": 2000,
+     "fim": 2001
+    },
+    {
+     "clube": "Q274465",
+     "inicio": 2001,
+     "fim": 2001
+    }
+   ]
+  },
+  {
+   "wikidata": "Q274872",
+   "nome": "Émerson Leão",
+   "posicao": "Goleiro",
+   "clubes": [
+    {
+     "clube": "Q3813348",
+     "inicio": 1968,
+     "fim": 1970
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 1971,
+     "fim": 1978
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 1979,
+     "fim": 1980
+    },
+    {
+     "clube": "Q221695",
+     "inicio": 1981,
+     "fim": 1982
+    },
+    {
+     "clube": "Q35933",
+     "inicio": 1983,
+     "fim": 1983
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 1984,
+     "fim": 1985
+    },
+    {
+     "clube": "Q219098",
+     "inicio": 1986,
+     "fim": 1986
+    }
+   ]
+  },
+  {
+   "wikidata": "Q47526",
+   "nome": "Zico",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q17479",
+     "inicio": 1971,
+     "fim": 1983
+    },
+    {
+     "clube": "Q2798",
+     "inicio": 1983,
+     "fim": 1985
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 1985,
+     "fim": 1989
+    },
+    {
+     "clube": "Q16932",
+     "inicio": 1991,
+     "fim": 1994
+    }
+   ]
+  },
+  {
+   "wikidata": "Q380405",
+   "nome": "Adílio",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q17479",
+     "inicio": 1975,
+     "fim": 1987
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 1987,
+     "fim": 1987
+    },
+    {
+     "clube": "Q478317",
+     "inicio": 1987,
+     "fim": 1988
+    },
+    {
+     "clube": "Q248782",
+     "inicio": 1989,
+     "fim": 1990
+    },
+    {
+     "clube": "Q1675356",
+     "inicio": 1991,
+     "fim": 1991
+    },
+    {
+     "clube": "Q572957",
+     "inicio": 1991,
+     "fim": 1992
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 1993,
+     "fim": 1993
+    },
+    {
+     "clube": "Q4749635",
+     "inicio": 1994,
+     "fim": 1994
+    },
+    {
+     "clube": "Q4817902",
+     "inicio": 1995,
+     "fim": 1995
+    },
+    {
+     "clube": "Q429998",
+     "inicio": 1995,
+     "fim": 1995
+    },
+    {
+     "clube": "Q2656570",
+     "inicio": 1995,
+     "fim": 1996
+    },
+    {
+     "clube": "Q666059",
+     "inicio": 1996,
+     "fim": 1996
+    },
+    {
+     "clube": "Q2663081",
+     "inicio": 1996,
+     "fim": 1996
+    },
+    {
+     "clube": "Q4863138",
+     "inicio": 1997,
+     "fim": 1997
+    }
+   ]
+  },
+  {
+   "wikidata": "Q2520149",
+   "nome": "Andrade",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q17479",
+     "inicio": 1977,
+     "fim": 1988
+    },
+    {
+     "clube": "Q2116855",
+     "inicio": 1978,
+     "fim": 1979
+    },
+    {
+     "clube": "Q2739",
+     "inicio": 1988,
+     "fim": 1989
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 1989,
+     "fim": 1990
+    },
+    {
+     "clube": "Q506832",
+     "inicio": 1991,
+     "fim": 1991
+    },
+    {
+     "clube": "Q3058500",
+     "inicio": 1991,
+     "fim": 1991
+    },
+    {
+     "clube": "Q2735045",
+     "inicio": 1992,
+     "fim": 1993
+    },
+    {
+     "clube": "Q3241573",
+     "inicio": 1994,
+     "fim": 1994
+    },
+    {
+     "clube": "Q3354098",
+     "inicio": 1994,
+     "fim": 1994
+    },
+    {
+     "clube": "Q429998",
+     "inicio": 1995,
+     "fim": 1995
+    },
+    {
+     "clube": "Q2656570",
+     "inicio": 1995,
+     "fim": 1998
+    },
+    {
+     "clube": "Q788363",
+     "inicio": 1999,
+     "fim": 1999
+    }
+   ]
+  },
+  {
+   "wikidata": "Q969872",
+   "nome": "Leandro",
+   "posicao": "Zagueiro",
+   "clubes": [
+    {
+     "clube": "Q17479",
+     "inicio": 1978,
+     "fim": 1990
+    }
+   ]
+  },
+  {
+   "wikidata": "Q1353800",
+   "nome": "Tita",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q17479",
+     "inicio": 1977,
+     "fim": 1982
+    },
+    {
+     "clube": "Q221695",
+     "inicio": 1983,
+     "fim": 1983
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 1983,
+     "fim": 1985
+    },
+    {
+     "clube": "Q80845",
+     "inicio": 1985,
+     "fim": 1986
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 1987,
+     "fim": 1987
+    },
+    {
+     "clube": "Q104761",
+     "inicio": 1987,
+     "fim": 1988
+    },
+    {
+     "clube": "Q2710",
+     "inicio": 1988,
+     "fim": 1989
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 1989,
+     "fim": 1990
+    },
+    {
+     "clube": "Q633223",
+     "inicio": 1990,
+     "fim": 1994
+    },
+    {
+     "clube": "Q646596",
+     "inicio": 1994,
+     "fim": 1995
+    },
+    {
+     "clube": "Q633223",
+     "inicio": 1995,
+     "fim": 1996
+    },
+    {
+     "clube": "Q1024337",
+     "inicio": 1997,
+     "fim": 1998
+    }
+   ]
+  },
+  {
+   "wikidata": "Q2448647",
+   "nome": "Nunes",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q739701",
+     "inicio": 1974,
+     "fim": 1975
+    },
+    {
+     "clube": "Q508440",
+     "inicio": 1975,
+     "fim": 1978
+    },
+    {
+     "clube": "Q80987",
+     "inicio": 1978,
+     "fim": 1980
+    },
+    {
+     "clube": "Q768253",
+     "inicio": 1980,
+     "fim": 1980
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 1980,
+     "fim": 1982
+    },
+    {
+     "clube": "Q80958",
+     "inicio": 1983,
+     "fim": 1983
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 1984,
+     "fim": 1984
+    },
+    {
+     "clube": "Q73971",
+     "inicio": 1985,
+     "fim": 1985
+    },
+    {
+     "clube": "Q80955",
+     "inicio": 1985,
+     "fim": 1985
+    },
+    {
+     "clube": "Q270995",
+     "inicio": 1986,
+     "fim": 1986
+    },
+    {
+     "clube": "Q219703",
+     "inicio": 1986,
+     "fim": 1987
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 1987,
+     "fim": 1987
+    },
+    {
+     "clube": "Q2553450",
+     "inicio": 1988,
+     "fim": 1988
+    },
+    {
+     "clube": "Q508440",
+     "inicio": 1991,
+     "fim": 1992
+    },
+    {
+     "clube": "Q120064",
+     "inicio": 1992,
+     "fim": 1992
+    }
+   ]
+  },
+  {
+   "wikidata": "Q927507",
+   "nome": "Mozer",
+   "posicao": "Defesa central",
+   "clubes": [
+    {
+     "clube": "Q17479",
+     "inicio": 1980,
+     "fim": 1987
+    },
+    {
+     "clube": "Q131499",
+     "inicio": 1987,
+     "fim": 1989
+    },
+    {
+     "clube": "Q132885",
+     "inicio": 1989,
+     "fim": 1992
+    },
+    {
+     "clube": "Q131499",
+     "inicio": 1992,
+     "fim": 1995
+    },
+    {
+     "clube": "Q16932",
+     "inicio": 1995,
+     "fim": 1996
+    }
+   ]
+  },
+  {
+   "wikidata": "Q297721",
+   "nome": "Aldair",
+   "posicao": "Defesa central",
+   "clubes": [
+    {
+     "clube": "Q17479",
+     "inicio": 1985,
+     "fim": 1989
+    },
+    {
+     "clube": "Q131499",
+     "inicio": 1989,
+     "fim": 1990
+    },
+    {
+     "clube": "Q2739",
+     "inicio": 1990,
+     "fim": 2003
+    },
+    {
+     "clube": "Q2074",
+     "inicio": 2003,
+     "fim": 2004
+    },
+    {
+     "clube": "Q525573",
+     "inicio": 2007,
+     "fim": 2010
+    }
+   ]
+  },
+  {
+   "wikidata": "Q372451",
+   "nome": "Sávio",
+   "posicao": "Wing half",
+   "clubes": [
+    {
+     "clube": "Q17479",
+     "inicio": 1992,
+     "fim": 1997
+    },
+    {
+     "clube": "Q8682",
+     "inicio": 1997,
+     "fim": 2002
+    },
+    {
+     "clube": "Q172476",
+     "inicio": 2002,
+     "fim": 2003
+    },
+    {
+     "clube": "Q10308",
+     "inicio": 2003,
+     "fim": 2006
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 2006,
+     "fim": 2007
+    },
+    {
+     "clube": "Q8823",
+     "inicio": 2007,
+     "fim": 2007
+    },
+    {
+     "clube": "Q10315",
+     "inicio": 2007,
+     "fim": 2007
+    },
+    {
+     "clube": "Q8823",
+     "inicio": 2007,
+     "fim": 2008
+    },
+    {
+     "clube": "Q2735045",
+     "inicio": 2008,
+     "fim": 2008
+    },
+    {
+     "clube": "Q141688",
+     "inicio": 2008,
+     "fim": 2009
+    },
+    {
+     "clube": "Q374069",
+     "inicio": 2010,
+     "fim": 2010
+    }
+   ]
+  },
+  {
+   "wikidata": "Q2015351",
+   "nome": "Dejan Petković",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q1137993",
+     "inicio": 1988,
+     "fim": 1992
+    },
+    {
+     "clube": "Q173009",
+     "inicio": 1992,
+     "fim": 1995
+    },
+    {
+     "clube": "Q8682",
+     "inicio": 1995,
+     "fim": 1997
+    },
+    {
+     "clube": "Q10329",
+     "inicio": 1996,
+     "fim": 1996
+    },
+    {
+     "clube": "Q12236",
+     "inicio": 1997,
+     "fim": 1997
+    },
+    {
+     "clube": "Q274465",
+     "inicio": 1997,
+     "fim": 1999
+    },
+    {
+     "clube": "Q501245",
+     "inicio": 1999,
+     "fim": 1999
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 2000,
+     "fim": 2001
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 2002,
+     "fim": 2003
+    },
+    {
+     "clube": "Q725367",
+     "inicio": 2003,
+     "fim": 2003
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 2004,
+     "fim": 2004
+    },
+    {
+     "clube": "Q309480",
+     "inicio": 2004,
+     "fim": 2005
+    },
+    {
+     "clube": "Q80987",
+     "inicio": 2005,
+     "fim": 2006
+    },
+    {
+     "clube": "Q80955",
+     "inicio": 2007,
+     "fim": 2007
+    },
+    {
+     "clube": "Q816779",
+     "inicio": 2007,
+     "fim": 2007
+    },
+    {
+     "clube": "Q270995",
+     "inicio": 2008,
+     "fim": 2008
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 2009,
+     "fim": 2011
+    }
+   ]
+  },
+  {
+   "wikidata": "Q170452",
+   "nome": "Adriano",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q17479",
+     "inicio": 2000,
+     "fim": 2001
+    },
+    {
+     "clube": "Q2052",
+     "inicio": 2002,
+     "fim": 2002
+    },
+    {
+     "clube": "Q2693",
+     "inicio": 2002,
+     "fim": 2004
+    },
+    {
+     "clube": "Q38568",
+     "inicio": 2008,
+     "fim": 2008
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 2009,
+     "fim": 2010
+    },
+    {
+     "clube": "Q2739",
+     "inicio": 2010,
+     "fim": 2011
+    },
+    {
+     "clube": "Q35933",
+     "inicio": 2011,
+     "fim": 2012
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 2012,
+     "fim": 2012
+    },
+    {
+     "clube": "Q506832",
+     "inicio": 2014,
+     "fim": 2014
+    },
+    {
+     "clube": "Q16844935",
+     "inicio": 2016,
+     "fim": 2016
+    }
+   ]
+  },
+  {
+   "wikidata": "Q39444",
+   "nome": "Ronaldinho",
+   "posicao": "Ponteiro",
+   "clubes": [
+    {
+     "clube": "Q221695",
+     "inicio": 1998,
+     "fim": 2001
+    },
+    {
+     "clube": "Q483020",
+     "inicio": 2001,
+     "fim": 2003
+    },
+    {
+     "clube": "Q7156",
+     "inicio": 2003,
+     "fim": 2008
+    },
+    {
+     "clube": "Q1543",
+     "inicio": 2008,
+     "fim": 2010
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 2011,
+     "fim": 2012
+    },
+    {
+     "clube": "Q270995",
+     "inicio": 2012,
+     "fim": 2014
+    },
+    {
+     "clube": "Q606210",
+     "inicio": 2014,
+     "fim": 2015
+    },
+    {
+     "clube": "Q80987",
+     "inicio": 2015,
+     "fim": 2015
+    },
+    {
+     "clube": "Q1349814",
+     "inicio": 2026,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q156802",
+   "nome": "Paolo Guerrero",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q572957",
+     "inicio": 1991,
+     "fim": 2001
+    },
+    {
+     "clube": "Q15789",
+     "inicio": 2004,
+     "fim": 2006
+    },
+    {
+     "clube": "Q51974",
+     "inicio": 2006,
+     "fim": 2012
+    },
+    {
+     "clube": "Q35933",
+     "inicio": 2012,
+     "fim": 2015
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 2015,
+     "fim": 2018
+    },
+    {
+     "clube": "Q80845",
+     "inicio": 2018,
+     "fim": 2021
+    },
+    {
+     "clube": "Q374069",
+     "inicio": 2022,
+     "fim": 2023
+    },
+    {
+     "clube": "Q276533",
+     "inicio": 2023,
+     "fim": 2023
+    },
+    {
+     "clube": "Q249643",
+     "inicio": 2023,
+     "fim": 2023
+    },
+    {
+     "clube": "Q603023",
+     "inicio": 2024,
+     "fim": 2024
+    },
+    {
+     "clube": "Q572957",
+     "inicio": 2024,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q109428",
+   "nome": "Diego Ribas",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q80955",
+     "inicio": 1997,
+     "fim": 2004
+    },
+    {
+     "clube": "Q128446",
+     "inicio": 2004,
+     "fim": 2006
+    },
+    {
+     "clube": "Q51976",
+     "inicio": 2006,
+     "fim": 2009
+    },
+    {
+     "clube": "Q1422",
+     "inicio": 2009,
+     "fim": 2010
+    },
+    {
+     "clube": "Q101859",
+     "inicio": 2010,
+     "fim": 2014
+    },
+    {
+     "clube": "Q8701",
+     "inicio": 2011,
+     "fim": 2014
+    },
+    {
+     "clube": "Q6601875",
+     "inicio": 2014,
+     "fim": null
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 2016,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q174926",
+   "nome": "Rafinha",
+   "posicao": "Lateral",
+   "clubes": [
+    {
+     "clube": "Q478317",
+     "inicio": 2002,
+     "fim": 2005
+    },
+    {
+     "clube": "Q32494",
+     "inicio": 2005,
+     "fim": 2010
+    },
+    {
+     "clube": "Q2074",
+     "inicio": 2010,
+     "fim": 2011
+    },
+    {
+     "clube": "Q15789",
+     "inicio": 2011,
+     "fim": null
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 2019,
+     "fim": 2020
+    },
+    {
+     "clube": "Q19628",
+     "inicio": 2020,
+     "fim": 2021
+    },
+    {
+     "clube": "Q38568",
+     "inicio": 2022,
+     "fim": 2024
+    }
+   ]
+  },
+  {
+   "wikidata": "Q18617137",
+   "nome": "Gerson",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q80987",
+     "inicio": 2014,
+     "fim": 2015
+    },
+    {
+     "clube": "Q2739",
+     "inicio": 2016,
+     "fim": 2016
+    },
+    {
+     "clube": "Q80987",
+     "inicio": 2016,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q13578003",
+   "nome": "Giorgian De Arrascaeta",
+   "posicao": "Wing half",
+   "clubes": [
+    {
+     "clube": "Q844238",
+     "inicio": 2012,
+     "fim": 2015
+    },
+    {
+     "clube": "Q188277",
+     "inicio": 2015,
+     "fim": 2018
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 2019,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q13646572",
+   "nome": "Gabigol",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q80955",
+     "inicio": 2013,
+     "fim": 2016
+    },
+    {
+     "clube": "Q131499",
+     "inicio": 2017,
+     "fim": 2018
+    },
+    {
+     "clube": "Q80955",
+     "inicio": 2018,
+     "fim": 2018
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 2019,
+     "fim": 2024
+    },
+    {
+     "clube": "Q188277",
+     "inicio": 2025,
+     "fim": null
+    },
+    {
+     "clube": "Q80955",
+     "inicio": 2026,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q47491410",
+   "nome": "Pedro",
+   "posicao": "Atacante",
+   "clubes": []
+  },
+  {
+   "wikidata": "Q19956526",
+   "nome": "Bruno Henrique",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q188277",
+     "inicio": 2011,
+     "fim": 2013
+    },
+    {
+     "clube": "Q1857213",
+     "inicio": 2012,
+     "fim": 2014
+    },
+    {
+     "clube": "Q1675356",
+     "inicio": 2014,
+     "fim": 2014
+    },
+    {
+     "clube": "Q816779",
+     "inicio": 2015,
+     "fim": 2015
+    },
+    {
+     "clube": "Q101859",
+     "inicio": 2016,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q4025436",
+   "nome": "Everton Ribeiro",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q35933",
+     "inicio": 2007,
+     "fim": 2011
+    },
+    {
+     "clube": "Q290940",
+     "inicio": 2008,
+     "fim": 2010
+    },
+    {
+     "clube": "Q478317",
+     "inicio": 2011,
+     "fim": 2012
+    },
+    {
+     "clube": "Q188277",
+     "inicio": 2013,
+     "fim": 2014
+    },
+    {
+     "clube": "Q424943",
+     "inicio": 2015,
+     "fim": null
+    },
+    {
+     "clube": "Q198032",
+     "inicio": 2024,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q350547",
+   "nome": "Filipe Luís",
+   "posicao": "Lateral",
+   "clubes": [
+    {
+     "clube": "Q218334",
+     "inicio": 2003,
+     "fim": 2004
+    },
+    {
+     "clube": "Q81888",
+     "inicio": 2004,
+     "fim": 2005
+    },
+    {
+     "clube": "Q8760",
+     "inicio": 2006,
+     "fim": 2010
+    },
+    {
+     "clube": "Q8701",
+     "inicio": 2010,
+     "fim": 2014
+    },
+    {
+     "clube": "Q9616",
+     "inicio": 2014,
+     "fim": 2015
+    },
+    {
+     "clube": "Q8701",
+     "inicio": 2015,
+     "fim": 2019
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 2019,
+     "fim": 2023
+    }
+   ]
+  },
+  {
+   "wikidata": "Q12897",
+   "nome": "Pelé",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q2340403",
+     "inicio": 1953,
+     "fim": 1956
+    },
+    {
+     "clube": "Q80955",
+     "inicio": 1956,
+     "fim": 1974
+    },
+    {
+     "clube": "Q646135",
+     "inicio": 1975,
+     "fim": 1977
+    }
+   ]
+  },
+  {
+   "wikidata": "Q180642",
+   "nome": "Garrincha",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q80958",
+     "inicio": 1953,
+     "fim": 1965
+    },
+    {
+     "clube": "Q35933",
+     "inicio": 1966,
+     "fim": 1966
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 1967,
+     "fim": 1967
+    },
+    {
+     "clube": "Q2341011",
+     "inicio": 1967,
+     "fim": 1967
+    },
+    {
+     "clube": "Q332524",
+     "inicio": 1968,
+     "fim": 1968
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 1968,
+     "fim": 1969
+    },
+    {
+     "clube": "Q2018179",
+     "inicio": 1972,
+     "fim": 1972
+    }
+   ]
+  },
+  {
+   "wikidata": "Q102331",
+   "nome": "Sócrates",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q2332493",
+     "inicio": 1974,
+     "fim": 1978
+    },
+    {
+     "clube": "Q35933",
+     "inicio": 1978,
+     "fim": 1984
+    },
+    {
+     "clube": "Q2052",
+     "inicio": 1984,
+     "fim": 1985
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 1986,
+     "fim": 1987
+    },
+    {
+     "clube": "Q80955",
+     "inicio": 1988,
+     "fim": 1989
+    },
+    {
+     "clube": "Q2332493",
+     "inicio": 1989,
+     "fim": 1989
+    },
+    {
+     "clube": "Q18318",
+     "inicio": 2004,
+     "fim": 2004
+    }
+   ]
+  },
+  {
+   "wikidata": "Q220283",
+   "nome": "Roberto Rivellino",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q35933",
+     "inicio": 1965,
+     "fim": 1974
+    },
+    {
+     "clube": "Q80987",
+     "inicio": 1974,
+     "fim": 1978
+    },
+    {
+     "clube": "Q73965",
+     "inicio": 1979,
+     "fim": 1981
+    }
+   ]
+  },
+  {
+   "wikidata": "Q311407",
+   "nome": "Tostão",
+   "posicao": "Wing half",
+   "clubes": [
+    {
+     "clube": "Q338285",
+     "inicio": 1962,
+     "fim": 1963
+    },
+    {
+     "clube": "Q188277",
+     "inicio": 1964,
+     "fim": 1971
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 1972,
+     "fim": 1973
+    }
+   ]
+  },
+  {
+   "wikidata": "Q210102",
+   "nome": "Jairzinho",
+   "posicao": "Wing half",
+   "clubes": [
+    {
+     "clube": "Q80958",
+     "inicio": 1959,
+     "fim": 1974
+    },
+    {
+     "clube": "Q132885",
+     "inicio": 1974,
+     "fim": 1975
+    },
+    {
+     "clube": "Q247731",
+     "inicio": 1975,
+     "fim": 1975
+    },
+    {
+     "clube": "Q188277",
+     "inicio": 1975,
+     "fim": 1977
+    },
+    {
+     "clube": "Q204675",
+     "inicio": 1977,
+     "fim": 1977
+    },
+    {
+     "clube": "Q1458264",
+     "inicio": 1977,
+     "fim": 1978
+    },
+    {
+     "clube": "Q2627402",
+     "inicio": 1978,
+     "fim": 1979
+    },
+    {
+     "clube": "Q3334769",
+     "inicio": 1979,
+     "fim": 1980
+    },
+    {
+     "clube": "Q127921",
+     "inicio": 1980,
+     "fim": 1981
+    },
+    {
+     "clube": "Q80958",
+     "inicio": 1981,
+     "fim": 1982
+    },
+    {
+     "clube": "Q2760357",
+     "inicio": 1982,
+     "fim": 1983
+    }
+   ]
+  },
+  {
+   "wikidata": "Q342489",
+   "nome": "Careca",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q1133475",
+     "inicio": 1978,
+     "fim": 1982
+    },
+    {
+     "clube": "Q38568",
+     "inicio": 1983,
+     "fim": 1987
+    },
+    {
+     "clube": "Q2641",
+     "inicio": 1987,
+     "fim": 1993
+    },
+    {
+     "clube": "Q844931",
+     "inicio": 1993,
+     "fim": 1996
+    },
+    {
+     "clube": "Q80955",
+     "inicio": 1997,
+     "fim": 1997
+    },
+    {
+     "clube": "Q7579313",
+     "inicio": 1998,
+     "fim": 1998
+    },
+    {
+     "clube": "Q2508225",
+     "inicio": 1999,
+     "fim": 1999
+    },
+    {
+     "clube": "Q749603",
+     "inicio": 1999,
+     "fim": 1999
+    }
+   ]
+  },
+  {
+   "wikidata": "Q529207",
+   "nome": "Ronaldo",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q188277",
+     "inicio": 1993,
+     "fim": 1994
+    },
+    {
+     "clube": "Q11938",
+     "inicio": 1994,
+     "fim": 1996
+    },
+    {
+     "clube": "Q7156",
+     "inicio": 1996,
+     "fim": 1997
+    },
+    {
+     "clube": "Q8682",
+     "inicio": 2002,
+     "fim": 2007
+    },
+    {
+     "clube": "Q1543",
+     "inicio": 2007,
+     "fim": 2008
+    },
+    {
+     "clube": "Q35933",
+     "inicio": 2009,
+     "fim": 2011
+    }
+   ]
+  },
+  {
+   "wikidata": "Q531814",
+   "nome": "Kaká",
+   "posicao": "Ponteiro",
+   "clubes": [
+    {
+     "clube": "Q38568",
+     "inicio": 2001,
+     "fim": 2003
+    },
+    {
+     "clube": "Q1543",
+     "inicio": 2003,
+     "fim": 2009
+    },
+    {
+     "clube": "Q8682",
+     "inicio": 2009,
+     "fim": 2013
+    },
+    {
+     "clube": "Q1543",
+     "inicio": 2013,
+     "fim": 2014
+    },
+    {
+     "clube": "Q38568",
+     "inicio": 2014,
+     "fim": 2014
+    },
+    {
+     "clube": "Q15214308",
+     "inicio": 2014,
+     "fim": 2017
+    }
+   ]
+  },
+  {
+   "wikidata": "Q58441",
+   "nome": "Robinho",
+   "posicao": "Wing half",
+   "clubes": [
+    {
+     "clube": "Q80955",
+     "inicio": 2002,
+     "fim": 2005
+    },
+    {
+     "clube": "Q8682",
+     "inicio": 2005,
+     "fim": 2008
+    },
+    {
+     "clube": "Q50602",
+     "inicio": 2008,
+     "fim": 2010
+    },
+    {
+     "clube": "Q80955",
+     "inicio": 2010,
+     "fim": 2010
+    },
+    {
+     "clube": "Q1543",
+     "inicio": 2010,
+     "fim": 2015
+    },
+    {
+     "clube": "Q80955",
+     "inicio": 2014,
+     "fim": 2015
+    },
+    {
+     "clube": "Q130521",
+     "inicio": 2015,
+     "fim": 2015
+    },
+    {
+     "clube": "Q270995",
+     "inicio": 2016,
+     "fim": 2017
+    },
+    {
+     "clube": "Q372599",
+     "inicio": 2018,
+     "fim": 2018
+    },
+    {
+     "clube": "Q857938",
+     "inicio": 2019,
+     "fim": 2020
+    },
+    {
+     "clube": "Q80955",
+     "inicio": 2020,
+     "fim": 2020
+    }
+   ]
+  },
+  {
+   "wikidata": "Q142794",
+   "nome": "Neymar",
+   "posicao": "Wing half",
+   "clubes": [
+    {
+     "clube": "Q80955",
+     "inicio": 2009,
+     "fim": 2013
+    },
+    {
+     "clube": "Q7156",
+     "inicio": 2013,
+     "fim": 2017
+    },
+    {
+     "clube": "Q483020",
+     "inicio": 2017,
+     "fim": 2023
+    },
+    {
+     "clube": "Q73965",
+     "inicio": 2023,
+     "fim": 2025
+    },
+    {
+     "clube": "Q80955",
+     "inicio": 2025,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q429039",
+   "nome": "Roberto Carlos",
+   "posicao": "Lateral",
+   "clubes": [
+    {
+     "clube": "Q19353",
+     "inicio": 1,
+     "fim": 2012
+    },
+    {
+     "clube": "Q2329137",
+     "inicio": 1991,
+     "fim": 1993
+    },
+    {
+     "clube": "Q270995",
+     "inicio": 1992,
+     "fim": 1992
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 1993,
+     "fim": 1995
+    },
+    {
+     "clube": "Q8682",
+     "inicio": 1996,
+     "fim": 2007
+    },
+    {
+     "clube": "Q6601875",
+     "inicio": 2007,
+     "fim": 2009
+    },
+    {
+     "clube": "Q35933",
+     "inicio": 2010,
+     "fim": 2011
+    },
+    {
+     "clube": "Q16838244",
+     "inicio": 2015,
+     "fim": 2016
+    }
+   ]
+  },
+  {
+   "wikidata": "Q215890",
+   "nome": "Dunga",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q80845",
+     "inicio": 1980,
+     "fim": 1984
+    },
+    {
+     "clube": "Q35933",
+     "inicio": 1984,
+     "fim": 1985
+    },
+    {
+     "clube": "Q80955",
+     "inicio": 1985,
+     "fim": 1987
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 1987,
+     "fim": 1987
+    },
+    {
+     "clube": "Q289613",
+     "inicio": 1987,
+     "fim": 1988
+    },
+    {
+     "clube": "Q2052",
+     "inicio": 1988,
+     "fim": 1992
+    },
+    {
+     "clube": "Q2710",
+     "inicio": 1992,
+     "fim": 1993
+    },
+    {
+     "clube": "Q4512",
+     "inicio": 1993,
+     "fim": 1995
+    },
+    {
+     "clube": "Q855401",
+     "inicio": 1995,
+     "fim": 1998
+    },
+    {
+     "clube": "Q80845",
+     "inicio": 1999,
+     "fim": 2000
+    }
+   ]
+  },
+  {
+   "wikidata": "Q295891",
+   "nome": "Cláudio Taffarel",
+   "posicao": "Goleiro",
+   "clubes": [
+    {
+     "clube": "Q80845",
+     "inicio": 1985,
+     "fim": 1990
+    },
+    {
+     "clube": "Q2693",
+     "inicio": 1990,
+     "fim": 1993
+    },
+    {
+     "clube": "Q289707",
+     "inicio": 1993,
+     "fim": 1994
+    },
+    {
+     "clube": "Q270995",
+     "inicio": 1995,
+     "fim": 1998
+    },
+    {
+     "clube": "Q495299",
+     "inicio": 1998,
+     "fim": 2001
+    },
+    {
+     "clube": "Q2693",
+     "inicio": 2001,
+     "fim": 2003
+    }
+   ]
+  },
+  {
+   "wikidata": "Q311641",
+   "nome": "Denílson",
+   "posicao": "Wing half",
+   "clubes": [
+    {
+     "clube": "Q38568",
+     "inicio": 1995,
+     "fim": 1998
+    },
+    {
+     "clube": "Q8723",
+     "inicio": 1998,
+     "fim": 2005
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 2000,
+     "fim": 2000
+    },
+    {
+     "clube": "Q172476",
+     "inicio": 2005,
+     "fim": 2006
+    },
+    {
+     "clube": "Q482764",
+     "inicio": 2006,
+     "fim": 2007
+    },
+    {
+     "clube": "Q642291",
+     "inicio": 2007,
+     "fim": 2008
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 2008,
+     "fim": 2008
+    },
+    {
+     "clube": "Q1675356",
+     "inicio": 2009,
+     "fim": 2009
+    },
+    {
+     "clube": "Q2301143",
+     "inicio": 2009,
+     "fim": 2009
+    },
+    {
+     "clube": "Q296050",
+     "inicio": 2010,
+     "fim": 2010
+    }
+   ]
+  },
+  {
+   "wikidata": "Q62786",
+   "nome": "Hulk",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q274465",
+     "inicio": 2004,
+     "fim": 2005
+    },
+    {
+     "clube": "Q874016",
+     "inicio": 2005,
+     "fim": 2008
+    },
+    {
+     "clube": "Q586787",
+     "inicio": 2006,
+     "fim": 2006
+    },
+    {
+     "clube": "Q620499",
+     "inicio": 2007,
+     "fim": 2008
+    },
+    {
+     "clube": "Q128446",
+     "inicio": 2008,
+     "fim": 2012
+    },
+    {
+     "clube": "Q29108",
+     "inicio": 2012,
+     "fim": 2016
+    },
+    {
+     "clube": "Q564216",
+     "inicio": 2016,
+     "fim": 2020
+    },
+    {
+     "clube": "Q270995",
+     "inicio": 2021,
+     "fim": 2026
+    },
+    {
+     "clube": "Q80987",
+     "inicio": 2026,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q312772",
+   "nome": "Fred",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q338285",
+     "inicio": 2003,
+     "fim": 2004
+    },
+    {
+     "clube": "Q188277",
+     "inicio": 2004,
+     "fim": 2005
+    },
+    {
+     "clube": "Q704",
+     "inicio": 2005,
+     "fim": 2009
+    },
+    {
+     "clube": "Q80987",
+     "inicio": 2009,
+     "fim": 2016
+    },
+    {
+     "clube": "Q270995",
+     "inicio": 2016,
+     "fim": 2017
+    },
+    {
+     "clube": "Q188277",
+     "inicio": 2018,
+     "fim": 2020
+    },
+    {
+     "clube": "Q80987",
+     "inicio": 2020,
+     "fim": 2022
+    }
+   ]
+  },
+  {
+   "wikidata": "Q192963",
+   "nome": "Luís Fabiano",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q219120",
+     "inicio": 1997,
+     "fim": 2000
+    },
+    {
+     "clube": "Q19509",
+     "inicio": 2000,
+     "fim": 2002
+    },
+    {
+     "clube": "Q38568",
+     "inicio": 2001,
+     "fim": 2004
+    },
+    {
+     "clube": "Q128446",
+     "inicio": 2004,
+     "fim": 2005
+    },
+    {
+     "clube": "Q10329",
+     "inicio": 2005,
+     "fim": 2011
+    },
+    {
+     "clube": "Q38568",
+     "inicio": 2011,
+     "fim": 2015
+    },
+    {
+     "clube": "Q537552",
+     "inicio": 2016,
+     "fim": 2017
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 2017,
+     "fim": 2017
+    }
+   ]
+  },
+  {
+   "wikidata": "Q207407",
+   "nome": "Elano",
+   "posicao": "Wing half",
+   "clubes": [
+    {
+     "clube": "Q80955",
+     "inicio": 2001,
+     "fim": 2004
+    },
+    {
+     "clube": "Q172969",
+     "inicio": 2004,
+     "fim": 2007
+    },
+    {
+     "clube": "Q50602",
+     "inicio": 2007,
+     "fim": 2009
+    },
+    {
+     "clube": "Q495299",
+     "inicio": 2009,
+     "fim": 2011
+    },
+    {
+     "clube": "Q80955",
+     "inicio": 2011,
+     "fim": 2012
+    },
+    {
+     "clube": "Q221695",
+     "inicio": 2012,
+     "fim": 2014
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 2014,
+     "fim": 2014
+    },
+    {
+     "clube": "Q17594408",
+     "inicio": 2014,
+     "fim": 2014
+    },
+    {
+     "clube": "Q80955",
+     "inicio": 2015,
+     "fim": 2015
+    },
+    {
+     "clube": "Q17594408",
+     "inicio": 2015,
+     "fim": 2015
+    },
+    {
+     "clube": "Q80955",
+     "inicio": 2016,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q156822",
+   "nome": "Lúcio",
+   "posicao": "Defesa central",
+   "clubes": [
+    {
+     "clube": "Q777267",
+     "inicio": 1997,
+     "fim": 1997
+    },
+    {
+     "clube": "Q80845",
+     "inicio": 1998,
+     "fim": 2000
+    },
+    {
+     "clube": "Q104761",
+     "inicio": 2001,
+     "fim": 2004
+    },
+    {
+     "clube": "Q15789",
+     "inicio": 2004,
+     "fim": 2009
+    },
+    {
+     "clube": "Q1422",
+     "inicio": 2012,
+     "fim": 2012
+    },
+    {
+     "clube": "Q38568",
+     "inicio": 2013,
+     "fim": 2013
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 2014,
+     "fim": 2015
+    },
+    {
+     "clube": "Q16839398",
+     "inicio": 2015,
+     "fim": 2016
+    },
+    {
+     "clube": "Q375697",
+     "inicio": 2018,
+     "fim": 2018
+    },
+    {
+     "clube": "Q522566",
+     "inicio": 2018,
+     "fim": 2019
+    }
+   ]
+  },
+  {
+   "wikidata": "Q210453",
+   "nome": "Thiago Silva",
+   "posicao": "Defesa central",
+   "clubes": [
+    {
+     "clube": "Q80987",
+     "inicio": 1998,
+     "fim": 2000
+    },
+    {
+     "clube": "Q4859851",
+     "inicio": 2000,
+     "fim": 2001
+    },
+    {
+     "clube": "Q80987",
+     "inicio": 2001,
+     "fim": 2001
+    },
+    {
+     "clube": "Q7159367",
+     "inicio": 2002,
+     "fim": 2003
+    },
+    {
+     "clube": "Q910453",
+     "inicio": 2003,
+     "fim": 2004
+    },
+    {
+     "clube": "Q128446",
+     "inicio": 2004,
+     "fim": 2005
+    },
+    {
+     "clube": "Q17497",
+     "inicio": 2005,
+     "fim": 2005
+    },
+    {
+     "clube": "Q80987",
+     "inicio": 2006,
+     "fim": 2008
+    },
+    {
+     "clube": "Q1543",
+     "inicio": 2009,
+     "fim": 2012
+    },
+    {
+     "clube": "Q483020",
+     "inicio": 2012,
+     "fim": 2020
+    },
+    {
+     "clube": "Q9616",
+     "inicio": 2020,
+     "fim": 2024
+    },
+    {
+     "clube": "Q80987",
+     "inicio": 2024,
+     "fim": 2025
+    },
+    {
+     "clube": "Q128446",
+     "inicio": 2026,
+     "fim": 2026
+    },
+    {
+     "clube": "Q80987",
+     "inicio": 2026,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q38136",
+   "nome": "Marcelo",
+   "posicao": "Lateral",
+   "clubes": [
+    {
+     "clube": "Q80987",
+     "inicio": 2005,
+     "fim": 2006
+    },
+    {
+     "clube": "Q8682",
+     "inicio": 2007,
+     "fim": 2022
+    },
+    {
+     "clube": "Q19628",
+     "inicio": 2022,
+     "fim": 2023
+    },
+    {
+     "clube": "Q80987",
+     "inicio": 2023,
+     "fim": 2025
+    }
+   ]
+  },
+  {
+   "wikidata": "Q172720",
+   "nome": "Daniel Alves",
+   "posicao": "Zagueiro",
+   "clubes": [
+    {
+     "clube": "Q198032",
+     "inicio": 2001,
+     "fim": 2002
+    },
+    {
+     "clube": "Q10329",
+     "inicio": 2002,
+     "fim": 2008
+    },
+    {
+     "clube": "Q7156",
+     "inicio": 2008,
+     "fim": 2016
+    },
+    {
+     "clube": "Q1422",
+     "inicio": 2016,
+     "fim": 2017
+    },
+    {
+     "clube": "Q483020",
+     "inicio": 2017,
+     "fim": 2019
+    },
+    {
+     "clube": "Q38568",
+     "inicio": 2019,
+     "fim": 2021
+    },
+    {
+     "clube": "Q7156",
+     "inicio": 2022,
+     "fim": 2022
+    },
+    {
+     "clube": "Q1143000",
+     "inicio": 2022,
+     "fim": 2023
+    }
+   ]
+  },
+  {
+   "wikidata": "Q193706",
+   "nome": "David Luiz",
+   "posicao": "Defesa central",
+   "clubes": [
+    {
+     "clube": "Q38568",
+     "inicio": 1999,
+     "fim": 2001
+    },
+    {
+     "clube": "Q274465",
+     "inicio": 2001,
+     "fim": 2007
+    },
+    {
+     "clube": "Q131499",
+     "inicio": 2007,
+     "fim": 2011
+    },
+    {
+     "clube": "Q9616",
+     "inicio": 2011,
+     "fim": 2014
+    },
+    {
+     "clube": "Q483020",
+     "inicio": 2014,
+     "fim": 2016
+    },
+    {
+     "clube": "Q9616",
+     "inicio": 2016,
+     "fim": 2019
+    },
+    {
+     "clube": "Q9617",
+     "inicio": 2019,
+     "fim": 2020
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 2021,
+     "fim": 2024
+    },
+    {
+     "clube": "Q188841",
+     "inicio": 2025,
+     "fim": 2025
+    },
+    {
+     "clube": "Q17442894",
+     "inicio": 2025,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q616664",
+   "nome": "Casemiro",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q38568",
+     "inicio": 2010,
+     "fim": 2013
+    },
+    {
+     "clube": "Q8682",
+     "inicio": 2013,
+     "fim": 2022
+    },
+    {
+     "clube": "Q128446",
+     "inicio": 2014,
+     "fim": 2015
+    },
+    {
+     "clube": "Q18656",
+     "inicio": 2022,
+     "fim": 2026
+    },
+    {
+     "clube": "Q16844931",
+     "inicio": 2026,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q459356",
+   "nome": "Fernandinho",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q506832",
+     "inicio": 2002,
+     "fim": 2005
+    },
+    {
+     "clube": "Q172969",
+     "inicio": 2005,
+     "fim": 2013
+    },
+    {
+     "clube": "Q50602",
+     "inicio": 2013,
+     "fim": 2022
+    },
+    {
+     "clube": "Q506832",
+     "inicio": 2022,
+     "fim": 2024
+    }
+   ]
+  },
+  {
+   "wikidata": "Q602525",
+   "nome": "Roberto Firmino",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q218334",
+     "inicio": 2009,
+     "fim": 2011
+    },
+    {
+     "clube": "Q22707",
+     "inicio": 2011,
+     "fim": 2015
+    },
+    {
+     "clube": "Q1130849",
+     "inicio": 2015,
+     "fim": 2023
+    },
+    {
+     "clube": "Q668",
+     "inicio": 2023,
+     "fim": 2025
+    },
+    {
+     "clube": "Q283545",
+     "inicio": 2025,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q28973866",
+   "nome": "Vinícius Júnior",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q17479",
+     "inicio": 2017,
+     "fim": 2018
+    },
+    {
+     "clube": "Q8682",
+     "inicio": 2018,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q42728914",
+   "nome": "Rodrygo",
+   "posicao": "Ponteiro",
+   "clubes": [
+    {
+     "clube": "Q80955",
+     "inicio": 2017,
+     "fim": 2019
+    },
+    {
+     "clube": "Q8682",
+     "inicio": 2019,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q28861547",
+   "nome": "Raphinha",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q374069",
+     "inicio": 2015,
+     "fim": 2015
+    },
+    {
+     "clube": "Q223450",
+     "inicio": 2016,
+     "fim": 2018
+    },
+    {
+     "clube": "Q75729",
+     "inicio": 2018,
+     "fim": 2019
+    },
+    {
+     "clube": "Q19509",
+     "inicio": 2019,
+     "fim": 2020
+    },
+    {
+     "clube": "Q1128631",
+     "inicio": 2020,
+     "fim": 2022
+    },
+    {
+     "clube": "Q7156",
+     "inicio": 2022,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q20806743",
+   "nome": "Richarlison",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q338285",
+     "inicio": 2015,
+     "fim": 2016
+    },
+    {
+     "clube": "Q80987",
+     "inicio": 2016,
+     "fim": 2017
+    },
+    {
+     "clube": "Q2714",
+     "inicio": 2017,
+     "fim": 2018
+    },
+    {
+     "clube": "Q5794",
+     "inicio": 2018,
+     "fim": 2022
+    },
+    {
+     "clube": "Q18741",
+     "inicio": 2022,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q29950055",
+   "nome": "Éder Militão",
+   "posicao": "Defesa central",
+   "clubes": [
+    {
+     "clube": "Q38568",
+     "inicio": 2017,
+     "fim": 2018
+    },
+    {
+     "clube": "Q128446",
+     "inicio": 2018,
+     "fim": 2019
+    },
+    {
+     "clube": "Q8682",
+     "inicio": 2019,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q18237361",
+   "nome": "Alisson Becker",
+   "posicao": "Goleiro",
+   "clubes": [
+    {
+     "clube": "Q80845",
+     "inicio": 2013,
+     "fim": 2016
+    },
+    {
+     "clube": "Q2739",
+     "inicio": 2016,
+     "fim": 2018
+    },
+    {
+     "clube": "Q1130849",
+     "inicio": 2018,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q17074511",
+   "nome": "Ederson Moraes",
+   "posicao": "Goleiro",
+   "clubes": [
+    {
+     "clube": "Q3084434",
+     "inicio": 2011,
+     "fim": 2012
+    },
+    {
+     "clube": "Q622432",
+     "inicio": 2012,
+     "fim": 2015
+    },
+    {
+     "clube": "Q131499",
+     "inicio": 2015,
+     "fim": 2017
+    },
+    {
+     "clube": "Q50602",
+     "inicio": 2017,
+     "fim": 2025
+    },
+    {
+     "clube": "Q6601875",
+     "inicio": 2025,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q19497",
+   "nome": "Oscar",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q38568",
+     "inicio": 2008,
+     "fim": 2010
+    },
+    {
+     "clube": "Q80845",
+     "inicio": 2010,
+     "fim": 2012
+    },
+    {
+     "clube": "Q9616",
+     "inicio": 2012,
+     "fim": 2016
+    },
+    {
+     "clube": "Q564216",
+     "inicio": 2017,
+     "fim": 2023
+    },
+    {
+     "clube": "Q38568",
+     "inicio": 2025,
+     "fim": 2025
+    }
+   ]
+  },
+  {
+   "wikidata": "Q73480",
+   "nome": "Willian",
+   "posicao": "Wing half",
+   "clubes": [
+    {
+     "clube": "Q35933",
+     "inicio": 2006,
+     "fim": 2007
+    },
+    {
+     "clube": "Q172969",
+     "inicio": 2007,
+     "fim": 2013
+    },
+    {
+     "clube": "Q19353",
+     "inicio": 2013,
+     "fim": 2013
+    },
+    {
+     "clube": "Q9616",
+     "inicio": 2013,
+     "fim": 2020
+    },
+    {
+     "clube": "Q9617",
+     "inicio": 2020,
+     "fim": 2021
+    },
+    {
+     "clube": "Q35933",
+     "inicio": 2021,
+     "fim": 2022
+    },
+    {
+     "clube": "Q18708",
+     "inicio": 2022,
+     "fim": 2024
+    },
+    {
+     "clube": "Q19628",
+     "inicio": 2024,
+     "fim": 2024
+    },
+    {
+     "clube": "Q18708",
+     "inicio": 2025,
+     "fim": 2025
+    },
+    {
+     "clube": "Q221695",
+     "inicio": 2025,
+     "fim": 2026
+    }
+   ]
+  },
+  {
+   "wikidata": "Q312886",
+   "nome": "Lucas Moura",
+   "posicao": "Wing half",
+   "clubes": [
+    {
+     "clube": "Q38568",
+     "inicio": 2010,
+     "fim": 2013
+    },
+    {
+     "clube": "Q483020",
+     "inicio": 2013,
+     "fim": 2018
+    },
+    {
+     "clube": "Q18741",
+     "inicio": 2018,
+     "fim": 2023
+    },
+    {
+     "clube": "Q38568",
+     "inicio": 2023,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q391680",
+   "nome": "Douglas Costa",
+   "posicao": "Wing half",
+   "clubes": [
+    {
+     "clube": "Q221695",
+     "inicio": 2008,
+     "fim": 2010
+    },
+    {
+     "clube": "Q172969",
+     "inicio": 2010,
+     "fim": 2015
+    },
+    {
+     "clube": "Q15789",
+     "inicio": 2015,
+     "fim": 2018
+    },
+    {
+     "clube": "Q1422",
+     "inicio": 2017,
+     "fim": 2022
+    },
+    {
+     "clube": "Q15789",
+     "inicio": 2020,
+     "fim": 2021
+    },
+    {
+     "clube": "Q221695",
+     "inicio": 2021,
+     "fim": 2021
+    },
+    {
+     "clube": "Q204357",
+     "inicio": 2022,
+     "fim": 2023
+    },
+    {
+     "clube": "Q80987",
+     "inicio": 2024,
+     "fim": 2024
+    },
+    {
+     "clube": "Q330143",
+     "inicio": 2024,
+     "fim": 2025
+    },
+    {
+     "clube": "Q2037",
+     "inicio": 2026,
+     "fim": 2026
+    },
+    {
+     "clube": "Q107337028",
+     "inicio": 2026,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q210128",
+   "nome": "Diego Souza",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q2035444",
+     "inicio": 2002,
+     "fim": 2002
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 2002,
+     "fim": 2007
+    },
+    {
+     "clube": "Q844271",
+     "inicio": 2005,
+     "fim": 2005
+    },
+    {
+     "clube": "Q844931",
+     "inicio": 2006,
+     "fim": 2006
+    },
+    {
+     "clube": "Q620499",
+     "inicio": 2007,
+     "fim": 2008
+    },
+    {
+     "clube": "Q1047535",
+     "inicio": 2009,
+     "fim": 2011
+    },
+    {
+     "clube": "Q1044651",
+     "inicio": 2011,
+     "fim": 2011
+    },
+    {
+     "clube": "Q204675",
+     "inicio": 2012,
+     "fim": 2012
+    },
+    {
+     "clube": "Q1570132",
+     "inicio": 2012,
+     "fim": 2013
+    },
+    {
+     "clube": "Q482262",
+     "inicio": 2013,
+     "fim": 2013
+    },
+    {
+     "clube": "Q1045524",
+     "inicio": 2014,
+     "fim": null
+    }
+   ]
+  },
+  {
+   "wikidata": "Q445541",
+   "nome": "Edmundo",
+   "posicao": "Atacante",
+   "clubes": [
+    {
+     "clube": "Q5014111",
+     "inicio": 1990,
+     "fim": 1992
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 1993,
+     "fim": 1995
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 1995,
+     "fim": 1995
+    },
+    {
+     "clube": "Q35933",
+     "inicio": 1996,
+     "fim": 1996
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 1996,
+     "fim": 1997
+    },
+    {
+     "clube": "Q2052",
+     "inicio": 1997,
+     "fim": 1999
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 1999,
+     "fim": 2001
+    },
+    {
+     "clube": "Q80955",
+     "inicio": 2000,
+     "fim": 2000
+    },
+    {
+     "clube": "Q2641",
+     "inicio": 2001,
+     "fim": 2001
+    },
+    {
+     "clube": "Q188277",
+     "inicio": 2001,
+     "fim": 2001
+    },
+    {
+     "clube": "Q620499",
+     "inicio": 2001,
+     "fim": 2002
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 2003,
+     "fim": 2003
+    },
+    {
+     "clube": "Q218883",
+     "inicio": 2003,
+     "fim": 2003
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 2003,
+     "fim": 2004
+    },
+    {
+     "clube": "Q80987",
+     "inicio": 2004,
+     "fim": 2004
+    },
+    {
+     "clube": "Q218334",
+     "inicio": 2005,
+     "fim": 2005
+    },
+    {
+     "clube": "Q3345324",
+     "inicio": 2005,
+     "fim": 2005
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 2006,
+     "fim": 2007
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 2008,
+     "fim": 2008
+    }
+   ]
+  },
+  {
+   "wikidata": "Q2579383",
+   "nome": "Felipe",
+   "posicao": "Meio-campista",
+   "clubes": [
+    {
+     "clube": "Q5014111",
+     "inicio": 1996,
+     "fim": 2002
+    },
+    {
+     "clube": "Q270995",
+     "inicio": 2001,
+     "fim": 2001
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 2001,
+     "fim": 2001
+    },
+    {
+     "clube": "Q495299",
+     "inicio": 2002,
+     "fim": 2002
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 2003,
+     "fim": 2004
+    },
+    {
+     "clube": "Q80987",
+     "inicio": 2005,
+     "fim": 2005
+    },
+    {
+     "clube": "Q283545",
+     "inicio": 2005,
+     "fim": 2010
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 2010,
+     "fim": 2012
+    },
+    {
+     "clube": "Q80987",
+     "inicio": 2013,
+     "fim": 2013
+    }
+   ]
+  },
+  {
+   "wikidata": "Q115332579",
+   "nome": "Estêvão",
+   "posicao": "",
+   "clubes": []
+  },
+  {
+   "wikidata": "Q311424",
+   "nome": "Júnior",
+   "posicao": "Lateral",
+   "clubes": [
+    {
+     "clube": "Q17479",
+     "inicio": 1974,
+     "fim": 1984
+    },
+    {
+     "clube": "Q2768",
+     "inicio": 1984,
+     "fim": 1987
+    },
+    {
+     "clube": "Q2710",
+     "inicio": 1987,
+     "fim": 1989
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 1989,
+     "fim": 1993
+    }
+   ]
+  }
+ ]
+}

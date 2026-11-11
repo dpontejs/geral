@@ -1,0 +1,321 @@
+# Nomes curtos e apelidos dos clubes do "Onde jogou?"; prevalecem sobre o Wikidata.
+# `ignorar = true` tira da carreira o que não é clube (o país, time B). Depois de editar:
+# uv run python scripts/import_carreiras.py --cache
+
+[Q155]
+ignorar = true  # o país, listado como clube
+
+[Q12217]
+ignorar = true  # time B do Real Madrid
+
+[Q17479]
+nome = "Flamengo"
+apelidos = ["Clube de Regatas do Flamengo", "CR Flamengo"]
+
+[Q5014111]
+nome = "Vasco"
+apelidos = ["Vasco da Gama", "Club de Regatas Vasco da Gama", "CR Vasco da Gama"]
+
+[Q80964]
+nome = "Palmeiras"
+apelidos = ["Sociedade Esportiva Palmeiras", "SE Palmeiras"]
+
+[Q38568]
+nome = "São Paulo"
+apelidos = ["São Paulo Futebol Clube", "São Paulo FC"]
+
+[Q80955]
+nome = "Santos"
+apelidos = ["Santos Futebol Clube", "Santos FC"]
+
+[Q80987]
+nome = "Fluminense"
+apelidos = ["Fluminense Football Club"]
+
+[Q188277]
+nome = "Cruzeiro"
+apelidos = ["Cruzeiro Esporte Clube"]
+
+[Q35933]
+nome = "Corinthians"
+apelidos = ["Sport Club Corinthians Paulista"]
+
+[Q221695]
+nome = "Grêmio"
+apelidos = ["Grêmio Foot-Ball Porto Alegrense", "Gremio"]
+
+[Q8682]
+nome = "Real Madrid"
+apelidos = ["Real Madrid Club de Fútbol"]
+
+[Q270995]
+nome = "Atlético-MG"
+apelidos = ["Clube Atlético Mineiro", "Atlético Mineiro", "Galo"]
+
+[Q7156]
+nome = "Barcelona"
+apelidos = ["Futbol Club Barcelona", "FC Barcelona", "Barça"]
+
+[Q478317]
+nome = "Coritiba"
+apelidos = ["Coritiba Foot Ball Club"]
+
+[Q274465]
+nome = "Vitória"
+apelidos = ["Esporte Clube Vitória", "ECV"]
+
+[Q506832]
+nome = "Athletico-PR"
+apelidos = ["Club Athletico Paranaense", "Atlético Paranaense", "Athletico Paranaense"]
+
+[Q483020]
+nome = "PSG"
+apelidos = ["Paris Saint-Germain"]
+
+[Q1543]
+nome = "Milan"
+apelidos = ["Associazione Calcio Milan", "AC Milan"]
+
+[Q80845]
+nome = "Internacional"
+apelidos = ["Sport Club Internacional", "Inter"]
+
+[Q8760]
+nome = "Deportivo La Coruña"
+apelidos = ["Real Club Deportivo de A Coruña", "Deportivo", "La Coruña"]
+
+[Q80958]
+nome = "Botafogo"
+apelidos = ["Clube Botafogo de Futebol e Regatas", "Botafogo de Futebol e Regatas"]
+
+[Q2739]
+nome = "Roma"
+apelidos = ["Associazione Sportiva Roma", "AS Roma"]
+
+[Q128446]
+nome = "Porto"
+apelidos = ["Futebol Clube do Porto", "FC Porto"]
+
+[Q204675]
+nome = "Portuguesa"
+apelidos = ["Associação Portuguesa de Desportos"]
+
+[Q15789]
+nome = "Bayern de Munique"
+apelidos = ["Bayern", "Bayern München", "Bayern Munich"]
+
+[Q218334]
+nome = "Figueirense"
+apelidos = ["Figueirense Futebol Clube"]
+
+[Q50602]
+nome = "Manchester City"
+apelidos = ["Manchester City Football Club", "City"]
+
+[Q2052]
+nome = "Fiorentina"
+apelidos = ["ACF Fiorentina"]
+
+[Q131499]
+nome = "Benfica"
+apelidos = ["Sport Lisboa e Benfica"]
+
+[Q9616]
+nome = "Chelsea"
+apelidos = ["Chelsea Football Club"]
+
+[Q10329]
+nome = "Sevilla"
+apelidos = ["Sevilla Fútbol Club", "Sevilha"]
+
+[Q104761]
+nome = "Bayer Leverkusen"
+apelidos = ["Bayer 04 Leverkusen", "Leverkusen"]
+
+[Q1133475]
+nome = "Guarani"
+apelidos = ["Guarani Futebol Clube"]
+
+[Q19628]
+nome = "Olympiacos"
+apelidos = ["Olympiacos FC", "Olympiakos"]
+
+[Q6601875]
+nome = "Fenerbahçe"
+apelidos = ["Fenerbahçe Spor Kulübü"]
+
+[Q1422]
+nome = "Juventus"
+apelidos = ["Juventus Football Club"]
+
+[Q172969]
+nome = "Shakhtar Donetsk"
+apelidos = ["Futbolniy Klub Shakhtar", "Shakhtar"]
+
+[Q283545]
+nome = "Al-Sadd"
+apelidos = ["Al-Sadd Sports Club"]
+
+[Q428211]
+nome = "Al-Gharafa"
+apelidos = ["Al-Gharafa Sports Club"]
+
+[Q704]
+nome = "Lyon"
+apelidos = ["Olympique Lyonnais"]
+
+[Q198032]
+nome = "Bahia"
+apelidos = ["Esporte Clube Bahia", "ECB"]
+
+[Q2035444]
+nome = "Joinville"
+apelidos = ["Joinville Esporte Clube"]
+
+[Q290940]
+nome = "São Caetano"
+apelidos = ["Associação Desportiva São Caetano"]
+
+[Q1130849]
+nome = "Liverpool"
+apelidos = ["Liverpool Football Club"]
+
+[Q132885]
+nome = "Olympique de Marseille"
+apelidos = ["Marseille", "Olympique de Marselha", "Marselha"]
+
+[Q2735045]
+nome = "Ferroviária-ES"
+apelidos = ["Associação Desportiva Ferroviária Vale do Rio Doce"]
+
+[Q816779]
+nome = "Goiás"
+apelidos = ["Goiás Esporte Clube"]
+
+[Q910453]
+nome = "Juventude"
+apelidos = ["Esporte Clube Juventude"]
+
+[Q2693]
+nome = "Parma"
+apelidos = ["Parma Calcio 1913"]
+
+[Q9617]
+nome = "Arsenal"
+apelidos = ["Arsenal Football Club"]
+
+[Q2710]
+nome = "Pescara"
+apelidos = ["Pescara Calcio"]
+
+[Q374069]
+nome = "Avaí"
+apelidos = ["Avaí Futebol Clube"]
+
+[Q338285]
+nome = "América-MG"
+apelidos = ["América Futebol Clube (Minas Gerais)", "América Mineiro"]
+
+[Q495299]
+nome = "Galatasaray"
+apelidos = ["Galatasaray Spor Kulübü"]
+
+[Q10333]
+nome = "Valencia"
+apelidos = ["Valencia Club de Fútbol", "Valência"]
+
+[Q219098]
+nome = "Sport"
+apelidos = ["Sport Club do Recife", "Sport Recife"]
+
+[Q8780]
+nome = "Espanyol"
+apelidos = ["Reial Club Deportiu Espanyol de Barcelona"]
+
+[Q18747]
+nome = "West Ham"
+apelidos = ["West Ham United Football Club", "West Ham United"]
+
+[Q8749]
+nome = "Celta de Vigo"
+apelidos = ["Real Club Celta de Vigo", "Celta"]
+
+[Q80897]
+nome = "Colón"
+apelidos = ["Club Atlético Colón"]
+
+[Q633223]
+nome = "León"
+apelidos = ["Club León"]
+
+[Q788363]
+nome = "Bangu"
+apelidos = ["Bangu Atlético Clube"]
+
+[Q3345324]
+nome = "Nova Iguaçu"
+apelidos = ["Nova Iguaçu Futebol Clube"]
+
+[Q508440]
+nome = "Santa Cruz"
+apelidos = ["Santa Cruz Futebol Clube"]
+
+[Q459090]
+nome = "América do México"
+apelidos = ["Club de Fútbol América", "Club América"]
+
+[Q482262]
+nome = "América-RN"
+apelidos = ["América Futebol Clube (Rio Grande do Norte)"]
+
+[Q188841]
+nome = "Fortaleza"
+apelidos = ["Fortaleza Esporte Clube"]
+
+[Q8701]
+nome = "Atlético de Madrid"
+apelidos = ["Club Atlético de Madrid", "Atlético Madrid"]
+
+[Q2641]
+nome = "Napoli"
+apelidos = ["Società Sportiva Calcio Napoli", "Nápoles"]
+
+[Q18741]
+nome = "Tottenham"
+apelidos = ["Tottenham Hotspur Football Club", "Tottenham Hotspur"]
+
+[Q838534]
+nome = "Paraná"
+apelidos = ["Paraná Clube"]
+
+[Q11938]
+nome = "PSV"
+apelidos = ["PSV Eindhoven"]
+
+[Q572957]
+nome = "Alianza Lima"
+apelidos = ["Club Alianza Lima"]
+
+[Q2074]
+nome = "Genoa"
+apelidos = ["Genoa Cricket and Football Club"]
+
+[Q172476]
+nome = "Bordeaux"
+apelidos = ["Football Club des Girondins de Bordeaux", "Girondins de Bordeaux"]
+
+[Q19509]
+nome = "Rennes"
+apelidos = ["Stade Rennais Football Club", "Stade Rennais"]
+
+[Q564216]
+nome = "Shanghai Port"
+apelidos = ["Shanghai Port Football Club", "Shanghai SIPG"]
+
+[Q354059]
+nome = "Adelaide United"
+apelidos = ["Adelaide United Football Club"]
+
+[Q463147]
+nome = "America-RJ"
+apelidos = ["America Football Club"]

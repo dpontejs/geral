@@ -1,0 +1,46 @@
+{% extends "base.html.j2" %}
+{% set label = team.name if team else "Geral" %}
+{% block title %}Onde jogou? #{{ number }} · {{ label }} · Geral{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/geral/jogos.css">{% endblock %}
+{% block content %}
+<section class="jogo wall">
+  <div class="wrap" id="oj" data-edition="{{ edition }}" data-number="{{ number }}" data-label="{{ label }}" data-player="{{ jogador.wikidata }}" data-max="{{ max_wrong }}">
+    <h1>Onde jogou?</h1>
+    <p class="lead">Um jogador por dia, o mesmo para todo mundo. Diga por quais clubes ele passou: cada acerto acende as passagens daquele clube. Você pode errar {{ max_wrong }} vezes.</p>
+    <nav class="editions" aria-label="Edições">
+      {% for slug, t in editions %}
+      <a href="/jogos/onde-jogou{% if slug != 'geral' %}/{{ slug }}{% endif %}"{% if slug == edition %} aria-current="page"{% endif %}>{{ t.name if t else "Geral" }}</a>
+      {% endfor %}
+    </nav>
+
+    <div class="board match">
+      <span class="lamp meta">#{{ number }} · {{ label }}{% if jogador.posicao %} · {{ jogador.posicao }}{% endif %}</span>
+      <span class="lamp player">{{ jogador.nome }}</span>
+      <ol class="career" id="oj-slots">
+        {% for s in jogador.clubes %}<li class="slot"><span class="years">{{ s.inicio }}{% if s.fim is none %}–{% elif s.fim != s.inicio %}–{{ s.fim }}{% endif %}</span><span class="lamp blink" aria-label="clube escondido">?</span></li>
+        {% endfor %}
+      </ol>
+    </div>
+
+    <form class="guess" id="oj-form">
+      <label>Clube<input class="word-input" id="oj-club" name="club" type="text" list="oj-clubs" autocomplete="off" spellcheck="false" required></label>
+      <datalist id="oj-clubs">{% for c in clubs %}<option value="{{ c }}"></option>{% endfor %}</datalist>
+      <button class="btn" type="submit">Chutar</button>
+      <button class="btn secondary" type="button" id="oj-give-up">Desistir</button>
+    </form>
+    <p class="how" id="oj-error" role="alert" hidden></p>
+    <p class="how" id="oj-wrong" aria-live="polite"></p>
+
+    <div class="result" id="oj-result" hidden>
+      <h2 id="oj-title"></h2>
+      <span class="final" id="oj-final"></span>
+      <div class="actions"><button class="btn" type="button" id="oj-share">Compartilhar</button><span id="oj-copied" role="status"></span></div>
+      <div class="stats"><span><b id="oj-streak">0</b>sequência</span><span><b id="oj-wins">0</b>completos</span><span><b id="oj-played">0</b>jogos</span></div>
+    </div>
+
+    <p class="how">Escolha o clube na lista enquanto digita. Clube que ele não defendeu conta como erro; com {{ max_wrong }} erros, ou desistindo, a carreira inteira aparece. Só clubes profissionais, sem seleção. Amanhã tem outro.</p>
+    <p class="credit">Carreiras: <a href="https://www.wikidata.org/wiki/{{ jogador.wikidata }}">Wikidata</a> (CC0), revisadas pela Geral. Achou um erro? Responda qualquer newsletter.</p>
+  </div>
+</section>
+<script src="/static/geral/onde-jogou.js" defer></script>
+{% endblock %}

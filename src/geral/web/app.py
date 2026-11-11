@@ -23,7 +23,7 @@ from jinja2 import select_autoescape
 from pydantic import AwareDatetime, BaseModel, Field
 
 from geral.config import Settings, get_settings
-from geral.games import craque
+from geral.games import craque, onde_jogou
 from geral.send.resend_sender import UNSUBSCRIBE_PLACEHOLDER, personalize
 from geral.teams import Team, load_teams
 from geral.web.bolao import TZ, BolaoStore
@@ -110,6 +110,11 @@ def unsubscribe_purpose(team: str | None) -> str:
     return f"unsubscribe:{team}" if team else "unsubscribe"
 
 
+class ClubGuessesIn(BaseModel):
+    palpites: list[Annotated[str, Field(max_length=60)]] = Field(max_length=40)
+    desistiu: bool = False
+
+
 class WordGuessesIn(BaseModel):
     guesses: list[Annotated[str, Field(max_length=20)]] = Field(
         min_length=1, max_length=craque.MAX_GUESSES
@@ -182,6 +187,28 @@ def create_app(
                     built[slug] = games
             craque_pools.update(built)  # published at once: a request alongside never sees half
         return craque_pools
+
+    career_state: dict[str, object] = {}
+
+    def careers() -> onde_jogou.Data:
+        if "data" not in career_state:
+            career_state["data"] = onde_jogou.load()
+        return career_state["data"]
+
+    def career_editions() -> dict[str, list[onde_jogou.Jogador]]:
+        """'geral' plus every listed team with players who passed through it, built on first use."""
+        if "pools" not in career_state:
+            data = careers()
+            names = {slug: team.name for slug, team in listed.items()}
+            built = {"geral": onde_jogou.pool(data, "geral", names)}
+            for slug in listed:
+                if players := onde_jogou.pool(data, slug, names):
+                    built[slug] = players
+            career_state["pools"] = built  # published at once
+        return career_state["pools"]
+
+    def career_number() -> int:
+        return max(1, onde_jogou.puzzle_number(now().astimezone(BRASILIA).date()))
 
     def craque_number() -> int:
         return max(1, craque.puzzle_number(now().astimezone(BRASILIA).date()))
@@ -626,6 +653,45 @@ def create_app(
                 {"detail": f"cada chute precisa de {len(answer.answer)} letras"}, status_code=422
             )
         return craque.judge(answer, body.guesses)
+
+    @app.get("/jogos/onde-jogou", response_class=HTMLResponse)
+    @app.get("/jogos/onde-jogou/{edition}", response_class=HTMLResponse)
+    def onde_jogou_page(request: Request, edition: str = "geral"):
+        players = career_editions().get(edition)
+        if not players:
+            return message(
+                request,
+                "Jogo não encontrado",
+                "Essa torcida ainda não tem o Onde jogou?. Jogue a edição geral enquanto isso.",
+                status=404,
+            )
+        number = career_number()
+        data = careers()
+        return page(
+            request,
+            "onde_jogou.html.j2",
+            edition=edition,
+            team=catalog.get(edition),
+            number=number,
+            jogador=onde_jogou.by_number(players, number),
+            clubs=sorted({c.nome for c in data.clubes.values()}),
+            editions=[(slug, catalog.get(slug)) for slug in career_editions()],
+            max_wrong=onde_jogou.MAX_WRONG,
+        )
+
+    @app.post("/api/jogos/onde-jogou/{edition}/{number}")
+    def onde_jogou_guess(edition: str, number: int, body: ClubGuessesIn):
+        players = career_editions().get(edition)
+        if not players or not 1 <= number <= career_number():
+            return JSONResponse({"detail": "puzzle not found"}, status_code=404)
+        data = careers()
+        clubs = []
+        for text in body.palpites:
+            if (club := onde_jogou.resolve(data, text)) is None:
+                return JSONResponse({"detail": f"Clube desconhecido: {text}"}, status_code=422)
+            clubs.append(club)
+        jogador = onde_jogou.by_number(players, number)
+        return onde_jogou.judge(data, jogador, clubs, body.desistiu)
 
     @app.get("/version.json")
     def version():

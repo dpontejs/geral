@@ -49,3 +49,14 @@
 .words .tile.existe { background: var(--ticket); }
 .words .tile.nao { background: var(--concrete-lt); }
 .guess input.word-input { width: min(100%, 360px); text-align: left; letter-spacing: .12em; text-transform: uppercase; }
+
+/* Onde jogou?: the player's career, one slot per stint. */
+.match .player { font-size: clamp(26px, 5.4vw, 60px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.career { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.slot { display: flex; flex-direction: column; gap: 6px; padding: 10px 12px; border: 2px solid #3A3833; min-height: 72px; }
+.slot .years { font: 700 14px/1 var(--body); color: var(--concrete-lt); letter-spacing: .04em; }
+.slot .lamp { font-size: 26px; }
+.slot-club { font: 800 20px/1.1 var(--display); text-transform: uppercase; }
+.slot-club.found { color: #7BE38D; }
+.slot-club.missed { color: var(--concrete-lt); }
+.guess .btn.secondary { background: transparent; color: var(--paper); border-color: var(--paper); }

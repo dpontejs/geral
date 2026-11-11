@@ -1,0 +1,226 @@
+"""'Onde jogou?': name the clubs in the career of the player of the day.
+
+Careers come from Wikidata (`scripts/import_carreiras.py` writes `carreiras.json` from the curated
+`jogadores.toml`); `clubes.toml` fixes club names. No club is written in the code: a team's edition
+is the players who played for the club whose name is the team's `name` in `teams.toml`.
+"""
+
+import json
+import re
+import tomllib
+import unicodedata
+from dataclasses import dataclass
+from datetime import date
+from functools import cached_property
+from pathlib import Path
+
+from pydantic import BaseModel
+
+from geral.games.daily import number_on, pick, shuffled
+
+HERE = Path(__file__).parent
+CAREERS = HERE / "carreiras.json"
+CLUB_FIXES = HERE / "clubes.toml"
+PLAYERS = HERE / "jogadores.toml"
+LAUNCH = date(2026, 11, 12)  # puzzle #1: no later than the deploy, or two days share #1
+MAX_WRONG = 3
+MIN_CLUBS = {"geral": 3, "team": 2}  # distinct clubs a career needs to be a puzzle
+# National and youth teams are not clubs of a career.
+NOT_A_CLUB = re.compile(
+    r"^sele[çc][ãa]o|selecci[óo]n|national|nazionale|\b(sub|u)-?\d{2}\b|\bB$|\bII$|juvenil|"
+    r"reserv|ol[ií]mpic",
+    re.IGNORECASE,
+)
+
+
+def normalize(text: str) -> str:
+    plain = unicodedata.normalize("NFKD", text)
+    plain = "".join(ch for ch in plain if not unicodedata.combining(ch))
+    return " ".join(plain.casefold().split())
+
+
+def _year(value: str) -> int | None:
+    return int(value[:4]) if value and value[:4].isdigit() else None
+
+
+def convert(players: list[dict], rows: list[dict], fixes: dict[str, dict]) -> dict:
+    """Wikidata rows (one per career statement) -> the compact careers file."""
+    names = {p["wikidata"]: p["nome"] for p in players}
+    stints: dict[str, set[tuple[str, int, int | None]]] = {qid: set() for qid in names}
+    positions: dict[str, str] = {}
+    labels: dict[str, set[str]] = {}
+    shown: dict[str, str] = {}
+    for r in rows:
+        qid, club, label = r["player"], r["club"], r["clubLabel"].strip()
+        if qid not in names:
+            continue
+        if r.get("position") and qid not in positions:
+            position = re.sub(r"\s*\(.*\)$", "", r["position"])  # "Lateral (futebol)"
+            positions[qid] = position[:1].upper() + position[1:]
+        start = _year(r["start"])
+        ignored = fixes.get(club, {}).get("ignorar", False)  # e.g. a country listed as a club
+        if r["national"] or ignored or NOT_A_CLUB.search(label) or start is None:
+            continue
+        stints[qid].add((club, start, _year(r["end"])))
+        labels.setdefault(club, set()).update(x for x in (label, r.get("clubShort", "")) if x)
+        shown.setdefault(club, r.get("clubShort") or label)
+
+    jogadores = []
+    for qid, nome in names.items():
+        merged: list[list] = []
+        for club, start, end in sorted(stints[qid], key=lambda s: (s[1], s[2] or 9999)):
+            if merged and merged[-1][0] == club:  # back-to-back stints at the same club
+                last = merged[-1][2]
+                merged[-1][2] = None if last is None or end is None else max(last, end)
+                continue
+            merged.append([club, start, end])
+        jogadores.append(
+            {
+                "wikidata": qid,
+                "nome": nome,
+                "posicao": positions.get(qid, ""),
+                "clubes": [{"clube": c, "inicio": s, "fim": e} for c, s, e in merged],
+            }
+        )
+
+    clubes = {}
+    for club in sorted(labels):
+        fix = fixes.get(club, {})
+        nome = fix.get("nome") or shown[club]
+        aliases = (labels[club] | set(fix.get("apelidos", []))) - {nome}
+        clubes[club] = {"nome": nome, "apelidos": sorted(aliases)}
+    return {"clubes": clubes, "jogadores": jogadores}
+
+
+@dataclass(frozen=True)
+class Clube:
+    nome: str
+    apelidos: tuple[str, ...]
+
+
+@dataclass(frozen=True)
+class Passagem:
+    clube: str
+    inicio: int
+    fim: int | None
+
+
+@dataclass(frozen=True)
+class Jogador:
+    wikidata: str
+    nome: str
+    posicao: str
+    clubes: tuple[Passagem, ...]
+
+    @property
+    def distintos(self) -> set[str]:
+        return {s.clube for s in self.clubes}
+
+
+@dataclass(frozen=True)
+class Data:
+    clubes: dict[str, Clube]
+    jogadores: tuple[Jogador, ...]
+
+    @classmethod
+    def from_dict(cls, raw: dict) -> "Data":
+        return cls(
+            clubes={
+                qid: Clube(c["nome"], tuple(c["apelidos"])) for qid, c in raw["clubes"].items()
+            },
+            jogadores=tuple(
+                Jogador(
+                    j["wikidata"],
+                    j["nome"],
+                    j["posicao"],
+                    tuple(Passagem(s["clube"], s["inicio"], s["fim"]) for s in j["clubes"]),
+                )
+                for j in raw["jogadores"]
+            ),
+        )
+
+    @cached_property
+    def index(self) -> dict[str, str]:
+        """Every club name and alias, normalized -> club id (for what people type)."""
+        found: dict[str, str] = {}
+        for qid, club in sorted(self.clubes.items()):
+            for name in (club.nome, *club.apelidos):
+                found.setdefault(normalize(name), qid)
+        return found
+
+
+def load(path: Path = CAREERS) -> Data:
+    return Data.from_dict(json.loads(path.read_text(encoding="utf-8")))
+
+
+def load_fixes(path: Path = CLUB_FIXES) -> dict[str, dict]:
+    return tomllib.loads(path.read_text(encoding="utf-8")) if path.exists() else {}
+
+
+def resolve(data: Data, text: str) -> str | None:
+    return data.index.get(normalize(text))
+
+
+def pool(data: Data, edition: str, teams: dict[str, str]) -> list[Jogador]:
+    """The edition's players in its fixed daily order; `teams` maps slug -> team name."""
+    if edition == "geral":
+        chosen = [j for j in data.jogadores if len(j.distintos) >= MIN_CLUBS["geral"]]
+    else:
+        name = teams.get(edition)
+        clubs = {qid for qid, c in data.clubes.items() if name and c.nome == name}
+        chosen = [
+            j
+            for j in data.jogadores
+            if j.distintos & clubs and len(j.distintos) >= MIN_CLUBS["team"]
+        ]
+    chosen.sort(key=lambda j: j.wikidata)
+    return shuffled(chosen, f"onde-jogou:{edition}") if chosen else []
+
+
+def puzzle_number(day: date) -> int:
+    return number_on(day, LAUNCH)
+
+
+def by_number(players: list[Jogador], number: int) -> Jogador:
+    return pick(players, number)
+
+
+class Slot(BaseModel):
+    inicio: int
+    fim: int | None
+    clube: str | None  # shown once found, or when the game is over
+    achado: bool
+
+
+class Verdict(BaseModel):
+    slots: list[Slot]
+    achados: int
+    total: int
+    erros: list[str]
+    solved: bool
+    over: bool
+
+
+def judge(data: Data, jogador: Jogador, palpites: list[str], desistiu: bool) -> Verdict:
+    career = jogador.distintos
+    guesses = list(dict.fromkeys(palpites))  # a repeated guess counts once
+    found = {q for q in guesses if q in career}
+    wrong = [q for q in guesses if q not in career]
+    solved = found == career
+    over = solved or len(wrong) >= MAX_WRONG or desistiu
+    return Verdict(
+        slots=[
+            Slot(
+                inicio=s.inicio,
+                fim=s.fim,
+                clube=data.clubes[s.clube].nome if s.clube in found or over else None,
+                achado=s.clube in found,
+            )
+            for s in jogador.clubes
+        ],
+        achados=len(found),
+        total=len(career),
+        erros=[data.clubes[q].nome for q in wrong],
+        solved=solved,
+        over=over,
+    )

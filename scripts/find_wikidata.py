@@ -1,58 +1,59 @@
 """Resolve footballer names to Wikidata ids, to start `src/geral/games/jogadores.toml`.
 
-One-off helper: prints a TOML entry per name with the first search hit described as a
-footballer, plus the description, so a human can check the match before committing.
+One-off helper with a single SPARQL query (Wikimedia rate-limits one search per name): a name
+matches a footballer's label or alias in Portuguese or English; with several matches, the one
+with the most Wikipedia articles wins. Prints a TOML entry per name, with the description, so a
+human can check the match before committing.
+
 Usage: uv run python scripts/find_wikidata.py "Romário" "Edmundo=Edmundo Alves de Souza Neto" ...
 (an argument "Shown name=search text" searches the text and keeps the shown name).
 """
 
 import sys
-import time
 
 import httpx
 
-API = "https://www.wikidata.org/w/api.php"
+SPARQL = "https://query.wikidata.org/sparql"
 HEADERS = {
     "User-Agent": "geral-games/0.1 (hobby project)",
-    "Accept": "application/json",
+    "Accept": "application/sparql-results+json",
     "Accept-Encoding": "gzip",  # Wikimedia answers 403 to the httpx default
 }
-FOOTBALL = ("football", "futebol", "soccer", "futbolista", "calciatore")
+QUERY = """
+SELECT ?name ?player ?playerDescription ?links WHERE {
+  VALUES ?name { %s }
+  { ?player rdfs:label ?name } UNION { ?player skos:altLabel ?name }
+  ?player wdt:P106 wd:Q937857 ; wikibase:sitelinks ?links .
+  SERVICE wikibase:label { bd:serviceParam wikibase:language "pt-br,pt,en". }
+}
+"""
 
 
-def find(client: httpx.Client, name: str) -> tuple[str, str] | None:
-    params = {
-        "action": "wbsearchentities",
-        "search": name,
-        "language": "pt",
-        "uselang": "pt",
-        "type": "item",
-        "limit": 7,
-        "format": "json",
-    }
-    for attempt in range(5):
-        response = client.get(API, params=params)
-        if response.status_code != 429:
-            break
-        time.sleep(int(response.headers.get("Retry-After", 10)) + attempt * 5)
-    time.sleep(1.5)  # Wikimedia robot policy: one request at a time, slowly
-    for hit in response.raise_for_status().json()["search"]:
-        description = hit.get("description", "")
-        if any(word in description.lower() for word in FOOTBALL):
-            return hit["id"], description
-    return None
+def literal(text: str) -> str:
+    escaped = text.replace("\\", "\\\\").replace('"', '\\"')
+    return f'"{escaped}"@pt "{escaped}"@en'
 
 
-def main(names: list[str]) -> None:
-    with httpx.Client(headers=HEADERS, timeout=30) as client:
-        for arg in names:
-            name, _, search = arg.partition("=")
-            found = find(client, search or name)
-            if found is None:
-                print(f"# NOT FOUND: {name}\n")
-                continue
-            qid, description = found
-            print(f'[[jogador]]\nnome = "{name}"\nwikidata = "{qid}"  # {description}\n')
+def main(args: list[str]) -> None:
+    wanted = [(name, search or name) for name, _, search in (a.partition("=") for a in args)]
+    query = QUERY % " ".join(literal(search) for _, search in wanted)
+    with httpx.Client(headers=HEADERS, timeout=120) as client:
+        response = client.post(SPARQL, data={"query": query})
+    best: dict[str, tuple[int, str, str]] = {}
+    for b in response.raise_for_status().json()["results"]["bindings"]:
+        name, links = b["name"]["value"], int(b["links"]["value"])
+        qid = b["player"]["value"].rsplit("/", 1)[-1]
+        description = b.get("playerDescription", {}).get("value", "")
+        if links > best.get(name, (-1, "", ""))[0]:
+            best[name] = (links, qid, description)
+    for name, search in wanted:
+        if search not in best:
+            print(f"# NOT FOUND: {name} ({search})\n")
+            continue
+        links, qid, description = best[search]
+        print(
+            f'[[jogador]]\nnome = "{name}"\nwikidata = "{qid}"  # {description} ({links} wikis)\n'
+        )
 
 
 if __name__ == "__main__":
