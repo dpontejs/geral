@@ -59,4 +59,27 @@
 .slot-club { font: 800 20px/1.1 var(--display); text-transform: uppercase; }
 .slot-club.found { color: #7BE38D; }
 .slot-club.missed { color: var(--concrete-lt); }
-.guess .btn.secondary { background: transparent; color: var(--paper); border-color: var(--paper); }
+
+/* Onde jogou?: club picker (search, countries, paged buttons). */
+.picker { display: flex; flex-direction: column; gap: 12px; background: var(--paper); border: 3px solid var(--ink); padding: 16px; }
+.picker-top { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
+.picker-search { flex: 1 1 260px; display: flex; flex-direction: column; gap: 6px; font-weight: 600; }
+.picker-search input { font: 18px var(--body); padding: 12px; border: 3px solid var(--ink); background: #fff; color: var(--ink); }
+.countries { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 700 14px/1 var(--body); padding: 9px 12px; min-height: 40px; border: 2px solid var(--ink); background: transparent; color: var(--ink); cursor: pointer; }
+.chip[aria-pressed="true"], select.chip.on { background: var(--ink); color: var(--lamp); }
+select.chip { appearance: auto; }
+.club-grid { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
+.club { width: 100%; min-height: 56px; display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 10px 12px; border: 2px solid var(--ink); background: #fff; color: var(--ink); cursor: pointer; text-align: left; }
+.club:hover:not(:disabled) { background: var(--ticket); }
+.club .club-name { font: 800 18px/1.1 var(--display); text-transform: uppercase; }
+.club .club-country { font-size: 12px; color: var(--ink-soft); }
+.club.found { background: #2F7D3A; color: #fff; border-color: #2F7D3A; }
+.club.found .club-country { color: #E6F4E8; }
+.club.wrong { background: var(--concrete-lt); text-decoration: line-through; }
+.club:disabled { cursor: default; }
+.club-grid .empty { grid-column: 1 / -1; color: var(--ink-soft); }
+.pager { display: flex; align-items: center; justify-content: center; gap: 12px; font-weight: 600; }
+.pager button { font: 900 24px/1 var(--display); width: 44px; height: 44px; border: 2px solid var(--ink); background: transparent; cursor: pointer; }
+.pager button:disabled { opacity: .3; cursor: default; }
+.picker .btn.secondary { border-width: 3px; }

@@ -22,12 +22,16 @@
       </ol>
     </div>
 
-    <form class="guess" id="oj-form">
-      <label>Clube<input class="word-input" id="oj-club" name="club" type="text" list="oj-clubs" autocomplete="off" spellcheck="false" required></label>
-      <datalist id="oj-clubs">{% for c in clubs %}<option value="{{ c }}"></option>{% endfor %}</datalist>
-      <button class="btn" type="submit">Chutar</button>
-      <button class="btn secondary" type="button" id="oj-give-up">Desistir</button>
+    <form class="picker" id="oj-form" role="search">
+      <div class="picker-top">
+        <label class="picker-search">Buscar clube<input id="oj-search" type="search" autocomplete="off" spellcheck="false" placeholder="Digite o nome ou o apelido"></label>
+        <button class="btn secondary" type="button" id="oj-give-up">Desistir</button>
+      </div>
+      <div class="countries" id="oj-countries" role="group" aria-label="Filtrar por país"></div>
+      <ul class="club-grid" id="oj-results" aria-live="polite"></ul>
+      <nav class="pager" aria-label="Páginas"><button type="button" id="oj-prev" aria-label="Página anterior">‹</button><span id="oj-page"></span><button type="button" id="oj-next" aria-label="Próxima página">›</button></nav>
     </form>
+    <script type="application/json" id="oj-club-data">{{ clubs | tojson }}</script>
     <p class="how" id="oj-error" role="alert" hidden></p>
     <p class="how" id="oj-wrong" aria-live="polite"></p>
 
@@ -38,7 +42,7 @@
       <div class="stats"><span><b id="oj-streak">0</b>sequência</span><span><b id="oj-wins">0</b>completos</span><span><b id="oj-played">0</b>jogos</span></div>
     </div>
 
-    <p class="how">Escolha o clube na lista enquanto digita. Clube que ele não defendeu conta como erro; com {{ max_wrong }} erros, ou desistindo, a carreira inteira aparece. Só clubes profissionais, sem seleção. Amanhã tem outro.</p>
+    <p class="how">Busque pelo nome ou filtre pelo país e toque no clube. Clube que ele não defendeu conta como erro; com {{ max_wrong }} erros, ou desistindo, a carreira inteira aparece. Só clubes profissionais, sem seleção. Amanhã tem outro.</p>
     <p class="credit">Carreiras: <a href="https://www.wikidata.org/wiki/{{ jogador.wikidata }}">Wikidata</a> (CC0), revisadas pela Geral. Achou um erro? Responda qualquer newsletter.</p>
   </div>
 </section>

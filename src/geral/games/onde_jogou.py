@@ -26,11 +26,15 @@ LAUNCH = date(2026, 11, 12)  # puzzle #1: no later than the deploy, or two days 
 MAX_WRONG = 3
 MIN_CLUBS = {"geral": 3, "team": 2}  # distinct clubs a career needs to be a puzzle
 # National and youth teams are not clubs of a career.
+# Whole words only: "Internazionale" is a club, not a "nazionale".
 NOT_A_CLUB = re.compile(
-    r"^sele[çc][ãa]o|selecci[óo]n|national|nazionale|\b(sub|u)-?\d{2}\b|\bB$|\bII$|juvenil|"
-    r"reserv|ol[ií]mpic",
+    r"^sele[çc][ãa]o|\bselecci[óo]n\b|\bnational\b|\bnazionale\b|\b(sub|u)-?\d{2}\b|\bB$|"
+    r"\bII$|\bjuvenil\b|\breserv|\bol[ií]mpic",
     re.IGNORECASE,
 )
+FIRST_YEAR = 1850  # Wikidata writes an unknown date as year 0001
+# Country names as the fans look for them.
+COUNTRY_NAMES = {"Reino Unido": "Inglaterra", "República Popular da China": "China"}
 
 
 def normalize(text: str) -> str:
@@ -40,7 +44,8 @@ def normalize(text: str) -> str:
 
 
 def _year(value: str) -> int | None:
-    return int(value[:4]) if value and value[:4].isdigit() else None
+    year = int(value[:4]) if value and value[:4].isdigit() else None
+    return year if year and year >= FIRST_YEAR else None
 
 
 def convert(players: list[dict], rows: list[dict], fixes: dict[str, dict]) -> dict:
@@ -50,6 +55,7 @@ def convert(players: list[dict], rows: list[dict], fixes: dict[str, dict]) -> di
     positions: dict[str, str] = {}
     labels: dict[str, set[str]] = {}
     shown: dict[str, str] = {}
+    countries: dict[str, str] = {}
     for r in rows:
         qid, club, label = r["player"], r["club"], r["clubLabel"].strip()
         if qid not in names:
@@ -57,13 +63,15 @@ def convert(players: list[dict], rows: list[dict], fixes: dict[str, dict]) -> di
         if r.get("position") and qid not in positions:
             position = re.sub(r"\s*\(.*\)$", "", r["position"])  # "Lateral (futebol)"
             positions[qid] = position[:1].upper() + position[1:]
-        start = _year(r["start"])
+        start = _year(r["start"]) or _year(r["end"])  # unknown start: the end year at least
         ignored = fixes.get(club, {}).get("ignorar", False)  # e.g. a country listed as a club
         if r["national"] or ignored or NOT_A_CLUB.search(label) or start is None:
             continue
         stints[qid].add((club, start, _year(r["end"])))
         labels.setdefault(club, set()).update(x for x in (label, r.get("clubShort", "")) if x)
         shown.setdefault(club, r.get("clubShort") or label)
+        if r.get("country"):
+            countries.setdefault(club, COUNTRY_NAMES.get(r["country"], r["country"]))
 
     jogadores = []
     for qid, nome in names.items():
@@ -88,7 +96,8 @@ def convert(players: list[dict], rows: list[dict], fixes: dict[str, dict]) -> di
         fix = fixes.get(club, {})
         nome = fix.get("nome") or shown[club]
         aliases = (labels[club] | set(fix.get("apelidos", []))) - {nome}
-        clubes[club] = {"nome": nome, "apelidos": sorted(aliases)}
+        pais = fix.get("pais") or countries.get(club) or "Outros"
+        clubes[club] = {"nome": nome, "apelidos": sorted(aliases), "pais": pais}
     return {"clubes": clubes, "jogadores": jogadores}
 
 
@@ -96,6 +105,7 @@ def convert(players: list[dict], rows: list[dict], fixes: dict[str, dict]) -> di
 class Clube:
     nome: str
     apelidos: tuple[str, ...]
+    pais: str = "Outros"
 
 
 @dataclass(frozen=True)
@@ -126,7 +136,8 @@ class Data:
     def from_dict(cls, raw: dict) -> "Data":
         return cls(
             clubes={
-                qid: Clube(c["nome"], tuple(c["apelidos"])) for qid, c in raw["clubes"].items()
+                qid: Clube(c["nome"], tuple(c["apelidos"]), c.get("pais", "Outros"))
+                for qid, c in raw["clubes"].items()
             },
             jogadores=tuple(
                 Jogador(

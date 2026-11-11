@@ -79,3 +79,10 @@ def test_api_rejects_future_or_zero_puzzle(game, number) -> None:
 
 def test_portal_links_the_career_game(game) -> None:
     assert 'href="/jogos/onde-jogou"' in game.get("/").text
+
+
+def test_game_page_ships_the_club_picker_with_countries(game) -> None:
+    page = game.get("/jogos/onde-jogou").text
+
+    assert 'id="oj-club-data"' in page and "<datalist" not in page
+    assert '"pais": "Brasil"' in page and '"nome": "Vasco"' in page

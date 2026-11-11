@@ -674,7 +674,13 @@ def create_app(
             team=catalog.get(edition),
             number=number,
             jogador=onde_jogou.by_number(players, number),
-            clubs=sorted({c.nome for c in data.clubes.values()}),
+            clubs=sorted(
+                (
+                    {"nome": c.nome, "apelidos": list(c.apelidos), "pais": c.pais}
+                    for c in data.clubes.values()
+                ),
+                key=lambda c: (c["pais"], c["nome"]),
+            ),
             editions=[(slug, catalog.get(slug)) for slug in career_editions()],
             max_wrong=onde_jogou.MAX_WRONG,
         )

@@ -22,13 +22,14 @@ HEADERS = {
     "Accept-Encoding": "gzip",
 }
 QUERY = """
-SELECT ?player ?club ?clubLabel ?clubShort ?start ?end ?positionLabel WHERE {
+SELECT ?player ?club ?clubLabel ?clubShort ?countryLabel ?start ?end ?positionLabel WHERE {
   VALUES ?player { %s }
   ?player p:P54 ?st . ?st ps:P54 ?club .
   OPTIONAL { ?st pq:P580 ?start }
   OPTIONAL { ?st pq:P582 ?end }
   OPTIONAL { ?club wdt:P1813 ?clubShort . FILTER(LANG(?clubShort) IN ("pt", "pt-br", "mul")) }
   OPTIONAL { ?player wdt:P413 ?position }
+  OPTIONAL { ?club wdt:P17 ?country }
   SERVICE wikibase:label { bd:serviceParam wikibase:language "pt-br,pt,en". }
 }
 """
@@ -56,6 +57,7 @@ def fetch(client: httpx.Client, qids: list[str]) -> list[dict]:
                 "club": value("club").rsplit("/", 1)[-1],
                 "clubLabel": value("clubLabel"),
                 "clubShort": value("clubShort"),
+                "country": value("countryLabel"),
                 "start": value("start"),
                 "end": value("end"),
                 "national": False,  # dropped by name (NOT_A_CLUB) and by clubes.toml instead

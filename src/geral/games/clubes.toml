@@ -319,3 +319,11 @@ apelidos = ["Adelaide United Football Club"]
 [Q463147]
 nome = "America-RJ"
 apelidos = ["America Football Club"]
+
+[Q631]
+nome = "Inter de Milão"
+apelidos = ["Football Club Internazionale Milano", "Internazionale", "Inter Milan"]
+
+[Q19353]
+nome = "Anji"
+apelidos = ["FC Anji Makhachkala", "Anzhi"]

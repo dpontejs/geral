@@ -1,5 +1,6 @@
-// "Onde jogou?": the server judges every club guessed so far; the day's guesses and the streak
-// live in localStorage (per edition). No dependencies.
+// "Onde jogou?": pick clubs from a searchable, country-filtered, paged list; the server judges
+// every club picked so far. The day's picks and the streak live in localStorage (per edition).
+// No dependencies.
 (() => {
   const root = document.getElementById("oj");
   if (!root) return;
@@ -8,9 +9,10 @@
   const max = Number(root.dataset.max);
   const $ = (id) => document.getElementById(id);
   const form = $("oj-form");
-  const input = $("oj-club");
-  const submit = form.querySelector("button[type=submit]");
+  const search = $("oj-search");
   const KEY = `onde-jogou:${edition}`;
+  const PAGE = 12;
+  const ALL = "Todos";
 
   const read = (key, fallback) => {
     try {
@@ -26,6 +28,35 @@
       /* private mode: the game still works, it just forgets */
     }
   };
+  const plain = (text) =>
+    text.normalize("NFKD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/\s+/g, " ").trim();
+  const el = (tag, cls, text) => {
+    const node = document.createElement(tag);
+    if (cls) node.className = cls;
+    if (text !== undefined) node.textContent = text;
+    return node;
+  };
+
+  // The club list: every name and alias searchable without accents.
+  const clubs = JSON.parse($("oj-club-data").textContent).map((club) => ({
+    ...club,
+    keys: [club.nome, ...club.apelidos].map(plain),
+  }));
+  const byCountry = new Map();
+  clubs.forEach((club) => byCountry.set(club.pais, (byCountry.get(club.pais) || 0) + 1));
+  // Brazil first, then the countries with more clubs; "Outros" last.
+  const countries = [...byCountry.keys()].sort(
+    (a, b) =>
+      (b === "Brasil") - (a === "Brasil") ||
+      (a === "Outros") - (b === "Outros") ||
+      byCountry.get(b) - byCountry.get(a) ||
+      a.localeCompare(b, "pt"),
+  );
+
+  // The full list follows the same order: Brazil's clubs first.
+  const rank = new Map(countries.map((name, i) => [name, i]));
+  clubs.sort((a, b) => rank.get(a.pais) - rank.get(b.pais) || a.nome.localeCompare(b.nome, "pt"));
+  const TOP = 8; // countries shown as chips; the rest go in a menu
 
   let day = read(KEY, null);
   // A new day, or the list changed today's player: start over.
@@ -33,16 +64,94 @@
     day = { number, player, palpites: [], desistiu: false };
   }
   let verdict = null;
+  let busy = false;
+  let country = ALL;
+  let page = 0;
 
-  const el = (tag, cls, text) => {
-    const node = document.createElement(tag);
-    if (cls) node.className = cls;
-    if (text !== undefined) node.textContent = text;
-    return node;
-  };
   const error = (text) => {
     $("oj-error").textContent = text;
     $("oj-error").hidden = !text;
+  };
+
+  const matches = () => {
+    const query = plain(search.value);
+    let found = clubs.filter((c) => country === ALL || c.pais === country);
+    if (query) {
+      found = found
+        .filter((c) => c.keys.some((k) => k.includes(query)))
+        .sort(
+          (a, b) =>
+            b.keys.some((k) => k.startsWith(query)) - a.keys.some((k) => k.startsWith(query)) ||
+            a.nome.localeCompare(b.nome, "pt"),
+        );
+    }
+    return found;
+  };
+
+  const picked = () => {
+    // Club name -> "found" | "wrong", from the last verdict.
+    const marks = new Map();
+    if (!verdict) return marks;
+    verdict.slots.forEach((s) => s.achado && marks.set(s.clube, "found"));
+    verdict.erros.forEach((name) => marks.set(name, "wrong"));
+    return marks;
+  };
+
+  const choose = (name) => {
+    country = name;
+    page = 0;
+    drawCountries();
+    drawResults();
+  };
+
+  const drawCountries = () => {
+    const chips = [ALL, ...countries.slice(0, TOP)].map((name) => {
+      const count = name === ALL ? clubs.length : byCountry.get(name);
+      const chip = el("button", "chip", `${name} (${count})`);
+      chip.type = "button";
+      chip.setAttribute("aria-pressed", String(name === country));
+      chip.addEventListener("click", () => choose(name));
+      return chip;
+    });
+    const rest = countries.slice(TOP);
+    if (rest.length) {
+      const menu = el("select", `chip${rest.includes(country) ? " on" : ""}`);
+      menu.setAttribute("aria-label", "Outro país");
+      menu.append(el("option", "", "Outro país…"));
+      menu.firstChild.value = "";
+      rest.forEach((name) => {
+        const option = el("option", "", `${name} (${byCountry.get(name)})`);
+        option.value = name;
+        option.selected = name === country;
+        menu.append(option);
+      });
+      menu.addEventListener("change", () => choose(menu.value || ALL));
+      chips.push(menu);
+    }
+    $("oj-countries").replaceChildren(...chips);
+  };
+
+  const drawResults = () => {
+    const found = matches();
+    const pages = Math.max(1, Math.ceil(found.length / PAGE));
+    page = Math.min(page, pages - 1);
+    const marks = picked();
+    $("oj-results").replaceChildren(
+      ...found.slice(page * PAGE, page * PAGE + PAGE).map((club) => {
+        const li = el("li");
+        const button = el("button", `club ${marks.get(club.nome) || ""}`.trim());
+        button.type = "button";
+        button.append(el("span", "club-name", club.nome), el("span", "club-country", club.pais));
+        button.disabled = marks.has(club.nome) || busy;
+        button.addEventListener("click", () => guess(club.nome));
+        li.append(button);
+        return li;
+      }),
+    );
+    if (!found.length) $("oj-results").append(el("li", "empty", "Nenhum clube com esse nome. Tente um apelido ou outro país."));
+    $("oj-page").textContent = `Página ${page + 1} de ${pages} · ${found.length} clubes`;
+    $("oj-prev").disabled = page === 0;
+    $("oj-next").disabled = page >= pages - 1;
   };
 
   const finish = () => {
@@ -67,17 +176,16 @@
   const render = () => {
     const slots = $("oj-slots").children;
     verdict.slots.forEach((slot, i) => {
-      const li = slots[i];
-      const shown = li.lastElementChild;
       if (!slot.clube) return;
-      const club = el("span", `slot-club${slot.achado ? " found" : " missed"}`, slot.clube);
-      shown.replaceWith(club);
+      const shown = slots[i].lastElementChild;
+      shown.replaceWith(el("span", `slot-club${slot.achado ? " found" : " missed"}`, slot.clube));
     });
     $("oj-wrong").textContent = verdict.erros.length
       ? `Errou (${verdict.erros.length} de ${max}): ${verdict.erros.join(", ")}`
       : "";
     form.hidden = verdict.over;
     $("oj-result").hidden = !verdict.over;
+    drawResults();
     if (!verdict.over) return;
     $("oj-title").textContent = verdict.solved ? "Carreira completa!" : "Fim de jogo";
     $("oj-final").textContent = `${verdict.achados} de ${verdict.total} clubes`;
@@ -90,51 +198,58 @@
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ palpites: day.palpites, desistiu: day.desistiu }),
     });
-    if (response.status === 422) {
-      const body = await response.json();
-      const problem = new Error("unknown club");
-      problem.detail = typeof body.detail === "string" ? body.detail : "Clube desconhecido";
-      throw problem;
-    }
     if (!response.ok) throw new Error(`HTTP ${response.status}`);
     verdict = await response.json();
     render();
   };
 
   const play = async (change, undo) => {
-    if (submit.disabled) return;
-    submit.disabled = true; // one guess in flight at a time
+    if (busy) return;
+    busy = true; // one pick in flight at a time
     change();
+    drawResults();
     try {
       await judge();
       write(KEY, day);
       error("");
-      form.reset();
-      input.focus();
-    } catch (problem) {
+    } catch {
       undo();
-      error(problem.detail ? `${problem.detail}. Escolha um clube da lista.` : "Não deu para conferir agora. Tente de novo.");
+      error("Não deu para conferir agora. Tente de novo.");
     } finally {
-      submit.disabled = false;
+      busy = false;
+      drawResults();
     }
   };
 
-  form.addEventListener("submit", (event) => {
-    event.preventDefault();
-    const club = input.value.trim();
-    if (!club) return;
+  const guess = (name) =>
     play(
-      () => day.palpites.push(club),
+      () => day.palpites.push(name),
       () => day.palpites.pop(),
     );
-  });
 
-  $("oj-give-up").addEventListener("click", () => {
+  search.addEventListener("input", () => {
+    page = 0;
+    drawResults();
+  });
+  form.addEventListener("submit", (event) => {
+    event.preventDefault(); // Enter picks the club when the search leaves only one
+    const found = matches();
+    if (found.length === 1 && !picked().has(found[0].nome)) guess(found[0].nome);
+  });
+  $("oj-prev").addEventListener("click", () => {
+    page -= 1;
+    drawResults();
+  });
+  $("oj-next").addEventListener("click", () => {
+    page += 1;
+    drawResults();
+  });
+  $("oj-give-up").addEventListener("click", () =>
     play(
       () => (day.desistiu = true),
       () => (day.desistiu = false),
-    );
-  });
+    ),
+  );
 
   $("oj-share").addEventListener("click", async () => {
     const found = verdict.achados;
@@ -151,6 +266,8 @@
     }
   });
 
+  drawCountries();
+  drawResults();
   if (day.palpites.length || day.desistiu) {
     form.hidden = true; // until we know whether today's game is over
     judge().catch(() => {

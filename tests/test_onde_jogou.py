@@ -153,3 +153,42 @@ def test_real_careers_are_sane() -> None:
         assert all(s.clube in real.clubes for s in jogador.clubes), jogador.nome
     names = [c.nome for c in real.clubes.values()]
     assert not [n for n in names if n.lower().startswith("seleção") or n in {"Brasil", "BRA"}]
+
+
+def test_convert_keeps_clubs_whose_name_contains_national_words() -> None:
+    rows = [
+        row("Q2", "Q100", "Club de Regatas Vasco da Gama", "1990", "1992", short="Vasco"),
+        row("Q2", "Q110", "Football Club Internazionale Milano", "1995", "1996"),
+    ]
+
+    data = Data.from_dict(convert(PLAYERS, rows, {}))
+
+    assert "Q110" in {s.clube for s in player(data, "Edmundo").clubes}
+
+
+def test_convert_uses_the_end_year_when_the_start_is_unknown() -> None:
+    rows = [
+        row("Q2", "Q100", "Club de Regatas Vasco da Gama", "1990", "1992", short="Vasco"),
+        row("Q2", "Q111", "FC Anji Makhachkala", "0001-01-01T00:00:00Z", "2012-01-01T00:00:00Z"),
+    ]
+
+    edmundo = player(Data.from_dict(convert(PLAYERS, rows, {})), "Edmundo")
+
+    assert [(s.clube, s.inicio, s.fim) for s in edmundo.clubes] == [
+        ("Q100", 1990, 1992),
+        ("Q111", 2012, 2012),
+    ]
+
+
+def test_convert_keeps_the_club_country_with_fixes_first() -> None:
+    rows = [
+        {**row("Q2", "Q100", "Club de Regatas Vasco da Gama", "1990", "1992"), "country": "Brasil"},
+        {**row("Q2", "Q108", "ACF Fiorentina", "1997", "1999"), "country": "Itália"},
+        row("Q2", "Q112", "Clube Sem País", "2000", "2001"),
+    ]
+
+    data = Data.from_dict(convert(PLAYERS, rows, {"Q108": {"pais": "Itália (Florença)"}}))
+
+    assert data.clubes["Q100"].pais == "Brasil"
+    assert data.clubes["Q108"].pais == "Itália (Florença)"
+    assert data.clubes["Q112"].pais == "Outros"

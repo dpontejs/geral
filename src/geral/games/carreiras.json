@@ -2,147 +2,178 @@
  "clubes": {
   "Q101859": {
    "nome": "VfL Wolfsburg",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Alemanha"
   },
   "Q1024337": {
    "nome": "Club Social y Deportivo Comunicaciones",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Guatemala"
   },
   "Q102720": {
    "nome": "Hertha BSC",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Alemanha"
   },
   "Q10292310": {
    "nome": "Grêmio Mangaratibense",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q10300": {
    "nome": "Rayo Vallecano de Madrid",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Espanha"
   },
   "Q10308": {
    "nome": "Real Zaragoza",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Espanha"
   },
   "Q10315": {
    "nome": "Real Sociedad de Fútbol",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Espanha"
   },
   "Q10329": {
    "nome": "Sevilla",
    "apelidos": [
     "Sevilha",
     "Sevilla Fútbol Club"
-   ]
+   ],
+   "pais": "Espanha"
   },
   "Q10333": {
    "nome": "Valencia",
    "apelidos": [
     "Valencia Club de Fútbol",
     "Valência"
-   ]
+   ],
+   "pais": "Espanha"
   },
   "Q1044651": {
    "nome": "Vegalta Sendai",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Japão"
   },
   "Q1045524": {
    "nome": "Montedio Yamagata",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Japão"
   },
   "Q1047535": {
    "nome": "Kyoto Sanga F.C.",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Japão"
   },
   "Q104761": {
    "nome": "Bayer Leverkusen",
    "apelidos": [
     "Bayer 04 Leverkusen",
     "Leverkusen"
-   ]
+   ],
+   "pais": "Alemanha"
   },
   "Q104770": {
    "nome": "1. Fußball-Club Köln 01/07",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Alemanha"
   },
   "Q10512": {
    "nome": "Elche Club de Fútbol",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Espanha"
   },
   "Q1056948": {
    "nome": "Lekhwiya Sports Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Catar"
   },
   "Q105853": {
    "nome": "Karlsruher Sport-Club Mühlburg-Phönix",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Alemanha"
   },
   "Q107337028": {
    "nome": "Al-Ittifaq F. C.",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Emirados Árabes Unidos"
   },
   "Q1128631": {
    "nome": "Leeds United Association Football Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Inglaterra"
   },
   "Q1130849": {
    "nome": "Liverpool",
    "apelidos": [
     "Liverpool Football Club"
-   ]
+   ],
+   "pais": "Inglaterra"
   },
   "Q1133475": {
    "nome": "Guarani",
    "apelidos": [
     "Guarani Futebol Clube"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q1137993": {
    "nome": "Radnički Niš",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Sérvia"
   },
   "Q1143000": {
    "nome": "Club Universidad Nacional",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "México"
   },
   "Q11938": {
    "nome": "PSV",
    "apelidos": [
     "PSV Eindhoven"
-   ]
+   ],
+   "pais": "Países Baixos"
   },
   "Q120064": {
    "nome": "Luftëtari Gjirokastër",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Albânia"
   },
   "Q12236": {
    "nome": "Real Racing Club de Santander",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Espanha"
   },
   "Q127921": {
    "nome": "Club Deportivo Jorge Wilstermann",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Bolívia"
   },
   "Q128446": {
    "nome": "Porto",
    "apelidos": [
     "FC Porto",
     "Futebol Clube do Porto"
-   ]
+   ],
+   "pais": "Portugal"
   },
   "Q130521": {
    "nome": "Guangzhou Football Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "China"
   },
   "Q131209": {
    "nome": "Fußballklub Austria Wien",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Áustria"
   },
   "Q131499": {
    "nome": "Benfica",
    "apelidos": [
     "Sport Lisboa e Benfica"
-   ]
+   ],
+   "pais": "Portugal"
   },
   "Q132885": {
    "nome": "Olympique de Marseille",
@@ -150,64 +181,78 @@
     "Marseille",
     "Marselha",
     "Olympique de Marselha"
-   ]
+   ],
+   "pais": "França"
   },
   "Q13391": {
    "nome": "U.S. Lecce",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Itália"
   },
   "Q1349814": {
    "nome": "Ravenna Calcio",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Itália"
   },
   "Q1368488": {
    "nome": "Yokohama Flügels",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Japão"
   },
   "Q141688": {
    "nome": "Anorthosis Famagusta FC",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Chipre"
   },
   "Q1422": {
    "nome": "Juventus",
    "apelidos": [
     "Juventus Football Club"
-   ]
+   ],
+   "pais": "Itália"
   },
   "Q1422177": {
    "nome": "Paulista Futebol Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q1458264": {
    "nome": "Portuguesa Fútbol Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Venezuela"
   },
   "Q1492": {
    "nome": "Barcelona",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Espanha"
   },
   "Q1508285": {
    "nome": "Paysandu Sport Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q1513287": {
    "nome": "Vila Nova Futebol Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q15214308": {
    "nome": "Orlando City Soccer Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Estados Unidos"
   },
   "Q1543": {
    "nome": "Milan",
    "apelidos": [
     "AC Milan",
     "Associazione Calcio Milan"
-   ]
+   ],
+   "pais": "Itália"
   },
   "Q1570132": {
    "nome": "CF Lobos de la BUAP",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "México"
   },
   "Q15789": {
    "nome": "Bayern de Munique",
@@ -215,380 +260,465 @@
     "Bayern",
     "Bayern Munich",
     "Bayern München"
-   ]
+   ],
+   "pais": "Alemanha"
   },
   "Q1675356": {
    "nome": "Itumbiara Esporte Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q16838244": {
    "nome": "Odisha FC",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Índia"
   },
   "Q16839398": {
    "nome": "Football Club Goa",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Índia"
   },
   "Q16844931": {
    "nome": "Club Internacional de Fútbol Miami",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Estados Unidos"
   },
   "Q16844935": {
    "nome": "Miami United Football Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Estados Unidos"
   },
   "Q16932": {
    "nome": "Kashima Antlers",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Japão"
   },
   "Q1703589": {
    "nome": "Sociedade Esportiva e Recreativa Caxias do Sul",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q170703": {
    "nome": "Club Atlético Boca Juniors",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Argentina"
   },
   "Q172476": {
    "nome": "Bordeaux",
    "apelidos": [
     "Football Club des Girondins de Bordeaux",
     "Girondins de Bordeaux"
-   ]
+   ],
+   "pais": "França"
   },
   "Q172969": {
    "nome": "Shakhtar Donetsk",
    "apelidos": [
     "Futbolniy Klub Shakhtar",
     "Shakhtar"
-   ]
+   ],
+   "pais": "Ucrânia"
   },
   "Q173009": {
    "nome": "Estrela Vermelha de Belgrado",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Sérvia"
   },
   "Q17442894": {
    "nome": "Pafos FC",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Chipre"
   },
   "Q17479": {
    "nome": "Flamengo",
    "apelidos": [
     "CR Flamengo",
     "Clube de Regatas do Flamengo"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q17497": {
    "nome": "FC Dinamo Moscou",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Rússia"
   },
   "Q17594408": {
    "nome": "Chennaiyin Football Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Índia"
   },
   "Q179075": {
    "nome": "Futbolniy Klub Dynamo Kyiv",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Ucrânia"
   },
   "Q180305": {
    "nome": "Association Sportive de Monaco Football Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Mônaco"
   },
   "Q18318": {
    "nome": "Garforth Town Association Football Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Inglaterra"
   },
   "Q1857213": {
    "nome": "Uberlândia Esporte Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q18640": {
    "nome": "Club de Gimnasia y Esgrima La Plata",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Argentina"
   },
   "Q18656": {
    "nome": "Manchester United Football Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Inglaterra"
   },
   "Q18708": {
    "nome": "Fulham Football Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Inglaterra"
   },
   "Q18711": {
    "nome": "Aston Villa Football Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Inglaterra"
   },
   "Q18741": {
    "nome": "Tottenham",
    "apelidos": [
     "Tottenham Hotspur",
     "Tottenham Hotspur Football Club"
-   ]
+   ],
+   "pais": "Inglaterra"
   },
   "Q18747": {
    "nome": "West Ham",
    "apelidos": [
     "West Ham United",
     "West Ham United Football Club"
-   ]
+   ],
+   "pais": "Inglaterra"
   },
   "Q188277": {
    "nome": "Cruzeiro",
    "apelidos": [
     "Cruzeiro Esporte Clube"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q1886": {
    "nome": "Atalanta Bergamasca Calcio",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Itália"
   },
   "Q188841": {
    "nome": "Fortaleza",
    "apelidos": [
     "Fortaleza Esporte Clube"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q1893": {
    "nome": "Bologna Football Club 1909",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Itália"
   },
   "Q1900225": {
    "nome": "12 de Octubre Football Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Paraguai"
   },
   "Q192071": {
    "nome": "Football Club de Nantes",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "França"
   },
   "Q19353": {
-   "nome": "FC Anji Makhachkala",
-   "apelidos": []
+   "nome": "Anji",
+   "apelidos": [
+    "Anzhi",
+    "FC Anji Makhachkala"
+   ],
+   "pais": "Rússia"
   },
   "Q19509": {
    "nome": "Rennes",
    "apelidos": [
     "Stade Rennais",
     "Stade Rennais Football Club"
-   ]
+   ],
+   "pais": "França"
   },
   "Q19516": {
    "nome": "Lille Olympique Sporting Club Métropole",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "França"
   },
   "Q19521": {
    "nome": "Association Sportive de Saint-Étienne Loire",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "França"
   },
   "Q19628": {
    "nome": "Olympiacos",
    "apelidos": [
     "Olympiacos FC",
     "Olympiakos"
-   ]
+   ],
+   "pais": "Grécia"
   },
   "Q198032": {
    "nome": "Bahia",
    "apelidos": [
     "ECB",
     "Esporte Clube Bahia"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q2005514": {
    "nome": "Toros Neza Fútbol Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "México"
   },
   "Q201584": {
    "nome": "AEK Atenas",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Grécia"
   },
   "Q2018179": {
    "nome": "Olaria Atlético Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q2035444": {
    "nome": "Joinville",
    "apelidos": [
     "Joinville Esporte Clube"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q2037": {
    "nome": "Associazione Calcio Chievo Verona",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Itália"
   },
   "Q204220": {
    "nome": "Red Bull New York",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Estados Unidos"
   },
   "Q204357": {
    "nome": "Los Angeles Galaxy",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Estados Unidos"
   },
   "Q204675": {
    "nome": "Portuguesa",
    "apelidos": [
     "Associação Portuguesa de Desportos"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q2052": {
    "nome": "Fiorentina",
    "apelidos": [
     "ACF Fiorentina"
-   ]
+   ],
+   "pais": "Itália"
   },
   "Q2074": {
    "nome": "Genoa",
    "apelidos": [
     "Genoa Cricket and Football Club"
-   ]
+   ],
+   "pais": "Itália"
   },
   "Q211401": {
    "nome": "União Desportiva de Leiria",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Portugal"
   },
   "Q2116855": {
    "nome": "Universidad de Los Andes Fútbol Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Venezuela"
   },
   "Q216510": {
    "nome": "Clube de Futebol Os Belenenses",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Portugal"
   },
   "Q218334": {
    "nome": "Figueirense",
    "apelidos": [
     "Figueirense Futebol Clube"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q218883": {
    "nome": "Urawa Red Diamonds",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Japão"
   },
   "Q219098": {
    "nome": "Sport",
    "apelidos": [
     "Sport Club do Recife",
     "Sport Recife"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q219120": {
    "nome": "Associação Atlética Ponte Preta",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q219235": {
    "nome": "Association du Servette Football Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Suíça"
   },
   "Q219703": {
    "nome": "Boavista Futebol Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Portugal"
   },
   "Q221695": {
    "nome": "Grêmio",
    "apelidos": [
     "Gremio",
     "Grêmio Foot-Ball Porto Alegrense"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q223450": {
    "nome": "Vitória Sport Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Portugal"
   },
   "Q223620": {
    "nome": "Deportivo Alavés",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Espanha"
   },
   "Q22707": {
    "nome": "TSG 1899 Hoffenheim",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Alemanha"
   },
   "Q2301143": {
    "nome": "Xi Măng Hải Phòng FC",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Vietnã"
   },
   "Q2329137": {
    "nome": "União São João Esporte Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q2332493": {
    "nome": "Botafogo Futebol Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q2340403": {
    "nome": "Bauru Atlético Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q2341011": {
    "nome": "Associação Atlética Portuguesa",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q2419887": {
    "nome": "Mogi Mirim Esporte Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q247731": {
    "nome": "Kaizer Chiefs Football Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "África do Sul"
   },
   "Q248782": {
    "nome": "Barcelona Sporting Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Equador"
   },
   "Q249643": {
    "nome": "Liga Deportiva Universitaria de Quito",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Equador"
   },
   "Q249662": {
    "nome": "Nagoya Grampus",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Japão"
   },
   "Q2508225": {
    "nome": "Esporte Clube São José",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q2508289": {
    "nome": "Rio Branco Atlético Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q2552872": {
    "nome": "Clube do Remo",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q2553450": {
    "nome": "Volta Redonda Futebol Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q2590133": {
    "nome": "Guaratinguetá Futebol Ltda.",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q2627402": {
    "nome": "Esporte Clube Noroeste",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q2641": {
    "nome": "Napoli",
    "apelidos": [
     "Nápoles",
     "Società Sportiva Calcio Napoli"
-   ]
+   ],
+   "pais": "Itália"
   },
   "Q2656570": {
    "nome": "Boavista Sport Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q2662116": {
    "nome": "Campo Grande Atlético Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q2663081": {
    "nome": "Friburguense Atlético Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q2693": {
    "nome": "Parma",
    "apelidos": [
     "Parma Calcio 1913"
-   ]
+   ],
+   "pais": "Itália"
   },
   "Q270995": {
    "nome": "Atlético-MG",
@@ -596,290 +726,351 @@
     "Atlético Mineiro",
     "Clube Atlético Mineiro",
     "Galo"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q2710": {
    "nome": "Pescara",
    "apelidos": [
     "Pescara Calcio"
-   ]
+   ],
+   "pais": "Itália"
   },
   "Q2714": {
    "nome": "Watford Football Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Inglaterra"
   },
   "Q2735045": {
    "nome": "Ferroviária-ES",
    "apelidos": [
     "Associação Desportiva Ferroviária Vale do Rio Doce"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q2739": {
    "nome": "Roma",
    "apelidos": [
     "AS Roma",
     "Associazione Sportiva Roma"
-   ]
+   ],
+   "pais": "Itália"
   },
   "Q2742586": {
    "nome": "Grêmio Esportivo Juventus",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q274465": {
    "nome": "Vitória",
    "apelidos": [
     "ECV",
     "Esporte Clube Vitória"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q2760357": {
    "nome": "Club 9 de Octubre",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Equador"
   },
   "Q276533": {
    "nome": "Racing Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Argentina"
   },
   "Q2768": {
    "nome": "Torino Football Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Itália"
   },
   "Q2798": {
    "nome": "Udinese Calcio",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Itália"
   },
   "Q283545": {
    "nome": "Al-Sadd",
    "apelidos": [
     "Al-Sadd Sports Club"
-   ]
+   ],
+   "pais": "Catar"
   },
   "Q283767": {
    "nome": "Al-Wahda Sports Cultural Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Emirados Árabes Unidos"
   },
   "Q2868221": {
    "nome": "Associação Atlética Francana",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q2868235": {
    "nome": "Associação Desportiva Cabofriense",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q289613": {
    "nome": "Associazione Calcio Pisa 1909",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Itália"
   },
   "Q289707": {
    "nome": "Associazione Calcio Reggiana 1919",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Itália"
   },
   "Q290940": {
    "nome": "São Caetano",
    "apelidos": [
     "Associação Desportiva São Caetano"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q29108": {
    "nome": "FC Zenit São Petersburgo",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Rússia"
   },
   "Q296050": {
    "nome": "AO Kavala",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Grécia"
   },
   "Q3058500": {
    "nome": "Esporte Clube Internacional de Lages",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q3084434": {
    "nome": "Grupo Desportivo de Ribeirão",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Portugal"
   },
   "Q309480": {
    "nome": "Al-Ittihad",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Arábia Saudita"
   },
   "Q3241573": {
    "nome": "Linhares Esporte Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q3241574": {
    "nome": "Linhares Futebol Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q324589": {
    "nome": "Club Atlético Lanús",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Argentina"
   },
   "Q32494": {
    "nome": "Fußball-Club Gelsenkirchen-Schalke 04",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Alemanha"
   },
   "Q330143": {
    "nome": "Sydney Football Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Austrália"
   },
   "Q332524": {
    "nome": "Atlético Junior",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Colômbia"
   },
   "Q332527": {
    "nome": "Corporación Deportiva Independiente Medellín",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Colômbia"
   },
   "Q3334769": {
    "nome": "Nacional Fast Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q3345324": {
    "nome": "Nova Iguaçu",
    "apelidos": [
     "Nova Iguaçu Futebol Clube"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q3354098": {
    "nome": "Operário Futebol Clube Ltda.",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q338285": {
    "nome": "América-MG",
    "apelidos": [
     "América Futebol Clube (Minas Gerais)",
     "América Mineiro"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q3487431": {
    "nome": "Sociedade Desportiva Serra Futebol Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q354059": {
    "nome": "Adelaide United",
    "apelidos": [
     "Adelaide United Football Club"
-   ]
+   ],
+   "pais": "Austrália"
   },
   "Q3554893": {
    "nome": "Vasco da Gama Futebol Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q3590749": {
    "nome": "Paraguay Olympic football team",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Outros"
   },
   "Q35933": {
    "nome": "Corinthians",
    "apelidos": [
     "Sport Club Corinthians Paulista"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q372599": {
    "nome": "Sivasspor",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Turquia"
   },
   "Q374069": {
    "nome": "Avaí",
    "apelidos": [
     "Avaí Futebol Clube"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q375697": {
    "nome": "Sociedade Esportiva do Gama",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q3813348": {
    "nome": "Comercial Futebol Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q38568": {
    "nome": "São Paulo",
    "apelidos": [
     "São Paulo FC",
     "São Paulo Futebol Clube"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q4120643": {
    "nome": "Persma Manado",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Indonésia"
   },
   "Q424943": {
    "nome": "Al-Ahli (Emirados Árabes Unidos)",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Emirados Árabes Unidos"
   },
   "Q428211": {
    "nome": "Al-Gharafa",
    "apelidos": [
     "Al-Gharafa Sports Club"
-   ]
+   ],
+   "pais": "Catar"
   },
   "Q429998": {
    "nome": "Bacabal Esporte Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q4512": {
    "nome": "Verein für Bewegungsspiele Stuttgart 1893",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Alemanha"
   },
   "Q459090": {
    "nome": "América do México",
    "apelidos": [
     "Club América",
     "Club de Fútbol América"
-   ]
+   ],
+   "pais": "México"
   },
   "Q463147": {
    "nome": "America-RJ",
    "apelidos": [
     "America Football Club"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q4749635": {
    "nome": "América Futebol Clube (Três Rios)",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q478317": {
    "nome": "Coritiba",
    "apelidos": [
     "Coritiba Foot Ball Club"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q4817902": {
    "nome": "Serrano Foot Ball Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q482262": {
    "nome": "América-RN",
    "apelidos": [
     "América Futebol Clube (Rio Grande do Norte)"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q482764": {
    "nome": "Al-Nassr",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Arábia Saudita"
   },
   "Q483020": {
    "nome": "PSG",
    "apelidos": [
     "Paris Saint-Germain"
-   ]
+   ],
+   "pais": "França"
   },
   "Q4859851": {
    "nome": "Barcelona Esporte Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q4863138": {
    "nome": "Barra Mansa Futebol Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q495299": {
    "nome": "Galatasaray",
    "apelidos": [
     "Galatasaray Spor Kulübü"
-   ]
+   ],
+   "pais": "Turquia"
   },
   "Q501245": {
    "nome": "Venezia F.C.",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Itália"
   },
   "Q5014111": {
    "nome": "Vasco",
@@ -887,14 +1078,16 @@
     "CR Vasco da Gama",
     "Club de Regatas Vasco da Gama",
     "Vasco da Gama"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q50602": {
    "nome": "Manchester City",
    "apelidos": [
     "City",
     "Manchester City Football Club"
-   ]
+   ],
+   "pais": "Inglaterra"
   },
   "Q506832": {
    "nome": "Athletico-PR",
@@ -902,148 +1095,190 @@
     "Athletico Paranaense",
     "Atlético Paranaense",
     "Club Athletico Paranaense"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q508440": {
    "nome": "Santa Cruz",
    "apelidos": [
     "Santa Cruz Futebol Clube"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q5136150": {
    "nome": "Club Atlético Villa San Carlos",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Argentina"
   },
   "Q515178": {
    "nome": "Deportivo Pereira",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Colômbia"
   },
   "Q51974": {
    "nome": "Hamburger SV",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Alemanha"
   },
   "Q51976": {
    "nome": "Werder Bremen",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Alemanha"
   },
   "Q522566": {
    "nome": "Brasiliense Futebol Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q525573": {
    "nome": "Società Sportiva Murata",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "San Marino"
   },
   "Q537552": {
    "nome": "Tianjin Jinmen Tiger Football Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "China"
   },
   "Q5399143": {
    "nome": "Esporte Clube Tupy",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q541744": {
    "nome": "Red Bull Bragantino",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q564216": {
    "nome": "Shanghai Port",
    "apelidos": [
     "Shanghai Port Football Club",
     "Shanghai SIPG"
-   ]
+   ],
+   "pais": "China"
   },
   "Q572957": {
    "nome": "Alianza Lima",
    "apelidos": [
     "Club Alianza Lima"
-   ]
+   ],
+   "pais": "Peru"
   },
   "Q5794": {
    "nome": "Everton Football Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Inglaterra"
   },
   "Q586787": {
    "nome": "Consadole Sapporo",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Japão"
   },
   "Q603023": {
    "nome": "Club Deportivo Universidad César Vallejo",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Peru"
   },
   "Q603101": {
    "nome": "Club Nacional",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Paraguai"
   },
   "Q604581": {
    "nome": "Club Sporting Cristal",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Peru"
   },
   "Q606210": {
    "nome": "Querétaro Fútbol Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "México"
   },
   "Q60785879": {
    "nome": "A.S. Excelsior",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "França"
   },
   "Q620499": {
    "nome": "Tokyo Verdy",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Japão"
   },
   "Q622432": {
    "nome": "Rio Ave Futebol Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Portugal"
   },
   "Q628763": {
    "nome": "Football Club Bunyodkor",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Uzbequistão"
   },
   "Q630279": {
    "nome": "Sanfrecce Hiroshima",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Japão"
+  },
+  "Q631": {
+   "nome": "Inter de Milão",
+   "apelidos": [
+    "Football Club Internazionale Milano",
+    "Inter Milan",
+    "Internazionale"
+   ],
+   "pais": "Itália"
   },
   "Q633223": {
    "nome": "León",
    "apelidos": [
     "Club León"
-   ]
+   ],
+   "pais": "México"
   },
   "Q642291": {
    "nome": "Football Club Dallas",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Estados Unidos"
   },
   "Q646135": {
    "nome": "New York Cosmos",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Estados Unidos"
   },
   "Q646596": {
    "nome": "Puebla Fútbol Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "México"
   },
   "Q6601875": {
    "nome": "Fenerbahçe",
    "apelidos": [
     "Fenerbahçe Spor Kulübü"
-   ]
+   ],
+   "pais": "Turquia"
   },
   "Q666059": {
    "nome": "Borussia Fulda",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Alemanha"
   },
   "Q668": {
    "nome": "Índia",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Índia"
   },
   "Q693297": {
    "nome": "Kabuscorp Sport Clube do Palanca",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Angola"
   },
   "Q704": {
    "nome": "Lyon",
    "apelidos": [
     "Olympique Lyonnais"
-   ]
+   ],
+   "pais": "França"
   },
   "Q7156": {
    "nome": "Barcelona",
@@ -1051,197 +1286,238 @@
     "Barça",
     "FC Barcelona",
     "Futbol Club Barcelona"
-   ]
+   ],
+   "pais": "Espanha"
   },
   "Q7159367": {
    "nome": "Pedrabranca Futebol Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q719439": {
    "nome": "Club Social de Deportes Rangers de Talca",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Chile"
   },
   "Q721560": {
    "nome": "Corporación Club Deportivo Universidad de Concepción",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Chile"
   },
   "Q725367": {
    "nome": "Shanghai Shenhua",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "China"
   },
   "Q736937": {
    "nome": "Pachuca Club de Fútbol",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "México"
   },
   "Q738423": {
    "nome": "Gamba Osaka",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Japão"
   },
   "Q73965": {
    "nome": "Al-Hilal",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Arábia Saudita"
   },
   "Q739701": {
    "nome": "Associação Desportiva Confiança",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q73971": {
    "nome": "Clube Náutico Capibaribe",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q7419428": {
    "nome": "Santa Cruz Recreativo Esporte Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q749603": {
    "nome": "São José Esporte Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q75729": {
    "nome": "Sporting Clube de Portugal",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Portugal"
   },
   "Q7579313": {
    "nome": "Sport Club Barueri",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q768253": {
    "nome": "Club de Fútbol Monterrey",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "México"
   },
   "Q777267": {
    "nome": "Clube de Regatas Guará",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q788363": {
    "nome": "Bangu",
    "apelidos": [
     "Bangu Atlético Clube"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q80845": {
    "nome": "Internacional",
    "apelidos": [
     "Inter",
     "Sport Club Internacional"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q80897": {
    "nome": "Colón",
    "apelidos": [
     "Club Atlético Colón"
-   ]
+   ],
+   "pais": "Argentina"
   },
   "Q80955": {
    "nome": "Santos",
    "apelidos": [
     "Santos FC",
     "Santos Futebol Clube"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q80958": {
    "nome": "Botafogo",
    "apelidos": [
     "Botafogo de Futebol e Regatas",
     "Clube Botafogo de Futebol e Regatas"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q80964": {
    "nome": "Palmeiras",
    "apelidos": [
     "SE Palmeiras",
     "Sociedade Esportiva Palmeiras"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q80987": {
    "nome": "Fluminense",
    "apelidos": [
     "Fluminense Football Club"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q812720": {
    "nome": "Al Ain Football Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Emirados Árabes Unidos"
   },
   "Q816779": {
    "nome": "Goiás",
    "apelidos": [
     "Goiás Esporte Clube"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q81888": {
    "nome": "Amsterdamsche Football Club Ajax",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Países Baixos"
   },
   "Q823384": {
    "nome": "Shimizu S-Pulse",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Japão"
   },
   "Q838534": {
    "nome": "Paraná",
    "apelidos": [
     "Paraná Clube"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q844238": {
    "nome": "Defensor Sporting Club",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Uruguai"
   },
   "Q844271": {
    "nome": "Vissel Kobe",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Japão"
   },
   "Q844931": {
    "nome": "Kashiwa Reysol",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Japão"
   },
   "Q848642": {
    "nome": "Club Libertad",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Paraguai"
   },
   "Q849823": {
    "nome": "Tigres de la Universidad Autónoma de Nuevo León",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "México"
   },
   "Q853053": {
    "nome": "Club Atlético Chacarita Juniors",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Argentina"
   },
   "Q855401": {
    "nome": "Júbilo Iwata",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Japão"
   },
   "Q857938": {
    "nome": "İstanbul Büyükşehir Belediyespor",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Turquia"
   },
   "Q8682": {
    "nome": "Real Madrid",
    "apelidos": [
     "Real Madrid Club de Fútbol"
-   ]
+   ],
+   "pais": "Espanha"
   },
   "Q8701": {
    "nome": "Atlético de Madrid",
    "apelidos": [
     "Atlético Madrid",
     "Club Atlético de Madrid"
-   ]
+   ],
+   "pais": "Espanha"
   },
   "Q8723": {
    "nome": "Real Betis Balompié",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Espanha"
   },
   "Q874016": {
    "nome": "Kawasaki Frontale",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Japão"
   },
   "Q8749": {
    "nome": "Celta de Vigo",
    "apelidos": [
     "Celta",
     "Real Club Celta de Vigo"
-   ]
+   ],
+   "pais": "Espanha"
   },
   "Q8760": {
    "nome": "Deportivo La Coruña",
@@ -1249,55 +1525,66 @@
     "Deportivo",
     "La Coruña",
     "Real Club Deportivo de A Coruña"
-   ]
+   ],
+   "pais": "Espanha"
   },
   "Q8780": {
    "nome": "Espanyol",
    "apelidos": [
     "Reial Club Deportiu Espanyol de Barcelona"
-   ]
+   ],
+   "pais": "Espanha"
   },
   "Q8823": {
    "nome": "Levante Unión Deportiva",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Espanha"
   },
   "Q8835": {
    "nome": "Real Club Deportivo Mallorca",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Espanha"
   },
   "Q910444": {
    "nome": "Club Ferro Carril Oeste",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Argentina"
   },
   "Q910453": {
    "nome": "Juventude",
    "apelidos": [
     "Esporte Clube Juventude"
-   ]
+   ],
+   "pais": "Brasil"
   },
   "Q914086": {
    "nome": "Club Cerro Porteño",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Paraguai"
   },
   "Q9616": {
    "nome": "Chelsea",
    "apelidos": [
     "Chelsea Football Club"
-   ]
+   ],
+   "pais": "Inglaterra"
   },
   "Q9617": {
    "nome": "Arsenal",
    "apelidos": [
     "Arsenal Football Club"
-   ]
+   ],
+   "pais": "Inglaterra"
   },
   "Q966183": {
    "nome": "Oeste Futebol Clube",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Brasil"
   },
   "Q972741": {
    "nome": "Fort Lauderdale Strikers",
-   "apelidos": []
+   "apelidos": [],
+   "pais": "Estados Unidos"
   }
  },
  "jogadores": [
@@ -1399,12 +1686,12 @@
      "fim": 2006
     },
     {
-     "clube": "Q972741",
+     "clube": "Q354059",
      "inicio": 2006,
      "fim": 2006
     },
     {
-     "clube": "Q354059",
+     "clube": "Q972741",
      "inicio": 2006,
      "fim": 2006
     },
@@ -1493,17 +1780,17 @@
      "fim": 1996
     },
     {
-     "clube": "Q10329",
-     "inicio": 1997,
-     "fim": 1997
-    },
-    {
      "clube": "Q274465",
      "inicio": 1997,
      "fim": 1997
     },
     {
      "clube": "Q188277",
+     "inicio": 1997,
+     "fim": 1997
+    },
+    {
+     "clube": "Q10329",
      "inicio": 1997,
      "fim": 1997
     },
@@ -1518,12 +1805,12 @@
      "fim": 1999
     },
     {
-     "clube": "Q274465",
+     "clube": "Q16932",
      "inicio": 2000,
      "fim": 2000
     },
     {
-     "clube": "Q16932",
+     "clube": "Q274465",
      "inicio": 2000,
      "fim": 2000
     },
@@ -1764,17 +2051,12 @@
      "fim": 2000
     },
     {
-     "clube": "Q218883",
-     "inicio": 2001,
-     "fim": 2001
-    },
-    {
-     "clube": "Q5014111",
-     "inicio": 2001,
-     "fim": 2001
-    },
-    {
      "clube": "Q80964",
+     "inicio": 2001,
+     "fim": 2001
+    },
+    {
+     "clube": "Q218883",
      "inicio": 2001,
      "fim": 2001
     },
@@ -1795,6 +2077,11 @@
    "nome": "Philippe Coutinho",
    "posicao": "Winger",
    "clubes": [
+    {
+     "clube": "Q631",
+     "inicio": 2008,
+     "fim": 2013
+    },
     {
      "clube": "Q5014111",
      "inicio": 2009,
@@ -1925,12 +2212,12 @@
      "fim": 2015
     },
     {
-     "clube": "Q3554893",
+     "clube": "Q38568",
      "inicio": 2015,
      "fim": null
     },
     {
-     "clube": "Q38568",
+     "clube": "Q3554893",
      "inicio": 2015,
      "fim": null
     }
@@ -2244,12 +2531,12 @@
      "fim": 1996
     },
     {
-     "clube": "Q5014111",
+     "clube": "Q270995",
      "inicio": 1997,
      "fim": 1997
     },
     {
-     "clube": "Q270995",
+     "clube": "Q5014111",
      "inicio": 1997,
      "fim": 1997
     },
@@ -3214,12 +3501,12 @@
      "fim": 1994
     },
     {
-     "clube": "Q4817902",
+     "clube": "Q429998",
      "inicio": 1995,
      "fim": 1995
     },
     {
-     "clube": "Q429998",
+     "clube": "Q4817902",
      "inicio": 1995,
      "fim": 1995
     },
@@ -3432,12 +3719,12 @@
      "fim": 1984
     },
     {
-     "clube": "Q73971",
+     "clube": "Q80955",
      "inicio": 1985,
      "fim": 1985
     },
     {
-     "clube": "Q80955",
+     "clube": "Q73971",
      "inicio": 1985,
      "fim": 1985
     },
@@ -3568,11 +3855,6 @@
      "fim": 2007
     },
     {
-     "clube": "Q8823",
-     "inicio": 2007,
-     "fim": 2007
-    },
-    {
      "clube": "Q10315",
      "inicio": 2007,
      "fim": 2007
@@ -3670,12 +3952,12 @@
      "fim": 2006
     },
     {
-     "clube": "Q80955",
+     "clube": "Q816779",
      "inicio": 2007,
      "fim": 2007
     },
     {
-     "clube": "Q816779",
+     "clube": "Q80955",
      "inicio": 2007,
      "fim": 2007
     },
@@ -3702,6 +3984,11 @@
      "fim": 2001
     },
     {
+     "clube": "Q631",
+     "inicio": 2001,
+     "fim": 2002
+    },
+    {
      "clube": "Q2052",
      "inicio": 2002,
      "fim": 2002
@@ -3710,6 +3997,11 @@
      "clube": "Q2693",
      "inicio": 2002,
      "fim": 2004
+    },
+    {
+     "clube": "Q631",
+     "inicio": 2004,
+     "fim": 2009
     },
     {
      "clube": "Q38568",
@@ -4004,6 +4296,11 @@
      "clube": "Q80955",
      "inicio": 2013,
      "fim": 2016
+    },
+    {
+     "clube": "Q631",
+     "inicio": 2016,
+     "fim": 2020
     },
     {
      "clube": "Q131499",
@@ -4325,6 +4622,11 @@
      "fim": 1977
     },
     {
+     "clube": "Q1458264",
+     "inicio": 1977,
+     "fim": 1977
+    },
+    {
      "clube": "Q204675",
      "inicio": 1977,
      "fim": 1977
@@ -4427,6 +4729,11 @@
      "clube": "Q7156",
      "inicio": 1996,
      "fim": 1997
+    },
+    {
+     "clube": "Q631",
+     "inicio": 1997,
+     "fim": 2002
     },
     {
      "clube": "Q8682",
@@ -4582,11 +4889,6 @@
    "posicao": "Lateral",
    "clubes": [
     {
-     "clube": "Q19353",
-     "inicio": 1,
-     "fim": 2012
-    },
-    {
      "clube": "Q2329137",
      "inicio": 1991,
      "fim": 1993
@@ -4602,6 +4904,11 @@
      "fim": 1995
     },
     {
+     "clube": "Q631",
+     "inicio": 1995,
+     "fim": 1996
+    },
+    {
      "clube": "Q8682",
      "inicio": 1996,
      "fim": 2007
@@ -4615,6 +4922,11 @@
      "clube": "Q35933",
      "inicio": 2010,
      "fim": 2011
+    },
+    {
+     "clube": "Q19353",
+     "inicio": 2012,
+     "fim": 2012
     },
     {
      "clube": "Q16838244",
@@ -4951,28 +5263,23 @@
      "fim": 2014
     },
     {
+     "clube": "Q17594408",
+     "inicio": 2014,
+     "fim": 2014
+    },
+    {
      "clube": "Q17479",
      "inicio": 2014,
      "fim": 2014
     },
     {
      "clube": "Q17594408",
-     "inicio": 2014,
-     "fim": 2014
-    },
-    {
-     "clube": "Q80955",
-     "inicio": 2015,
-     "fim": 2015
-    },
-    {
-     "clube": "Q17594408",
      "inicio": 2015,
      "fim": 2015
     },
     {
      "clube": "Q80955",
-     "inicio": 2016,
+     "inicio": 2015,
      "fim": null
     }
    ]
@@ -5001,6 +5308,11 @@
      "clube": "Q15789",
      "inicio": 2004,
      "fim": 2009
+    },
+    {
+     "clube": "Q631",
+     "inicio": 2009,
+     "fim": 2012
     },
     {
      "clube": "Q1422",
@@ -5798,12 +6110,12 @@
      "fim": 2000
     },
     {
-     "clube": "Q2641",
+     "clube": "Q188277",
      "inicio": 2001,
      "fim": 2001
     },
     {
-     "clube": "Q188277",
+     "clube": "Q2641",
      "inicio": 2001,
      "fim": 2001
     },
@@ -5811,11 +6123,6 @@
      "clube": "Q620499",
      "inicio": 2001,
      "fim": 2002
-    },
-    {
-     "clube": "Q5014111",
-     "inicio": 2003,
-     "fim": 2003
     },
     {
      "clube": "Q218883",
@@ -5865,12 +6172,12 @@
      "fim": 2002
     },
     {
-     "clube": "Q270995",
+     "clube": "Q80964",
      "inicio": 2001,
      "fim": 2001
     },
     {
-     "clube": "Q80964",
+     "clube": "Q270995",
      "inicio": 2001,
      "fim": 2001
     },
