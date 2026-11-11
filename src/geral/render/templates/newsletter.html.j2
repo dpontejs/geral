@@ -290,7 +290,7 @@
       <p class="muted" style="margin-top: 6px;">{% for f in mo.form %}{{ f.score }} {{ f.opponent }}{% if not loop.last %} · {% endif %}{% endfor %}</p>
       {% endif %}
       {% if mo and mo.standing %}{% set s = mo.standing %}
-      <p class="subhead">Campanha {{ team.league_name | campaign }}</p>
+      <p class="subhead">Campanha {{ (mo.league or team.league_name) | campaign }}</p>
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
         <td width="33%" class="kpi"><span class="kpi-value">{{ s.position }}º</span><br><span class="kpi-label">{{ s.points }} pontos</span></td>
         <td width="33%" class="kpi"><span class="kpi-value">{{ s | performance }}</span><br><span class="kpi-label">aproveitamento</span></td>
@@ -364,7 +364,7 @@
   {% if standings %}
   <tr><td class="block font">
     <table role="presentation" class="card" width="100%" cellpadding="0" cellspacing="0" border="0"><tr><td class="card-body">
-      <p class="card-title">Classificação · {{ team.league_name }}</p>
+      <p class="card-title">Classificação · {{ n.table_name or team.league_name }}</p>
       <table role="presentation" class="table" width="100%" cellpadding="0" cellspacing="0" border="0">
         <tr><th>#</th><th>Time</th><th>P</th><th>J</th><th>V</th><th>E</th><th>D</th><th>SG</th></tr>
         {% for r in standings %}

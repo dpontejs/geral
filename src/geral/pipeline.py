@@ -23,7 +23,7 @@ from geral.processing.dedupe import dedupe, is_relevant
 from geral.processing.extract import DomainRateLimiter, extract_articles
 from geral.report import RunReport
 from geral.send.recipients import mailto_unsubscribe
-from geral.stats.espn import ESPNStatsClient
+from geral.stats.combined import stats_client_for
 from geral.summarizer.client import LLMClient, LLMError, get_llm_client
 from geral.summarizer.pipeline import (
     MAX_TOPICS,
@@ -158,7 +158,7 @@ def build_newsletter(
     """
     settings = settings or get_settings()
     collect = collect or collect_articles
-    stats_client = stats_client or ESPNStatsClient(team, tz_name=settings.TIMEZONE)
+    stats_client = stats_client or stats_client_for(team, tz_name=settings.TIMEZONE)
 
     pre_game = edition.kind == "pre"
     # The short sections ("Saiba mais", "Brasil afora") belong to the news editions only.
@@ -230,6 +230,7 @@ def build_newsletter(
         last_match=last_match,
         next_match=next_match,
         standings=standings,
+        table_name=getattr(stats_client, "table_name", None) or team.league_name,
         preview=preview,
         lineups=notes.lineups,
         tips=notes.tips,

@@ -76,7 +76,7 @@ class FakeStatsClient:
 
 
 def test_stats_command_prints_match_next_and_table(monkeypatch) -> None:
-    monkeypatch.setattr(cli, "ESPNStatsClient", lambda *args, **kwargs: FakeStatsClient())
+    monkeypatch.setattr(cli, "stats_client_for", lambda *args, **kwargs: FakeStatsClient())
 
     result = CliRunner().invoke(
         cli.app, ["stats", "--team", "flamengo", "--edition", "news", "--date", "2026-10-12"]
@@ -106,7 +106,7 @@ def test_stats_command_without_data(monkeypatch) -> None:
         def get_standings(self, league="bra.1"):
             return []
 
-    monkeypatch.setattr(cli, "ESPNStatsClient", lambda *args, **kwargs: Empty())
+    monkeypatch.setattr(cli, "stats_client_for", lambda *args, **kwargs: Empty())
 
     result = CliRunner().invoke(
         cli.app, ["stats", "--team", "flamengo", "--edition", "news", "--date", "2026-10-12"]

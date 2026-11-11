@@ -147,6 +147,7 @@ class TeamMoment(BaseModel):
     standing: StandingRow | None = None
     gap: str | None = None
     rankings: list[PlayerRanking] = Field(default_factory=list)
+    league: str | None = None  # the table's competition, for the "Campanha" line
 
 
 class Edition(BaseModel):
@@ -196,6 +197,7 @@ class Newsletter(BaseModel):
     last_match: MatchStats | None = None
     next_match: NextMatch | None = None
     standings: list[StandingRow] = Field(default_factory=list)
+    table_name: str | None = None  # competition of `standings` (ESPN league or a ge table)
     preview: MatchPreview | None = None  # pre-game only
     lineups: str = ""  # pre-game: probable line-ups, from the news
     tips: list[str] = Field(default_factory=list)  # pre-game: the press's predictions

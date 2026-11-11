@@ -574,3 +574,16 @@ def test_pre_game_keeps_outlook_and_where_to_watch() -> None:
     ]
     preview_prompt = llm.prompts[-1]
     assert "Últimos confrontos" in preview_prompt and "2-0 Bahia" in preview_prompt
+
+
+def test_build_newsletter_keeps_the_table_competition() -> None:
+    stats = FakeStats()
+    stats.table_name = "Série C"
+
+    newsletter = build(good_llm(), stats)
+
+    assert newsletter.table_name == "Série C"
+
+
+def test_build_newsletter_table_defaults_to_the_team_league() -> None:
+    assert build(good_llm()).table_name == "Brasileirão"

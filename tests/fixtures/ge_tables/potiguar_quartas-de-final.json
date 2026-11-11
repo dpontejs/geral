@@ -1,0 +1,156 @@
+{
+ "lista_jogos_unica": true,
+ "edicao": {
+  "data_inicio": "2026-01-10",
+  "data_fim": "2026-03-21",
+  "nome": "Campeonato Potiguar 2026",
+  "regulamento": "Na primeira fase, as 8 equipes jogam no sistema de pontos corridos em turno único. Dois primeiros colocados vão direto à Semifinal, times de 3º a 6º colocados se classificam para a Segunda fase, e os dois últimos são rebaixados. Em caso de igualdade na pontuação, são critérios de desempate: 1) mais vitórias; 2) melhor saldo de gols; 3) mais gols pró; 4) confronto direto (entre dois times); 5) menos cartões vermelhos; 6) menos cartões amarelos; 7) sorteio. Segunda fase, Semifinal e Final são disputadas no sistema mata-mata em jogos de ida e volta. Em caso de igualdade na pontuação, são critérios de desempate: 1) melhor saldo de gols no confronto; 2) disputa de pênaltis.",
+  "localizacao": "Brasil, Rio Grande do Norte"
+ },
+ "fase": {
+  "tipo": {
+   "tipo_id": "2",
+   "descricao": "Mata Mata"
+  },
+  "disclaimer": "",
+  "slug": "quartas-de-final-potiguar-2026"
+ },
+ "max_jogos_chaves": 2,
+ "secao": [
+  {
+   "tem_chave_subsequente": false,
+   "chave": [
+    {
+     "id": 75678,
+     "nome": "Segunda fase 2",
+     "tem_chave_anterior": false,
+     "jogos": [
+      {
+       "id": 350456,
+       "equipes": {
+        "mandante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2024/12/31/laguna-fc-svg-74583.svg",
+         "id": 9206,
+         "nome_popular": "Laguna",
+         "sigla": "LAG"
+        },
+        "visitante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2019/01/11/Potiguar_de_Mossoró-RN.svg",
+         "id": 353,
+         "nome_popular": "Potiguar de Mossoró",
+         "sigla": "POT"
+        }
+       },
+       "data_realizacao": "2026-02-28",
+       "hora_realizacao": "16:00",
+       "exibir_jogo": true,
+       "sede": {
+        "nome_popular": "Frasqueirão"
+       },
+       "placar_oficial_visitante": 0,
+       "placar_oficial_mandante": 0,
+       "placar_penaltis_visitante": null,
+       "placar_penaltis_mandante": null,
+       "transmissao": null,
+       "jogo_ja_comecou": true
+      },
+      {
+       "id": 350457,
+       "equipes": {
+        "mandante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2019/01/11/Potiguar_de_Mossoró-RN.svg",
+         "id": 353,
+         "nome_popular": "Potiguar de Mossoró",
+         "sigla": "POT"
+        },
+        "visitante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2024/12/31/laguna-fc-svg-74583.svg",
+         "id": 9206,
+         "nome_popular": "Laguna",
+         "sigla": "LAG"
+        }
+       },
+       "data_realizacao": "2026-03-04",
+       "hora_realizacao": "20:00",
+       "exibir_jogo": true,
+       "sede": {
+        "nome_popular": "Fião"
+       },
+       "placar_oficial_visitante": 0,
+       "placar_oficial_mandante": 1,
+       "placar_penaltis_visitante": null,
+       "placar_penaltis_mandante": null,
+       "transmissao": null,
+       "jogo_ja_comecou": true
+      }
+     ]
+    },
+    {
+     "id": 75677,
+     "nome": "Segunda fase 1",
+     "tem_chave_anterior": false,
+     "jogos": [
+      {
+       "id": 350454,
+       "equipes": {
+        "mandante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2024/02/23/santa-cruz-rn-svg.svg",
+         "id": 4421,
+         "nome_popular": "Santa Cruz de Natal",
+         "sigla": "STC"
+        },
+        "visitante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2025/07/25/escudos-01-77006.svg",
+         "id": 9356,
+         "nome_popular": "QFC",
+         "sigla": "QFC"
+        }
+       },
+       "data_realizacao": "2026-02-28",
+       "hora_realizacao": "15:30",
+       "exibir_jogo": true,
+       "sede": {
+        "nome_popular": "Domição"
+       },
+       "placar_oficial_visitante": 1,
+       "placar_oficial_mandante": 1,
+       "placar_penaltis_visitante": null,
+       "placar_penaltis_mandante": null,
+       "transmissao": null,
+       "jogo_ja_comecou": true
+      },
+      {
+       "id": 350455,
+       "equipes": {
+        "mandante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2025/07/25/escudos-01-77006.svg",
+         "id": 9356,
+         "nome_popular": "QFC",
+         "sigla": "QFC"
+        },
+        "visitante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2024/02/23/santa-cruz-rn-svg.svg",
+         "id": 4421,
+         "nome_popular": "Santa Cruz de Natal",
+         "sigla": "STC"
+        }
+       },
+       "data_realizacao": "2026-03-04",
+       "hora_realizacao": "16:00",
+       "exibir_jogo": true,
+       "sede": {
+        "nome_popular": "Ninho das Águias"
+       },
+       "placar_oficial_visitante": 0,
+       "placar_oficial_mandante": 2,
+       "placar_penaltis_visitante": null,
+       "placar_penaltis_mandante": null,
+       "transmissao": null,
+       "jogo_ja_comecou": true
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
