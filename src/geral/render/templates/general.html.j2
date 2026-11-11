@@ -11,7 +11,7 @@
   .headline { font-size: 26px; line-height: 1.2; font-weight: 800; margin: 6px 0 12px 0; }
   .intro { font-size: 16px; line-height: 1.55; margin: 0; }
   .serie { background-color: #FFFFFF; border: 2px solid {{ ink }}; }
-  .serie-name { background-color: {{ ink }}; color: {{ paper }}; font-size: 15px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; padding: 8px 14px; }
+  .serie-name { background-color: {{ turf }}; color: {{ paper }}; font-size: 15px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; padding: 8px 14px; }
   .serie-body { padding: 14px; }
   .summary { font-size: 15px; line-height: 1.5; margin: 0 0 12px 0; }
   .label { font-size: 11px; font-weight: 800; letter-spacing: 1.5px; text-transform: uppercase; color: {{ concrete }}; margin: 12px 0 6px 0; }
@@ -33,7 +33,7 @@
   <tr><td align="center" style="padding-bottom: 14px;">
     {% if logo_url %}<img src="{{ logo_url }}" alt="Geral" width="120" style="display: block; border: 0; margin: 0 auto;">{% else %}<span style="font-size: 32px; font-weight: 900; letter-spacing: 3px;">GERAL</span>{% endif %}
   </td></tr>
-  <tr><td height="5" style="height: 5px; line-height: 5px; font-size: 0; background-color: {{ ticket }};">&nbsp;</td></tr>
+  <tr><td height="5" style="height: 5px; line-height: 5px; font-size: 0; background-color: {{ pitch }};">&nbsp;</td></tr>
   <tr><td style="padding: 14px 4px 18px 4px;">
     <p class="kicker" style="margin: 0;">{{ e.label }}</p>
     <h1 class="headline">{{ e.headline }}</h1>

@@ -18,7 +18,15 @@ seus mascotes.
 
 ## Contratos
 
-- Paleta neutra, de foto de jornal antigo (o verde de pôster foi descartado: lembrava o Palmeiras):
+- Em 2026-11-11 o portal ficou "apagado" e o dev escolheu, entre quatro paletas, a do **gramado**:
+  a mesma página (Geral, ingresso, placar de lâmpadas), com o muro de concreto trocado por grama
+  cortada em faixas e linhas de cal. Cores novas: gramado `#1F7A3D`/`#248A46`, grama escura
+  `#0E3320` (cabeçalho, rodapé, molduras, botões). Grama com faixas só no topo e no Intervalo; o
+  meio é grama clara lisa `#D3E2C6` marcada como campo (o ingresso na grande área, a linha de
+  meio-campo antes das torcidas). O papel e o amarelo continuam.
+  Valem para o portal, os joguinhos, as mensagens, o e-mail de confirmação e a edição geral.
+- Paleta original, de foto de jornal antigo (o verde de pôster tinha sido descartado por lembrar o
+  Palmeiras; o gramado é verde de campo, não de camisa, e a cor dos clubes segue fora do painel):
 
   | Papel | Cor | Uso |
   |---|---|---|
