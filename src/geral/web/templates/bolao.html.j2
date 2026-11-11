@@ -6,17 +6,14 @@
     <span class="eyebrow">Bolão {{ season }} · {{ team.newsletter }}</span>
     <h1>Ranking da temporada</h1>
     {% if rows %}
-    <div class="placar" style="margin-top:20px">
-      <table>
-        <thead><tr><th>#</th><th>Apelido</th><th style="text-align:right">Pontos</th><th style="text-align:right">Cravadas</th></tr></thead>
-        <tbody>
+    <div class="board bolao-board" style="margin-top:20px">
+      <ol class="ranking" aria-label="Ranking do bolão: pontos por apelido">
         {% for r in rows %}
-        <tr{% if r.nickname == me %} class="me"{% endif %}><td class="pos">{{ loop.index }}</td><td>{{ r.nickname }}{% if loop.first and r.points %} 👑{% endif %}</td><td class="n">{{ r.points }}</td><td class="n">{{ r.exact }}</td></tr>
+        <li{% if r.nickname == me %} class="me"{% endif %}><span class="dot" style="--c: {{ team.accent }}" aria-hidden="true"></span><span class="name">{{ r.nickname }}</span><span class="n">{{ r.points }}</span></li>
         {% endfor %}
-        </tbody>
-      </table>
+      </ol>
     </div>
-    <p>Placar exato vale 5; vencedor e saldo, 3; só o resultado, 2.</p>
+    <p>Pontos na temporada. Placar exato vale 5; vencedor e saldo, 3; só o resultado, 2. No empate, ganha quem cravou mais placares.</p>
     {% else %}
     <p>Ninguém palpitou ainda nesta temporada. O próximo pré-jogo da {{ team.newsletter }} traz a cartela.</p>
     {% endif %}
