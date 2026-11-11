@@ -46,6 +46,8 @@ class Team(BaseModel):
     # League of the table, campaign and player rankings; None when ESPN has no table for it.
     league: str | None = None
     other_sports: dict[str, str] = Field(default_factory=dict)  # name -> Google News query
+    # False: in the catalog but not on the portal, the sign-up or `due --all` (a team moving in).
+    listed: bool = True
 
     @field_validator("accent")
     @classmethod

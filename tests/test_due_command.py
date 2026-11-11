@@ -216,3 +216,11 @@ def test_due_needs_a_team_or_all() -> None:
     result = CliRunner().invoke(cli.app, ["due"])
 
     assert result.exit_code == 2
+
+
+def test_due_all_skips_unlisted_teams(geral_db) -> None:
+    follow(geral_db, "ana@example.com", ["flamengo", "vasco"])
+
+    result = CliRunner().invoke(cli.app, ["due", "--all"])
+
+    assert [line.split("\t")[0] for line in result.stdout.splitlines()] == ["vasco"]

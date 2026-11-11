@@ -124,6 +124,8 @@ def create_app(
     mailer = mailer or mailer_from_settings(settings)
     bolao = bolao or BolaoStore(store.path)  # same SQLite: the ranking joins the subscriptions
     catalog = teams if teams is not None else load_teams()
+    # Teams people can see and join; unlisted ones (moving in) still work for links and the API.
+    listed = {slug: team for slug, team in catalog.items() if team.listed}
     limiter = RateLimiter(SIGNUPS_PER_IP, SIGNUP_WINDOW)
     public_url = settings.PUBLIC_URL.rstrip("/")
 
@@ -144,10 +146,10 @@ def create_app(
             request,
             "index.html.j2",
             status,
-            teams=list(catalog.values()),
+            teams=list(listed.values()),
             editions=store.latest_editions(),
             counts=counts,
-            ranking=sorted(catalog.values(), key=lambda t: (-counts.get(t.slug, 0), t.newsletter)),
+            ranking=sorted(listed.values(), key=lambda t: (-counts.get(t.slug, 0), t.newsletter)),
             clock=now().astimezone(BRASILIA),
             **context,
         )
@@ -189,7 +191,7 @@ def create_app(
     async def subscribe(request: Request):
         form = await request.form()
         email = normalize(str(form.get("email", "")))
-        chosen = [catalog[s] for s in dict.fromkeys(map(str, form.getlist("team"))) if s in catalog]
+        chosen = [listed[s] for s in dict.fromkeys(map(str, form.getlist("team"))) if s in listed]
         check_inbox = (
             "Confira seu e-mail",
             "Se o endereço estiver certo, você vai receber um link para confirmar a inscrição. "

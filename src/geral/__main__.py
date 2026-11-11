@@ -214,8 +214,8 @@ def due(
     store = SubscriberStore(settings.SUBSCRIBERS_DB)
     counts = store.counts()
     for club in load_teams().values():
-        if not counts.get(club.slug):
-            continue  # no subscriber: no edition, no Gemini cost
+        if not club.listed or not counts.get(club.slug):
+            continue  # hidden (moving in) or nobody follows it: no edition, no Gemini cost
         edition = store.latest_edition(club.slug)
         latest = (
             LatestEdition(subject=edition.subject, published_at=edition.published_at)
