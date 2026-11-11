@@ -14,6 +14,8 @@ Ordem de execução. Cada fatia vira um PR; a página da fatia fica em `docs/fea
 - [ ] `/api/subscribers?team=<slug>` e envio só para quem assina o time
 - [ ] `geral due` devolvendo edições vencidas de todos os times com inscrito ativo
 - [ ] Decidir cota do LLM (ver PLAN §5)
+- [ ] Urubu News na coleção da Geral (a primeira torcida): cartão, inscrição e placar; decidir se a Geral só lista e aponta para `urubunews.diegoponte.dev` ou se assume os inscritos dela
+- [ ] Rascunho do portal aprovado: https://claude.ai/artifact/4TwD5bpDS9NBmFoN6onH5b
 
 ## Fatia 2b — Dados das Séries C, D e estaduais (ABC)
 - [ ] Cliente da API de tabelas do ge (`api.globoesporte.globo.com/tabela/{tUUID}/fase/{slug}/...`): jogos, resultados e classificação; tUUID e fases lidos da página do campeonato a cada execução
