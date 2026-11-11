@@ -47,30 +47,8 @@ SCORER_SEP = ";"
 LAUNCH = date(2026, 11, 12)  # puzzle #1
 MAX_GUESSES = 6
 COACH_HINT_AFTER, WINNER_HINT_AFTER = 3, 4  # misses
-# Edition slug -> club in the dataset (display name); "geral" plays the whole Série A.
-EDITIONS: dict[str, str | None] = {
-    "geral": None,
-    "vasco": "Vasco",
-    "palmeiras": "Palmeiras",
-    "flamengo": "Flamengo",
-    "nautico": "Náutico",
-}
-BIG_12 = frozenset(
-    {
-        "Atlético-MG",
-        "Botafogo",
-        "Corinthians",
-        "Cruzeiro",
-        "Flamengo",
-        "Fluminense",
-        "Grêmio",
-        "Internacional",
-        "Palmeiras",
-        "Santos",
-        "São Paulo",
-        "Vasco",
-    }
-)
+# The 12 big clubs (a data file, like the matches): their meetings are "clássicos".
+BIG_12 = frozenset(Path(__file__).with_name("grandes.txt").read_text(encoding="utf-8").splitlines())
 
 
 @dataclass(frozen=True)
@@ -170,11 +148,10 @@ def _memorable(m: Match, club: str | None) -> bool:
     return club in (m.home, m.away) and (goals >= 3 or rival in BIG_12)
 
 
-def pool(matches: list[Match], edition: str) -> list[Match]:
-    """The edition's matches in its fixed daily order (KeyError for an unknown edition)."""
-    club = EDITIONS[edition]
+def pool(matches: list[Match], club: str | None) -> list[Match]:
+    """Matches of `club` (None: the whole Série A) in the edition's fixed daily order."""
     games = sorted((m for m in matches if _memorable(m, club)), key=lambda m: m.id)
-    random.Random(f"quanto-foi:{edition}").shuffle(games)
+    random.Random(f"quanto-foi:{club or 'geral'}").shuffle(games)
     return games
 
 

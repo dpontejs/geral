@@ -143,6 +143,9 @@ section.block .wrap { padding-block: 8px 52px; }
 .mini .lamp.title { font-size: 36px; }
 .mini .lamp.big { font-size: 50px; }
 .mini p { margin: 0; font-size: 15px; }
+.play-card { text-decoration: none; }
+.play-card:hover { border-color: var(--ticket); }
+.play-card .go { margin-top: auto; font: 800 20px/1 var(--display); text-transform: uppercase; letter-spacing: .06em; color: var(--lamp); }
 .series { display: flex; gap: 6px; flex-wrap: wrap; }
 .series span { font: 800 14px/1 var(--display); border: 2px solid #5E5B55; padding: 5px 8px; letter-spacing: .05em; }
 
@@ -179,6 +182,7 @@ footer .wrap { padding-block: 22px 30px; display: flex; justify-content: space-b
 input.nick { width: min(100%, 320px); display: block; }
 .hidden-field { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 </style>
+{% block head %}{% endblock %}
 </head>
 <body>
 <header>

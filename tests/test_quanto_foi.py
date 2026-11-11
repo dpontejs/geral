@@ -58,28 +58,26 @@ def test_convert_writes_club_names_with_accents(matches) -> None:
 
 
 def test_geral_pool_keeps_only_memorable_matches(matches) -> None:
-    ids = {m.id for m in pool(matches, "geral")}
+    ids = {m.id for m in pool(matches, None)}
 
     # classics among the big 12, 4+ goals or a 3+ goal margin
     assert ids == {1, 4607, 5075, 4733, 57, 596}
 
 
 def test_team_pool_only_has_the_team_matches(matches) -> None:
-    assert {m.id for m in pool(matches, "vasco")} == {1, 5075}
-    assert {m.id for m in pool(matches, "nautico")} == {1953, 1965}
+    assert {m.id for m in pool(matches, "Vasco")} == {1, 5075}
+    assert {m.id for m in pool(matches, "Náutico")} == {1953, 1965}
 
 
 def test_puzzle_is_the_same_for_everyone_on_a_day(matches) -> None:
     day = date(2026, 11, 20)
 
-    assert puzzle(pool(matches, "geral"), day) == puzzle(
-        pool(list(reversed(matches)), "geral"), day
-    )
-    assert puzzle(pool(matches, "geral"), day).number == (day - LAUNCH).days + 1
+    assert puzzle(pool(matches, None), day) == puzzle(pool(list(reversed(matches)), None), day)
+    assert puzzle(pool(matches, None), day).number == (day - LAUNCH).days + 1
 
 
 def test_puzzle_does_not_repeat_until_the_pool_ends(matches) -> None:
-    games = pool(matches, "geral")
+    games = pool(matches, None)
     days = [LAUNCH + timedelta(days=i) for i in range(len(games))]
 
     assert len({puzzle(games, day).match.id for day in days}) == len(games)

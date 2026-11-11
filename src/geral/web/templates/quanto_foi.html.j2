@@ -1,0 +1,92 @@
+{% extends "base.html.j2" %}
+{% set m = puzzle.match %}
+{% set label = team.name if team else "Geral" %}
+{% block title %}Quanto foi? #{{ puzzle.number }} · {{ label }} · Geral{% endblock %}
+{% block head %}
+<style>
+.qf .wrap { display: flex; flex-direction: column; gap: 22px; padding-block: 36px 48px; }
+.qf h1 { font-size: clamp(52px, 8vw, 104px); color: var(--paper); text-shadow: 4px 4px 0 var(--ink); }
+.qf .lead { margin: 0; max-width: 44em; background: var(--paper); border: 3px solid var(--ink); padding: 12px 16px; }
+.editions { display: flex; flex-wrap: wrap; gap: 8px; }
+.editions a { font: 800 18px/1 var(--display); text-transform: uppercase; letter-spacing: .04em; text-decoration: none; padding: 12px 14px; background: var(--paper); border: 3px solid var(--ink); }
+.editions a[aria-current] { background: var(--ink); color: var(--lamp); }
+.match { border: 10px solid #5E5B55; box-shadow: inset 0 0 0 3px #000, 6px 6px 0 var(--ink); padding: 20px 22px 24px; display: flex; flex-direction: column; gap: 16px; }
+.match .meta { font-size: clamp(14px, 1.6vw, 18px); opacity: .85; }
+.match .teams { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); gap: 16px; align-items: center; }
+.match .teams .team { font-size: clamp(26px, 4.6vw, 60px); overflow-wrap: anywhere; }
+.match .teams .team.away { text-align: right; }
+.match .teams .x { font-size: clamp(30px, 4.6vw, 60px); }
+.guess { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
+.guess label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; color: var(--paper); }
+.guess input { width: 96px; font: 900 40px/1 var(--display); text-align: center; padding: 8px; border: 3px solid var(--ink); background: var(--paper); color: var(--ink); }
+.guess .x { font: 900 40px/1 var(--display); color: var(--paper); padding-bottom: 12px; }
+.guess input::-webkit-outer-spin-button, .guess input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+.guess input[type=number] { -moz-appearance: textfield; appearance: textfield; }
+.guess .btn { background: var(--ticket); color: var(--ink); }
+.guess .btn:hover { background: var(--lamp); color: var(--ink); }
+.tries { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.tries li { display: grid; grid-template-columns: 40px 1fr 1fr; gap: 8px; align-items: center; }
+.tries .n { font: 800 18px/1 var(--display); color: var(--paper); }
+.cell { display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 14px; border: 3px solid var(--ink); font: 900 30px/1 var(--display); }
+.cell small { font: 700 14px/1 var(--body); text-transform: uppercase; letter-spacing: .06em; }
+.cell.certo { background: #2F7D3A; color: #fff; }
+.cell.perto { background: var(--ticket); color: var(--ink); }
+.cell.longe { background: var(--concrete-lt); color: var(--ink); }
+.hints { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 6px; }
+.hints li { background: var(--ink); color: var(--lamp); padding: 10px 14px; font-weight: 600; }
+.result { background: var(--paper); border: 3px solid var(--ink); padding: 20px; display: flex; flex-direction: column; gap: 10px; }
+.result h2 { font-size: clamp(30px, 4vw, 46px); }
+.result .final { font: 900 clamp(30px, 5vw, 56px)/1 var(--display); text-transform: uppercase; }
+.result .actions { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; }
+.stats { display: flex; flex-wrap: wrap; gap: 18px; font-weight: 600; }
+.stats b { font: 900 30px/1 var(--display); display: block; }
+.how { color: var(--paper); font-size: 15px; max-width: 60ch; margin: 0; }
+.credit { font-size: 13px; color: var(--paper); margin: 0; }
+[hidden] { display: none !important; }
+@media (max-width: 640px) { .match .teams { grid-template-columns: 1fr; text-align: center; } .match .teams .team.away { text-align: center; } }
+</style>
+{% endblock %}
+{% block content %}
+<section class="qf wall">
+  <div class="wrap" id="qf" data-edition="{{ edition }}" data-number="{{ puzzle.number }}" data-label="{{ label }}" data-max="{{ max_guesses }}">
+    <h1>Quanto foi?</h1>
+    <p class="lead">Um jogo do Brasileirão por dia, o mesmo para todo mundo. Chute o placar: você tem {{ max_guesses }} tentativas, e cada chute diz se você chegou perto.</p>
+    <nav class="editions" aria-label="Edições">
+      {% for slug, t in editions %}
+      <a href="/jogos/quanto-foi{% if slug != 'geral' %}/{{ slug }}{% endif %}"{% if slug == edition %} aria-current="page"{% endif %}>{{ t.name if t else "Geral" }}</a>
+      {% endfor %}
+    </nav>
+
+    <div class="board match">
+      <span class="lamp meta">#{{ puzzle.number }} · Rodada {{ m.round }} · {{ m.day.strftime("%d/%m/%Y") }} · {{ m.stadium }}</span>
+      <div class="teams">
+        <span class="lamp team">{{ m.home }}</span>
+        <span class="lamp x blink" aria-hidden="true">? × ?</span>
+        <span class="lamp team away">{{ m.away }}</span>
+      </div>
+    </div>
+
+    <form class="guess" id="qf-form">
+      <label>{{ m.home }}<input id="qf-home" name="home" type="number" inputmode="numeric" min="0" max="20" required></label>
+      <span class="x" aria-hidden="true">×</span>
+      <label>{{ m.away }}<input id="qf-away" name="away" type="number" inputmode="numeric" min="0" max="20" required></label>
+      <button class="btn" type="submit">Chutar</button>
+    </form>
+
+    <ol class="tries" id="qf-tries" aria-live="polite"></ol>
+    <ul class="hints" id="qf-hints"></ul>
+
+    <div class="result" id="qf-result" hidden>
+      <h2 id="qf-title"></h2>
+      <span class="final" id="qf-final"></span>
+      <p id="qf-goals" style="margin:0"></p>
+      <div class="actions"><button class="btn" type="button" id="qf-share">Compartilhar</button><span id="qf-copied" role="status"></span></div>
+      <div class="stats"><span><b id="qf-streak">0</b>sequência</span><span><b id="qf-wins">0</b>acertos</span><span><b id="qf-played">0</b>jogos</span></div>
+    </div>
+
+    <p class="how">Verde: acertou os gols daquele time. Amarelo: errou por um. Cinza: errou por mais. "Mais" e "menos" dizem para onde ir. Depois de 3 erros aparecem os técnicos (quando o jogo tem); depois de 4, quem venceu. Amanhã tem outro.</p>
+    <p class="credit">Dados: Série A 2003–2024, do <a href="https://github.com/adaoduque/Brasileirao_Dataset">Brasileirao_Dataset</a> (Adão Duque). Gols a partir de 2014.</p>
+  </div>
+</section>
+<script src="/static/geral/quanto-foi.js" defer></script>
+{% endblock %}

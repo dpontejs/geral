@@ -49,10 +49,12 @@ class Clock:
         return self.now
 
 
-def make_client(store, mailer, clock, teams=None, **settings) -> TestClient:
+def make_client(store, mailer, clock, teams=None, matches=None, **settings) -> TestClient:
     defaults = {"SUBSCRIBERS_API_TOKEN": API_TOKEN, "PUBLIC_URL": "https://geral.test"}
     config = Settings(SUBSCRIBE_SECRET=SECRET, **(defaults | settings))
-    app = create_app(settings=config, store=store, mailer=mailer, now=clock, teams=teams)
+    app = create_app(
+        settings=config, store=store, mailer=mailer, now=clock, teams=teams, matches=matches
+    )
     return TestClient(app, base_url="https://geral.test")
 
 

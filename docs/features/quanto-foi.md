@@ -1,7 +1,7 @@
 # "Quanto foi?": adivinhe o placar de um jogo histórico
 
 - **Data:** 2026-11-11
-- **Status:** proposta
+- **Status:** aprovada
 - **ADRs:** —
 - **Pesquisa:** relatório "Joguinhos de futebol para a Geral" (fora do repo); o "7 a 0" virou nome de
   outro jogo (draft e Copa simulada, 7a0.com.br), por isso o cartão do portal muda de nome.
@@ -53,16 +53,16 @@ class GuessesIn(BaseModel):
 
 ## Critérios de aceite (como testes)
 
-- [ ] `test_puzzle_is_the_same_for_everyone_on_a_day`: dada a mesma edição e data, o jogo é o mesmo.
-- [ ] `test_puzzle_does_not_repeat_until_the_pool_ends`: dias seguidos percorrem o pool sem repetir.
-- [ ] `test_team_pool_only_has_the_team_matches`: a edição do Vasco só sorteia jogos do Vasco.
-- [ ] `test_judge_marks_exact_close_and_far_per_side`: 2x1 contra 3x1 → mandante perto/mais, visitante certo.
-- [ ] `test_judge_reveals_only_when_over`: sem acertar e com menos de 6 chutes, sem `reveal`.
-- [ ] `test_judge_gives_hints_after_misses`: técnicos após 3 erros, vencedor após 4.
-- [ ] `test_api_rejects_future_puzzle`: `number` de amanhã → 404 (não dá para espiar).
-- [ ] `test_game_page_does_not_leak_the_score`: o HTML do dia não contém o placar.
-- [ ] `test_unknown_or_abc_edition_is_404`.
-- [ ] `test_portal_links_the_game`: o cartão do Intervalo aponta para `/jogos/quanto-foi`.
+- [x] `test_puzzle_is_the_same_for_everyone_on_a_day`: dada a mesma edição e data, o jogo é o mesmo.
+- [x] `test_puzzle_does_not_repeat_until_the_pool_ends`: dias seguidos percorrem o pool sem repetir.
+- [x] `test_team_pool_only_has_the_team_matches`: a edição do Vasco só sorteia jogos do Vasco.
+- [x] `test_judge_marks_exact_close_and_far_per_side`: 2x1 contra 3x1 → mandante perto/mais, visitante certo.
+- [x] `test_judge_reveals_only_when_over`: sem acertar e com menos de 6 chutes, sem `reveal`.
+- [x] `test_judge_gives_hints_after_misses`: técnicos após 3 erros, vencedor após 4.
+- [x] `test_api_rejects_future_puzzle`: `number` de amanhã → 404 (não dá para espiar).
+- [x] `test_game_page_does_not_leak_the_score`: o HTML do dia não contém o placar.
+- [x] `test_unknown_or_abc_edition_is_404`.
+- [x] `test_portal_links_the_game`: o cartão do Intervalo aponta para `/jogos/quanto-foi`.
 
 ## Verificação ponta a ponta
 
