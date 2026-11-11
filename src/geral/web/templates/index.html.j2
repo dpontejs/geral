@@ -94,23 +94,20 @@
     </div>
     <div class="grid">
       <a class="board mini play-card" href="/jogos/onde-jogou">
-        <span class="lamp tag">Novo · todo dia</span>
+        <span class="lamp tag">Todo dia</span>
         <span class="lamp title">Onde jogou?</span>
-        <span class="lamp big blink" aria-hidden="true">? ? ?</span>
         <p>Um craque por dia: diga por quais clubes ele passou antes de errar três vezes. Tem edição da sua torcida.</p>
         <span class="go">Jogar →</span>
       </a>
       <a class="board mini play-card" href="/jogos/quem-e">
-        <span class="lamp tag">Novo · todo dia</span>
+        <span class="lamp tag">Todo dia</span>
         <span class="lamp title">Quem é?</span>
-        <span class="lamp big blink" aria-hidden="true">? ? ?</span>
-        <p>A carreira inteira no placar: clubes e anos. Adivinhe o jogador em seis chutes. Tem edição da sua torcida.</p>
+        <p>A carreira inteira no placar, clubes e anos: adivinhe o jogador em seis chutes. Tem edição da sua torcida.</p>
         <span class="go">Jogar →</span>
       </a>
       <a class="board mini play-card" href="/jogos/craque-do-dia">
-        <span class="lamp tag">Novo · todo dia</span>
+        <span class="lamp tag">Todo dia</span>
         <span class="lamp title">Craque do dia</span>
-        <span class="lamp big blink" aria-hidden="true">_ _ _ _</span>
         <p>Adivinhe o ídolo ou artilheiro do dia, letra por letra, em seis chutes. Tem edição da sua torcida.</p>
         <span class="go">Jogar →</span>
       </a>
@@ -118,18 +115,18 @@
         <span class="lamp tag">Em breve</span>
         <span class="lamp title">Bolão</span>
         <p>Palpite com um clique no e-mail do pré-jogo. Quem acerta mais leva a torcida no placar.</p>
+        <span class="go soon">Em breve</span>
       </div>
       <div class="board mini">
-        <span class="lamp tag">Em breve · toda segunda</span>
+        <span class="lamp tag">Em breve</span>
         <span class="lamp title">Edição geral</span>
-        <p>O futebol brasileiro da semana numa edição só: resultados, tabela e o que importa, da Série A à D.</p>
-        <div class="series"><span>SÉRIE A</span><span>B</span><span>C</span><span>D</span><span>ESTADUAIS</span></div>
+        <p>Toda segunda, o futebol brasileiro da semana numa edição só: resultados, tabela e o que importa, da Série A aos estaduais.</p>
+        <span class="go soon">Em breve</span>
       </div>
       <a class="board mini play-card" href="/pedir">
-        <span class="lamp tag">Novo · peça a sua</span>
+        <span class="lamp tag">Peça a sua</span>
         <span class="lamp title">Seu time?</span>
-        <p>Peça a sua torcida. Quando juntar gente, a gente acende a newsletter e te avisa.</p>
-        {% if top_request %}<p>Mais pedido: <b>{{ top_request.name }}</b> ({{ top_request.votes }})</p>{% endif %}
+        <p>Peça a sua torcida. Quando juntar gente, a gente acende a newsletter e te avisa.{% if top_request %} Mais pedido: <b>{{ top_request.name }}</b> ({{ top_request.votes }}).{% endif %}</p>
         <span class="go">Pedir →</span>
       </a>
     </div>

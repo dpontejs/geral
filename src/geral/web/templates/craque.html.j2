@@ -6,7 +6,7 @@
 <section class="jogo wall">
   <div class="wrap" id="cd" data-edition="{{ edition }}" data-number="{{ number }}" data-label="{{ label }}" data-max="{{ max_guesses }}" data-letters="{{ letters }}">
     <h1>Craque do dia</h1>
-    <p class="lead">Um ídolo ou artilheiro por dia, o mesmo para todo mundo. Chute o nome de guerra: você tem {{ max_guesses }} tentativas, e cada letra diz se está no lugar certo.</p>
+    <p class="lead">Um ídolo ou artilheiro por dia, o mesmo para todo mundo. Chute o nome do craque, como a torcida chama: você tem {{ max_guesses }} tentativas, e cada letra diz se está no lugar certo.</p>
     <nav class="editions" aria-label="Edições">
       {% for slug, t in editions %}
       <a href="/jogos/craque-do-dia{% if slug != 'geral' %}/{{ slug }}{% endif %}"{% if slug == edition %} aria-current="page"{% endif %}>{{ t.name if t else "Geral" }}</a>
@@ -19,7 +19,7 @@
     </div>
 
     <form class="guess" id="cd-form">
-      <label>Nome de guerra<input class="word-input" id="cd-word" name="word" type="text" maxlength="{{ letters }}" autocomplete="off" autocapitalize="characters" spellcheck="false" required></label>
+      <label>Nome do craque<input class="word-input" id="cd-word" name="word" type="text" maxlength="{{ letters }}" autocomplete="off" autocapitalize="characters" spellcheck="false" required></label>
       <button class="btn" type="submit">Chutar</button>
     </form>
     <p class="how" id="cd-error" role="alert" hidden></p>
