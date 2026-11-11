@@ -10,7 +10,7 @@ import os
 import re
 from collections import defaultdict, deque
 from collections.abc import Callable
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime, timedelta, timezone
 from pathlib import Path
 from urllib.parse import urlencode
 
@@ -25,6 +25,7 @@ from geral.config import Settings, get_settings
 from geral.send.resend_sender import UNSUBSCRIBE_PLACEHOLDER
 from geral.teams import Team, load_teams
 from geral.web.mailer import Mailer, MailError, mailer_from_settings
+from geral.web.scoreboard import animation_svg
 from geral.web.store import RequestResult, SubscriberStore, normalize
 from geral.web.tokens import make_token, read_token
 from geral.web.welcome import add_welcome
@@ -42,10 +43,13 @@ CONFIRMATIONS_PER_DAY = 30  # global cap: protects the Resend quota and the doma
 MAX_EMAIL_LENGTH = 254
 WELCOME_PREFIX = "Boas-vindas! "
 STATIC = Path(__file__).resolve().parents[1] / "static"
+# The scoreboard clock: Brasília time, no daylight saving since 2019 (no tzdata in the image).
+BRASILIA = timezone(timedelta(hours=-3))
 
 templates = Jinja2Templates(directory=Path(__file__).parent / "templates")
 # Jinja only autoescapes .html by default; ours end in .html.j2 and show user input.
 templates.env.autoescape = select_autoescape(["html.j2"])
+templates.env.globals["scoreboard_animation"] = animation_svg
 
 
 class RateLimiter:
@@ -119,6 +123,7 @@ def create_app(
             editions=store.latest_editions(),
             counts=counts,
             ranking=sorted(catalog.values(), key=lambda t: (-counts.get(t.slug, 0), t.newsletter)),
+            clock=now().astimezone(BRASILIA),
             **context,
         )
 

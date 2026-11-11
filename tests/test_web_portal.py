@@ -1,3 +1,5 @@
+import re
+
 import pytest
 from webkit import NOW, publish
 
@@ -18,6 +20,32 @@ def test_portal_lists_catalog_teams_with_last_edition_and_counts(client, store) 
     assert 'href="/t/nautico"' in page
     assert "1 na Geral" in page
     assert 'name="team" value="vasco"' in page
+
+
+def test_portal_scoreboard_ranks_teams_by_subscribers(client, store) -> None:
+    store.request("ana@example.com", ["nautico", "vasco"], NOW)
+    store.confirm("ana@example.com", NOW)
+    store.request("bia@example.com", ["nautico"], NOW)
+    store.confirm("bia@example.com", NOW)
+
+    page = client.get("/").text
+    board = page.split('id="placar"', 1)[1].split("</section>", 1)[0]
+
+    rows = re.findall(r'class="name">([^<]+)</span><span class="n">(\d+)<', board)
+    assert rows[:2] == [("Timbu", "2"), ("Almirante", "1")]
+    assert {name for name, _ in rows} == {"Timbu", "Almirante", "Porco", "Elefante"}
+
+
+def test_portal_scoreboard_clock_shows_brasilia_time(client) -> None:
+    page = client.get("/").text
+
+    assert '<time class="clock" datetime="2026-11-10T09:00-03:00">09:00</time>' in page
+
+
+def test_portal_scoreboard_plays_the_goal_animation(client) -> None:
+    page = client.get("/").text
+
+    assert '<svg class="lance"' in page
 
 
 def test_portal_without_edition_says_first_edition_soon(client) -> None:

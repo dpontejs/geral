@@ -1,8 +1,8 @@
 {% extends "base.html.j2" %}
 {% block title %}{{ title }} · Geral{% endblock %}
 {% block content %}
-<section class="msg">
-  <div class="wrap">
+<section class="msg wall">
+  <div class="wrap"><div class="sheet">
     <h1>{{ title }}</h1>
     <p>{{ text }}</p>
     {% if unsubscribe_token %}
@@ -15,8 +15,8 @@
     </form>
     {% endif %}
     {% else %}
-    <a class="btn" href="/" style="width:auto;text-decoration:none">Voltar para a Geral</a>
+    <a class="btn" href="/">Voltar para a Geral</a>
     {% endif %}
-  </div>
+  </div></div>
 </section>
 {% endblock %}
