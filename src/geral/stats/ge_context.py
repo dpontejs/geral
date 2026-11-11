@@ -105,7 +105,15 @@ def load(context: dict, name: str, client: httpx.Client, team_id: int, tz: ZoneI
                 continue
             if game is not None:
                 games[game.id] = game
-    return Competition(name=name, games=list(games.values()), groups=groups)
+    current_phase = phases[current]["phase"] if phases else {}
+    kind = current_phase.get("typeID")
+    return Competition(
+        name=name,
+        games=list(games.values()),
+        groups=groups,
+        phase=current_phase.get("name"),
+        phase_kind="knockout" if kind == KNOCKOUT else "groups" if kind == "3" else "points",
+    )
 
 
 def _has_data(phase: dict) -> bool:

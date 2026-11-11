@@ -33,8 +33,10 @@ class GECollector:
         url: str,
         client: httpx.Client | None = None,
         tz_name: str = "America/Sao_Paulo",
+        max_pages: int = MAX_FEED_PAGES,
     ) -> None:
         self.url = url
+        self.max_pages = max_pages
         # Team news live under the page path: /pe/futebol/times/nautico/noticia/...
         self.path = urlsplit(url).path
         self._client = client
@@ -69,7 +71,7 @@ class GECollector:
     ) -> list[Article]:
         """Feed items published in [start, end], paging until the page's last item is older."""
         articles: dict[str, Article] = {}
-        for n in range(1, MAX_FEED_PAGES + 1):
+        for n in range(1, self.max_pages + 1):
             response = client.get(FEED_PAGE_URL.format(instance=instance, n=n))
             response.raise_for_status()
             items = response.json().get("items") or []

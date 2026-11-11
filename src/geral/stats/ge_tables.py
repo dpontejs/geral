@@ -31,6 +31,7 @@ LEAGUE_PREFIX = "ge:"
 NO_SHOW = timedelta(hours=3)  # not started this long after kickoff, no score: postponed
 MAX_ROUNDS = 40
 POINTS, KNOCKOUT, GROUPS = "1", "2", "3"  # fase.tipo.tipo_id
+PHASE_KINDS = {POINTS: "points", KNOCKOUT: "knockout", GROUPS: "groups"}
 
 TUUID = re.compile(r'tUUID:\s*"([0-9a-f-]{36})"')
 PHASES = re.compile(r'"fases_navegacao":(\[[^\]]*\])')
@@ -54,6 +55,7 @@ class GETablesClient:
         self._clock = clock or (lambda: datetime.now(self.tz))
         self._goals = goals or CBFGoals(self._client)
         self._competitions: dict[str, Competition | None] = {}
+        self._loader = CompetitionLoader(self._client, self.tz, self.team_id)
         self.table_name: str | None = None
 
     # Public API (same shape as ESPNStatsClient)
@@ -207,13 +209,85 @@ class GETablesClient:
             return None
         if name not in self._competitions:
             try:
-                self._competitions[name] = self._load(name, self.team.ge_tables[name])
+                self._competitions[name] = self._loader.load(name, self.team.ge_tables[name])
             except Exception as e:
                 logger.warning("Failed to load ge competition %s: %s", name, e)
                 self._competitions[name] = None
         return self._competitions[name]
 
-    def _load(self, name: str, page_url: str) -> Competition:
+    # Parsing
+
+    def _fixture(self, game: Game, now: datetime) -> Fixture:
+        # ge has no "postponed": a match that never started hours after its time was put off.
+        no_show = game.kickoff + NO_SHOW + (timedelta() if game.time_valid else timedelta(days=1))
+        if game.canceled:
+            state = "postponed"
+        elif game.kickoff > now:
+            state = "pre"
+        elif game.finished(now):
+            state = "post"
+        elif game.started:
+            state = "in"
+        elif game.home_goals is None and now >= no_show:
+            state = "postponed"
+        else:
+            state = "pre"
+        return Fixture(
+            match_id=str(game.id),
+            league=f"{LEAGUE_PREFIX}{game.competition}",
+            kickoff=game.kickoff,
+            time_valid=game.time_valid,
+            state=state,
+            home=game.home,
+            away=game.away,
+        )
+
+    def _form(self, team_id: int, until: datetime) -> list[FormResult]:
+        now = self._clock()
+        played = [
+            g
+            for g in self._games()
+            if g.involves(team_id) and g.finished(now) and g.kickoff <= until
+        ]
+        played.sort(key=lambda g: g.kickoff, reverse=True)
+        return [self._result(g, team_id) for g in played[:FORM_SIZE]]
+
+    def _result(self, game: Game, team_id: int) -> FormResult:
+        at_home = game.home_id == team_id
+        goals_for, goals_against = (
+            (game.home_goals, game.away_goals) if at_home else (game.away_goals, game.home_goals)
+        )
+        result = "V" if goals_for > goals_against else "D" if goals_for < goals_against else "E"
+        score = f"{goals_for}-{goals_against}"
+        if game.home_penalties is not None and game.away_penalties is not None:
+            pens = (game.home_penalties, game.away_penalties)
+            pens_for, pens_against = pens if at_home else pens[::-1]
+            score += f" ({pens_for}-{pens_against} pên.)"
+        return FormResult(
+            result=result,
+            opponent=game.away if at_home else game.home,
+            score=score,
+            competition=game.competition,
+            date=game.kickoff,
+        )
+
+
+def load_competition(
+    client: httpx.Client, name: str, page_url: str, tz: ZoneInfo, team_id: int | None = None
+) -> Competition:
+    """A ge championship (either page format): its matches and current table, for any reader."""
+    return CompetitionLoader(client, tz, team_id).load(name, page_url)
+
+
+class CompetitionLoader:
+    """Reads a championship page and ge's APIs into a Competition; `team_id` marks our rows."""
+
+    def __init__(self, client: httpx.Client, tz: ZoneInfo, team_id: int | None = None) -> None:
+        self._client = client
+        self.tz = tz
+        self.team_id = team_id
+
+    def load(self, name: str, page_url: str) -> Competition:
         page = self._client.get(page_url)
         page.raise_for_status()
         tuuid = TUUID.search(page.text)
@@ -228,6 +302,7 @@ class GETablesClient:
 
         games: dict[int, Game] = {}
         groups = None
+        phase_kind = None
         # Later phases too: their first matches must be planned before ge makes them current.
         for index, phase in enumerate(navigation):
             base = f"{GE_TABLES_API}/{tuuid.group(1)}/fase/{phase['slug']}"
@@ -238,8 +313,10 @@ class GETablesClient:
                     raise
                 logger.info("Skipping ge phase %s, not published yet: %s", phase["slug"], e)
                 continue
-            if index == current and data["fase"]["tipo"]["tipo_id"] != KNOCKOUT:
-                groups = self._groups(data, name)
+            if index == current:
+                phase_kind = PHASE_KINDS.get(data["fase"]["tipo"]["tipo_id"])
+                if phase_kind != "knockout":
+                    groups = self._groups(data, name)
             for item in raw:
                 try:
                     game = self._game(item, name)
@@ -248,7 +325,13 @@ class GETablesClient:
                     continue
                 if game is not None:
                     games[game.id] = game
-        return Competition(name=name, games=list(games.values()), groups=groups)
+        return Competition(
+            name=name,
+            games=list(games.values()),
+            groups=groups,
+            phase=navigation[current].get("nome") if navigation else None,
+            phase_kind=phase_kind,
+        )
 
     def _groups(self, data: dict, name: str) -> list[list[StandingRow]] | None:
         groups = data.get("grupos") or [{"classificacao": data.get("classificacao", [])}]
@@ -314,60 +397,6 @@ class GETablesClient:
             # Both sides or none: a half shoot-out would print "3 x None".
             home_penalties=pens[0] if None not in pens else None,
             away_penalties=pens[1] if None not in pens else None,
-        )
-
-    def _fixture(self, game: Game, now: datetime) -> Fixture:
-        # ge has no "postponed": a match that never started hours after its time was put off.
-        no_show = game.kickoff + NO_SHOW + (timedelta() if game.time_valid else timedelta(days=1))
-        if game.canceled:
-            state = "postponed"
-        elif game.kickoff > now:
-            state = "pre"
-        elif game.finished(now):
-            state = "post"
-        elif game.started:
-            state = "in"
-        elif game.home_goals is None and now >= no_show:
-            state = "postponed"
-        else:
-            state = "pre"
-        return Fixture(
-            match_id=str(game.id),
-            league=f"{LEAGUE_PREFIX}{game.competition}",
-            kickoff=game.kickoff,
-            time_valid=game.time_valid,
-            state=state,
-            home=game.home,
-            away=game.away,
-        )
-
-    def _form(self, team_id: int, until: datetime) -> list[FormResult]:
-        now = self._clock()
-        played = [
-            g
-            for g in self._games()
-            if g.involves(team_id) and g.finished(now) and g.kickoff <= until
-        ]
-        played.sort(key=lambda g: g.kickoff, reverse=True)
-        return [self._result(g, team_id) for g in played[:FORM_SIZE]]
-
-    def _result(self, game: Game, team_id: int) -> FormResult:
-        at_home = game.home_id == team_id
-        goals_for, goals_against = (
-            (game.home_goals, game.away_goals) if at_home else (game.away_goals, game.home_goals)
-        )
-        result = "V" if goals_for > goals_against else "D" if goals_for < goals_against else "E"
-        score = f"{goals_for}-{goals_against}"
-        if game.home_penalties is not None and game.away_penalties is not None:
-            pens = (game.home_penalties, game.away_penalties)
-            pens_for, pens_against = pens if at_home else pens[::-1]
-            score += f" ({pens_for}-{pens_against} pên.)"
-        return FormResult(
-            result=result,
-            opponent=game.away if at_home else game.home,
-            score=score,
-            competition=game.competition,
-            date=game.kickoff,
         )
 
     def _standing(self, entry: dict) -> StandingRow:

@@ -161,3 +161,12 @@ def test_ge_page_without_feed_uses_the_page() -> None:
         articles = collect_abc(datetime(2026, 11, 9, tzinfo=TZ), datetime(2026, 11, 11, tzinfo=TZ))
 
     assert [a.title for a in articles] == ["ABC treina forte para 2027"]
+
+
+def test_ge_feed_page_limit_is_configurable(abc_feed) -> None:
+    collector = GECollector(url=GE_ABC_URL, client=httpx.Client(), max_pages=1)
+
+    collector.collect(datetime(2026, 10, 1, tzinfo=TZ), datetime(2026, 11, 11, 23, 0, tzinfo=TZ))
+
+    feeds = [str(c.request.url) for c in abc_feed.calls if "falkor" in str(c.request.url)]
+    assert feeds == [ABC_FEED.format(n=1)]

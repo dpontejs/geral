@@ -2,6 +2,7 @@ import logging
 import os
 import webbrowser
 from datetime import datetime
+from email.utils import formataddr, parseaddr
 from pathlib import Path
 from typing import Annotated, Literal
 
@@ -13,6 +14,9 @@ from rich.table import Table
 from geral import __version__, pipeline
 from geral.config import get_settings
 from geral.edition import edition_from_slot, resolve_match_edition
+from geral.general.collect import collect_week
+from geral.general.edition import build_general, week_window
+from geral.general.render import render_general
 from geral.models import Edition, Newsletter
 from geral.render.renderer import render
 from geral.report import ProblemCollector, RunReport
@@ -20,7 +24,9 @@ from geral.schedule import DEFAULT_WINDOW, LABELS, TZ, Fixture, Slot, label_of, 
 from geral.schedule import due as due_slot
 from geral.send.recipients import (
     LatestEdition,
+    Recipient,
     latest_edition,
+    mailto_unsubscribe,
     preview_summary,
     publish_latest_edition,
     register_match,
@@ -36,7 +42,7 @@ from geral.send.resend_sender import (
 from geral.stats.combined import stats_client_for
 from geral.stats.espn import StatsUnavailable
 from geral.stats.table import standings_window
-from geral.summarizer.client import LLMError
+from geral.summarizer.client import LLMError, get_llm_client
 from geral.teams import Team, UnknownTeam, get_team, load_teams
 from geral.web import announce as announcements
 from geral.web.legacy import import_single_team
@@ -538,6 +544,58 @@ def _publish_report(report: RunReport) -> None:
     if summary_path:
         with open(summary_path, "a", encoding="utf-8") as summary:
             summary.write(markdown)
+
+
+@app.command("edicao-geral")
+def edicao_geral(
+    date: DateOption = None,
+    out: Annotated[
+        Path | None, typer.Option(help="HTML file (default: out/geral-<date>.html)")
+    ] = None,
+    send: Annotated[
+        bool, typer.Option("--send", help="Send to NEWSLETTER_RECIPIENTS (respects DRY_RUN)")
+    ] = False,
+) -> None:
+    """Build the edição geral (Série A to D) of a Monday; --send mails the fixed list."""
+    _setup_logging()
+    settings = get_settings()
+    start, end = week_window((date or _now()).date())
+    weeks = collect_week(start, end)
+    if not weeks:
+        typer.echo(f"Nada na semana até {end:%d/%m/%Y}: edição geral não gerada.")
+        return
+    try:
+        llm = get_llm_client(settings)
+    except LLMError as e:  # no key: the edition goes without the texts
+        logger.error("Edição geral without the Gemini: %s", e)
+        llm = None
+    edition = build_general(start, end, weeks, llm)
+    logo = f"{settings.PUBLIC_URL.rstrip('/')}/static/geral/logo-email.png"
+    html, text = render_general(
+        edition,
+        logo_url=logo if settings.PUBLIC_URL.startswith("https://") else None,
+        unsubscribe_url=UNSUBSCRIBE_PLACEHOLDER,
+    )
+    mailto = mailto_unsubscribe(settings)
+    path = out or Path("out") / f"geral-{end:%Y-%m-%d}.html"
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(html.replace(UNSUBSCRIBE_PLACEHOLDER, mailto), encoding="utf-8")
+    path.with_suffix(".txt").write_text(text.replace(UNSUBSCRIBE_PLACEHOLDER, mailto), "utf-8")
+    typer.echo(f"{edition.subject}\ncópia em {path}")
+    if not send:
+        return
+    _, address = parseaddr(settings.NEWSLETTER_FROM)
+    sender = ResendSender(
+        settings.RESEND_API_KEY, formataddr(("Geral", address)), dry_run=settings.DRY_RUN
+    )
+    recipients = [Recipient(email, mailto) for email in settings.NEWSLETTER_RECIPIENTS]
+    try:
+        sender.send(edition.subject, html, text, recipients)
+    except SendError as e:
+        typer.echo(f"Envio falhou: {e}", err=True)
+        raise typer.Exit(code=1) from e
+    outcome = "não enviada (DRY_RUN)" if settings.DRY_RUN else "enviada"
+    typer.echo(f"{edition.label}: {outcome} para {len(recipients)} destinatários.")
 
 
 def _setup_logging() -> None:

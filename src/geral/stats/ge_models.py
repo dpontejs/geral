@@ -2,6 +2,7 @@
 
 from dataclasses import dataclass
 from datetime import datetime, timedelta
+from typing import Literal
 
 from geral.models import StandingRow
 
@@ -39,3 +40,5 @@ class Competition:
     games: list[Game]
     # Groups of the current points phase (rows already parsed); None in a knockout phase.
     groups: list[list[StandingRow]] | None = None
+    phase: str | None = None  # the current phase's name, e.g. "Final"
+    phase_kind: Literal["points", "groups", "knockout"] | None = None
