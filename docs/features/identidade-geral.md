@@ -1,7 +1,7 @@
 # Identidade visual da Geral (o hub)
 
 - **Data:** 2026-11-10
-- **Status:** periquito no lugar do geraldino (2026-11-11)
+- **Status:** imagens geradas (o Nano Banana pintou a pele de amarelo; aceito por ora)
 - **ADRs:** —
 
 ## Objetivo
@@ -24,32 +24,36 @@ seus mascotes.
   |---|---|---|
   | concreto | `#8E8B84` | destaque principal, fundo do ícone |
   | concreto claro | `#B9B5AC` | arquibancada, traços secundários |
-  | papel de jornal antigo | `#EFE4CC` | fundo da página e do e-mail, penas claras do periquito |
+  | papel de jornal antigo | `#EFE4CC` | fundo da página e do e-mail, camisa do geraldino |
+  | pele desbotada | `#C99A73` | só a pele do geraldino |
   | amarelo de ingresso | `#E3B23C` | só detalhes: radinho, selos, "edição geral" |
   | tinta | `#1E1E1E` | contorno e texto |
 
-- Mascote: o **periquito** (2026-11-11, no lugar do geraldino): um periquito torcedor comemorando o gol
-  na frente do estádio redondo, de radinho de pilha e ingresso na mão, em concreto e papel de jornal
-  (sem verde, para não virar o mascote do Palmeiras). O geraldino segue na história do "Por que
-  Geral?", como o torcedor do Maracanã antigo.
+- Mascote: o **geraldino**, torcedor da Geral, em pé, radinho de pilha colado no ouvido, camisa
+  sem time, braço erguido no grito de gol; atrás dele, a curva da marquise de concreto.
 - Tipografia: condensada de pôster esportivo antigo (Oswald na logo, como as newsletters).
 - Arquivos em `src/geral/static/geral/`: `icon-512.png`, `logo-email.png`, `og-image.png`, gerados
-  por `scripts/make_brand.py` a partir do ícone do Nano Banana (`brand_src/geral-periquito.png`).
+  por `scripts/make_brand.py` a partir do ícone do Nano Banana (`brand_src/geral.jpg`).
 
-## Prompt do ícone (Nano Banana Pro, `gemini-3-pro-image` pela chave do Gemini)
+## Prompt do ícone (Nano Banana)
 
-> Retro 1970s Brazilian newspaper illustration style mascot logo: a cheerful, cheeky little parakeet
-> (periquito) fan in the old concrete stadium terraces, wings raised celebrating a goal, holding a
-> small transistor radio, tiny paper ticket tucked under one wing. Behind it, the curved concrete
-> roof edge and terraces of a huge old round stadium. Bold flat vector shapes, thick #1E1E1E outline,
-> no gradients, no textures, no text. Everything fits completely inside a solid #8E8B84 circle with a
-> thin #EFE4CC ring; nothing crosses the circle edge. Plain white background outside the circle.
-> Readable at 32 px. Colors: circle background #8E8B84; terraces and roof #B9B5AC; the parakeet's
-> feathers in #EFE4CC and #B9B5AC with #1E1E1E markings; the radio is the only #E3B23C element. No
-> green, no other colors. No club crest, no club colors, no flags, no stadium logo. Square image.
+> Retro 1970s Brazilian newspaper illustration style mascot logo: a "geraldino", an ordinary fan
+> standing in the old concrete stadium terraces, holding a small transistor radio against his ear,
+> other arm raised shouting a goal, plain shirt with no team colors, mustache, joyful and passionate
+> face, three-quarter view. Behind him, the curved concrete roof edge and terraces of a huge old
+> round stadium. Bold flat vector shapes, thick #1E1E1E outline, no gradients, no textures, no
+> text. Everything fits completely inside a solid #8E8B84 circle with a thin #EFE4CC ring; nothing
+> crosses the circle edge. Transparent background outside the circle. Readable at 32 px. Colors:
+> circle background #8E8B84; terraces and roof #B9B5AC; shirt #EFE4CC; skin #C99A73; hair, mustache
+> and outlines #1E1E1E; the radio is the only #E3B23C element. No green, no other colors. No club
+> crest, no club colors, no flags, no stadium logo.
 
-Gerado pela API (`google-genai`, `models.generate_content(model="gemini-3-pro-image", ...,
-response_modalities=["IMAGE"])`); o original fica em `brand_src/geral-periquito.png`.
+## Como gerar
+
+```bash
+python scripts/make_brand.py brand_src/geral.jpg src/geral/static/geral Geral "" "#1E1E1E" "#1E1E1E" Geral \
+  --circle "--paper=#EFE4CC" "--tagline=Todas as torcidas numa Geral só"
+```
 
 ## Critérios de aceite
 

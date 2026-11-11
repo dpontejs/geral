@@ -31,8 +31,6 @@ def cut_mascot(path, circle=False):
     border += [(x, y) for y in range(h) for x in (0, w - 1)]
     counts = Counter(tuple(c // 8 * 8 for c in px[p]) for p in border)
     tones = sorted((t for t, _ in counts.most_common(2)), key=sum)  # [grey, white]
-    if len(tones) == 1:  # a plain background (the Gemini API), not a fake checkerboard
-        tones *= 2
 
     def near(p, tone):
         return all(abs(a - b) <= 20 for a, b in zip(p, tone, strict=True))
