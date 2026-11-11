@@ -164,3 +164,19 @@ def test_abc_follows_serie_c_and_potiguar_on_ge():
 
     assert abc.ge_id == 350
     assert set(abc.ge_tables) == {"Série C", "Potiguar"}
+
+
+def test_cbf_tables_need_cbf_id_and_a_ge_table():
+    abc = load_teams()["abc"]
+
+    with pytest.raises(ValidationError, match="cbf_id"):
+        Team.model_validate(abc.model_dump() | {"cbf_id": None})
+    with pytest.raises(ValidationError, match="ge_tables"):
+        Team.model_validate(abc.model_dump() | {"cbf_tables": {"Série Z": "x"}})
+
+
+def test_abc_takes_serie_c_goals_from_cbf():
+    abc = load_teams()["abc"]
+
+    assert abc.cbf_id == 20042
+    assert abc.cbf_tables == {"Série C": "campeonato-brasileiro/serie-c"}

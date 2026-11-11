@@ -8,7 +8,7 @@ Regras:
 {% if next_match %}Esta é a edição de pré-jogo: a manchete e a abertura apresentam o próximo jogo.
 Próximo jogo: {{ team.name }} x {{ next_match.opponent }} ({{ next_match.competition }}, {{ next_match.date.strftime("%d/%m às %H:%M") }}{% if next_match.venue %}, {{ next_match.venue }}{% endif %})
 {% endif %}
-{% if last_match %}Última partida: {{ last_match.home }} {{ last_match.home_goals }} x {{ last_match.away_goals }} {{ last_match.away }} ({{ last_match.competition }}, {{ last_match.date.strftime("%d/%m") }})
+{% if last_match %}Última partida: {{ last_match.home }} {{ last_match.home_goals }} x {{ last_match.away_goals }} {{ last_match.away }} ({{ last_match.competition }}, {{ last_match.date.strftime("%d/%m") }}{% if last_match.home_penalties is not none %}, pênaltis {{ last_match.home_penalties }} x {{ last_match.away_penalties }}{% endif %})
 {% endif %}
 {% if topics %}Tópicos da edição, do mais ao menos importante:
 {% for topic in topics %}- {{ topic.title }}: {{ topic.summary }}

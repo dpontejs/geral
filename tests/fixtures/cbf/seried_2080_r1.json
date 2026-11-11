@@ -1,0 +1,296 @@
+{
+ "grupos": [
+  "GRUPO E01",
+  "GRUPO E02",
+  "GRUPO E03",
+  "GRUPO E04"
+ ],
+ "jogos": [
+  {
+   "grupo": "GRUPO E01",
+   "jogo": [
+    {
+     "id_jogo": "835097",
+     "num_jogo": "593",
+     "rodada": "1",
+     "grupo": "GRUPO E01",
+     "mandante": {
+      "id": "20319",
+      "nome": "São José",
+      "url_escudo": "https://conteudo.cbf.com.br/clubes/20319/escudo.jpg",
+      "gols": "1",
+      "panaltis": "0",
+      "atletas": [],
+      "alteracoes": []
+     },
+     "visitante": {
+      "id": "20098",
+      "nome": "Gama",
+      "url_escudo": "https://conteudo.cbf.com.br/clubes/20098/escudo.jpg",
+      "gols": "1",
+      "panaltis": "0",
+      "atletas": [],
+      "alteracoes": []
+     },
+     "local": "Francisco Novelletto - Porto Alegre - RS",
+     "campeonato": "Campeonato Brasileiro",
+     "data": " 08/08/2026",
+     "hora": "17:00",
+     "qtd_alteracoes_jogo": 0,
+     "documentos": [],
+     "arbitros": [],
+     "penalidades": [
+      {
+       "id": "91972",
+       "tipo": "GOL",
+       "resultado": "NR",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20098/escudo.jpg",
+       "clube": "Gama - DF",
+       "clube_id": "20098",
+       "atleta_nome": "Willian Pontes de Araújo Júnior",
+       "atleta_apelido": "Willian Jr.",
+       "atleta_camisa": "10",
+       "atleta_id": "532317",
+       "tempo_jogo": "2",
+       "minutos": "30:00"
+      },
+      {
+       "id": "91971",
+       "tipo": "GOL",
+       "resultado": "NR",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20319/escudo.jpg",
+       "clube": "São José - RS",
+       "clube_id": "20319",
+       "atleta_nome": "Andrey Nunes dos Santos",
+       "atleta_apelido": "ANDREY",
+       "atleta_camisa": "20",
+       "atleta_id": "522973",
+       "tempo_jogo": "2",
+       "minutos": "45:00"
+      },
+      {
+       "id": "433899",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20319/escudo.jpg",
+       "clube": "São José - RS",
+       "clube_id": "20319",
+       "atleta_nome": "Keverton Resende Marcolino",
+       "atleta_apelido": "Keverton",
+       "atleta_camisa": "5",
+       "atleta_id": "524372",
+       "tempo_jogo": "TN1",
+       "minutos": "24:00"
+      },
+      {
+       "id": "433905",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20098/escudo.jpg",
+       "clube": "Gama - DF",
+       "clube_id": "20098",
+       "atleta_nome": "Gabriel Lima da Silva",
+       "atleta_apelido": "Gabriel",
+       "atleta_camisa": "66",
+       "atleta_id": "611688",
+       "tempo_jogo": "TN2",
+       "minutos": "32:00"
+      },
+      {
+       "id": "433917",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20098/escudo.jpg",
+       "clube": "Gama - DF",
+       "clube_id": "20098",
+       "atleta_nome": "Lucas Emanuel da Silva",
+       "atleta_apelido": "Lucão",
+       "atleta_camisa": "21",
+       "atleta_id": "561069",
+       "tempo_jogo": "TN2",
+       "minutos": "40:00"
+      },
+      {
+       "id": "433909",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20098/escudo.jpg",
+       "clube": "Gama - DF",
+       "clube_id": "20098",
+       "atleta_nome": "Eduardo Jose da Rosa Milhomem",
+       "atleta_apelido": "Eduardo",
+       "atleta_camisa": "95",
+       "atleta_id": "449281",
+       "tempo_jogo": "TN2",
+       "minutos": "43:00"
+      },
+      {
+       "id": "433902",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20098/escudo.jpg",
+       "clube": "Gama - DF",
+       "clube_id": "20098",
+       "atleta_nome": "Darlan Silva Dutra",
+       "atleta_apelido": "DARLAN",
+       "atleta_camisa": "3",
+       "atleta_id": "699062",
+       "tempo_jogo": "TN2",
+       "minutos": "8:00"
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "grupo": "GRUPO E03",
+   "jogo": [
+    {
+     "id_jogo": "835099",
+     "num_jogo": "595",
+     "rodada": "1",
+     "grupo": "GRUPO E03",
+     "mandante": {
+      "id": "20050",
+      "nome": "Nacional",
+      "url_escudo": "https://conteudo.cbf.com.br/clubes/20050/escudo.jpg",
+      "gols": "1",
+      "panaltis": "0",
+      "atletas": [],
+      "alteracoes": []
+     },
+     "visitante": {
+      "id": "20042",
+      "nome": "Abc F. C.",
+      "url_escudo": "https://conteudo.cbf.com.br/clubes/20042/escudo.jpg",
+      "gols": "2",
+      "panaltis": "0",
+      "atletas": [],
+      "alteracoes": []
+     },
+     "local": "Arena da Amazônia - Manaus - AM",
+     "campeonato": "Campeonato Brasileiro",
+     "data": " 08/08/2026",
+     "hora": "16:00",
+     "qtd_alteracoes_jogo": 0,
+     "documentos": [],
+     "arbitros": [],
+     "penalidades": [
+      {
+       "id": "91954",
+       "tipo": "GOL",
+       "resultado": "NR",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20042/escudo.jpg",
+       "clube": "Abc F. C. - RN",
+       "clube_id": "20042",
+       "atleta_nome": "Luiz Fernando Ferreira de Souza",
+       "atleta_apelido": "Luiz Fernando",
+       "atleta_camisa": "18",
+       "atleta_id": "404134",
+       "tempo_jogo": "1",
+       "minutos": "21:00"
+      },
+      {
+       "id": "91955",
+       "tipo": "GOL",
+       "resultado": "NR",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20042/escudo.jpg",
+       "clube": "Abc F. C. - RN",
+       "clube_id": "20042",
+       "atleta_nome": "Luiz Fernando Ferreira de Souza",
+       "atleta_apelido": "Luiz Fernando",
+       "atleta_camisa": "18",
+       "atleta_id": "404134",
+       "tempo_jogo": "1",
+       "minutos": "45:00"
+      },
+      {
+       "id": "91956",
+       "tipo": "GOL",
+       "resultado": "NR",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20050/escudo.jpg",
+       "clube": "Nacional - AM",
+       "clube_id": "20050",
+       "atleta_nome": "Fredson Vinicius Santos Oliveira",
+       "atleta_apelido": "Fredson",
+       "atleta_camisa": "15",
+       "atleta_id": "371657",
+       "tempo_jogo": "2",
+       "minutos": "02:00"
+      },
+      {
+       "id": "433872",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20050/escudo.jpg",
+       "clube": "Nacional - AM",
+       "clube_id": "20050",
+       "atleta_nome": "Mateus Muller de Souza Lopes",
+       "atleta_apelido": "Mateus Muller",
+       "atleta_camisa": "16",
+       "atleta_id": "373728",
+       "tempo_jogo": "AC2",
+       "minutos": "45:005:00"
+      },
+      {
+       "id": "433870",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20050/escudo.jpg",
+       "clube": "Nacional - AM",
+       "clube_id": "20050",
+       "atleta_nome": "Fredson Vinicius Santos Oliveira",
+       "atleta_apelido": "Fredson",
+       "atleta_camisa": "15",
+       "atleta_id": "371657",
+       "tempo_jogo": "TN1",
+       "minutos": "23:00"
+      },
+      {
+       "id": "433873",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20042/escudo.jpg",
+       "clube": "Abc F. C. - RN",
+       "clube_id": "20042",
+       "atleta_nome": "Matheus Alves da Silva Cardoso",
+       "atleta_apelido": "Matheus Alves",
+       "atleta_camisa": "1",
+       "atleta_id": "381586",
+       "tempo_jogo": "TN2",
+       "minutos": "22:00"
+      },
+      {
+       "id": "433875",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20042/escudo.jpg",
+       "clube": "Abc F. C. - RN",
+       "clube_id": "20042",
+       "atleta_nome": "Edson Felipe da Cruz",
+       "atleta_apelido": "Edson Felipe",
+       "atleta_camisa": "5",
+       "atleta_id": "291843",
+       "tempo_jogo": "TN2",
+       "minutos": "33:00"
+      },
+      {
+       "id": "433876",
+       "tipo": "PENALIDADE",
+       "resultado": "AMARELO",
+       "url_escudo": "https://conteudo.cbf.com.br/clubes/20042/escudo.jpg",
+       "clube": "Abc F. C. - RN",
+       "clube_id": "20042",
+       "atleta_nome": "Luiz Fernando Ferreira de Souza",
+       "atleta_apelido": "Luiz Fernando",
+       "atleta_camisa": "18",
+       "atleta_id": "404134",
+       "tempo_jogo": "TN2",
+       "minutos": "42:00"
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -32,7 +32,7 @@ Ordem de execução. Cada fatia vira um PR; a página da fatia fica em `docs/fea
 
 ## Fatia 2b — Dados das Séries C, D e estaduais (ABC)
 - [x] Cliente da API de tabelas do ge (`api.globoesporte.globo.com/tabela/{tUUID}/fase/{slug}/...`): jogos, resultados e classificação; tUUID e fases lidos da página do campeonato a cada execução (`docs/features/dados-serie-c.md`)
-- [ ] Autores dos gols pela página de jogo da CBF (`registros`), com fallback no lance a lance do ge
+- [x] Autores dos gols pela API de jogos da CBF (Séries C e D) e pênaltis do mata-mata pelo ge; o estadual fica só com o placar (a CBF não o tem e o HTML do jogo no ge não traz os lances)
 - [ ] Notícias do time pelo feed JSON da página do ge (no lugar da raspagem do HTML)
 - [ ] Pernambucano: segundo parser, para o formato `tabela-context`
 

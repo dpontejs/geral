@@ -13,7 +13,7 @@ nos jogos do Potiguar e da Série C 2027, sem mexer nos times que a ESPN já cob
 
 ## Fora de escopo
 
-- Autores dos gols (página de jogo da CBF): parte 2b.2. Aqui o pós-jogo traz só o placar.
+- Autores dos gols (CBF) e pênaltis: parte 2b.2 (PR seguinte).
 - Notícias pelo feed JSON do ge: parte 2b.3. Pernambucano (`tabela-context`): parte 2b.4.
 - Escudos dos adversários: o ge só publica SVG, que o Gmail não mostra; o nosso usa o da ESPN.
 - Confronto direto no pré-jogo (o ge não tem); a forma dos dois times sai dos jogos do campeonato.
@@ -79,4 +79,3 @@ para a ESPN). O Potiguar 2026 foi conferido chamando o `GETablesClient` com o re
 
 - API não documentada: se mudar, o ABC volta a só ter notícias (os demais não são afetados).
 - ~45 chamadas ao ge por execução do `due` (a cada 10 min, só o ABC); cache só dentro da execução.
-- Pênaltis do mata-mata não aparecem (o pós-jogo mostra o empate): fica para a 2b.2.
