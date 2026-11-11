@@ -1,7 +1,7 @@
 # Identidade visual da Geral (o hub)
 
 - **Data:** 2026-11-10
-- **Status:** proposta
+- **Status:** imagens geradas (o Nano Banana pintou a pele de amarelo; aceito por ora)
 - **ADRs:** —
 
 ## Objetivo
@@ -47,6 +47,13 @@ seus mascotes.
 > circle background #8E8B84; terraces and roof #B9B5AC; shirt #EFE4CC; skin #C99A73; hair, mustache
 > and outlines #1E1E1E; the radio is the only #E3B23C element. No green, no other colors. No club
 > crest, no club colors, no flags, no stadium logo.
+
+## Como gerar
+
+```bash
+python scripts/make_brand.py brand_src/geral.jpg src/geral/static/geral Geral "" "#1E1E1E" "#1E1E1E" Geral \
+  --circle "--paper=#EFE4CC" "--tagline=Todas as torcidas numa Geral só"
+```
 
 ## Critérios de aceite
 

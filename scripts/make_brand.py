@@ -102,32 +102,34 @@ def font(size, weight=700):
     return f
 
 
-def wordmark(icon, first, second, c1, c2, size=(640, 255), icon_h=205):
-    canvas = Image.new("RGB", size, PAPER)
+def wordmark(icon, first, second, c1, c2, size=(640, 255), icon_h=205, paper=PAPER):
+    """Icon + name, centered; the name is as big as fits, up to half the icon's height."""
+    canvas = Image.new("RGB", size, paper)
     ic = icon.resize((icon_h, icon_h), Image.LANCZOS)
     pad = (size[1] - icon_h) // 2
-    canvas.paste(ic, (pad, pad), ic)
+    gap = icon_h // 18
     draw = ImageDraw.Draw(canvas)
-    x0 = pad + icon_h + 22
-    avail = size[0] - x0 - pad
-    s = 120
-    while True:
+    first, second = first.upper(), second.upper()
+    avail = size[0] - 2 * pad - icon_h - gap
+    s = icon_h
+    while s > 30:
         f = font(s)
-        w1 = draw.textlength(first.upper() + " ", font=f)
-        w2 = draw.textlength(second.upper(), font=f)
-        if w1 + w2 <= avail or s < 30:
+        w1 = draw.textlength(first + (" " if second else ""), font=f)
+        w2 = draw.textlength(second, font=f)
+        top, bottom = draw.textbbox((0, 0), first, font=f)[1::2]
+        if w1 + w2 <= avail and bottom - top <= icon_h * 0.5:
             break
         s -= 2
-    asc, desc = f.getmetrics()
-    bbox = draw.textbbox((0, 0), first.upper(), font=f)
-    y = (size[1] - (bbox[3] - bbox[1])) // 2 - bbox[1]
-    draw.text((x0, y), first.upper() + " ", font=f, fill=c1)
-    draw.text((x0 + w1, y), second.upper(), font=f, fill=c2)
+    x = int((size[0] - (icon_h + gap + w1 + w2)) // 2)
+    canvas.paste(ic, (x, pad), ic)
+    y = (size[1] - (bottom - top)) // 2 - top
+    draw.text((x + icon_h + gap, y), first, font=f, fill=c1)
+    draw.text((x + icon_h + gap + w1, y), second, font=f, fill=c2)
     return canvas
 
 
-def og(logo, tagline):
-    canvas = Image.new("RGB", (1200, 630), PAPER)
+def og(logo, tagline, paper=PAPER):
+    canvas = Image.new("RGB", (1200, 630), paper)
     lg = logo.resize((960, 383), Image.LANCZOS)
     canvas.paste(lg, (120, 70))
     draw = ImageDraw.Draw(canvas)
@@ -146,12 +148,17 @@ def save_small(im, path, colors=48):
 
 if __name__ == "__main__":
     src, out, first, second, c1, c2, team = sys.argv[1:8]
-    circle = "--circle" in sys.argv[8:]
+    opts = dict(a[2:].split("=", 1) if "=" in a else (a[2:], "1") for a in sys.argv[8:])
+    circle = "circle" in opts
+    paper = hexrgb(opts["paper"]) if "paper" in opts else PAPER  # the hub: --paper=#EFE4CC
+    tagline = opts.get("tagline", f"Notícias do {team}, antes e depois de cada jogo")
     os.makedirs(out, exist_ok=True)
     icon = cut_mascot(src, circle)
     save_small(icon, f"{out}/icon-512.png", 64)
-    logo = wordmark(icon, first, second, hexrgb(c1), hexrgb(c2), size=(1280, 510), icon_h=410)
+    logo = wordmark(
+        icon, first, second, hexrgb(c1), hexrgb(c2), size=(1280, 510), icon_h=410, paper=paper
+    )
     save_small(logo.resize((640, 255), Image.LANCZOS), f"{out}/logo-email.png")
-    save_small(og(logo, f"Notícias do {team}, antes e depois de cada jogo"), f"{out}/og-image.png")
+    save_small(og(logo, tagline, paper), f"{out}/og-image.png")
     for f in ("icon-512", "logo-email", "og-image"):
         print(f, os.path.getsize(f"{out}/{f}.png") // 1024, "KB")
