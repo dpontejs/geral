@@ -1,0 +1,896 @@
+{
+ "data": {
+  "multisportMatchesByPhase": [
+   {
+    "__typename": "GroupedMultisportMatch",
+    "phaseID": 22138,
+    "groupName": "Grupo Sertão",
+    "groupID": 6075,
+    "order": 1,
+    "events": [
+     {
+      "category": {
+       "name": "Masculino"
+      },
+      "sport": {
+       "name": "Futebol",
+       "logo": "",
+       "logoSvg": "https://s.sde.globo.com/media/sports/futebol.svg"
+      },
+      "modality": {
+       "name": "Futebol de campo"
+      },
+      "editorialData": {
+       "hasLiveCoverage": false,
+       "url": "",
+       "logo": null,
+       "video": null
+      },
+      "match": {
+       "id": 357470,
+       "startDate": "2026-10-31",
+       "startHour": "15:00:00",
+       "firstContestant": {
+        "__typename": "Team",
+        "id": 2890,
+        "name": "Petrolina Social Futebol Clube",
+        "slug": "petrolina",
+        "popularName": "Petrolina",
+        "abbreviation": "PET",
+        "badge": "https://s.sde.globo.com/media/organizations/2019/01/29/escudo_petrolina_svg.svg"
+       },
+       "secondContestant": {
+        "__typename": "Team",
+        "id": 3711,
+        "name": "Ferroviário Esporte Clube do Cabo",
+        "slug": "ferroviario-do-cabo",
+        "popularName": "Ferroviário do Cabo",
+        "abbreviation": "FCA",
+        "badge": "https://s.sde.globo.com/media/organizations/2026/10/07/Ferroviario_do_Cabo_SVG.svg"
+       },
+       "result": "FIRST_TEAM",
+       "winner": {
+        "id": 2890,
+        "name": "Petrolina Social Futebol Clube"
+       },
+       "round": 4,
+       "scoreboard": {
+        "home": 7,
+        "away": 1,
+        "penalty": null
+       },
+       "detailedScoreboard": {
+        "firstParticipantScore": 7,
+        "secondParticipantScore": 1,
+        "details": null
+       },
+       "transmission": {
+        "__typename": "TRTransmission",
+        "id": "9d783224-7805-4172-8f5b-69efba4bc4cd",
+        "url": "https://ge.globo.com/pe/petrolina-regiao/futebol/campeonato-pernambucano/jogo/31-10-2026/petrolina-ferroviario-do-cabo.ghtml",
+        "broadcastStatus": {
+         "label": "ENCERRADA"
+        }
+       },
+       "moment": "PAST",
+       "location": {
+        "name": "Estádio Paulo de Souza Coelho",
+        "popularName": "Paulo Coelho"
+       },
+       "isMedalDispute": false,
+       "phase": {
+        "name": "Primeiro turno (Forró)"
+       },
+       "liveWatchSources": null
+      }
+     },
+     {
+      "category": {
+       "name": "Masculino"
+      },
+      "sport": {
+       "name": "Futebol",
+       "logo": "",
+       "logoSvg": "https://s.sde.globo.com/media/sports/futebol.svg"
+      },
+      "modality": {
+       "name": "Futebol de campo"
+      },
+      "editorialData": {
+       "hasLiveCoverage": false,
+       "url": "",
+       "logo": null,
+       "video": null
+      },
+      "match": {
+       "id": 357475,
+       "startDate": "2026-11-01",
+       "startHour": "15:00:00",
+       "firstContestant": {
+        "__typename": "Team",
+        "id": 2617,
+        "name": "Salgueiro Atlético Clube",
+        "slug": "salgueirope",
+        "popularName": "Salgueiro",
+        "abbreviation": "SAL",
+        "badge": "https://s.sde.globo.com/media/organizations/2019/01/04/Salgueiro_PE-01.svg"
+       },
+       "secondContestant": {
+        "__typename": "Team",
+        "id": 9932,
+        "name": "FácilNet Futebol Clube",
+        "slug": "facilnet",
+        "popularName": "FácilNet",
+        "abbreviation": "FNT",
+        "badge": "https://s.sde.globo.com/media/organizations/2026/08/07/2BXHLvOunGsF9MVCfXqT.svg"
+       },
+       "result": "SECOND_TEAM",
+       "winner": {
+        "id": 9932,
+        "name": "FácilNet Futebol Clube"
+       },
+       "round": 4,
+       "scoreboard": {
+        "home": 2,
+        "away": 3,
+        "penalty": null
+       },
+       "detailedScoreboard": {
+        "firstParticipantScore": 2,
+        "secondParticipantScore": 3,
+        "details": null
+       },
+       "transmission": {
+        "__typename": "TRTransmission",
+        "id": "15f11080-c91a-4c66-acf1-f01d487a1e6e",
+        "url": "https://ge.globo.com/pe/petrolina-regiao/futebol/campeonato-pernambucano/jogo/01-11-2026/salgueirope-facilnet.ghtml",
+        "broadcastStatus": {
+         "label": "ENCERRADA"
+        }
+       },
+       "moment": "PAST",
+       "location": {
+        "name": "Estádio Cornélio de Barros",
+        "popularName": "Cornélio de Barros"
+       },
+       "isMedalDispute": false,
+       "phase": {
+        "name": "Primeiro turno (Forró)"
+       },
+       "liveWatchSources": null
+      }
+     },
+     {
+      "category": {
+       "name": "Masculino"
+      },
+      "sport": {
+       "name": "Futebol",
+       "logo": "",
+       "logoSvg": "https://s.sde.globo.com/media/sports/futebol.svg"
+      },
+      "modality": {
+       "name": "Futebol de campo"
+      },
+      "editorialData": {
+       "hasLiveCoverage": false,
+       "url": "",
+       "logo": null,
+       "video": null
+      },
+      "match": {
+       "id": 357476,
+       "startDate": "2026-11-01",
+       "startHour": "15:00:00",
+       "firstContestant": {
+        "__typename": "Team",
+        "id": 4491,
+        "name": "1º de Maio-PE",
+        "slug": "1-de-maio-pe",
+        "popularName": "1º de Maio-PE",
+        "abbreviation": "MAI",
+        "badge": "https://s.sde.globo.com/media/organizations/2026/10/07/1º_de_Maio-PE_SVG.svg"
+       },
+       "secondContestant": {
+        "__typename": "Team",
+        "id": 4248,
+        "name": "Afogados de Ingazeira Futebol Clube",
+        "slug": "afogados",
+        "popularName": "Afogados",
+        "abbreviation": "AFO",
+        "badge": "https://s.sde.globo.com/media/organizations/2019/01/02/Afogados-01.svg"
+       },
+       "result": "SECOND_TEAM",
+       "winner": {
+        "id": 4248,
+        "name": "Afogados de Ingazeira Futebol Clube"
+       },
+       "round": 4,
+       "scoreboard": {
+        "home": 0,
+        "away": 4,
+        "penalty": null
+       },
+       "detailedScoreboard": {
+        "firstParticipantScore": 0,
+        "secondParticipantScore": 4,
+        "details": null
+       },
+       "transmission": null,
+       "moment": "PAST",
+       "location": {
+        "name": "Estádio Paulo de Souza Coelho",
+        "popularName": "Paulo Coelho"
+       },
+       "isMedalDispute": false,
+       "phase": {
+        "name": "Primeiro turno (Forró)"
+       },
+       "liveWatchSources": null
+      }
+     }
+    ]
+   },
+   {
+    "__typename": "GroupedMultisportMatch",
+    "phaseID": 22138,
+    "groupName": "Grupo Agreste",
+    "groupID": 6076,
+    "order": 2,
+    "events": [
+     {
+      "category": {
+       "name": "Masculino"
+      },
+      "sport": {
+       "name": "Futebol",
+       "logo": "",
+       "logoSvg": "https://s.sde.globo.com/media/sports/futebol.svg"
+      },
+      "modality": {
+       "name": "Futebol de campo"
+      },
+      "editorialData": {
+       "hasLiveCoverage": false,
+       "url": "https://ge.globo.com/pe/caruaru-regiao/futebol/times/central/noticia/2026/11/01/central-perde-a-invencibilidade-no-campeonato-pernambucano.ghtml",
+       "logo": null,
+       "video": null
+      },
+      "match": {
+       "id": 357471,
+       "startDate": "2026-10-31",
+       "startHour": "15:00:00",
+       "firstContestant": {
+        "__typename": "Team",
+        "id": 3381,
+        "name": "Chã Grande Futebol Clube",
+        "slug": "chagrande",
+        "popularName": "Chã Grande",
+        "abbreviation": "CHA",
+        "badge": "https://s.sde.globo.com/media/organizations/2026/10/07/CH_GRANDE_SVG.svg"
+       },
+       "secondContestant": {
+        "__typename": "Team",
+        "id": 345,
+        "name": "Central Sport Club",
+        "slug": "central",
+        "popularName": "Central",
+        "abbreviation": "CEN",
+        "badge": "https://s.sde.globo.com/media/organizations/2023/08/28/central-sc.svg"
+       },
+       "result": "FIRST_TEAM",
+       "winner": {
+        "id": 3381,
+        "name": "Chã Grande Futebol Clube"
+       },
+       "round": 4,
+       "scoreboard": {
+        "home": 2,
+        "away": 1,
+        "penalty": null
+       },
+       "detailedScoreboard": {
+        "firstParticipantScore": 2,
+        "secondParticipantScore": 1,
+        "details": null
+       },
+       "transmission": null,
+       "moment": "PAST",
+       "location": {
+        "name": "Municipal Ewerson Simões Barbosa",
+        "popularName": "Barbosão (PE)"
+       },
+       "isMedalDispute": false,
+       "phase": {
+        "name": "Primeiro turno (Forró)"
+       },
+       "liveWatchSources": null
+      }
+     },
+     {
+      "category": {
+       "name": "Masculino"
+      },
+      "sport": {
+       "name": "Futebol",
+       "logo": "",
+       "logoSvg": "https://s.sde.globo.com/media/sports/futebol.svg"
+      },
+      "modality": {
+       "name": "Futebol de campo"
+      },
+      "editorialData": {
+       "hasLiveCoverage": false,
+       "url": "",
+       "logo": null,
+       "video": null
+      },
+      "match": {
+       "id": 357477,
+       "startDate": "2026-11-01",
+       "startHour": "15:00:00",
+       "firstContestant": {
+        "__typename": "Team",
+        "id": 3581,
+        "name": "Pesqueira Futebol Clube",
+        "slug": "pesqueira",
+        "popularName": "Pesqueira",
+        "abbreviation": "PES",
+        "badge": "https://s.sde.globo.com/media/organizations/2026/10/07/Pesqueira_Futebol_Club_SVG.svg"
+       },
+       "secondContestant": {
+        "__typename": "Team",
+        "id": 1333,
+        "name": "Clube Atlético do Porto",
+        "slug": "porto",
+        "popularName": "Porto-PE",
+        "abbreviation": "POR",
+        "badge": "https://s.sde.globo.com/media/organizations/2024/01/10/escudo-do-porto-pe-66426.svg"
+       },
+       "result": "FIRST_TEAM",
+       "winner": {
+        "id": 3581,
+        "name": "Pesqueira Futebol Clube"
+       },
+       "round": 4,
+       "scoreboard": {
+        "home": 1,
+        "away": 0,
+        "penalty": null
+       },
+       "detailedScoreboard": {
+        "firstParticipantScore": 1,
+        "secondParticipantScore": 0,
+        "details": null
+       },
+       "transmission": null,
+       "moment": "PAST",
+       "location": {
+        "name": "Estádio Joaquim José de Brito",
+        "popularName": "Joaquim Brito"
+       },
+       "isMedalDispute": false,
+       "phase": {
+        "name": "Primeiro turno (Forró)"
+       },
+       "liveWatchSources": null
+      }
+     },
+     {
+      "category": {
+       "name": "Masculino"
+      },
+      "sport": {
+       "name": "Futebol",
+       "logo": "",
+       "logoSvg": "https://s.sde.globo.com/media/sports/futebol.svg"
+      },
+      "modality": {
+       "name": "Futebol de campo"
+      },
+      "editorialData": {
+       "hasLiveCoverage": false,
+       "url": "",
+       "logo": null,
+       "video": null
+      },
+      "match": {
+       "id": 357478,
+       "startDate": "2026-11-01",
+       "startHour": "15:00:00",
+       "firstContestant": {
+        "__typename": "Team",
+        "id": 3313,
+        "name": "Belo Jardim Futebol Clube",
+        "slug": "belo-jardim",
+        "popularName": "Belo Jardim",
+        "abbreviation": "BJD",
+        "badge": "https://s.sde.globo.com/media/organizations/2026/10/07/BELO_JARDIM_SVG.svg"
+       },
+       "secondContestant": {
+        "__typename": "Team",
+        "id": 2889,
+        "name": "Sociedade Esportiva Ypiranga Futebol Clube",
+        "slug": "ypiranga-pe",
+        "popularName": "Ypiranga-PE",
+        "abbreviation": "YPI",
+        "badge": "https://s.sde.globo.com/media/organizations/2026/10/07/Ypiranga_SVG.svg"
+       },
+       "result": "DRAW",
+       "winner": null,
+       "round": 4,
+       "scoreboard": {
+        "home": 1,
+        "away": 1,
+        "penalty": null
+       },
+       "detailedScoreboard": {
+        "firstParticipantScore": 1,
+        "secondParticipantScore": 1,
+        "details": null
+       },
+       "transmission": {
+        "__typename": "TRTransmission",
+        "id": "9666b97f-178a-4cd5-bf2d-514ef01c00f4",
+        "url": "https://ge.globo.com/pe/caruaru-regiao/futebol/campeonato-pernambucano/jogo/01-11-2026/belo-jardim-ypiranga-pe.ghtml",
+        "broadcastStatus": {
+         "label": "ENCERRADA"
+        }
+       },
+       "moment": "PAST",
+       "location": {
+        "name": "José Bezerra de Mendonça",
+        "popularName": "Sesc Mendonção"
+       },
+       "isMedalDispute": false,
+       "phase": {
+        "name": "Primeiro turno (Forró)"
+       },
+       "liveWatchSources": null
+      }
+     }
+    ]
+   },
+   {
+    "__typename": "GroupedMultisportMatch",
+    "phaseID": 22138,
+    "groupName": "Grupo Zona da Mata",
+    "groupID": 6077,
+    "order": 3,
+    "events": [
+     {
+      "category": {
+       "name": "Masculino"
+      },
+      "sport": {
+       "name": "Futebol",
+       "logo": "",
+       "logoSvg": "https://s.sde.globo.com/media/sports/futebol.svg"
+      },
+      "modality": {
+       "name": "Futebol de campo"
+      },
+      "editorialData": {
+       "hasLiveCoverage": false,
+       "url": "",
+       "logo": null,
+       "video": null
+      },
+      "match": {
+       "id": 357472,
+       "startDate": "2026-10-31",
+       "startHour": "15:00:00",
+       "firstContestant": {
+        "__typename": "Team",
+        "id": 6199,
+        "name": "Santa Fé Futebol Clube",
+        "slug": "santa-fe-pe",
+        "popularName": "Santa Fé-PE",
+        "abbreviation": "SFE",
+        "badge": "https://s.sde.globo.com/media/organizations/2026/10/07/Santa_Fe_SVG.svg"
+       },
+       "secondContestant": {
+        "__typename": "Team",
+        "id": 6710,
+        "name": "Águia Futebol Clube",
+        "slug": "aguia-pe",
+        "popularName": "Águia",
+        "abbreviation": "AFC",
+        "badge": "https://s.sde.globo.com/media/organizations/2023/10/03/aguia-pe.svg"
+       },
+       "result": "DRAW",
+       "winner": null,
+       "round": 4,
+       "scoreboard": {
+        "home": 0,
+        "away": 0,
+        "penalty": null
+       },
+       "detailedScoreboard": {
+        "firstParticipantScore": 0,
+        "secondParticipantScore": 0,
+        "details": null
+       },
+       "transmission": null,
+       "moment": "PAST",
+       "location": {
+        "name": "Municipal Cláudio Rodrigues Correia",
+        "popularName": "Cláudio Correia"
+       },
+       "isMedalDispute": false,
+       "phase": {
+        "name": "Primeiro turno (Forró)"
+       },
+       "liveWatchSources": null
+      }
+     },
+     {
+      "category": {
+       "name": "Masculino"
+      },
+      "sport": {
+       "name": "Futebol",
+       "logo": "",
+       "logoSvg": "https://s.sde.globo.com/media/sports/futebol.svg"
+      },
+      "modality": {
+       "name": "Futebol de campo"
+      },
+      "editorialData": {
+       "hasLiveCoverage": false,
+       "url": "",
+       "logo": null,
+       "video": null
+      },
+      "match": {
+       "id": 357473,
+       "startDate": "2026-10-31",
+       "startHour": "15:00:00",
+       "firstContestant": {
+        "__typename": "Team",
+        "id": 3707,
+        "name": "Centro Limoeirense de Futebol",
+        "slug": "centro-limoeirense",
+        "popularName": "Centro Limoeirense",
+        "abbreviation": "CLF",
+        "badge": "https://s.sde.globo.com/media/organizations/2026/10/07/CENTRO_LIMOEIRENSE_SVG.svg"
+       },
+       "secondContestant": {
+        "__typename": "Team",
+        "id": 4061,
+        "name": "Clube Atlético Pernambucano",
+        "slug": "atleticopernambucano",
+        "popularName": "Atlético-PE",
+        "abbreviation": "CAP",
+        "badge": "https://s.sde.globo.com/media/organizations/2026/10/07/ATLETICO_PERNAMBUCANO_SVG.svg"
+       },
+       "result": "FIRST_TEAM",
+       "winner": {
+        "id": 3707,
+        "name": "Centro Limoeirense de Futebol"
+       },
+       "round": 4,
+       "scoreboard": {
+        "home": 1,
+        "away": 0,
+        "penalty": null
+       },
+       "detailedScoreboard": {
+        "firstParticipantScore": 1,
+        "secondParticipantScore": 0,
+        "details": null
+       },
+       "transmission": null,
+       "moment": "PAST",
+       "location": {
+        "name": "Estádio José Vareda",
+        "popularName": "Varedão"
+       },
+       "isMedalDispute": false,
+       "phase": {
+        "name": "Primeiro turno (Forró)"
+       },
+       "liveWatchSources": null
+      }
+     },
+     {
+      "category": {
+       "name": "Masculino"
+      },
+      "sport": {
+       "name": "Futebol",
+       "logo": "",
+       "logoSvg": "https://s.sde.globo.com/media/sports/futebol.svg"
+      },
+      "modality": {
+       "name": "Futebol de campo"
+      },
+      "editorialData": {
+       "hasLiveCoverage": false,
+       "url": "",
+       "logo": null,
+       "video": null
+      },
+      "match": {
+       "id": 357479,
+       "startDate": "2026-11-01",
+       "startHour": "15:00:00",
+       "firstContestant": {
+        "__typename": "Team",
+        "id": 3705,
+        "name": "Serrano Futebol Clube",
+        "slug": "serrano-pe",
+        "popularName": "Serrano-PE",
+        "abbreviation": "SFC",
+        "badge": "https://s.sde.globo.com/media/organizations/2026/10/07/Serrano_PE_SVG.svg"
+       },
+       "secondContestant": {
+        "__typename": "Team",
+        "id": 3713,
+        "name": "Associação Desportiva Jaboatão dos Guararapes",
+        "slug": "jaguar",
+        "popularName": "Jaguar",
+        "abbreviation": "JAG",
+        "badge": "https://s.sde.globo.com/media/organizations/2025/01/10/jaguar.svg"
+       },
+       "result": "DRAW",
+       "winner": null,
+       "round": 4,
+       "scoreboard": {
+        "home": 2,
+        "away": 2,
+        "penalty": null
+       },
+       "detailedScoreboard": {
+        "firstParticipantScore": 2,
+        "secondParticipantScore": 2,
+        "details": null
+       },
+       "transmission": null,
+       "moment": "PAST",
+       "location": {
+        "name": "Paulo Petribu",
+        "popularName": "Paulo Petribu"
+       },
+       "isMedalDispute": false,
+       "phase": {
+        "name": "Primeiro turno (Forró)"
+       },
+       "liveWatchSources": null
+      }
+     }
+    ]
+   },
+   {
+    "__typename": "GroupedMultisportMatch",
+    "phaseID": 22138,
+    "groupName": "Grupo Região Metropolitana",
+    "groupID": 6078,
+    "order": 4,
+    "events": [
+     {
+      "category": {
+       "name": "Masculino"
+      },
+      "sport": {
+       "name": "Futebol",
+       "logo": "",
+       "logoSvg": "https://s.sde.globo.com/media/sports/futebol.svg"
+      },
+      "modality": {
+       "name": "Futebol de campo"
+      },
+      "editorialData": {
+       "hasLiveCoverage": false,
+       "url": "",
+       "logo": null,
+       "video": null
+      },
+      "match": {
+       "id": 357474,
+       "startDate": "2026-11-01",
+       "startHour": "15:00:00",
+       "firstContestant": {
+        "__typename": "Team",
+        "id": 4246,
+        "name": "Ipojuca Atlético Clube",
+        "slug": "ipojuca",
+        "popularName": "Ipojuca",
+        "abbreviation": "IPO",
+        "badge": "https://s.sde.globo.com/media/organizations/2026/03/18/ipojuca-svg.svg"
+       },
+       "secondContestant": {
+        "__typename": "Team",
+        "id": 3710,
+        "name": "Íbis Sport Club",
+        "slug": "ibis",
+        "popularName": "Íbis",
+        "abbreviation": "IBI",
+        "badge": "https://s.sde.globo.com/media/organizations/2026/10/07/Ibis_Sport_Club_SVG.svg"
+       },
+       "result": "SECOND_TEAM",
+       "winner": {
+        "id": 3710,
+        "name": "Íbis Sport Club"
+       },
+       "round": 4,
+       "scoreboard": {
+        "home": 0,
+        "away": 1,
+        "penalty": null
+       },
+       "detailedScoreboard": {
+        "firstParticipantScore": 0,
+        "secondParticipantScore": 1,
+        "details": null
+       },
+       "transmission": null,
+       "moment": "PAST",
+       "location": {
+        "name": "Municipal Antônio Dourado Neto",
+        "popularName": "Antônio Dourado"
+       },
+       "isMedalDispute": false,
+       "phase": {
+        "name": "Primeiro turno (Forró)"
+       },
+       "liveWatchSources": null
+      }
+     },
+     {
+      "category": {
+       "name": "Masculino"
+      },
+      "sport": {
+       "name": "Futebol",
+       "logo": "",
+       "logoSvg": "https://s.sde.globo.com/media/sports/futebol.svg"
+      },
+      "modality": {
+       "name": "Futebol de campo"
+      },
+      "editorialData": {
+       "hasLiveCoverage": false,
+       "url": "",
+       "logo": null,
+       "video": null
+      },
+      "match": {
+       "id": 357480,
+       "startDate": "2026-11-01",
+       "startHour": "15:00:00",
+       "firstContestant": {
+        "__typename": "Team",
+        "id": 2891,
+        "name": "América Futebol Clube (PE)",
+        "slug": "america-pe",
+        "popularName": "América-PE",
+        "abbreviation": "AME",
+        "badge": "https://s.sde.globo.com/media/organizations/2019/01/04/America_Futebol_Clube_de_Recife-PE-01.svg"
+       },
+       "secondContestant": {
+        "__typename": "Team",
+        "id": 3708,
+        "name": "Vera Cruz Futebol Clube",
+        "slug": "vera-cruz",
+        "popularName": "Vera Cruz ",
+        "abbreviation": "VCR",
+        "badge": "https://s.sde.globo.com/media/organizations/2026/10/07/Vera_Cruz_SVG.svg"
+       },
+       "result": "FIRST_TEAM",
+       "winner": {
+        "id": 2891,
+        "name": "América Futebol Clube (PE)"
+       },
+       "round": 4,
+       "scoreboard": {
+        "home": 1,
+        "away": 0,
+        "penalty": null
+       },
+       "detailedScoreboard": {
+        "firstParticipantScore": 1,
+        "secondParticipantScore": 0,
+        "details": null
+       },
+       "transmission": null,
+       "moment": "PAST",
+       "location": {
+        "name": "Estádio Grito da República / Rio Doce",
+        "popularName": "Grito da República"
+       },
+       "isMedalDispute": false,
+       "phase": {
+        "name": "Primeiro turno (Forró)"
+       },
+       "liveWatchSources": null
+      }
+     },
+     {
+      "category": {
+       "name": "Masculino"
+      },
+      "sport": {
+       "name": "Futebol",
+       "logo": "",
+       "logoSvg": "https://s.sde.globo.com/media/sports/futebol.svg"
+      },
+      "modality": {
+       "name": "Futebol de campo"
+      },
+      "editorialData": {
+       "hasLiveCoverage": false,
+       "url": "",
+       "logo": null,
+       "video": null
+      },
+      "match": {
+       "id": 357481,
+       "startDate": "2026-11-02",
+       "startHour": "15:00:00",
+       "firstContestant": {
+        "__typename": "Team",
+        "id": 9999,
+        "name": "Guarany Esporte Clube",
+        "slug": "guarany-de-camaragibe",
+        "popularName": "Guarany de Camaragibe",
+        "abbreviation": "GUA",
+        "badge": "https://s.sde.globo.com/media/organizations/2026/10/07/GUARANY_PE_SVG.svg"
+       },
+       "secondContestant": {
+        "__typename": "Team",
+        "id": 3704,
+        "name": "Sete de Setembro Esporte Clube",
+        "slug": "sete-de-setembro-pe",
+        "popularName": "Sete de Setembro-PE",
+        "abbreviation": "SET",
+        "badge": "https://s.sde.globo.com/media/organizations/2026/10/07/Sete_de_Setembro_SVG.svg"
+       },
+       "result": "FIRST_TEAM",
+       "winner": {
+        "id": 9999,
+        "name": "Guarany Esporte Clube"
+       },
+       "round": 4,
+       "scoreboard": {
+        "home": 1,
+        "away": 0,
+        "penalty": null
+       },
+       "detailedScoreboard": {
+        "firstParticipantScore": 1,
+        "secondParticipantScore": 0,
+        "details": null
+       },
+       "transmission": null,
+       "moment": "PAST",
+       "location": {
+        "name": "Paulo Petribu",
+        "popularName": "Paulo Petribu"
+       },
+       "isMedalDispute": false,
+       "phase": {
+        "name": "Primeiro turno (Forró)"
+       },
+       "liveWatchSources": null
+      }
+     }
+    ]
+   }
+  ]
+ },
+ "extensions": {
+  "cacheControl": {
+   "version": 1,
+   "hints": [
+    {
+     "path": [
+      "multisportMatchesByPhase"
+     ],
+     "maxAge": 300,
+     "scope": "PUBLIC"
+    }
+   ]
+  }
+ }
+}
