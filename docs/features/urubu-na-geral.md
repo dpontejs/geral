@@ -1,7 +1,7 @@
 # A Urubu News entra na Geral (parte 2a)
 
 - **Data:** 2026-11-11
-- **Status:** PR 1 (bolão por torcida) implementado; PRs 2 e 3 a fazer
+- **Status:** PRs 1 e 2 entregues (geral #8); virada pronta (`infra` #28 + PR da virada)
 - **ADRs:** `docs/adr/0001-geral-assume-a-urubu-news.md`
 
 ## Objetivo
@@ -38,11 +38,26 @@ ninguém recebe edição em dobro. O bolão passa a valer para todas as torcidas
    - Host `urubunews.*`/`flamengo.*`: `/` redireciona para `https://geral.diegoponte.dev/`.
    - `geral import-urubu <urubu.db>`: idempotente; ativos → `subscribers` + assinatura `flamengo`
      (mantém `confirmed_at`), última edição → `editions[flamengo]`, bolão → `team = flamengo`.
-3. **Virada** (`infra` + operação, numa janela sem jogo do Flamengo):
-   desligar o gatilho e o cron da Urubu → copiar o SQLite da Urubu para o volume da Geral e rodar o
-   import → Caddy: `urubunews.*` e `flamengo.*` apontam para `geral:8000`, com
-   `LEGACY_SUBSCRIBE_SECRET` no `.env` da Geral → `listed = true` → `make smoke` e conferir um
-   descadastro antigo e um palpite antigo.
+3. **Virada** (`infra` #28 + este PR, numa janela sem edição da Urubu vencida). Roteiro:
+   1. **Importar** (a Urubu ainda no ar): copiar o SQLite dela para o volume da Geral e importar.
+      ```bash
+      ssh -i ~/.ssh/hetzner_vps deploy@<vps> 'set -e
+        U=/opt/stacks/flamengo-news/compose.yml; G=/opt/stacks/geral/compose.yml
+        docker compose -f $U cp flamengo-news:/data/subscribers.db /tmp/urubu.db
+        docker compose -f $G cp /tmp/urubu.db geral:/data/urubu-import.db
+        docker compose -f $G exec -T geral python -m geral import-legacy /data/urubu-import.db --team flamengo'
+      ```
+   2. **Trocar o tráfego:** merge do `infra` #28 e `make configure` (Caddy aponta `urubunews.*` e
+      `flamengo.*` para a Geral, `.env` ganha `LEGACY_*`, o gatilho da Urubu para).
+   3. **Desligar o cron da Urubu:** `gh workflow disable newsletter.yml -R dpontejs/flamengo-news`.
+   4. **Importar de novo** (idempotente): o mesmo comando do passo 1 pega quem entrou ou palpitou
+      no meio do caminho.
+   5. **Mostrar a Urubu:** merge deste PR (`listed = true`); o auto-deploy leva ~2 min.
+   6. **Conferir:** `make smoke`; abrir um link de descadastro e um de palpite de um e-mail antigo da
+      Urubu (GET só pergunta); `geral due --all` na VPS lista o `flamengo` quando houver edição
+      vencida; envio em `DRY_RUN` da `flamengo` pelo Actions mostra os inscritos migrados.
+   - **Volta:** reverter `infra` #28 + `make configure`, `gh workflow enable` na Urubu e reverter
+     este PR. Os dados da Urubu não são tocados (o import só lê).
 
 ## Critérios de aceite (como testes)
 

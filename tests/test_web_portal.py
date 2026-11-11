@@ -33,7 +33,7 @@ def test_portal_scoreboard_ranks_teams_by_subscribers(client, store) -> None:
 
     rows = re.findall(r'class="name">([^<]+)</span><span class="n">(\d+)<', board)
     assert rows[:2] == [("Timbu", "2"), ("Almirante", "1")]
-    assert {name for name, _ in rows} == {"Timbu", "Almirante", "Porco", "Elefante"}
+    assert {name for name, _ in rows} == {"Timbu", "Almirante", "Porco", "Elefante", "Urubu"}
 
 
 def test_portal_scoreboard_clock_shows_brasilia_time(client) -> None:
@@ -115,9 +115,18 @@ def test_team_page_drops_the_bet_card(client) -> None:
     assert "palpite" not in page and BET_TOKEN_PLACEHOLDER not in page
 
 
-def test_unlisted_team_is_hidden_from_portal_and_signup(client, store, mailer) -> None:
-    page = client.get("/").text
-    signup = client.post("/subscribe", data={"email": "ana@x.com", "team": ["flamengo"]})
+def test_unlisted_team_is_hidden_from_portal_and_signup(store, mailer, clock) -> None:
+    # A team moving in (as the Urubu News did) stays hidden until its switch.
+    from webkit import make_client
 
-    assert "Urubu News" not in page and 'value="flamengo"' not in page
+    from geral.teams import load_teams
+
+    catalog = load_teams()
+    catalog["nautico"] = catalog["nautico"].model_copy(update={"listed": False})
+    client = make_client(store, mailer, clock, teams=catalog)
+
+    page = client.get("/").text
+    signup = client.post("/subscribe", data={"email": "ana@x.com", "team": ["nautico"]})
+
+    assert "Timbu News" not in page and 'value="nautico"' not in page
     assert signup.status_code == 400 and store.get("ana@x.com") is None

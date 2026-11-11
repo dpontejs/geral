@@ -218,8 +218,13 @@ def test_due_needs_a_team_or_all() -> None:
     assert result.exit_code == 2
 
 
-def test_due_all_skips_unlisted_teams(geral_db) -> None:
-    follow(geral_db, "ana@example.com", ["flamengo", "vasco"])
+def test_due_all_skips_unlisted_teams(geral_db, monkeypatch) -> None:
+    from geral.teams import load_teams
+
+    catalog = load_teams()
+    catalog["nautico"] = catalog["nautico"].model_copy(update={"listed": False})
+    monkeypatch.setattr(cli, "load_teams", lambda: catalog)
+    follow(geral_db, "ana@example.com", ["nautico", "vasco"])
 
     result = CliRunner().invoke(cli.app, ["due", "--all"])
 

@@ -20,11 +20,11 @@ Ordem de execução. Cada fatia vira um PR; a página da fatia fica em `docs/fea
 - [x] Decidir cota do LLM: chave paga (ver PLAN §5)
 
 ## Fatia 2a — A Urubu News entra na Geral (`docs/adr/0001-geral-assume-a-urubu-news.md`)
-- [ ] Flamengo no `teams.toml` com a marca Urubu News (logo, cor, outras modalidades)
-- [ ] Portar o bolão por torcida (cartela, palpite, ranking da temporada) e somar no placar da Geral
-- [ ] Migrar inscritos, palpites e ranking do SQLite da Urubu, com `team = flamengo`
-- [ ] O app da Geral atende `urubunews.diegoponte.dev` e `flamengo.diegoponte.dev` com os mesmos tokens (links já enviados seguem funcionando)
-- [ ] Desligar o envio da Urubu no repositório antigo só depois da primeira edição enviada pela Geral
+- [x] Flamengo no `teams.toml` com a marca Urubu News (logo, cor, outras modalidades)
+- [x] Portar o bolão por torcida (cartela, palpite, ranking da temporada) e somar no placar da Geral
+- [x] Migrar inscritos, palpites e ranking do SQLite da Urubu, com `team = flamengo`
+- [x] O app da Geral atende `urubunews.diegoponte.dev` e `flamengo.diegoponte.dev` com os mesmos tokens (links já enviados seguem funcionando)
+- [x] Desligar o envio da Urubu no repositório antigo só depois da primeira edição enviada pela Geral
 
 ## Em outro chat
 - [ ] Revisão de design do portal (tirar a "cara de IA"), na linha da identidade da Geral

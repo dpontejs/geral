@@ -61,8 +61,8 @@ accent = "#C60000"
 leagues = ["bra.2", "bra.copa_do_nordeste", "bra.copa_do_brazil"]
 league = "bra.2"
 
-# The Urubu News, moving in from its own app (docs/adr/0001). Hidden (`listed = false`: not on
-# the portal, the sign-up or `due --all`) until the switch, when its subscribers are imported.
+# The Urubu News, moved in from its own app (docs/adr/0001, docs/features/urubu-na-geral.md):
+# its subscribers, bolão and old links live in the Geral since the switch.
 [flamengo]
 sender = "news"
 name = "Flamengo"
@@ -75,7 +75,7 @@ keywords = ["flamengo", "fla", "mengão", "rubro-negro", "rubro-negra", "rubro-n
 accent = "#A51C24"
 leagues = ["bra.1", "conmebol.libertadores", "bra.copa_do_brazil", "bra.camp.carioca", "bra.supercopa_do_brazil", "fifa.cwc"]
 league = "bra.1"
-listed = false
+listed = true
 [flamengo.other_sports]
 "Basquete" = '"Flamengo" basquete OR NBB'
 "Vôlei" = '"Sesc-Flamengo" OR "Flamengo" vôlei'
