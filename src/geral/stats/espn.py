@@ -213,6 +213,10 @@ class ESPNStatsClient:
             league=self.team.league_name,
         )
 
+    @property
+    def table_name(self) -> str | None:
+        return self.team.league_name
+
     def get_standings(self, league: str | None = None) -> list[StandingRow]:
         """Table of `league` (default: the team's); for group competitions only our group."""
         league = league or self.team.league

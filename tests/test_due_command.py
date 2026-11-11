@@ -5,9 +5,11 @@ import pytest
 from typer.testing import CliRunner
 
 import geral.__main__ as cli
+from geral.config import get_settings
 from geral.schedule import Fixture
 from geral.send.recipients import LatestEdition
 from geral.stats.espn import StatsUnavailable
+from geral.teams import get_team
 
 TZ = ZoneInfo("America/Sao_Paulo")
 BAHIA = Fixture(
@@ -20,6 +22,7 @@ BAHIA = Fixture(
     away="Flamengo",
 )
 LAST_SENT = datetime(2026, 10, 16, 19, 11, tzinfo=TZ)
+REAL_FIXTURES = cli._fixtures  # conftest swaps it for an empty calendar in every test
 
 
 @pytest.fixture
@@ -229,3 +232,19 @@ def test_due_all_skips_unlisted_teams(geral_db, monkeypatch) -> None:
     result = CliRunner().invoke(cli.app, ["due", "--all"])
 
     assert [line.split("\t")[0] for line in result.stdout.splitlines()] == ["vasco"]
+
+
+def test_due_fixtures_come_from_espn_and_ge(monkeypatch) -> None:
+    ge_match = BAHIA.model_copy(update={"match_id": "350926", "league": "ge:Potiguar"})
+
+    class Sources:
+        def get_fixtures(self, now):
+            return [ge_match]
+
+    seen = []
+    monkeypatch.setattr(cli, "stats_client_for", lambda team, **kw: seen.append(team) or Sources())
+
+    fixtures = REAL_FIXTURES(get_team("abc"), get_settings(), datetime(2026, 3, 20, tzinfo=TZ))
+
+    assert fixtures == [ge_match]
+    assert seen == [get_team("abc")]

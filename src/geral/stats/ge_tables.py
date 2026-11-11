@@ -244,7 +244,11 @@ class GETablesClient:
                 if index == current:
                     table = data
             for item in raw:
-                game = self._game(item, name)
+                try:
+                    game = self._game(item, name)
+                except (KeyError, TypeError, ValueError) as e:  # e.g. a knockout tie still TBD
+                    logger.info("Skipping ge game %s: %s", item.get("id"), e)
+                    continue
                 if game is not None:
                     games[game.id] = game
         return Competition(name=name, games=list(games.values()), table=table)

@@ -1,3 +1,4 @@
+import json
 from datetime import datetime
 from pathlib import Path
 from zoneinfo import ZoneInfo
@@ -229,3 +230,16 @@ def test_ge_api_down_other_methods_degrade(ge) -> None:
     assert client.get_standings() == []
     assert client.get_moment(end, []) is None
     assert client.get_preview("350926", "ge:Potiguar") is None
+
+
+def test_ge_undefined_knockout_game_is_skipped(ge) -> None:
+    final = json.loads(body("potiguar_final.json"))
+    tbd = final["secao"][0]["chave"][0]["jogos"][0]
+    tbd["equipes"] = {"mandante": None, "visitante": None}
+    ge.get(f"{POTIGUAR}/final-potiguar-2026/classificacao/").mock(
+        return_value=httpx.Response(200, json=final)
+    )
+
+    fixtures = make_client().get_fixtures(datetime(2026, 1, 1, tzinfo=TZ))
+
+    assert len(fixtures) == 10

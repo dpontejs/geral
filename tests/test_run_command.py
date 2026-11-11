@@ -89,7 +89,7 @@ def sent(ids: list[str]) -> httpx.Response:
 def use(monkeypatch, articles: list[Article], match: MatchStats | None) -> None:
     monkeypatch.setattr(pipeline, "collect_articles", lambda edition, settings: articles)
     monkeypatch.setattr(pipeline, "collect_candidates", lambda edition, settings: ([], []))
-    monkeypatch.setattr(pipeline, "ESPNStatsClient", lambda *args, **kwargs: FakeStats(match))
+    monkeypatch.setattr(pipeline, "stats_client_for", lambda *args, **kwargs: FakeStats(match))
 
 
 @respx.mock
@@ -203,7 +203,7 @@ def test_run_writes_report_to_github_step_summary(env, tmp_path) -> None:
 
     env.setattr(pipeline, "collect_articles", collect)
     env.setattr(pipeline, "collect_candidates", lambda edition, settings: ([], []))
-    env.setattr(pipeline, "ESPNStatsClient", lambda *args, **kwargs: FakeStats(MATCH))
+    env.setattr(pipeline, "stats_client_for", lambda *args, **kwargs: FakeStats(MATCH))
     respx.post(RESEND_URL).mock(return_value=sent(["email_9"]))
 
     result = CliRunner().invoke(

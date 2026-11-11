@@ -33,7 +33,8 @@ from geral.send.resend_sender import (
     SendError,
     build_subject,
 )
-from geral.stats.espn import ESPNStatsClient, StatsUnavailable
+from geral.stats.combined import stats_client_for
+from geral.stats.espn import StatsUnavailable
 from geral.stats.table import standings_window
 from geral.summarizer.client import LLMError
 from geral.teams import Team, UnknownTeam, get_team, load_teams
@@ -102,7 +103,7 @@ def stats(
     club = _team(team)
     resolved = _resolve(club, edition, date)
     settings = get_settings()
-    client = ESPNStatsClient(club, tz_name=settings.TIMEZONE)
+    client = stats_client_for(club, tz_name=settings.TIMEZONE)
     console = Console(width=120)
     console.rule(resolved.label)
 
@@ -141,7 +142,7 @@ def stats(
 
     rows = standings_window(client.get_standings())
     if rows:
-        table = Table(title=club.league_name)
+        table = Table(title=getattr(client, "table_name", None) or club.league_name)
         for column in ("#", "Time", "P", "J", "V", "E", "D", "SG"):
             table.add_column(column)
         for r in rows:
@@ -531,8 +532,7 @@ def _now() -> datetime:
 
 
 def _fixtures(team: Team, settings, now: datetime) -> list[Fixture]:
-    client = ESPNStatsClient(team, tz_name=settings.TIMEZONE)
-    return client.get_fixtures(now)
+    return stats_client_for(team, tz_name=settings.TIMEZONE).get_fixtures(now)
 
 
 def _published_topics(settings, team: Team) -> list[str]:

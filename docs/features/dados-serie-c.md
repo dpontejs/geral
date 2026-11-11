@@ -1,7 +1,7 @@
 # Jogos e tabela das Séries C, D e estaduais pelo ge (parte 2b.1)
 
 - **Data:** 2026-11-11
-- **Status:** proposta
+- **Status:** implementada (aguardando PR)
 - **ADRs:** —
 
 ## Objetivo
@@ -50,25 +50,30 @@ ge_id = 350  # equipe_id do ge (classificação/jogos)
 
 ## Critérios de aceite (como testes)
 
-- [ ] `test_ge_tables_require_ge_id`: dado `ge_tables` sem `ge_id`, quando carrega, então erro.
-- [ ] `test_ge_fixtures_from_points_groups_and_knockout`: dadas as fases do Potiguar (respx), quando busca os jogos, então vêm os do ABC dos três formatos, com `league="ge:Potiguar"`.
-- [ ] `test_ge_reads_tuuid_from_page_each_run`: dado o HTML da página, quando busca, então a API é chamada com o `tUUID` dela.
-- [ ] `test_ge_last_match_has_score_and_competition`: dado um jogo encerrado na janela, quando busca o último jogo, então vem o placar, o nome do campeonato e `is_home`.
-- [ ] `test_ge_next_match` e `test_ge_unplayed_match_is_pre_without_time_valid`.
-- [ ] `test_ge_standings_our_group_only` e `test_ge_knockout_has_no_standings`.
-- [ ] `test_ge_page_down_raises_unavailable_on_fixtures` e `..._other_methods_degrade` (None/[]).
-- [ ] `test_combined_fixtures_merge_espn_and_ge` e `test_combined_unavailable_when_one_source_fails`.
-- [ ] `test_combined_last_match_is_the_most_recent_of_both` e `test_combined_preview_routes_by_league`.
-- [ ] `test_stats_client_for_team_without_ge_tables_is_espn`.
-- [ ] `test_due_all_plans_ge_matches`: dado um jogo do Potiguar amanhã, quando roda `due --all`, então sai o pré-jogo do ABC.
+- [x] `test_ge_tables_require_ge_id`: dado `ge_tables` sem `ge_id`, quando carrega, então erro.
+- [x] `test_ge_fixtures_from_points_groups_and_knockout`: dadas as fases do Potiguar (respx), quando busca os jogos, então vêm os do ABC dos três formatos, com `league="ge:Potiguar"`.
+- [x] `test_ge_reads_tuuid_from_page_each_run`: dado o HTML da página, quando busca, então a API é chamada com o `tUUID` dela.
+- [x] `test_ge_last_match_has_score_and_competition`: dado um jogo encerrado na janela, quando busca o último jogo, então vem o placar, o nome do campeonato e `is_home`.
+- [x] `test_ge_next_match` e `test_ge_unplayed_match_is_pre_without_time_valid`.
+- [x] `test_ge_standings_our_group_only` e `test_ge_knockout_has_no_standings`.
+- [x] `test_ge_page_down_raises_unavailable_on_fixtures` e `test_ge_api_down_other_methods_degrade` (None/[]).
+- [x] `test_ge_undefined_knockout_game_is_skipped`: confronto ainda sem times não derruba a agenda.
+- [x] `test_combined_fixtures_merge_espn_and_ge` e `test_combined_unavailable_when_one_source_fails`.
+- [x] `test_combined_last_match_is_the_most_recent_of_both` e `test_combined_preview_routes_by_league`.
+- [x] `test_stats_client_for_team_without_ge_tables_is_espn`.
+- [x] `test_due_fixtures_come_from_espn_and_ge`: a agenda do `due` usa `stats_client_for`.
+- [x] `test_render_table_and_campaign_use_the_table_competition` e `test_build_newsletter_keeps_the_table_competition`.
 
 ## Verificação ponta a ponta
 
 ```bash
 uv run ruff check . && uv run pytest
-uv run geral stats --team abc --date 2026-03-22     # final do Potiguar 2026: 1x1 com o América-RN
-uv run geral preview --team abc --edition post --date 2026-03-22 --out out/abc.html
+uv run geral stats --team abc        # hoje: sem jogo do ABC no ge (Série C 2026 sem ele)
 ```
+
+A agenda só olha a semana passada em diante, então data antiga não resolve edição (vale também
+para a ESPN). O Potiguar 2026 foi conferido chamando o `GETablesClient` com o relógio em
+22/03/2026: 11 jogos, último jogo 1x1 com o América-RN, forma, prévia e confronto direto.
 
 ## Riscos e dúvidas abertas
 

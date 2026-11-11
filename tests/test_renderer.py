@@ -690,3 +690,16 @@ def test_bolao_card_uses_the_team_name() -> None:
 
     card = between_markers(html)
     assert "gols do Náutico" in card and "c=nautico" in card and "Flamengo" not in card
+
+
+def test_render_table_and_campaign_use_the_table_competition() -> None:
+    newsletter = analysis_newsletter().model_copy(
+        update={"team": get_team("abc"), "table_name": "Série C"}
+    )
+    newsletter.moment = newsletter.moment.model_copy(update={"league": "Série C"})
+    newsletter.standings = [row(1, "ABC", True), row(2, "Time 2")]
+
+    html, _ = render(newsletter)
+
+    assert "Classificação · Série C" in html
+    assert "Campanha na Série C" in html

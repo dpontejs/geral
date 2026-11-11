@@ -26,7 +26,7 @@ Partida: {{ m.home }} {{ m.home_goals }} x {{ m.away_goals }} {{ m.away }} ({{ m
 {% if moment %}{% if moment.form %}Forma recente do {{ team.name }} (mais recente primeiro):
 {% for f in moment.form %}- {{ f.result }} {{ f.score }} {{ f.opponent }} ({{ f.competition }})
 {% endfor %}{% endif %}
-{% if moment.standing %}{{ team.league_name }}: {{ moment.standing.position }}º, {{ moment.standing.points }} pontos em {{ moment.standing.played }} jogos.
+{% if moment.standing %}{{ moment.league or team.league_name }}: {{ moment.standing.position }}º, {{ moment.standing.points }} pontos em {{ moment.standing.played }} jogos.
 {% endif %}
 {% if moment.gap %}Na tabela: {{ moment.gap }}.
 {% endif %}
