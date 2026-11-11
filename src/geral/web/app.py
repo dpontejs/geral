@@ -130,6 +130,20 @@ def create_app(
     def index(request: Request):
         return portal(request)
 
+    @app.get("/t/{team}", response_class=HTMLResponse)
+    def team_page(request: Request, team: str):
+        """The team's latest edition, to read on the site; personal links point to the portal."""
+        edition = store.latest_edition(team) if team in catalog else None
+        if edition is None:
+            return message(
+                request,
+                "Edição não encontrada",
+                "Essa torcida ainda não tem edição publicada. Volte para a Geral e se inscreva "
+                "para receber a primeira.",
+                status=404,
+            )
+        return HTMLResponse(edition.html.replace(UNSUBSCRIBE_PLACEHOLDER, f"{public_url}/"))
+
     @app.get("/subscribe")
     def subscribe_reload():
         # Reloading the "check your inbox" page, or a link preview, lands here.
