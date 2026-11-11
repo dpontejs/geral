@@ -9,6 +9,7 @@ import hmac
 import logging
 import os
 import re
+import unicodedata
 from collections import defaultdict, deque
 from collections.abc import Callable
 from datetime import UTC, datetime, timedelta, timezone
@@ -31,6 +32,7 @@ from geral.web.bolao import TZ, BolaoStore
 from geral.web.mailer import Mailer, MailError, mailer_from_settings
 from geral.web.scoreboard import animation_svg
 from geral.web.store import RequestResult, SubscriberStore, normalize
+from geral.web.team_requests import TeamRequestStore, network, team_key
 from geral.web.tokens import make_token, read_token
 from geral.web.welcome import add_welcome
 
@@ -47,6 +49,11 @@ CONFIRMATIONS_PER_DAY = 30  # global cap: protects the Resend quota and the doma
 MAX_EMAIL_LENGTH = 254
 WELCOME_PREFIX = "Boas-vindas! "
 MIN_NICKNAME, MAX_NICKNAME = 3, 20
+# Team requests: a name as people write it (accents, dots, apostrophes), and a few per IP.
+TEAM_NAME_RE = re.compile(r"^[\w .'-]+$")
+MIN_TEAM_NAME, MAX_TEAM_NAME = 2, 40
+REQUESTS_PER_IP = 10
+TOP_REQUESTS = 10
 SCORE_RE = re.compile(r"^(\d)-(\d)$")
 # Shown in every follower's e-mail: letters, digits, spaces, hyphens and apostrophes only (no
 # links, no line breaks).
@@ -135,6 +142,7 @@ def create_app(
     now: Callable[[], datetime] = lambda: datetime.now(UTC),
     teams: dict[str, Team] | None = None,
     bolao: BolaoStore | None = None,
+    team_requests: TeamRequestStore | None = None,
 ) -> FastAPI:
     settings = settings or get_settings()
     secret = settings.SUBSCRIBE_SECRET
@@ -143,6 +151,7 @@ def create_app(
     store = store or SubscriberStore(settings.SUBSCRIBERS_DB)
     mailer = mailer or mailer_from_settings(settings)
     bolao = bolao or BolaoStore(store.path)  # same SQLite: the ranking joins the subscriptions
+    team_requests = team_requests or TeamRequestStore(store.path)
     catalog = teams if teams is not None else load_teams()
     # Teams people can see and join; unlisted ones (moving in) still work for links and the API.
     listed = {slug: team for slug, team in catalog.items() if team.listed}
@@ -155,6 +164,14 @@ def create_app(
         return read_token(legacy_secret, purpose, token, now()) if legacy_secret else None
 
     limiter = RateLimiter(SIGNUPS_PER_IP, SIGNUP_WINDOW)
+    request_limiter = RateLimiter(REQUESTS_PER_IP, SIGNUP_WINDOW)
+    # A request for a team already here points to it, by slug, name or newsletter (nicknames
+    # are often shared by several clubs). Teams moving in count as here too.
+    known = {
+        team_key(word): team
+        for team in catalog.values()
+        for word in (team.slug, team.name, team.newsletter)
+    }
     public_url = settings.PUBLIC_URL.rstrip("/")
 
     def link(path: str, purpose: str, email: str) -> str:
@@ -179,6 +196,7 @@ def create_app(
             counts=counts,
             ranking=sorted(listed.values(), key=lambda t: (-counts.get(t.slug, 0), t.newsletter)),
             clock=now().astimezone(BRASILIA),
+            top_request=next(iter(team_requests.top(1)), None),  # only past the public minimum
             **context,
         )
 
@@ -772,6 +790,65 @@ def create_app(
         if unknown := [q for q in body.palpites if q not in known]:
             return JSONResponse({"detail": f"Jogador desconhecido: {unknown[0]}"}, status_code=422)
         return quem_e.judge(data, quem_e.by_number(players, number), body.palpites)
+
+    @app.get("/pedir", response_class=HTMLResponse)
+    def request_page(request: Request):
+        return page(request, "pedir.html.j2", top=team_requests.top(TOP_REQUESTS))
+
+    @app.post("/pedir", response_class=HTMLResponse)
+    async def request_team(request: Request):
+        form = await request.form()
+        name = " ".join(unicodedata.normalize("NFC", str(form.get("team", ""))).split())
+        email = normalize(str(form.get("email", "")))
+
+        def again(error: str) -> HTMLResponse:
+            top = team_requests.top(TOP_REQUESTS)
+            return page(request, "pedir.html.j2", 400, error=error, team=name, email=email, top=top)
+
+        if form.get("website"):  # honeypot: only bots fill the hidden field
+            return message(request, "Pedido anotado", "Valeu! Seu pedido foi anotado.")
+        valid_name = MIN_TEAM_NAME <= len(name) <= MAX_TEAM_NAME and TEAM_NAME_RE.match(name)
+        if not valid_name:
+            return again("Escreva o nome do time (de 2 a 40 letras).")
+        if not team_key(name):
+            return again("Escreva o nome com letras do nosso alfabeto, como em português.")
+        if email and not is_valid_email(email):
+            return again("Digite um e-mail válido, ou deixe em branco.")
+        if team := known.get(team_key(name)):
+            return message(
+                request,
+                "Já tem!",
+                f"O {team.name} já está na Geral: é a {team.newsletter}.",
+                link_url=f"/t/{team.slug}",
+                link_label=f"Ver a {team.newsletter}",
+            )
+        voter_network = network(request.client.host if request.client else "unknown")
+        if not request_limiter.allow(voter_network, now()):
+            return message(
+                request, "Muitos pedidos", "Espere um pouco e tente de novo.", status=429
+            )
+        voter = hmac.new(secret.encode(), voter_network.encode(), "sha256").hexdigest()
+        team_requests.add(name, voter, email or None, now())
+        position, requested = team_requests.position(team_key(name)) or (0, None)
+        votes = requested.votes if requested else 1
+        text = (
+            f"{requested.name if requested else name} está em {position}º entre os mais pedidos,"
+            f" com {votes} pedido{'s' if votes != 1 else ''}."
+        )
+        if email:
+            text += " Você recebe um e-mail só, quando a torcida nascer."
+        return message(
+            request, "Pedido anotado", text, link_url="/pedir", link_label="Ver os mais pedidos"
+        )
+
+    @app.get("/api/team-requests")
+    def list_team_requests(request: Request):
+        if not authorized(request):
+            return unauthorized()
+        return [
+            {"key": t.key, "name": t.name, "votes": t.votes, "emails": t.emails}
+            for t in team_requests.top(limit=10_000, min_votes=1)
+        ]
 
     @app.get("/version.json")
     def version():

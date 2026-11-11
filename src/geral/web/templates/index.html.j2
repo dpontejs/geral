@@ -125,11 +125,13 @@
         <p>O futebol brasileiro da semana numa edição só: resultados, tabela e o que importa, da Série A à D.</p>
         <div class="series"><span>SÉRIE A</span><span>B</span><span>C</span><span>D</span><span>ESTADUAIS</span></div>
       </div>
-      <div class="board mini">
-        <span class="lamp tag">Em breve</span>
+      <a class="board mini play-card" href="/pedir">
+        <span class="lamp tag">Novo · peça a sua</span>
         <span class="lamp title">Seu time?</span>
         <p>Peça a sua torcida. Quando juntar gente, a gente acende a newsletter e te avisa.</p>
-      </div>
+        {% if top_request %}<p>Mais pedido: <b>{{ top_request.name }}</b> ({{ top_request.votes }})</p>{% endif %}
+        <span class="go">Pedir →</span>
+      </a>
     </div>
   </div>
 </section>

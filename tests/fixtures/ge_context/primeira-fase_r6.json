@@ -1,0 +1,52 @@
+{
+ "data": {
+  "multisportMatchesByPhase": [
+   {
+    "__typename": "GroupedMultisportMatch",
+    "phaseID": 22138,
+    "groupName": "Grupo Sertão",
+    "groupID": 6075,
+    "order": 1,
+    "events": null
+   },
+   {
+    "__typename": "GroupedMultisportMatch",
+    "phaseID": 22138,
+    "groupName": "Grupo Agreste",
+    "groupID": 6076,
+    "order": 2,
+    "events": null
+   },
+   {
+    "__typename": "GroupedMultisportMatch",
+    "phaseID": 22138,
+    "groupName": "Grupo Zona da Mata",
+    "groupID": 6077,
+    "order": 3,
+    "events": null
+   },
+   {
+    "__typename": "GroupedMultisportMatch",
+    "phaseID": 22138,
+    "groupName": "Grupo Região Metropolitana",
+    "groupID": 6078,
+    "order": 4,
+    "events": null
+   }
+  ]
+ },
+ "extensions": {
+  "cacheControl": {
+   "hints": [
+    {
+     "maxAge": 300,
+     "path": [
+      "multisportMatchesByPhase"
+     ],
+     "scope": "PUBLIC"
+    }
+   ],
+   "version": 1
+  }
+ }
+}

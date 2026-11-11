@@ -34,7 +34,11 @@ class CombinedStatsClient:
         return self.team.league_name if self._espn_table else self.ge.table_name
 
     def get_fixtures(self, now: datetime) -> list[Fixture]:
-        """Both calendars; either one unknown makes the whole calendar unknown."""
+        """Both calendars; either one unknown makes the whole calendar unknown.
+
+        Going on without ge could plan a news edition over a state-league pre-game and lose it
+        for good; unknown only delays it, since `due` tries again in 10 minutes.
+        """
         fixtures = self.espn.get_fixtures(now) + self.ge.get_fixtures(now)
         return sorted(fixtures, key=lambda f: f.kickoff)
 

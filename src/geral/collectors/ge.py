@@ -5,6 +5,7 @@ from urllib.parse import urlsplit
 from zoneinfo import ZoneInfo
 
 import httpx
+from dateutil.parser import isoparse
 from selectolax.lexbor import LexborHTMLParser
 
 from geral.collectors.base import create_http_client
@@ -12,9 +13,18 @@ from geral.models import Article
 
 logger = logging.getLogger(__name__)
 
+# The team page loads its news from this feed (one instance per page, read on every run).
+FEED_INSTANCE = re.compile(
+    r"falkor-cda\.bastian\.globo\.com/tenants/ge/instances/([0-9a-f-]{36})/posts"
+)
+FEED_PAGE_URL = (
+    "https://falkor-cda.bastian.globo.com/tenants/ge/instances/{instance}/posts/page/{n}"
+)
+MAX_FEED_PAGES = 3
+
 
 class GECollector:
-    """Collector that scrapes latest news headlines from the team's ge.globo page."""
+    """The team's news on ge: the page's JSON feed, or the page's headlines when it fails."""
 
     name: str = "ge"
 
@@ -46,7 +56,50 @@ class GECollector:
             logger.error("Failed to fetch ge.globo page %s: %s", self.url, e)
             return []
 
+        instance = FEED_INSTANCE.search(html)
+        if instance is not None:
+            try:
+                return self.collect_feed(client, instance.group(1), start, end)
+            except Exception as e:
+                logger.warning("ge feed failed for %s, reading the page instead: %s", self.url, e)
         return self.parse_html(html, start, end)
+
+    def collect_feed(
+        self, client: httpx.Client, instance: str, start: datetime, end: datetime
+    ) -> list[Article]:
+        """Feed items published in [start, end], paging until the page's last item is older."""
+        articles: dict[str, Article] = {}
+        for n in range(1, MAX_FEED_PAGES + 1):
+            response = client.get(FEED_PAGE_URL.format(instance=instance, n=n))
+            response.raise_for_status()
+            items = response.json().get("items") or []
+            dates = []
+            for item in items:
+                article = self._feed_article(item)
+                if article is None:
+                    continue
+                dates.append(article.published_at)
+                if start <= article.published_at <= end:
+                    articles.setdefault(article.url, article)
+            # Pinned posts open the page; the last item is the oldest of the regular ones.
+            if not items or not dates or dates[-1] < start:
+                break
+        return list(articles.values())
+
+    def _feed_article(self, item: dict) -> Article | None:
+        content = item.get("content") or {}
+        url, title, published = content.get("url"), content.get("title"), item.get("publication")
+        if not (url and title and published):
+            return None  # videos and other blocks without a story
+        image = ((content.get("image") or {}).get("sizes") or {}).get("L") or {}
+        return Article(
+            url=url,
+            title=title.strip(),
+            source="ge",
+            published_at=isoparse(published).astimezone(self.tz),
+            summary_hint=content.get("summary") or None,
+            image_url=image.get("url"),
+        )
 
     def parse_html(self, html: str, start: datetime, end: datetime) -> list[Article]:
         """Parse HTML string and extract Article models within [start, end]."""

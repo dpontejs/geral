@@ -1,0 +1,471 @@
+{
+ "id": "4b8faafe-65bb-4857-8f02-b73ede244276",
+ "items": [
+  {
+   "id": "35606cb2-aeea-4988-85f6-46d047fb3a5d",
+   "feedId": "c98f42ef-8719-45f1-bbb9-d896d9512323",
+   "type": "materia",
+   "lastPublication": "2026-10-28T21:58:21.942Z",
+   "publication": "2026-10-28T21:58:21.942Z",
+   "content": {
+    "identifier": "https://apis.backstage.globoi.com/api/v2/multi-content/ge/9d80782d-f63e-457b-9809-d27806cd95c3",
+    "image": {
+     "cropOptions": {
+      "landscape": {
+       "bottom": 739,
+       "left": 0,
+       "right": 1280,
+       "top": 19
+      },
+      "portrait": {
+       "bottom": 853,
+       "left": 240,
+       "right": 1093,
+       "top": 0
+      },
+      "type": "landscape and portrait"
+     },
+     "rightsHolder": "Divulgação/Portuguesa SAF",
+     "size": {
+      "height": 853,
+      "width": 1280
+     },
+     "sizes": {
+      "L": {
+       "height": 608,
+       "url": "https://s2-ge.glbimg.com/TOfQssZqcy2vG16N1ESoM3ZdDI0=/0x19:1280x739/1080x608/smart/filters:max_age(3600)/https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/g/u/JvAfgCSWex196MqpOfrA/gui-santos.jpeg",
+       "width": 1080
+      }
+     },
+     "url": "https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/g/u/JvAfgCSWex196MqpOfrA/gui-santos.jpeg"
+    },
+    "missingFields": false,
+    "section": "abc",
+    "summary": "Novo reforço alvinegro para a temporada 2027 também participou de campanha do título da Copa Paulista 2026 com o São José-SP",
+    "title": "ABC anuncia atacante Guilherme Santos, ex-Portuguesa e Botafogo-PB",
+    "type": "materia",
+    "url": "https://ge.globo.com/rn/futebol/times/abc/noticia/2026/10/28/abc-anuncia-atacante-guilherme-santos-ex-portuguesa-e-botafogo-pb.ghtml",
+    "video": null
+   },
+   "draft": false,
+   "area": "",
+   "postHash": "6fd02b40-d31a-11f1-9d2d-b17632395a55",
+   "parentId": null,
+   "children": null,
+   "isPublishing": false,
+   "created": "2026-10-28T21:56:32.464Z",
+   "modified": "2026-10-28T21:58:22.077Z",
+   "tenantId": "ge",
+   "versionId": "1d3c0599-21e9-4d33-9cda-2eb6314de5cb",
+   "age": 1191960,
+   "kind": "editorial"
+  },
+  {
+   "id": "139945e4-9e6f-47ee-9419-07aa58f37807",
+   "feedId": "c98f42ef-8719-45f1-bbb9-d896d9512323",
+   "type": "materia",
+   "lastPublication": "2026-10-16T18:27:25.758Z",
+   "publication": "2026-10-16T18:27:25.758Z",
+   "content": {
+    "identifier": "https://apis.backstage.globoi.com/api/v2/multi-content/ge/cbb1a00a-25ed-42e3-a868-6d5ff4d8e8d8",
+    "image": {
+     "cropOptions": {
+      "landscape": {
+       "bottom": 921,
+       "left": 0,
+       "right": 1638,
+       "top": 0
+      },
+      "portrait": {
+       "bottom": 1391,
+       "left": 122,
+       "right": 1513,
+       "top": 0
+      },
+      "type": "landscape and portrait"
+     },
+     "rightsHolder": "Guilherme Drovas/ABC",
+     "size": {
+      "height": 1391,
+      "width": 1638
+     },
+     "sizes": {
+      "L": {
+       "height": 608,
+       "url": "https://s2-ge.glbimg.com/Be0_qRggPoikskNfBbcnPSdqwr0=/0x0:1638x921/1080x608/smart/filters:max_age(3600)/https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/Y/h/LaOAZzTGiC5j2Jg9BT4Q/jonathan.jpg",
+       "width": 1080
+      }
+     },
+     "url": "https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/Y/h/LaOAZzTGiC5j2Jg9BT4Q/jonathan.jpg"
+    },
+    "missingFields": false,
+    "section": "abc",
+    "summary": "Volante de 24 anos chegou ao Alvinegro para a disputa da Série D e foi titular na campanha do acesso",
+    "title": "ABC anuncia permanência do volante Jonathan para 2027",
+    "type": "materia",
+    "url": "https://ge.globo.com/rn/futebol/times/abc/noticia/2026/10/16/abc-anuncia-permanencia-do-volante-jonathan-para-2027.ghtml",
+    "video": null
+   },
+   "draft": false,
+   "area": "",
+   "postHash": "e2f74170-c98e-11f1-b558-57b11304b0bc",
+   "parentId": null,
+   "children": null,
+   "isPublishing": false,
+   "created": "2026-10-16T18:24:55.630Z",
+   "modified": "2026-10-16T18:27:25.885Z",
+   "tenantId": "ge",
+   "versionId": "f94c00b7-ad43-4c90-a0ac-5d73acb677f5",
+   "age": 2241416,
+   "kind": "editorial"
+  },
+  {
+   "id": "58e09b6ea19530f52e8e028e50a21621",
+   "feedId": "64a95829-60be-4ce6-ad74-e76599b0c532",
+   "type": "materia",
+   "lastPublication": "2026-11-11T16:44:26.81Z",
+   "publication": "2026-11-11T16:42:15.244Z",
+   "content": {
+    "category": "8f83055d-7069-4078-a689-d74910dca3a5",
+    "chapeu": {
+     "label": "",
+     "image": {}
+    },
+    "image": {
+     "url": "https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/C/l/sQDoqaT3uJvj45O9bYfA/55291783164-1a8d274350-3k.jpg",
+     "cropOptions": {},
+     "sizes": {
+      "L": {
+       "width": 1080,
+       "height": 608,
+       "url": "https://s2-ge.glbimg.com/jdINauXqxqGa8_EnLsytcAXZloc=/1080x608/top/smart/https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/C/l/sQDoqaT3uJvj45O9bYfA/55291783164-1a8d274350-3k.jpg"
+      }
+     }
+    },
+    "recommendationSummary": "Ídolo do ABC, atacante de 38 anos foi decisivo na campanha do acesso à Série C em 2026 e chegou a 112 gols pelo Alvinegro, tornando-se o terceiro maior artilheiro do clube",
+    "recommendationTitle": "Wallyson renova contrato com ABC para a temporada 2027",
+    "section": "abc",
+    "summary": "Ídolo do ABC, atacante de 38 anos foi decisivo na campanha do acesso à Série C em 2026 e chegou a 112 gols pelo Alvinegro, tornando-se o terceiro maior artilheiro da história do clube",
+    "title": "Wallyson renova contrato com ABC para a temporada 2027",
+    "url": "https://ge.globo.com/rn/futebol/times/abc/noticia/2026/11/11/wallyson-renova-contrato-com-abc-para-a-temporada-2027.ghtml",
+    "video": null
+   },
+   "draft": false,
+   "area": "",
+   "parentId": null,
+   "children": null,
+   "isPublishing": false,
+   "created": "2026-11-11T16:42:15.244Z",
+   "modified": "2026-11-11T16:44:26.810Z",
+   "tenantId": "ge",
+   "age": 1326,
+   "kind": "automatic"
+  },
+  {
+   "id": "83be4898bc35257890c50e3155d3fb45",
+   "feedId": "64a95829-60be-4ce6-ad74-e76599b0c532",
+   "type": "materia",
+   "lastPublication": "2026-11-06T15:20:54.419Z",
+   "publication": "2026-11-06T15:14:44.226Z",
+   "content": {
+    "category": "db68e23e-7486-4cf2-baa0-946122d871a8",
+    "chapeu": {
+     "label": "",
+     "image": {}
+    },
+    "image": {
+     "url": "https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2023/u/u/lp0n3VSyy3bxTgoPh4yg/bismarck-valendo.jpg",
+     "cropOptions": {},
+     "sizes": {
+      "L": {
+       "width": 1080,
+       "height": 608,
+       "url": "https://s2-ge.glbimg.com/zBcpk5d78BRx4-JaD44KJ06Ebjo=/1080x608/top/smart/https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2023/u/u/lp0n3VSyy3bxTgoPh4yg/bismarck-valendo.jpg"
+      }
+     }
+    },
+    "recommendationSummary": "Ailton Lucas disse que estava dormindo quando foi informado que o filho havia sido baleado e morto em Natal. Pai lembra que jogador era muito querido por comunidade onde cresceu.",
+    "recommendationTitle": "Pai de Bismarck lamenta morte do filho e relembra sonho não realizado ",
+    "section": "rn",
+    "summary": "Ailton Lucas disse que estava dormindo quando foi informado que o filho havia sido baleado e morto em Natal. Pai lembra que jogador era muito querido pela família e por comunidade onde cresceu",
+    "title": "Pai de Bismarck lamenta morte do filho e relembra sonho não realizado de vê-lo jogar no ABC",
+    "url": "https://ge.globo.com/rn/noticia/2026/11/06/pai-de-bismarck-lamenta-morte-do-filho-e-relembra-sonho-nao-realizado-de-ve-lo-jogar-no-abc.ghtml",
+    "video": null
+   },
+   "draft": false,
+   "area": "",
+   "parentId": null,
+   "children": null,
+   "isPublishing": false,
+   "created": "2026-11-06T15:14:44.226Z",
+   "modified": "2026-11-06T15:20:54.419Z",
+   "tenantId": "ge",
+   "age": 438577,
+   "kind": "automatic"
+  },
+  {
+   "id": "72dd2ecfddc5a0ea3ea3b5fc8509b30c",
+   "feedId": "64a95829-60be-4ce6-ad74-e76599b0c532",
+   "type": "materia",
+   "lastPublication": "2026-11-05T21:46:53.622Z",
+   "publication": "2026-11-05T21:46:52.851Z",
+   "content": {
+    "category": "8f83055d-7069-4078-a689-d74910dca3a5",
+    "chapeu": {
+     "label": "",
+     "image": {}
+    },
+    "image": {
+     "url": "https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2025/i/T/sywwd7Q2OZUMdTyZN8zw/wallace-goleiro-botafogo-pb.jpg",
+     "cropOptions": {},
+     "sizes": {
+      "L": {
+       "width": 1080,
+       "height": 608,
+       "url": "https://s2-ge.glbimg.com/YevWD-oIk6HgsZ1rIYV6I8SI0L8=/1080x608/top/smart/https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2025/i/T/sywwd7Q2OZUMdTyZN8zw/wallace-goleiro-botafogo-pb.jpg"
+      }
+     }
+    },
+    "recommendationSummary": "Goleiro de 30 anos atuou pela Desportiva Guarabira na segunda divisão do Campeonato Paraibano 2026",
+    "recommendationTitle": "ABC oficializa goleiro Wallace, ex-Botafogo-PB e Campinense",
+    "section": "abc",
+    "summary": "Goleiro de 30 anos atuou pela Desportiva Guarabira na segunda divisão do Campeonato Paraibano 2026",
+    "title": "ABC oficializa goleiro Wallace, ex-Botafogo-PB e Campinense",
+    "url": "https://ge.globo.com/rn/futebol/times/abc/noticia/2026/11/05/abc-oficializa-goleiro-wallace-ex-botafogo-pb-e-campinense.ghtml",
+    "video": null
+   },
+   "draft": false,
+   "area": "",
+   "parentId": null,
+   "children": null,
+   "isPublishing": false,
+   "created": "2026-11-05T21:46:52.851Z",
+   "modified": "2026-11-05T21:46:53.622Z",
+   "tenantId": "ge",
+   "age": 501449,
+   "kind": "automatic"
+  },
+  {
+   "id": "f1423708fcf5859bd5dfed286a9ba35b",
+   "feedId": "64a95829-60be-4ce6-ad74-e76599b0c532",
+   "type": "materia",
+   "lastPublication": "2026-11-05T20:51:49.207Z",
+   "publication": "2026-11-05T20:47:26.776Z",
+   "content": {
+    "category": "db68e23e-7486-4cf2-baa0-946122d871a8",
+    "chapeu": {
+     "label": "",
+     "image": {}
+    },
+    "image": {
+     "url": "https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/E/Z/BxNnIQTAqooggd44CGyg/qfc-america.jpeg",
+     "cropOptions": {},
+     "sizes": {
+      "L": {
+       "width": 1080,
+       "height": 608,
+       "url": "https://s2-ge.glbimg.com/HusYFOC4Okj58U7_Fa7ZfkWzcRQ=/1080x608/top/smart/https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/E/Z/BxNnIQTAqooggd44CGyg/qfc-america.jpeg"
+      }
+     }
+    },
+    "recommendationSummary": "Federação anuncia nove competições para 2027, com novas disputas na base e no futebol feminino, além de torneio que dará vaga na Copa do Brasil de 2028",
+    "recommendationTitle": "Calendário do futebol potiguar para 2027 tem três novas competições",
+    "section": "rn",
+    "summary": "Federação anuncia nove competições para 2027, com novas disputas na base e no futebol feminino, além de torneio que dará vaga na Copa do Brasil de 2028",
+    "title": "Calendário do futebol potiguar para 2027 tem três novas competições; veja datas",
+    "url": "https://ge.globo.com/rn/noticia/2026/11/05/fnf-divulga-calendario-do-futebol-potiguar-para-2027-veja-datas.ghtml",
+    "video": null
+   },
+   "draft": false,
+   "area": "",
+   "parentId": null,
+   "children": null,
+   "isPublishing": false,
+   "created": "2026-11-05T20:47:26.776Z",
+   "modified": "2026-11-05T20:51:49.207Z",
+   "tenantId": "ge",
+   "age": 505015,
+   "kind": "automatic"
+  },
+  {
+   "id": "28f2bf6488f732f38f4a4aa420185e0e",
+   "feedId": "64a95829-60be-4ce6-ad74-e76599b0c532",
+   "type": "materia",
+   "lastPublication": "2026-11-05T20:55:17.838Z",
+   "publication": "2026-11-05T20:15:39.594Z",
+   "content": {
+    "category": "afc63de0-fa42-4844-9e88-e176960e6ead",
+    "chapeu": {
+     "label": "",
+     "image": {}
+    },
+    "image": {
+     "url": "https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/2/U/oYHioWQw6ucanNYRFMdA/fnf.jpg",
+     "cropOptions": {},
+     "sizes": {
+      "L": {
+       "width": 1080,
+       "height": 608,
+       "url": "https://s2-ge.glbimg.com/7mclzaUoYB1vCWOBaQTf1URsmz0=/1080x608/top/smart/https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/2/U/oYHioWQw6ucanNYRFMdA/fnf.jpg"
+      }
+     }
+    },
+    "recommendationSummary": "Competição prevista para o fim da próxima temporada vai valer a terceira vaga do Rio Grande do Norte na Copa do Brasil de 2028. Estadual começa no dia 9 de janeiro",
+    "recommendationTitle": "FNF anuncia criação de nova Copa e mantém fórmula do estadual em 2027",
+    "section": "campeonato potiguar",
+    "summary": "Competição prevista para o fim da próxima temporada vai valer a terceira vaga do Rio Grande do Norte na Copa do Brasil de 2028. Estadual começa no dia 9 de janeiro",
+    "title": "FNF anuncia criação de nova Copa e mantém fórmula de disputa do Campeonato Potiguar 2027",
+    "url": "https://ge.globo.com/rn/futebol/campeonato-potiguar/noticia/2026/11/05/fnf-anuncia-criacao-de-nova-copa-e-mantem-formula-de-disputa-do-campeonato-potiguar-2027.ghtml",
+    "video": null
+   },
+   "draft": false,
+   "area": "",
+   "parentId": null,
+   "children": null,
+   "isPublishing": false,
+   "created": "2026-11-05T20:15:39.594Z",
+   "modified": "2026-11-05T20:55:17.838Z",
+   "tenantId": "ge",
+   "age": 506922,
+   "kind": "automatic"
+  },
+  {
+   "id": "2145939fdff50f13044ca582d3fb8bc2",
+   "feedId": "64a95829-60be-4ce6-ad74-e76599b0c532",
+   "type": "materia",
+   "lastPublication": "2026-11-04T18:31:23.799Z",
+   "publication": "2026-11-04T18:31:23.292Z",
+   "content": {
+    "category": "6c3b0a8e-116e-41cb-bed6-41acc417f301",
+    "chapeu": {
+     "label": "",
+     "image": {}
+    },
+    "image": {
+     "url": "https://s01.video.glbimg.com/deo/vi/07/22/15152207",
+     "cropOptions": {},
+     "sizes": {
+      "L": {
+       "width": 1080,
+       "height": 608,
+       "url": "https://s2-ge.glbimg.com/aGvn01NJmaB8ejj0w9xN2XetjUk=/1080x608/top/smart/filters:max_age(3600)/https://s01.video.glbimg.com/deo/vi/07/22/15152207"
+      }
+     }
+    },
+    "recommendationSummary": "Alyson Vinicius reforça o Atlético-PB na Copa Paraíba após passagens por Ceará e Amazonas, visando garantir o retorno do clube ao cenário nacional em 2027.",
+    "recommendationTitle": "Alyson Vinicius: bicampeão do Nordeste reforça o Atlético-PB",
+    "section": "atlético-pb",
+    "summary": "Lateral-esquerdo de 30 anos estava livre no mercado após deixar o Amazonas e reforça o Trovão Azul após nove anos de sua primeira passagem",
+    "title": "Bicampeão da Copa do Nordeste, Alyson Vinicius retorna ao Atlético-PB para a disputa da Copa Paraíba",
+    "url": "https://ge.globo.com/pb/futebol/times/atletico-pb/noticia/2026/11/04/bicampeao-copa-nordeste-alyson-vinicius-retorna-atletico-pb-disputa-copa-paraiba.ghtml",
+    "video": {
+     "duration": 36370,
+     "id": 15152207,
+     "kind": "excerpt",
+     "previewUrl": "",
+     "programTitle": "Globo Esporte PB",
+     "trademark": "https://s3.glbimg.com/v1/AUTH_180b9dd048d9434295d27c4b6dadc248/media_kit/program/trademark/a8c8/a8c847610b73565c.svg",
+     "trademarkRaster": "https://s2-ge.glbimg.com/ipzZ0s-pDWByj6RGsS7kPF5_Nw4=/212x0/https://s3.glbimg.com/v1/AUTH_180b9dd048d9434295d27c4b6dadc248/media_kit/program/trademark/a8c8/a8c847610b73565c.svg",
+     "url": "https://globoplay.globo.com/v/15152207/",
+     "videoOrientation": "horizontal"
+    }
+   },
+   "draft": false,
+   "area": "",
+   "parentId": null,
+   "children": null,
+   "isPublishing": false,
+   "created": "2026-11-04T18:31:23.292Z",
+   "modified": "2026-11-04T18:31:23.799Z",
+   "tenantId": "ge",
+   "age": 599578,
+   "kind": "automatic"
+  },
+  {
+   "id": "632924192c02d96b90f973a2a1bfac3c",
+   "feedId": "64a95829-60be-4ce6-ad74-e76599b0c532",
+   "type": "materia",
+   "lastPublication": "2026-11-04T17:47:03.574Z",
+   "publication": "2026-11-04T17:47:02.877Z",
+   "content": {
+    "category": "8f83055d-7069-4078-a689-d74910dca3a5",
+    "chapeu": {
+     "label": "",
+     "image": {}
+    },
+    "image": {
+     "url": "https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/2/z/OdsZ9tSMSRqhqw23LUzQ/matheus2.jpg",
+     "cropOptions": {},
+     "sizes": {
+      "L": {
+       "width": 1080,
+       "height": 608,
+       "url": "https://s2-ge.glbimg.com/i5FOkWGuJ8-1TemvlriJIkLVU20=/1080x608/top/smart/https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/2/z/OdsZ9tSMSRqhqw23LUzQ/matheus2.jpg"
+      }
+     }
+    },
+    "recommendationSummary": "Jogador de 26 anos trabalhou com o técnico João Burse no Porto Vitória. Ele é o oitavo reforço do Alvinegro para a temporada 2027",
+    "recommendationTitle": "ABC contrata volante Matheus Santos, ex-Porto Vitória",
+    "section": "abc",
+    "summary": "Jogador de 26 anos trabalhou com o técnico João Burse no Porto Vitória. Ele é o oitavo reforço do Alvinegro para a temporada 2027",
+    "title": "ABC contrata volante Matheus Santos, ex-Porto Vitória e Estrela do Norte",
+    "url": "https://ge.globo.com/rn/futebol/times/abc/noticia/2026/11/04/abc-contrata-volante-matheus-santos-ex-porto-vitoria-e-estrela-do-norte.ghtml",
+    "video": null
+   },
+   "draft": false,
+   "area": "",
+   "parentId": null,
+   "children": null,
+   "isPublishing": false,
+   "created": "2026-11-04T17:47:02.877Z",
+   "modified": "2026-11-04T17:47:03.574Z",
+   "tenantId": "ge",
+   "age": 602239,
+   "kind": "automatic"
+  },
+  {
+   "id": "36a0c880fed27ad4fb9ae8d79f663ea2",
+   "feedId": "64a95829-60be-4ce6-ad74-e76599b0c532",
+   "type": "materia",
+   "lastPublication": "2026-10-30T17:55:56.079Z",
+   "publication": "2026-10-30T17:44:57.972Z",
+   "content": {
+    "category": "8f83055d-7069-4078-a689-d74910dca3a5",
+    "chapeu": {
+     "label": "",
+     "image": {}
+    },
+    "image": {
+     "url": "https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/k/d/BMFQpuQ6egiTp4ZlZdwg/joao.jpg",
+     "cropOptions": {},
+     "sizes": {
+      "L": {
+       "width": 1080,
+       "height": 608,
+       "url": "https://s2-ge.glbimg.com/M2s09-YKLb18MsfSgdS7bDzHkVo=/1080x608/top/smart/https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/k/d/BMFQpuQ6egiTp4ZlZdwg/joao.jpg"
+      }
+     }
+    },
+    "recommendationSummary": "Atacante defendeu o EC São Bernardo na Série A3 do Campeonato Paulista e na Copa Paulista em 2026",
+    "recommendationTitle": "ABC anuncia atacante João Guilherme para a temporada 2027",
+    "section": "abc",
+    "summary": "Atacante defendeu o EC São Bernardo na Série A3 do Campeonato Paulista e na Copa Paulista em 2026",
+    "title": "ABC anuncia atacante João Guilherme para a temporada 2027",
+    "url": "https://ge.globo.com/rn/futebol/times/abc/noticia/2026/10/30/abc-anuncia-atacante-joao-guilherme-para-a-temporada-2027.ghtml",
+    "video": null
+   },
+   "draft": false,
+   "area": "",
+   "parentId": null,
+   "children": null,
+   "isPublishing": false,
+   "created": "2026-10-30T17:44:57.972Z",
+   "modified": "2026-10-30T17:55:56.079Z",
+   "tenantId": "ge",
+   "age": 1034364,
+   "kind": "automatic"
+  }
+ ],
+ "nextPage": 2,
+ "perPage": 0
+}
