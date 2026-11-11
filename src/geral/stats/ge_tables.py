@@ -27,6 +27,7 @@ logger = logging.getLogger(__name__)
 GE_TABLES_API = "https://api.globoesporte.globo.com/tabela"
 LEAGUE_PREFIX = "ge:"
 MATCH_LENGTH = timedelta(hours=2, minutes=15)  # after this, a match with a score is over
+NO_SHOW = timedelta(hours=3)  # not started this long after kickoff, no score: postponed
 MAX_ROUNDS = 40
 POINTS, KNOCKOUT, GROUPS = "1", "2", "3"  # fase.tipo.tipo_id
 
@@ -47,6 +48,7 @@ class Game:
     home_goals: int | None
     away_goals: int | None
     venue: str | None
+    started: bool = False  # ge's `jogo_ja_comecou`
 
     def involves(self, team_id: int) -> bool:
         return team_id in (self.home_id, self.away_id)
@@ -83,15 +85,21 @@ class GETablesClient:
     # Public API (same shape as ESPNStatsClient)
 
     def get_fixtures(self, now: datetime) -> list[Fixture]:
-        """Our matches in every ge competition from a week ago on; raises when one fails."""
+        """Our matches in every ge competition from a week ago on; raises when one fails.
+
+        Any error is StatsUnavailable: `due --all` must go on with the other teams.
+        """
         competitions = self._all()
         if any(c is None for c in competitions):
             raise StatsUnavailable("a ge competition could not be loaded")
-        fixtures = [
-            self._fixture(game, self._clock())  # the state is today's, like ESPN's
-            for game in self._ours(competitions)
-            if game.kickoff >= now - FIXTURES_LOOKBACK
-        ]
+        try:
+            fixtures = [
+                self._fixture(game, self._clock())  # the state is today's, like ESPN's
+                for game in self._ours(competitions)
+                if game.kickoff >= now - FIXTURES_LOOKBACK
+            ]
+        except Exception as e:
+            raise StatsUnavailable(f"ge fixtures could not be built: {e}") from e
         return sorted(fixtures, key=lambda f: f.kickoff)
 
     def get_last_match(self, start: datetime, end: datetime) -> MatchStats | None:
@@ -119,7 +127,13 @@ class GETablesClient:
         )
 
     def get_next_match(self, now: datetime) -> NextMatch | None:
-        upcoming = [g for g in self._ours(self._all()) if g.kickoff > now]
+        # A match without kickoff time (00:00) is still the next one all through its day.
+        upcoming = [
+            g
+            for g in self._ours(self._all())
+            if g.kickoff > now
+            or (not g.time_valid and g.kickoff.date() == now.date() and not g.finished(now))
+        ]
         if not upcoming:
             return None
         game = min(upcoming, key=lambda g: g.kickoff)
@@ -130,7 +144,8 @@ class GETablesClient:
             date=game.kickoff,
             venue=game.venue,
             is_home=is_home,
-            match_id=str(game.id),
+            # No kickoff time, no deadline for the bets: the bolão stays closed.
+            match_id=str(game.id) if game.time_valid else None,
         )
 
     def get_standings(self, league: str | None = None) -> list[StandingRow]:
@@ -232,17 +247,18 @@ class GETablesClient:
 
         games: dict[int, Game] = {}
         table = None
-        for index, phase in enumerate(navigation[: current + 1]):
+        # Later phases too: their first matches must be planned before ge makes them current.
+        for index, phase in enumerate(navigation):
             base = f"{GE_TABLES_API}/{tuuid.group(1)}/fase/{phase['slug']}"
-            data = self._json(f"{base}/classificacao/")
-            kind = data["fase"]["tipo"]["tipo_id"]
-            if kind == KNOCKOUT:
-                raw = [g for s in data.get("secao", []) for c in s["chave"] for g in c["jogos"]]
-            else:
-                last = (data.get("rodada") or {}).get("ultima") if kind == POINTS else None
-                raw = self._rounds(base, last)
-                if index == current:
-                    table = data
+            try:
+                data, raw = self._phase(base)
+            except Exception as e:
+                if index <= current:
+                    raise
+                logger.info("Skipping ge phase %s, not published yet: %s", phase["slug"], e)
+                continue
+            if index == current and data["fase"]["tipo"]["tipo_id"] != KNOCKOUT:
+                table = data
             for item in raw:
                 try:
                     game = self._game(item, name)
@@ -253,12 +269,24 @@ class GETablesClient:
                     games[game.id] = game
         return Competition(name=name, games=list(games.values()), table=table)
 
-    def _rounds(self, base: str, last: int | None) -> list[dict]:
-        """Every round's games: 1..`last`, or up to the first empty round when unknown."""
+    def _phase(self, base: str) -> tuple[dict, list[dict]]:
+        """The phase's classification and its games, from the knockout ties or the rounds."""
+        data = self._json(f"{base}/classificacao/")
+        kind = data["fase"]["tipo"]["tipo_id"]
+        if kind == KNOCKOUT:
+            return data, [g for s in data.get("secao", []) for c in s["chave"] for g in c["jogos"]]
+        last = (data.get("rodada") or {}).get("ultima") if kind == POINTS else None
+        return data, self._rounds(base, last or 0)
+
+    def _rounds(self, base: str, last: int) -> list[dict]:
+        """Rounds 1..`last` and on, until the first empty one after it.
+
+        `rodada.ultima` may be the last round published, not the last of the phase.
+        """
         games: list[dict] = []
-        for n in range(1, (last or MAX_ROUNDS) + 1):
+        for n in range(1, MAX_ROUNDS + 1):
             round_games = self._json(f"{base}/rodada/{n}/jogos/")
-            if not round_games and last is None:
+            if not round_games and n > last:
                 break
             games += round_games
         return games
@@ -278,6 +306,8 @@ class GETablesClient:
         at = time.fromisoformat(hour) if hour else time(0, 0)
         kickoff = datetime.combine(date.fromisoformat(day[:10]), at, tzinfo=self.tz)
         home, away = item["equipes"]["mandante"], item["equipes"]["visitante"]
+        if not (isinstance(home["nome_popular"], str) and isinstance(away["nome_popular"], str)):
+            raise ValueError("a side without name")
         return Game(
             id=int(item["id"]),
             competition=competition,
@@ -290,15 +320,22 @@ class GETablesClient:
             home_goals=item.get("placar_oficial_mandante"),
             away_goals=item.get("placar_oficial_visitante"),
             venue=(item.get("sede") or {}).get("nome_popular"),
+            started=bool(item.get("jogo_ja_comecou")),
         )
 
     def _fixture(self, game: Game, now: datetime) -> Fixture:
+        # ge has no "postponed": a match that never started hours after its time was put off.
+        no_show = game.kickoff + NO_SHOW + (timedelta() if game.time_valid else timedelta(days=1))
         if game.kickoff > now:
             state = "pre"
         elif game.finished(now):
             state = "post"
-        else:
+        elif game.started:
             state = "in"
+        elif game.home_goals is None and now >= no_show:
+            state = "postponed"
+        else:
+            state = "pre"
         return Fixture(
             match_id=str(game.id),
             league=f"{LEAGUE_PREFIX}{game.competition}",

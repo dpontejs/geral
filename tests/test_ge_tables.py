@@ -63,6 +63,9 @@ def ge() -> respx.MockRouter:
             router.get(f"{POTIGUAR}/primeira-fase-potiguar-2026/rodada/{n}/jogos/").mock(
                 return_value=json_response(f"potiguar_primeira-fase_r{n}.json")
             )
+        router.get(f"{POTIGUAR}/primeira-fase-potiguar-2026/rodada/8/jogos/").mock(
+            return_value=httpx.Response(200, json=[])
+        )
         router.get(SERIE_D_PAGE).mock(
             return_value=httpx.Response(200, text=body("page_seried.html"))
         )
@@ -243,3 +246,117 @@ def test_ge_undefined_knockout_game_is_skipped(ge) -> None:
     fixtures = make_client().get_fixtures(datetime(2026, 1, 1, tzinfo=TZ))
 
     assert len(fixtures) == 10
+
+
+def mock_final(ge, change) -> None:
+    """Serve the Potiguar final with `change` applied to ABC x América-RN (the second leg)."""
+    final = json.loads(body("potiguar_final.json"))
+    for section in final["secao"]:
+        for tie in section["chave"]:
+            for game in tie["jogos"]:
+                if game["id"] == 350926:
+                    change(game)
+    ge.get(f"{POTIGUAR}/final-potiguar-2026/classificacao/").mock(
+        return_value=httpx.Response(200, json=final)
+    )
+
+
+def test_ge_match_without_time_is_next_all_day_but_opens_no_bolao(ge) -> None:
+    mock_final(
+        ge,
+        lambda g: g.update(
+            hora_realizacao=None,
+            placar_oficial_mandante=None,
+            placar_oficial_visitante=None,
+            jogo_ja_comecou=False,
+        ),
+    )
+    morning = datetime(2026, 3, 21, 8, 0, tzinfo=TZ)
+    client = make_client(now=morning)
+
+    upcoming = client.get_next_match(morning)
+    final = client.get_fixtures(morning)[-1]
+
+    assert upcoming is not None and upcoming.opponent == "América-RN"
+    assert upcoming.match_id is None  # no kickoff time, no deadline for the bets
+    assert (final.time_valid, final.state) == (False, "pre")
+
+
+def test_ge_unplayed_match_hours_later_is_postponed(ge) -> None:
+    mock_final(
+        ge,
+        lambda g: g.update(
+            placar_oficial_mandante=None, placar_oficial_visitante=None, jogo_ja_comecou=False
+        ),
+    )
+    later = datetime(2026, 3, 21, 20, 0, tzinfo=TZ)
+
+    final = make_client(now=later).get_fixtures(later)[-1]
+
+    assert final.state == "postponed"
+
+
+def test_ge_started_match_is_in(ge) -> None:
+    mock_final(ge, lambda g: g.update(placar_oficial_mandante=0, placar_oficial_visitante=0))
+    during = datetime(2026, 3, 21, 16, 30, tzinfo=TZ)
+
+    assert make_client(now=during).get_fixtures(during)[-1].state == "in"
+
+
+def test_ge_phases_after_the_current_one_enter_the_calendar(ge) -> None:
+    page = (
+        body("page_potiguar.html")
+        .replace('"atual":true', '"atual":false')
+        .replace('"nome":"Semifinal","slug"', '"nome":"Semifinal","atual":true,"slug"')
+    )
+    ge.get(POTIGUAR_PAGE).mock(return_value=httpx.Response(200, text=page))
+
+    fixtures = make_client().get_fixtures(datetime(2026, 1, 1, tzinfo=TZ))
+
+    assert fixtures[-1].match_id == "350926"
+
+
+def test_ge_failing_future_phase_is_left_out(ge) -> None:
+    page = (
+        body("page_potiguar.html")
+        .replace('"atual":true', '"atual":false')
+        .replace('"nome":"Semifinal","slug"', '"nome":"Semifinal","atual":true,"slug"')
+    )
+    ge.get(POTIGUAR_PAGE).mock(return_value=httpx.Response(200, text=page))
+    ge.get(f"{POTIGUAR}/final-potiguar-2026/classificacao/").mock(return_value=httpx.Response(404))
+
+    fixtures = make_client().get_fixtures(datetime(2026, 1, 1, tzinfo=TZ))
+
+    assert fixtures[-1].match_id == "350513"
+
+
+def test_ge_points_rounds_go_past_ultima_until_an_empty_one(ge) -> None:
+    first = json.loads(body("potiguar_primeira-fase.json"))
+    first["rodada"] = {"atual": 5, "ultima": 5}
+    ge.get(f"{POTIGUAR}/primeira-fase-potiguar-2026/classificacao/").mock(
+        return_value=httpx.Response(200, json=first)
+    )
+
+    fixtures = make_client().get_fixtures(datetime(2026, 1, 1, tzinfo=TZ))
+
+    assert len(fixtures) == 11
+
+
+def test_ge_game_without_names_is_skipped(ge) -> None:
+    mock_final(ge, lambda g: g["equipes"]["visitante"].update(nome_popular=None))
+
+    fixtures = make_client().get_fixtures(datetime(2026, 1, 1, tzinfo=TZ))
+
+    assert "350926" not in [f.match_id for f in fixtures]
+
+
+def test_ge_unexpected_error_in_fixtures_is_unavailable(ge, monkeypatch) -> None:
+    client = make_client()
+
+    def boom(game, now):
+        raise RuntimeError("bad data")
+
+    monkeypatch.setattr(client, "_fixture", boom)
+
+    with pytest.raises(StatsUnavailable):
+        client.get_fixtures(datetime(2026, 1, 1, tzinfo=TZ))
