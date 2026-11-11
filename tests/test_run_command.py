@@ -676,6 +676,7 @@ def bolao_newsletter(kind: str):
             competition="Brasileirão",
             date=datetime(2026, 11, 15, 18, 30, tzinfo=TZ),
             is_home=False,
+            match_id="401",
         )
     else:
         newsletter.last_match = MATCH.model_copy(
@@ -802,3 +803,37 @@ def test_post_game_sends_without_board_when_page_returns_garbage(env, monkeypatc
     assert result.exit_code == 0, result.output
     owner, _ = json.loads(route.calls.last.request.content)
     assert "Cravaram" not in owner["html"]
+
+
+@respx.mock
+def test_pre_game_card_only_for_the_edition_match(env, monkeypatch) -> None:
+    enable_subscriptions(env)
+    subscribers_with_bet_token()
+    other = bolao_newsletter("pre")
+    other.next_match = other.next_match.model_copy(update={"match_id": "999"})
+    use_newsletter(monkeypatch, other)
+    register = respx.put(url__startswith="https://news.test/api/teams/flamengo/bolao")
+    route = respx.post(RESEND_URL).mock(return_value=sent(["e1", "e2"]))
+
+    result = CliRunner().invoke(cli.app, [*RUN, "pre"])
+
+    assert result.exit_code == 0, result.output
+    assert not register.called
+    _, ana = json.loads(route.calls.last.request.content)
+    assert "/palpite" not in ana["html"]
+
+
+@respx.mock
+def test_post_game_result_only_for_the_edition_match(env, monkeypatch) -> None:
+    enable_subscriptions(env)
+    subscribers_with_bet_token()
+    other = bolao_newsletter("post")
+    other.last_match = other.last_match.model_copy(update={"fixture_id": 999})
+    use_newsletter(monkeypatch, other)
+    writes = respx.put(url__startswith="https://news.test/api/teams/flamengo/bolao")
+    respx.post(RESEND_URL).mock(return_value=sent(["e1", "e2"]))
+
+    result = CliRunner().invoke(cli.app, [*RUN, "post"])
+
+    assert result.exit_code == 0, result.output
+    assert not writes.called

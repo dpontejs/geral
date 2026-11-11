@@ -93,6 +93,7 @@ class NextMatch(BaseModel):
     venue: str | None = None
     is_home: bool = True
     opponent_logo: str | None = None
+    match_id: str | None = None  # the ESPN event: the bolão only opens for the edition's match
 
 
 class StandingRow(BaseModel):

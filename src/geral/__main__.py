@@ -387,7 +387,9 @@ def _bolao(newsletter: Newsletter, settings, team: Team, write: bool) -> None:
         return
     edition, upcoming, played = newsletter.edition, newsletter.next_match, newsletter.last_match
     try:
-        if edition.kind == "pre" and edition.match_id and upcoming:
+        # Only the edition's own match: a rescheduled game or an earlier one in another
+        # competition must not open (or close) the bolão with the wrong opponent and deadline.
+        if edition.kind == "pre" and upcoming and upcoming.match_id == edition.match_id:
             if write:
                 register_match(
                     settings,
@@ -398,7 +400,11 @@ def _bolao(newsletter: Newsletter, settings, team: Team, write: bool) -> None:
                     upcoming.date,
                 )
             newsletter.bolao_open = True
-        elif edition.kind == "post" and played:
+        elif (
+            edition.kind == "post"
+            and played
+            and (edition.match_id is None or str(played.fixture_id) == edition.match_id)
+        ):
             score = (
                 (played.home_goals, played.away_goals)
                 if played.is_home

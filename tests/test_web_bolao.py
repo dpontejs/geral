@@ -151,8 +151,10 @@ def test_unknown_match_or_team_is_404(client, store, bolao) -> None:
 
 
 def test_nickname_is_escaped(client, store, bolao) -> None:
+    # The form refuses markup now, but nicknames imported from an older app never went through it.
     token = member(store, bolao, "ana@x.com")
-    bet(client, token, nickname="<b>Ana</b>")
+    bolao.set_nickname("ana@x.com", "<b>Ana</b>")
+    bet(client, token)
 
     page = client.get("/bolao/vasco", params={"t": token})
 
@@ -229,3 +231,24 @@ def test_summary_preview_does_not_persist(client, store, bolao) -> None:
 
     assert response.status_code == 200 and response.json()["exact"] == ["Ana"]
     assert bolao.match("vasco", "m1").our_goals is None
+
+
+@pytest.mark.parametrize("nickname", ["x\nbit.ly/golpe", "bit.ly/golpe", "ana<script>", "a://b"])
+def test_nickname_rejects_links_and_line_breaks(client, store, bolao, nickname) -> None:
+    token = member(store, bolao, "bia@x.com")
+
+    assert bet(client, token, nickname=nickname).status_code == 409
+    assert bolao.nickname("bia@x.com") is None
+
+
+@pytest.mark.parametrize("nickname", ["Zé do Rádio", "D'Ávila", "Fla-Flu 81", "joão_2"])
+def test_nickname_accepts_names(client, store, bolao, nickname) -> None:
+    token = member(store, bolao, "bia@x.com")
+
+    assert bet(client, token, nickname=nickname).status_code == 200
+
+
+def test_match_kickoff_without_timezone_is_refused(client) -> None:
+    naive = {"opponent": "Bahia", "home": True, "kickoff": "2026-11-15T21:30:00"}
+
+    assert client.put(f"{API}/m3", json=naive, headers=AUTH).status_code == 422

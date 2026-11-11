@@ -24,7 +24,7 @@ ninguém recebe edição em dobro. O bolão passa a valer para todas as torcidas
      `bolao_players(email PK, nickname UNIQUE NOCASE)` (apelido único na Geral toda).
    - Token `bet` (por e-mail, sem expirar) vale para qualquer torcida; só palpita quem assina a torcida.
    - `GET|POST /palpite?t=&c=<slug>&m=&p=` (GET só pergunta), `GET /bolao/<slug>?t=` (ranking da
-     temporada); API `PUT /api/teams/<slug>/bolao/matches/{id}`, `GET .../summary?our=&their=`,
+     temporada); API `PUT /api/teams/<slug>/bolao/matches/{id}`, `GET .../summary?ours=&theirs=`,
      `PUT .../result`; `/api/subscribers?team=` ganha `bet_token`.
    - Newsletter: cartela 4×4 no pré-jogo, quadro no pós-jogo (quem cravou, top 5, Rei do Maracanã,
      Pé-frio), como na Urubu; prévia e `DRY_RUN` nunca gravam.

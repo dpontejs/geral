@@ -19,10 +19,10 @@ from fastapi.responses import HTMLResponse, JSONResponse, RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from jinja2 import select_autoescape
-from pydantic import BaseModel, Field
+from pydantic import AwareDatetime, BaseModel, Field
 
 from geral.config import Settings, get_settings
-from geral.send.resend_sender import UNSUBSCRIBE_PLACEHOLDER
+from geral.send.resend_sender import UNSUBSCRIBE_PLACEHOLDER, personalize
 from geral.teams import Team, load_teams
 from geral.web.bolao import TZ, BolaoStore
 from geral.web.mailer import Mailer, MailError, mailer_from_settings
@@ -45,6 +45,9 @@ MAX_EMAIL_LENGTH = 254
 WELCOME_PREFIX = "Boas-vindas! "
 MIN_NICKNAME, MAX_NICKNAME = 3, 20
 SCORE_RE = re.compile(r"^(\d)-(\d)$")
+# Shown in every follower's e-mail: letters, digits, spaces, hyphens and apostrophes only (no
+# links, no line breaks).
+NICKNAME_RE = re.compile(r"^[\w' -]+$")
 STATIC = Path(__file__).resolve().parents[1] / "static"
 # The scoreboard clock: Brasília time, no daylight saving since 2019 (no tzdata in the image).
 BRASILIA = timezone(timedelta(hours=-3))
@@ -82,7 +85,7 @@ class EditionIn(BaseModel):
 class BolaoMatchIn(BaseModel):
     opponent: str
     home: bool  # our team plays at home
-    kickoff: datetime
+    kickoff: AwareDatetime  # compared with the page's clock: a naive time would break /palpite
 
 
 class BolaoResultIn(BaseModel):
@@ -169,7 +172,9 @@ def create_app(
                 "para receber a primeira.",
                 status=404,
             )
-        return HTMLResponse(edition.html.replace(UNSUBSCRIBE_PLACEHOLDER, f"{public_url}/"))
+        # A public page: no bet card (the links are personal) and no personal unsubscribe.
+        html = personalize(edition.html, None)
+        return HTMLResponse(html.replace(UNSUBSCRIBE_PLACEHOLDER, f"{public_url}/"))
 
     @app.get("/subscribe")
     def subscribe_reload():
@@ -484,6 +489,8 @@ def create_app(
             problem = None
             if not MIN_NICKNAME <= len(nickname) <= MAX_NICKNAME:
                 problem = f"O apelido precisa ter de {MIN_NICKNAME} a {MAX_NICKNAME} caracteres."
+            elif not NICKNAME_RE.match(nickname):
+                problem = "Use só letras, números, espaços, hífen e apóstrofo no apelido."
             elif not bolao.set_nickname(email, nickname):
                 problem = "Esse apelido já é de outra pessoa. Escolha outro."
             if problem:

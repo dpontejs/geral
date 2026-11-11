@@ -1,7 +1,7 @@
 import re
 
 import pytest
-from webkit import NOW, publish
+from webkit import AUTH, NOW, publish
 
 from geral.send.resend_sender import UNSUBSCRIBE_PLACEHOLDER
 
@@ -101,3 +101,15 @@ def test_portal_explains_the_name(client) -> None:
     assert 'id="por-que-geral"' in page
     assert "Por que Geral?" in page
     assert "Maracanã" in page and "geraldino" in page
+
+
+def test_team_page_drops_the_bet_card(client) -> None:
+    from geral.send.resend_sender import BET_TOKEN_PLACEHOLDER
+
+    html = f"<!--bolao--><a href='/palpite?t={BET_TOKEN_PLACEHOLDER}'>2x1</a><!--/bolao-->"
+    edition = {"subject": "S", "html": html + UNSUBSCRIBE_PLACEHOLDER, "text": "t"}
+    client.put("/api/teams/vasco/latest-edition", json=edition, headers=AUTH)
+
+    page = client.get("/t/vasco").text
+
+    assert "palpite" not in page and BET_TOKEN_PLACEHOLDER not in page
