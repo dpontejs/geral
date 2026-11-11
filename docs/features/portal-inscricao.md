@@ -41,7 +41,8 @@ GET  /health, /version.json
 - Quem já é ativo e marca torcidas novas recebe outra confirmação: ninguém inclui torcidas no
   e-mail de outra pessoa. Sem enumeração: `/subscribe` responde sempre "Confira seu e-mail".
 - Sair da última torcida ativa marca o e-mail como `unsubscribed`.
-- Anti-abuso da Urubu mantido: honeypot, 5 por IP por hora, teto diário, reenvio após 10 min.
+- Anti-abuso da Urubu mantido: honeypot, 5 por IP por hora, teto diário (conta cada e-mail
+  enviado), reenvio só após 10 min, inclusive para quem já é ativo e pede torcida nova.
 - `geral run --team <slug>` lê `/api/subscribers?team=` e publica em
   `/api/teams/<slug>/latest-edition`; `--skip-if-sent` e os tópicos já publicados também por torcida.
 
@@ -49,7 +50,9 @@ GET  /health, /version.json
 
 - [x] `test_subscribe_with_two_teams_creates_pending_subscriptions_and_sends_one_confirmation`
 - [x] `test_subscribe_rejects_no_team_or_unknown_team` (400, nada gravado nem enviado)
-- [x] `test_subscribe_same_page_for_active_email` e `test_honeypot_and_rate_limit` (portados)
+- [x] `test_subscribe_same_page_for_active_email`, `test_honeypot_and_invalid_email_send_nothing` e `test_rate_limit_per_ip` (portados)
+- [x] `test_active_subscriber_also_waits_the_cooldown` e `test_daily_cap_counts_every_confirmation_sent` (ninguém enche a caixa de um assinante ativo)
+- [x] `test_asking_again_keeps_the_pending_team_alive` e `test_confirming_with_nothing_left_to_confirm_is_not_a_subscription`
 - [x] `test_confirm_activates_teams_and_welcomes_with_each_latest_edition` (uma boas-vindas por torcida com edição; sem edição, nada)
 - [x] `test_confirm_twice_does_not_welcome_again`
 - [x] `test_active_subscriber_adding_a_team_needs_confirmation` (a torcida nova fica pendente até o clique)

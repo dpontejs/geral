@@ -32,6 +32,11 @@ CREATE TABLE IF NOT EXISTS subscriptions (
     activated_at TEXT,
     PRIMARY KEY (email, team)
 );
+-- Every confirmation e-mail sent: the daily cap counts e-mails, not people.
+CREATE TABLE IF NOT EXISTS confirmations_sent (
+    email TEXT NOT NULL,
+    sent_at TEXT NOT NULL
+);
 CREATE TABLE IF NOT EXISTS editions (
     team TEXT PRIMARY KEY,
     subject TEXT NOT NULL,
@@ -131,13 +136,14 @@ class SubscriberStore:
         for team in new:
             self._run(
                 "INSERT INTO subscriptions (email, team, status, created_at)"
-                " VALUES (?, ?, 'pending', ?) ON CONFLICT (email, team) DO NOTHING",
+                " VALUES (?, ?, 'pending', ?) ON CONFLICT (email, team) DO UPDATE"
+                " SET created_at = excluded.created_at WHERE subscriptions.status = 'pending'",
                 email,
                 team,
                 now.isoformat(),
             )
         recently_sent = sent_at and now - datetime.fromisoformat(sent_at) < CONFIRMATION_COOLDOWN
-        if status == "pending" and recently_sent:
+        if recently_sent:  # any status: an active address must not be flooded either
             return RequestResult.COOLDOWN
         self._run(
             "UPDATE subscribers SET status = CASE WHEN status = 'active' THEN 'active'"
@@ -145,12 +151,19 @@ class SubscriberStore:
             now.isoformat(),
             email,
         )
+        self._run(
+            "INSERT INTO confirmations_sent (email, sent_at) VALUES (?, ?)", email, now.isoformat()
+        )
         return RequestResult.SEND_CONFIRMATION
 
     def forget_confirmation(self, email: str) -> None:
         """Lift the cooldown after a confirmation e-mail failed to go out."""
+        email = normalize(email)
+        self._run("UPDATE subscribers SET confirmation_sent_at = NULL WHERE email = ?", email)
         self._run(
-            "UPDATE subscribers SET confirmation_sent_at = NULL WHERE email = ?", normalize(email)
+            "DELETE FROM confirmations_sent WHERE rowid ="
+            " (SELECT MAX(rowid) FROM confirmations_sent WHERE email = ?)",
+            email,
         )
 
     def confirm(self, email: str, now: datetime) -> list[str] | None:
@@ -163,12 +176,16 @@ class SubscriberStore:
         subscriber = self.get(email)
         if subscriber is None or subscriber.status == "unsubscribed":
             return None
-        if subscriber.status == "pending":
-            self._run(
-                "UPDATE subscribers SET status = 'active', confirmed_at = ? WHERE email = ?",
-                now.isoformat(),
-                email,
-            )
+        if subscriber.status == "pending" and not self.pending_teams(email):
+            return None  # nothing left to confirm (purged): not a subscription
+        # Confirming lifts the cooldown: adding a team right after is a new, legit request.
+        self._run(
+            "UPDATE subscribers SET status = 'active', confirmation_sent_at = NULL,"
+            " confirmed_at = CASE WHEN status = 'pending' THEN ? ELSE confirmed_at END"
+            " WHERE email = ?",
+            now.isoformat(),
+            email,
+        )
         rows = self._run(
             "UPDATE subscriptions SET status = 'active', activated_at = ?"
             " WHERE email = ? AND status = 'pending' RETURNING team",
@@ -187,8 +204,8 @@ class SubscriberStore:
         email = normalize(email)
         self._run("DELETE FROM subscriptions WHERE email = ?", email)
         self._run(
-            "UPDATE subscribers SET status = 'unsubscribed', unsubscribed_at = ?"
-            " WHERE email = ? AND status != 'unsubscribed'",
+            "UPDATE subscribers SET status = 'unsubscribed', unsubscribed_at = ?,"
+            " confirmation_sent_at = NULL WHERE email = ? AND status != 'unsubscribed'",
             now.isoformat(),
             email,
         )
@@ -236,7 +253,7 @@ class SubscriberStore:
 
     def confirmations_sent_since(self, since: datetime) -> int:
         rows = self._run(
-            "SELECT COUNT(*) FROM subscribers WHERE confirmation_sent_at >= ?", since.isoformat()
+            "SELECT COUNT(*) FROM confirmations_sent WHERE sent_at >= ?", since.isoformat()
         )
         return rows[0][0]
 
@@ -246,6 +263,10 @@ class SubscriberStore:
         Teams added by an active subscriber but never confirmed are dropped too.
         """
         cutoff = (now - RETENTION).isoformat()
+        self._run(
+            "DELETE FROM confirmations_sent WHERE sent_at < ?",
+            (now - timedelta(days=2)).isoformat(),
+        )
         self._run("DELETE FROM subscriptions WHERE status = 'pending' AND created_at < ?", cutoff)
         rows = self._run(
             "DELETE FROM subscribers WHERE"

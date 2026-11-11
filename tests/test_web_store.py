@@ -167,3 +167,39 @@ def test_purge_removes_stale_pending_and_old_unsubscribed(store: SubscriberStore
     assert store.get("recent-out@example.com").status == "unsubscribed"
     assert store.active("vasco") == ["fan@example.com"]
     assert store.pending_teams("fan@example.com") == []
+
+
+def test_active_subscriber_also_waits_the_cooldown(store: SubscriberStore) -> None:
+    subscribe(store, ANA, ["vasco"])
+
+    assert store.request(ANA, ["abc"], NOW) is RequestResult.SEND_CONFIRMATION
+    soon = NOW + timedelta(minutes=5)
+    assert store.request(ANA, ["nautico"], soon) is RequestResult.COOLDOWN
+    later = NOW + timedelta(minutes=11)
+    assert store.request(ANA, ["nautico"], later) is RequestResult.SEND_CONFIRMATION
+
+
+def test_daily_cap_counts_every_confirmation_sent(store: SubscriberStore) -> None:
+    for minutes in (0, 11, 22):
+        store.request(ANA, ["vasco"], NOW + timedelta(minutes=minutes))
+
+    assert store.confirmations_sent_since(NOW - timedelta(hours=1)) == 3
+
+
+def test_asking_again_keeps_the_pending_team_alive(store: SubscriberStore) -> None:
+    store.request(ANA, ["abc"], NOW - timedelta(days=29))
+    store.request(ANA, ["abc"], NOW)  # a fresh link
+
+    store.purge(NOW + timedelta(days=2))
+
+    assert store.confirm(ANA, NOW + timedelta(days=2)) == ["abc"]
+
+
+def test_confirming_with_nothing_left_to_confirm_is_not_a_subscription(
+    store: SubscriberStore,
+) -> None:
+    store.request(ANA, ["abc"], NOW)
+    store._run("DELETE FROM subscriptions WHERE email = ?", ANA)
+
+    assert store.confirm(ANA, NOW) is None
+    assert store.get(ANA).status == "pending"
