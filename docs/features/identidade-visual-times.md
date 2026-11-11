@@ -33,9 +33,21 @@ O escudo continua só no placar, como dado da partida.
 | Elefante News (ABC) | elefante investindo, tromba erguida, presas | carvão `#141414` | cinza-elefante `#8A8F98` | mascote do ABC |
 | Timbu News (Náutico) | timbu (gambá-de-orelha-branca) de cara fechada | vermelho `#C60000` | branco | mascote e apelido do Náutico |
 
+## Como gerar
+
+Só o **ícone** sai do Nano Banana. A logo do e-mail e a og-image são montadas por código a
+partir dele (`scripts/make_brand.py`, fonte Oswald), porque o Nano Banana redesenha o mascote
+mesmo com a imagem de referência, e já colocou símbolos do clube (cruz, faixa) na logo.
+O script recorta o círculo (o "fundo transparente" do Nano Banana é um quadriculado desenhado),
+monta as três imagens e reduz a paleta:
+
+```bash
+python scripts/make_brand.py <icone.png> src/resenha/static/vasco Almirante News "#141414" "#B3122E" Vasco
+```
+
 ## Prompts (Nano Banana)
 
-Mesmo estilo da Urubu News. Gerar o ícone primeiro e reaproveitá-lo na logo e na og-image.
+Mesmo estilo da Urubu News. Só o ícone; o resto sai do script.
 
 **Ícone** (trocar `<MASCOTE>` e `<CORES>`):
 
