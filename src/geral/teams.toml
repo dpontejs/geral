@@ -51,9 +51,12 @@ ge_id = 350
 cbf_id = 20042
 [abc.ge_tables]
 "Série C" = "https://ge.globo.com/futebol/brasileirao-serie-c/"
+# Série D 2026: the last matches (form, last game) until the 2027 season; drop it then.
+"Série D" = "https://ge.globo.com/futebol/brasileirao-serie-d/"
 "Potiguar" = "https://ge.globo.com/rn/futebol/campeonato-potiguar/"
 [abc.cbf_tables]  # goal scorers; the Potiguar is not on the CBF site
 "Série C" = "campeonato-brasileiro/serie-c"
+"Série D" = "campeonato-brasileiro/serie-d"
 
 [nautico]
 sender = "timbu"
