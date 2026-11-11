@@ -30,7 +30,7 @@ class Version:
     """One of the two texts: who it comes from, subject and body."""
 
     key: str  # the moved-in team's slug or "geral": preview file names
-    sender_name: str
+    team: Team | None  # sends from this newsletter's own mailbox; None: from the Geral
     subject: str
     html: str
     text: str
@@ -46,7 +46,7 @@ def versions(settings: Settings, legacy: Team) -> tuple[Version, Version]:
     """The moved-in text and the Geral text, with the unsubscribe placeholder in them."""
     public_url = settings.PUBLIC_URL.rstrip("/")
 
-    def build(moved_in: bool, key: str, sender: str, subject: str, accent: str) -> Version:
+    def build(moved_in: bool, key: str, sender: Team | None, subject: str, accent: str) -> Version:
         context = {
             "moved_in": moved_in,
             "team": legacy,
@@ -67,14 +67,14 @@ def versions(settings: Settings, legacy: Team) -> tuple[Version, Version]:
         build(
             True,
             legacy.slug,
-            legacy.newsletter,
+            legacy,
             f"A {legacy.newsletter} agora faz parte da Geral",
             legacy.accent,
         ),
         build(
             False,
             "geral",
-            "Geral",
+            None,
             f"Novidades na Geral: a {legacy.newsletter} chegou",
             GERAL_ACCENT,
         ),
@@ -98,10 +98,11 @@ def recipient(settings: Settings, email: str, now: datetime) -> Recipient:
 
 
 def sender(settings: Settings, version: Version) -> ResendSender:
-    address = parseaddr(settings.NEWSLETTER_FROM)[1]
-    return ResendSender(
-        settings.RESEND_API_KEY, formataddr((version.sender_name, address)), dry_run=False
-    )
+    """Like the editions: a newsletter's name and its own mailbox (`news@`), else the Geral's."""
+    base = parseaddr(settings.NEWSLETTER_FROM)[1]
+    team = version.team
+    name, address = (team.newsletter, team.sender_address(base)) if team else ("Geral", base)
+    return ResendSender(settings.RESEND_API_KEY, formataddr((name, address)), dry_run=False)
 
 
 def send(

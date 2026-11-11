@@ -8,6 +8,7 @@ from urllib.parse import parse_qs, urlparse
 import httpx
 import pytest
 import respx
+from fakes import FLAMENGO
 from typer.testing import CliRunner
 
 import geral.__main__ as cli
@@ -23,6 +24,8 @@ CUTOFF = "2026-11-11T15:00:00+00:00"
 
 @pytest.fixture
 def db(tmp_path, monkeypatch):
+    # The moved-in newsletter keeps its own mailbox (teams.toml `sender`), as in production.
+    monkeypatch.setattr(cli, "_team", lambda slug: FLAMENGO.model_copy(update={"sender": "news"}))
     path = tmp_path / "geral.db"
     for name, value in {
         "SUBSCRIBERS_DB": str(path),
@@ -86,7 +89,7 @@ def test_send_gives_each_active_person_one_email_with_the_text_of_their_group(db
     sent = {e["to"][0]: e for e in emails(route)}
     assert sorted(sent) == ["both@x.com", "geral@x.com", "newfla@x.com", "urubu@x.com"]
     for email in ("urubu@x.com", "both@x.com"):
-        assert sent[email]["from"] == "Urubu News <geral@geral.test>"
+        assert sent[email]["from"] == "Urubu News <news@geral.test>"
         assert "faz parte da Geral" in sent[email]["subject"]
     for email in ("geral@x.com", "newfla@x.com"):
         assert sent[email]["from"] == "Geral <geral@geral.test>"
@@ -141,7 +144,7 @@ def test_to_sends_both_versions_to_that_address_only_and_marks_nobody(db) -> Non
     sent = emails(route)
     assert [e["to"][0] for e in sent] == ["me@x.com", "me@x.com"]
     assert {e["from"] for e in sent} == {
-        "Urubu News <geral@geral.test>",
+        "Urubu News <news@geral.test>",
         "Geral <geral@geral.test>",
     }
     assert db.announced("geral") == set()
