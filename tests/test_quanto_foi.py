@@ -130,3 +130,18 @@ def test_repeated_guess_counts_as_a_try(matches) -> None:
     verdict = judge(by_id(matches, 4607), [(1, 1), (1, 1)])
 
     assert len(verdict.rows) == 2
+
+
+@pytest.mark.parametrize(
+    "club, ids",
+    [
+        (None, [5249, 1272, 1334, 18]),
+        ("Vasco", [799, 1740, 2424, 1740]),
+        ("Náutico", [4336, 4230, 4343, 2058]),
+    ],
+)
+def test_quanto_foi_order_is_unchanged(club, ids) -> None:
+    # Pinned on launch day: changing how the order is built would change puzzles people played.
+    games = pool(load_matches(), club)
+
+    assert [by_number(games, n).match.id for n in (1, 2, 3, 500)] == ids

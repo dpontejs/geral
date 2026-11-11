@@ -1,0 +1,219 @@
+# Craque do dia: ídolos e artilheiros da torcida rubro-negra.
+# Rascunho curado à mão: revise época, posição e fato antes de publicar.
+
+[[craque]]
+nome = "Leônidas"
+completo = "Leônidas da Silva"
+posicao = "Atacante"
+epoca = "anos 30 e 40"
+fato = "O Diamante Negro."
+
+[[craque]]
+nome = "Domingos"
+completo = "Domingos da Guia"
+posicao = "Zagueiro"
+epoca = "anos 30 e 40"
+fato = "O Divino Mestre da zaga."
+
+[[craque]]
+nome = "Zizinho"
+completo = "Thomaz Soares da Silva"
+posicao = "Meia"
+epoca = "anos 40"
+fato = "Meia ídolo de Pelé."
+
+[[craque]]
+nome = "Dida"
+completo = "Edvaldo Alves de Santa Rosa"
+posicao = "Atacante"
+epoca = "anos 50 e 60"
+fato = "Artilheiro, ídolo de infância de Zico."
+
+[[craque]]
+nome = "Evaristo"
+completo = "Evaristo de Macedo"
+posicao = "Atacante"
+epoca = "anos 50"
+fato = "Atacante que depois jogou no Barcelona."
+
+[[craque]]
+nome = "Carpegiani"
+completo = "Paulo César Carpegiani"
+posicao = "Meia"
+epoca = "anos 70"
+fato = "Meia que depois foi técnico do título mundial de 1981."
+
+[[craque]]
+nome = "Rondinelli"
+completo = "Antônio José Rondinelli Tobias"
+posicao = "Zagueiro"
+epoca = "anos 70"
+fato = "O Deus da Raça, gol do título carioca de 1978."
+
+[[craque]]
+nome = "Zico"
+completo = "Arthur Antunes Coimbra"
+posicao = "Meia"
+epoca = "anos 70 e 80"
+fato = "O Galinho, maior artilheiro da história do clube."
+
+[[craque]]
+nome = "Júnior"
+completo = "Leovegildo Lins da Gama Júnior"
+posicao = "Lateral e meia"
+epoca = "anos 70 a 90"
+fato = "O Maestro, jogador com mais partidas pelo clube."
+
+[[craque]]
+nome = "Adílio"
+completo = "Adílio de Oliveira Gonçalves"
+posicao = "Meia"
+epoca = "anos 70 e 80"
+fato = "Campeão do mundo em 1981."
+
+[[craque]]
+nome = "Andrade"
+completo = "Jorge Luís Andrade da Silva"
+posicao = "Volante"
+epoca = "anos 70 e 80"
+fato = "Campeão do mundo em 1981."
+
+[[craque]]
+nome = "Leandro"
+completo = "José Leandro de Souza Ferreira"
+posicao = "Lateral"
+epoca = "anos 70 e 80"
+fato = "Campeão do mundo em 1981."
+
+[[craque]]
+nome = "Tita"
+completo = "Milton Queiroz da Paixão"
+posicao = "Meia"
+epoca = "anos 70 e 80"
+fato = "Campeão da Libertadores de 1981."
+
+[[craque]]
+nome = "Nunes"
+completo = "João Batista Nunes de Oliveira"
+posicao = "Atacante"
+epoca = "anos 80"
+fato = "Fez dois gols na final do Mundial de 1981."
+
+[[craque]]
+nome = "Raul"
+completo = "Raul Guilherme Plassmann"
+posicao = "Goleiro"
+epoca = "anos 70 e 80"
+fato = "Goleiro campeão do mundo em 1981."
+
+[[craque]]
+nome = "Mozer"
+completo = "José Carlos Nepomuceno Mozer"
+posicao = "Zagueiro"
+epoca = "anos 80"
+fato = "Zagueiro revelado no clube."
+
+[[craque]]
+nome = "Aldair"
+completo = "Aldair Nascimento dos Santos"
+posicao = "Zagueiro"
+epoca = "anos 80"
+fato = "Revelado no clube, campeão do mundo em 1994."
+
+[[craque]]
+nome = "Bebeto"
+completo = "José Roberto Gama de Oliveira"
+posicao = "Atacante"
+epoca = "anos 80"
+fato = "Atacante revelado no clube."
+
+[[craque]]
+nome = "Romário"
+completo = "Romário de Souza Faria"
+posicao = "Atacante"
+epoca = "anos 90"
+fato = "Artilheiro nos anos 90."
+
+[[craque]]
+nome = "Sávio"
+completo = "Sávio Bortolini Pimentel"
+posicao = "Atacante"
+epoca = "anos 90"
+fato = "O Anjo Loiro."
+
+[[craque]]
+nome = "Petkovic"
+completo = "Dejan Petković"
+posicao = "Meia"
+epoca = "anos 2000"
+fato = "Gol de falta do tri carioca de 2001."
+
+[[craque]]
+nome = "Adriano"
+completo = "Adriano Leite Ribeiro"
+posicao = "Atacante"
+epoca = "anos 2000"
+fato = "O Imperador, campeão brasileiro de 2009."
+
+[[craque]]
+nome = "Ronaldinho"
+completo = "Ronaldo de Assis Moreira"
+posicao = "Meia"
+epoca = "anos 2010"
+fato = "Craque de Copa e de Bola de Ouro."
+
+[[craque]]
+nome = "Hernane"
+completo = "Hernane Vidal de Souza"
+posicao = "Atacante"
+epoca = "anos 2010"
+fato = "O Brocador, campeão da Copa do Brasil de 2013."
+
+[[craque]]
+nome = "Guerrero"
+completo = "Paolo Guerrero"
+posicao = "Atacante"
+epoca = "anos 2010"
+fato = "Centroavante peruano."
+
+[[craque]]
+nome = "Diego"
+completo = "Diego Ribas da Cunha"
+posicao = "Meia"
+epoca = "anos 2010 e 2020"
+fato = "Campeão da Libertadores de 2019."
+
+[[craque]]
+nome = "Rafinha"
+completo = "Márcio Rafael Ferreira de Souza"
+posicao = "Lateral"
+epoca = "anos 2010"
+fato = "Campeão da Libertadores de 2019."
+
+[[craque]]
+nome = "Gerson"
+completo = "Gerson Santos da Silva"
+posicao = "Meia"
+epoca = "anos 2010 e 2020"
+fato = "O Coringa."
+
+[[craque]]
+nome = "Arrascaeta"
+completo = "Giorgian De Arrascaeta"
+posicao = "Meia"
+epoca = "anos 2010 e 2020"
+fato = "Meia uruguaio de muitos títulos."
+
+[[craque]]
+nome = "Gabigol"
+completo = "Gabriel Barbosa"
+posicao = "Atacante"
+epoca = "anos 2010 e 2020"
+fato = "Fez os dois gols da final da Libertadores de 2019."
+
+[[craque]]
+nome = "Pedro"
+completo = "Pedro Guilherme Abreu dos Santos"
+posicao = "Atacante"
+epoca = "anos 2020"
+fato = "Centroavante artilheiro."
