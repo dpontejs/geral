@@ -1,7 +1,7 @@
 # "Quanto foi?": adivinhe o placar de um jogo histórico
 
 - **Data:** 2026-11-11
-- **Status:** aprovada
+- **Status:** entregue (PR #16) e retirado em 2026-11-11: a Geral troca o placar histórico pelos jogos de carreira ("Onde jogou?", "Quem é?")
 - **ADRs:** —
 - **Pesquisa:** relatório "Joguinhos de futebol para a Geral" (fora do repo); o "7 a 0" virou nome de
   outro jogo (draft e Copa simulada, 7a0.com.br), por isso o cartão do portal muda de nome.
