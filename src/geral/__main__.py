@@ -564,10 +564,22 @@ def edicao_geral(
     skip_if_sent: Annotated[
         bool, typer.Option("--skip-if-sent", help="Do nothing if this week's edition went out")
     ] = False,
+    publish_only: Annotated[
+        bool,
+        typer.Option(
+            "--publish-only",
+            help="Put it on the portal (page and welcome e-mail) without sending: the first one",
+        ),
+    ] = False,
 ) -> None:
     """Build the edição geral (Série A to D) of a Monday; --send mails it and publishes it."""
     _setup_logging()
     settings = get_settings()
+    if publish_only and (send or not settings.SUBSCRIBERS_API_TOKEN):
+        typer.echo(
+            "--publish-only precisa de SUBSCRIBERS_API_TOKEN e não combina com --send.", err=True
+        )
+        raise typer.Exit(code=1)
     start, end = week_window((date or _now()).date())
     label = general_label(end.date())
     if skip_if_sent and _already_sent(settings, GENERAL_EDITION, label):
@@ -606,6 +618,14 @@ def edicao_geral(
     path.write_text(html.replace(UNSUBSCRIBE_PLACEHOLDER, mailto), encoding="utf-8")
     path.with_suffix(".txt").write_text(text.replace(UNSUBSCRIBE_PLACEHOLDER, mailto), "utf-8")
     typer.echo(f"{edition.subject}\ncópia em {path}")
+    if publish_only:
+        try:
+            publish_latest_edition(settings, GENERAL_SLUG, edition.subject, html, text)
+        except httpx.HTTPError as e:
+            typer.echo(f"{edition.label}: não publicada no portal: {e}", err=True)
+            raise typer.Exit(code=1) from e
+        typer.echo(f"{edition.label}: publicada no portal, sem envio.")
+        return
     if recipients is None:
         return
     _, address = parseaddr(settings.NEWSLETTER_FROM)

@@ -54,6 +54,9 @@ brasileiro, e não de uma torcida.
   não refaz a edição da semana; sem inscritos, para antes de coletar.
 - Workflow `newsletter.yml`: `team=geral` roda `edicao-geral --send` (com `--date` e
   `--skip-if-sent` quando vierem).
+- `geral edicao-geral --publish-only` (workflow com `publish_only`): publica a edição no portal
+  (`/t/geral`, cartão do Intervalo e boas-vindas de quem se inscreve) sem enviar. Serve para a
+  primeira edição: sem ela, quem se inscreve antes da primeira segunda não recebe nada.
 
 ## Critérios de aceite (como testes)
 
