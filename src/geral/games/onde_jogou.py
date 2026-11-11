@@ -35,7 +35,7 @@ NOT_A_CLUB = re.compile(
 FIRST_YEAR = 1850  # Wikidata writes an unknown date as year 0001
 # Positions as a Brazilian fan says them (Wikidata mixes English and Portugal's Portuguese).
 POSITIONS = {
-    "wing half": "Volante",
+    "wing half": "Meia-atacante",  # Wikidata uses it for wingers and playmakers
     "winger": "Ponta",
     "ponteiro": "Ponta",
     "defesa central": "Zagueiro",

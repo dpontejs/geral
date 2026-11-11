@@ -751,9 +751,9 @@ def create_app(
             number=number,
             jogador=jogador,
             clubes=data.clubes,
-            player_key=hashlib.sha256(f"{secret}:quem-e:{jogador.wikidata}".encode()).hexdigest()[
-                :12
-            ],
+            player_key=hashlib.sha256(
+                f"{secret}:quem-e:{number}:{jogador.wikidata}".encode()
+            ).hexdigest()[:12],
             players=sorted(
                 ({"id": j.wikidata, "nome": j.nome} for j in data.jogadores),
                 key=lambda p: p["nome"],

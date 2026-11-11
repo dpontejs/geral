@@ -11,7 +11,7 @@ from geral.games import onde_jogou
 from geral.games.daily import number_on, pick
 from geral.games.onde_jogou import Data, Jogador
 
-LAUNCH = date(2026, 11, 12)  # puzzle #1: no later than the deploy, or two days share #1
+LAUNCH = date(2026, 11, 11)  # puzzle #1: no later than the deploy, or two days share #1
 MAX_GUESSES = 6
 POSITION_HINT_AFTER, INITIAL_HINT_AFTER = 3, 4  # misses
 

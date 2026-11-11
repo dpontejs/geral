@@ -246,7 +246,7 @@ def test_real_club_names_are_unique() -> None:
 @pytest.mark.parametrize(
     "raw, shown",
     [
-        ("wing half", "Volante"),
+        ("wing half", "Meia-atacante"),  # Neymar, Robinho, Arrascaeta: never a volante
         ("Winger", "Ponta"),
         ("defesa central", "Zagueiro"),
         ("Attacking midfielder", "Meia"),

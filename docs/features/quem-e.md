@@ -22,7 +22,7 @@ Usa o mesmo `carreiras.json`; edições iguais às do "Onde jogou?", em outra or
 - `geral/games/quem_e.py`: `pool(data, edition, teams)` (semente `quem-e`), `judge(data, jogador,
   palpites) -> Verdict` com `rows` (nome e acerto por chute), `solved`, `over` (acertou ou 6
   chutes), dicas (posição a partir do 3º erro, inicial do nome a partir do 4º) e `reveal` (nome,
-  posição) só no fim. `LAUNCH = 2026-11-12`, `MAX_GUESSES = 6`.
+  posição) só no fim. `LAUNCH = 2026-11-11`, `MAX_GUESSES = 6`.
 - Rotas: `GET /jogos/quem-e[/{edition}]` (carreira com clubes e anos; lista de jogadores para o
   seletor) e `POST /api/jogos/quem-e/{edition}/{number}` com `{"palpites": [id do Wikidata]}`;
   jogador desconhecido → 422; edição ou número inválido → 404.
