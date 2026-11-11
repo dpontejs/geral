@@ -78,4 +78,5 @@ para a ESPN). O Potiguar 2026 foi conferido chamando o `GETablesClient` com o re
 ## Riscos e dúvidas abertas
 
 - API não documentada: se mudar, o ABC volta a só ter notícias (os demais não são afetados).
-- ~20 a 40 chamadas ao ge por execução do `due` (a cada 10 min); cache só dentro da execução.
+- ~45 chamadas ao ge por execução do `due` (a cada 10 min, só o ABC); cache só dentro da execução.
+- Pênaltis do mata-mata não aparecem (o pós-jogo mostra o empate): fica para a 2b.2.
