@@ -3,7 +3,16 @@ from pathlib import Path
 
 import pytest
 
-from geral.games.quanto_foi import LAUNCH, by_number, convert, load_matches, pool, puzzle
+from geral.games.quanto_foi import (
+    LAUNCH,
+    Side,
+    by_number,
+    convert,
+    judge,
+    load_matches,
+    pool,
+    puzzle,
+)
 
 FIXTURES = Path(__file__).parent / "fixtures" / "brasileirao"
 
@@ -75,3 +84,51 @@ def test_puzzle_does_not_repeat_until_the_pool_ends(matches) -> None:
 
     assert len({puzzle(games, day).match.id for day in days}) == len(games)
     assert puzzle(games, LAUNCH) == by_number(games, 1)
+
+
+def test_judge_marks_exact_close_and_far_per_side(matches) -> None:
+    answer = by_id(matches, 4607)  # Fluminense 3 x 0 Figueirense
+
+    verdict = judge(answer, [(2, 0), (0, 2)])
+
+    assert verdict.rows[0] == (Side(status="perto", hint="mais"), Side(status="certo", hint=""))
+    assert verdict.rows[1] == (
+        Side(status="longe", hint="mais"),
+        Side(status="longe", hint="menos"),
+    )
+    assert not verdict.solved and not verdict.over and verdict.reveal is None
+
+
+def test_judge_reveals_only_when_over(matches) -> None:
+    answer = by_id(matches, 4607)
+
+    solved = judge(answer, [(1, 1), (3, 0)])
+    lost = judge(answer, [(1, 1)] * 6)
+
+    assert solved.solved and solved.over
+    assert solved.reveal.home_scorers == [
+        "Rafael Sóbis",
+        "Fred",
+        "Nirley da Silva Fonseca (contra)",
+    ]
+    assert solved.reveal.stadium == "Maracanã" and solved.reveal.day == date(2014, 4, 19)
+    assert lost.over and not lost.solved and lost.reveal.home_goals == 3
+
+
+def test_judge_gives_hints_after_misses(matches) -> None:
+    answer = by_id(matches, 4607)
+
+    assert judge(answer, [(0, 0)] * 2).hints == []
+    assert judge(answer, [(0, 0)] * 3).hints == ["Técnicos: C. Borges dos Santos × V. Eutrópio"]
+    assert judge(answer, [(0, 0)] * 4).hints[-1] == "Venceu: Fluminense"
+    assert judge(by_id(matches, 57), [(0, 0)] * 4).hints == ["Deu empate"]
+
+
+def test_judge_skips_coach_hint_when_unknown(matches) -> None:
+    assert judge(by_id(matches, 1), [(0, 0)] * 3).hints == []
+
+
+def test_repeated_guess_counts_as_a_try(matches) -> None:
+    verdict = judge(by_id(matches, 4607), [(1, 1), (1, 1)])
+
+    assert len(verdict.rows) == 2

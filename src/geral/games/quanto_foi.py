@@ -11,6 +11,9 @@ import re
 from dataclasses import dataclass
 from datetime import date, datetime
 from pathlib import Path
+from typing import Literal
+
+from pydantic import BaseModel
 
 DATA = Path(__file__).with_name("brasileirao.csv")
 FIELDS = (
@@ -42,6 +45,8 @@ DISPLAY = {
 SCORER_SEP = ";"
 
 LAUNCH = date(2026, 11, 12)  # puzzle #1
+MAX_GUESSES = 6
+COACH_HINT_AFTER, WINNER_HINT_AFTER = 3, 4  # misses
 # Edition slug -> club in the dataset (display name); "geral" plays the whole Série A.
 EDITIONS: dict[str, str | None] = {
     "geral": None,
@@ -183,3 +188,70 @@ def by_number(games: list[Match], number: int) -> Puzzle:
 
 def puzzle(games: list[Match], day: date) -> Puzzle:
     return by_number(games, puzzle_number(day))
+
+
+class Side(BaseModel):
+    status: Literal["certo", "perto", "longe"]
+    hint: Literal["mais", "menos", ""]  # the real number is higher / lower
+
+
+class Reveal(BaseModel):
+    home: str
+    away: str
+    home_goals: int
+    away_goals: int
+    stadium: str
+    day: date
+    round: int
+    home_scorers: list[str]
+    away_scorers: list[str]
+
+
+class Verdict(BaseModel):
+    rows: list[tuple[Side, Side]]
+    solved: bool
+    over: bool
+    hints: list[str]
+    reveal: Reveal | None
+
+
+def _side(guess: int, real: int) -> Side:
+    diff = real - guess
+    status = "certo" if diff == 0 else "perto" if abs(diff) == 1 else "longe"
+    return Side(status=status, hint="mais" if diff > 0 else "menos" if diff < 0 else "")
+
+
+def judge(match: Match, guesses: list[tuple[int, int]]) -> Verdict:
+    real = (match.home_goals, match.away_goals)
+    solved = real in guesses
+    over = solved or len(guesses) >= MAX_GUESSES
+    misses = len(guesses) - (1 if solved else 0)
+    hints = []
+    if misses >= COACH_HINT_AFTER and match.home_coach and match.away_coach:
+        hints.append(f"Técnicos: {match.home_coach} × {match.away_coach}")
+    if misses >= WINNER_HINT_AFTER:
+        hints.append(
+            "Deu empate"
+            if real[0] == real[1]
+            else f"Venceu: {match.home if real[0] > real[1] else match.away}"
+        )
+    reveal = None
+    if over:
+        reveal = Reveal(
+            home=match.home,
+            away=match.away,
+            home_goals=match.home_goals,
+            away_goals=match.away_goals,
+            stadium=match.stadium,
+            day=match.day,
+            round=match.round,
+            home_scorers=list(match.home_scorers),
+            away_scorers=list(match.away_scorers),
+        )
+    return Verdict(
+        rows=[(_side(h, real[0]), _side(a, real[1])) for h, a in guesses],
+        solved=solved,
+        over=over,
+        hints=hints,
+        reveal=reveal,
+    )
