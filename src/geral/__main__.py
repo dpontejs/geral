@@ -38,6 +38,7 @@ from geral.stats.espn import StatsUnavailable
 from geral.stats.table import standings_window
 from geral.summarizer.client import LLMError
 from geral.teams import Team, UnknownTeam, get_team, load_teams
+from geral.web import announce as announcements
 from geral.web.legacy import import_single_team
 from geral.web.store import SubscriberStore
 
@@ -398,6 +399,62 @@ def import_legacy(
     if report.nickname_conflicts:
         conflicts = ", ".join(report.nickname_conflicts)
         typer.echo(f"Apelidos já usados na Geral (ficaram sem apelido): {conflicts}")
+
+
+@app.command()
+def announce(
+    moved_in_before: Annotated[
+        datetime,
+        typer.Option(
+            formats=["%Y-%m-%dT%H:%M:%S%z"],
+            help="When the moved-in team (LEGACY_TEAM) went on the portal, e.g. "
+            "2026-11-11T15:00:00+00:00: who followed it before came with the import",
+        ),
+    ],
+    send_it: Annotated[
+        bool, typer.Option("--send", help="Send to everyone who has not got it yet")
+    ] = False,
+    to: Annotated[
+        str | None, typer.Option("--to", help="Send both versions to this address only (a test)")
+    ] = None,
+) -> None:
+    """Announce the Geral: one e-mail per active person, never twice; without --send or --to it
+    only counts the audiences and saves both versions to out/.
+
+    Runs next to the page (the Geral's SUBSCRIBERS_DB)."""
+    _setup_logging()
+    settings = get_settings()
+    if not settings.LEGACY_TEAM or not settings.SUBSCRIBE_SECRET:
+        typer.echo("announce precisa de LEGACY_TEAM e SUBSCRIBE_SECRET.", err=True)
+        raise typer.Exit(code=2)
+    legacy = _team(settings.LEGACY_TEAM)
+    store = SubscriberStore(settings.SUBSCRIBERS_DB)
+    now = _now()
+    both = announcements.versions(settings, legacy)
+    found = announcements.audiences(store, legacy, moved_in_before)
+    typer.echo(
+        f"Faltam receber: {len(found.moved_in)} vindos da {legacy.newsletter}, "
+        f"{len(found.others)} da Geral."
+    )
+    try:
+        if to:
+            for version in both:
+                announcements.send(settings, store, version, [to], now, mark=False)
+            typer.echo(f"As duas versões foram para {to}.")
+        elif send_it:
+            for version, emails in zip(both, (found.moved_in, found.others), strict=True):
+                sent = announcements.send(settings, store, version, emails, now)
+                typer.echo(f"{version.subject}: enviado para {sent}.")
+        else:
+            out = Path("out")
+            out.mkdir(exist_ok=True)
+            for version in both:
+                (out / f"anuncio-{version.key}.html").write_text(version.html, encoding="utf-8")
+                (out / f"anuncio-{version.key}.txt").write_text(version.text, encoding="utf-8")
+            typer.echo("Nada enviado; prévias em out/anuncio-*. --to testa, --send envia.")
+    except SendError as e:
+        typer.echo(f"Falha no envio (quem já recebeu ficou marcado): {e}", err=True)
+        raise typer.Exit(code=1) from e
 
 
 def _bolao(newsletter: Newsletter, settings, team: Team, write: bool) -> None:
