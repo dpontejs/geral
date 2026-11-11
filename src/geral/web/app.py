@@ -8,6 +8,7 @@ import hmac
 import logging
 import os
 import re
+import unicodedata
 from collections import defaultdict, deque
 from collections.abc import Callable
 from datetime import UTC, datetime, timedelta, timezone
@@ -31,7 +32,7 @@ from geral.web.bolao import TZ, BolaoStore
 from geral.web.mailer import Mailer, MailError, mailer_from_settings
 from geral.web.scoreboard import animation_svg
 from geral.web.store import RequestResult, SubscriberStore, normalize
-from geral.web.team_requests import TeamRequestStore, team_key
+from geral.web.team_requests import TeamRequestStore, network, team_key
 from geral.web.tokens import make_token, read_token
 from geral.web.welcome import add_welcome
 
@@ -155,11 +156,12 @@ def create_app(
 
     limiter = RateLimiter(SIGNUPS_PER_IP, SIGNUP_WINDOW)
     request_limiter = RateLimiter(REQUESTS_PER_IP, SIGNUP_WINDOW)
-    # A request for a team already here points to it: its name, newsletter or nicknames.
+    # A request for a team already here points to it, by slug, name or newsletter (nicknames
+    # are often shared by several clubs). Teams moving in count as here too.
     known = {
         team_key(word): team
-        for team in listed.values()
-        for word in (team.slug, team.name, team.newsletter, *team.keywords)
+        for team in catalog.values()
+        for word in (team.slug, team.name, team.newsletter)
     }
     public_url = settings.PUBLIC_URL.rstrip("/")
 
@@ -185,7 +187,7 @@ def create_app(
             counts=counts,
             ranking=sorted(listed.values(), key=lambda t: (-counts.get(t.slug, 0), t.newsletter)),
             clock=now().astimezone(BRASILIA),
-            top_request=next(iter(team_requests.top(1)), None),
+            top_request=next(iter(team_requests.top(1)), None),  # only past the public minimum
             **context,
         )
 
@@ -653,7 +655,7 @@ def create_app(
     @app.post("/pedir", response_class=HTMLResponse)
     async def request_team(request: Request):
         form = await request.form()
-        name = " ".join(str(form.get("team", "")).split())
+        name = " ".join(unicodedata.normalize("NFC", str(form.get("team", ""))).split())
         email = normalize(str(form.get("email", "")))
 
         def again(error: str) -> HTMLResponse:
@@ -663,8 +665,10 @@ def create_app(
         if form.get("website"):  # honeypot: only bots fill the hidden field
             return message(request, "Pedido anotado", "Valeu! Seu pedido foi anotado.")
         valid_name = MIN_TEAM_NAME <= len(name) <= MAX_TEAM_NAME and TEAM_NAME_RE.match(name)
-        if not valid_name or not team_key(name):
+        if not valid_name:
             return again("Escreva o nome do time (de 2 a 40 letras).")
+        if not team_key(name):
+            return again("Escreva o nome com letras do nosso alfabeto, como em português.")
         if email and not is_valid_email(email):
             return again("Digite um e-mail válido, ou deixe em branco.")
         if team := known.get(team_key(name)):
@@ -675,13 +679,13 @@ def create_app(
                 link_url=f"/t/{team.slug}",
                 link_label=f"Ver a {team.newsletter}",
             )
-        client_ip = request.client.host if request.client else "unknown"
-        if not request_limiter.allow(client_ip, now()):
+        voter_network = network(request.client.host if request.client else "unknown")
+        if not request_limiter.allow(voter_network, now()):
             return message(
                 request, "Muitos pedidos", "Espere um pouco e tente de novo.", status=429
             )
-        anonymous = "ip:" + hmac.new(secret.encode(), client_ip.encode(), "sha256").hexdigest()
-        team_requests.add(name, email or anonymous, email or None, now())
+        voter = hmac.new(secret.encode(), voter_network.encode(), "sha256").hexdigest()
+        team_requests.add(name, voter, email or None, now())
         position, requested = team_requests.position(team_key(name)) or (0, None)
         votes = requested.votes if requested else 1
         text = (
@@ -700,7 +704,7 @@ def create_app(
             return unauthorized()
         return [
             {"key": t.key, "name": t.name, "votes": t.votes, "emails": t.emails}
-            for t in team_requests.top(limit=10_000)
+            for t in team_requests.top(limit=10_000, min_votes=1)
         ]
 
     @app.get("/version.json")

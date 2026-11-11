@@ -14,7 +14,9 @@ primeiro.
 ## Fora de escopo
 
 - O e-mail "sua torcida nasceu" (comando que avisa quem pediu): PR seguinte, quando houver o
-  primeiro time a nascer de um pedido. Aqui o e-mail só fica guardado.
+  primeiro time a nascer de um pedido. Aqui o e-mail só fica guardado. Como ele não é
+  confirmado, o aviso será um e-mail único, dizendo que alguém pediu o time com aquele endereço e
+  convidando a assinar; não inscreve ninguém.
 - Redesenho do portal (outro chat): o cartão "Seu time?" só vira link, e a página nova usa os
   estilos que já existem.
 - Página de ranking de torcidas: o placar do portal já ordena as torcidas por inscritos.
@@ -22,19 +24,22 @@ primeiro.
 ## Contratos
 
 - Tabela `team_requests` (mesmo SQLite): `team_key` (nome normalizado: minúsculas, sem acento,
-  sem pontuação, espaços únicos), `team_name` (como digitado), `requester` (e-mail normalizado
-  ou `ip:<hmac do IP>`), `email` (nulo se não deu), `created_at`. Chave `(team_key, requester)`:
-  um voto por pessoa por time; pedir de novo com e-mail guarda o e-mail.
-- `GET /pedir`: formulário (time, e-mail opcional, honeypot `website`) e os 10 mais pedidos
-  (nome mais digitado + votos; nunca e-mail).
+  sem pontuação, espaços únicos), `team_name` (como digitado), `voter` (HMAC da rede: o IPv4, ou
+  o /64 do IPv6), `email` (nulo se não deu), `created_at`. Chave `(team_key, voter)`: um voto
+  por rede por time, com ou sem e-mail (e-mail inventado não soma voto); pedir de novo com e-mail
+  guarda o e-mail.
+- `GET /pedir`: formulário (time, e-mail opcional, honeypot `website`) e os 10 mais pedidos com
+  pelo menos 3 votos (nome mais digitado + votos; nunca e-mail). Abaixo de 3 votos o nome não
+  aparece em público: uma pessoa só não escreve na home.
 - `POST /pedir` → 200 "Pedido anotado" com a posição e os votos do time; com e-mail, avisa que
   só vai receber um e-mail quando a torcida nascer.
-  - Time que já está na Geral (nome, newsletter ou palavra-chave do catálogo): não conta voto,
-    responde "Já tem!" com link para `/t/<slug>`.
-  - 400: nome com menos de 2 ou mais de 40 caracteres, ou fora de letras, dígitos, espaço,
-    `-`, `.`, `'`; e-mail inválido. 429: mais de 10 pedidos por IP por hora.
+  - Time que já está no catálogo (slug, nome ou newsletter; apelidos não, porque vários clubes
+    os dividem): não conta voto, responde "Já tem!" com link para `/t/<slug>`.
+  - 400: nome com menos de 2 ou mais de 40 caracteres (após NFC), fora de letras, dígitos,
+    espaço, `-`, `.`, `'`, ou sem letra do alfabeto latino (mensagem própria); e-mail inválido.
+    429: mais de 10 pedidos por rede por hora.
 - `GET /api/team-requests` (token da API): `[{key, name, votes, emails}]` por votos, para o dono.
-- Portal: o cartão "Seu time?" vira link para `/pedir` e mostra o mais pedido, se houver.
+- Portal: o cartão "Seu time?" vira link para `/pedir` e mostra o mais pedido com 3 votos ou mais.
 
 ## Critérios de aceite (como testes)
 
@@ -58,4 +63,5 @@ uv run uvicorn geral.web.app:create_app --factory   # abrir /pedir, pedir, ver a
 
 ## Riscos e dúvidas abertas
 
-- Voto anônimo por IP é burlável (troca de rede); para um projeto por diversão, aceitável.
+- Voto por rede é burlável (troca de rede) e conta uma vez a casa inteira; para um projeto por
+  diversão, aceitável.
