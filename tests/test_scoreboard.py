@@ -1,6 +1,6 @@
 import xml.etree.ElementTree as ET
 
-from geral.web.scoreboard import COLS, ROWS, TICKS, WHITE_LAMP, animation_svg, lamp_color, layers
+from geral.web.scoreboard import COLS, ROWS, TICKS, animation_svg, layers
 
 
 def test_every_layer_fits_the_board_and_has_a_valid_window() -> None:
@@ -37,18 +37,3 @@ def test_svg_holds_still_on_the_goal_when_motion_is_reduced() -> None:
 
     assert "prefers-reduced-motion: reduce" in svg
     assert 'class="layer end"' in svg
-
-
-def test_lamp_color_lights_black_clubs_in_white() -> None:
-    assert lamp_color("#141414") == WHITE_LAMP
-    assert lamp_color("#FFFFFF") == WHITE_LAMP
-
-
-def test_lamp_color_keeps_the_club_hue_but_bright_enough_for_a_black_board() -> None:
-    import colorsys
-
-    for accent, channel in [("#006437", 1), ("#C60000", 0)]:
-        lit = lamp_color(accent)
-        r, g, b = (int(lit[i : i + 2], 16) / 255 for i in (1, 3, 5))
-        assert (r, g, b)[channel] == max(r, g, b)  # still green / still red
-        assert colorsys.rgb_to_hls(r, g, b)[1] >= 0.55  # bright

@@ -30,7 +30,7 @@ from geral.send.resend_sender import UNSUBSCRIBE_PLACEHOLDER, personalize
 from geral.teams import Team, load_teams
 from geral.web.bolao import TZ, BolaoStore
 from geral.web.mailer import Mailer, MailError, mailer_from_settings
-from geral.web.scoreboard import animation_svg, lamp_color
+from geral.web.scoreboard import animation_svg
 from geral.web.store import RequestResult, SubscriberStore, normalize
 from geral.web.team_requests import TeamRequestStore, network, team_key
 from geral.web.tokens import make_token, read_token
@@ -66,7 +66,6 @@ templates = Jinja2Templates(directory=Path(__file__).parent / "templates")
 # Jinja only autoescapes .html by default; ours end in .html.j2 and show user input.
 templates.env.autoescape = select_autoescape(["html.j2"])
 templates.env.globals["scoreboard_animation"] = animation_svg
-templates.env.filters["lamp"] = lamp_color
 
 
 class RateLimiter:

@@ -80,16 +80,17 @@ nav a.cta:hover { background: var(--lamp); color: var(--ink); }
 .scoreboard > div:last-child { border-right: 0; }
 .scoreboard .play { display: flex; align-items: center; padding: 16px; }
 .lance { display: block; width: 100%; height: auto; }
-.scoreboard .clockbox { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 16px 8px; text-align: center; }
+.scoreboard .clockbox { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 28px; padding: 16px 8px; text-align: center; }
 .clock { font-size: clamp(34px, 4vw, 54px); letter-spacing: .02em; }
 .clockbox .total { font-size: clamp(28px, 3vw, 40px); }
 .clockbox small { font-size: 13px; letter-spacing: .14em; }
 .ranking { list-style: none; margin: 0; padding: 14px 0; display: flex; flex-direction: column; justify-content: center; gap: 2px; height: 100%; }
 .ranking li { display: grid; grid-template-columns: 14px minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 7px 22px; }
 .ranking .dot { width: 14px; height: 14px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 2px var(--paper); }
-/* Portal board: each fanbase lights up in its club color (black shirts in a plain white lamp). */
+/* Portal board: names and counts only, in lamp yellow like the rest of the board. */
 .ranking.lamps li { grid-template-columns: minmax(0, 1fr) auto; }
-.ranking.lamps .name, .ranking.lamps .n { color: var(--team-lamp, var(--lamp)); text-shadow: 0 0 6px color-mix(in srgb, var(--team-lamp, var(--lamp)) 55%, transparent), 0 0 18px color-mix(in srgb, var(--team-lamp, var(--lamp)) 25%, transparent); }
+/* The font's colon looked like a "+": two lamps drawn instead. */
+.clock .colon { display: inline-block; width: .32em; height: .62em; margin: 0 .06em; vertical-align: .08em; background: radial-gradient(circle at 50% 15%, var(--lamp) 0 .07em, transparent .085em), radial-gradient(circle at 50% 85%, var(--lamp) 0 .07em, transparent .085em); filter: drop-shadow(0 0 4px rgba(255, 194, 26, .6)); }
 .ranking .name, .ranking .n { font-size: clamp(26px, 3.4vw, 46px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ranking .n { font-variant-numeric: tabular-nums; }
 
