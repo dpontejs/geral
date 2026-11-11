@@ -4,7 +4,14 @@ from geral.general.edition import GeneralEdition
 from geral.render.renderer import render_pair
 
 # docs/features/identidade-geral.md
-COLORS = {"paper": "#EFE4CC", "ink": "#1E1E1E", "concrete": "#8E8B84", "ticket": "#E3B23C"}
+COLORS = {
+    "paper": "#EFE4CC",
+    "ink": "#1E1E1E",
+    "concrete": "#5B6B5E",
+    "ticket": "#E3B23C",
+    "turf": "#0E3320",
+    "pitch": "#1F7A3D",
+}
 
 
 def render_general(

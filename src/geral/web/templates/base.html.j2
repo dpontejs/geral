@@ -15,28 +15,33 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Geral: o geraldino com o radinho de pilha e o nome do portal">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#1E1E1E">
+<meta name="theme-color" content="#0E3320">
 <link rel="icon" href="/static/geral/icon-512.png">
 <link rel="apple-touch-icon" href="/static/geral/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Big+Shoulders+Stencil+Display:wght@800&family=Doto:wght@900&family=Barlow:wght@400;500;600;700&display=swap">
 <style>
-/* A Geral do Maracanã antigo: muro de concreto, ingresso de papel e o placar eletrônico de
-   lâmpadas amarelas. O placar aparece só no topo e nos joguinhos; o resto é papel e concreto.
-   As cores dos clubes ficam fora do painel (o placar antigo era de uma cor só). Tema único. */
+/* A Geral do Maracanã antigo: o gramado colado na Geral, ingresso de papel e o placar
+   eletrônico de lâmpadas amarelas. O placar aparece só no topo e nos joguinhos; o resto é
+   gramado e papel. As cores dos clubes ficam fora do painel (o placar antigo era de uma cor
+   só). Tema único. */
 :root {
   --paper: #EFE4CC;
   --paper-2: #E6D8BA;
-  --concrete: #8E8B84;
   --concrete-lt: #B9B5AC;
-  --seam: #7F7C75;
-  --ink: #1E1E1E;
+  --ink: #14231A;
   --ink-soft: #3F3C36;
   --ticket: #E3B23C;
   --board: #0B0B0A;
   --lamp: #FFC21A;
   --lamp-off: #1D1C18;
+  --turf: #0E3320;
+  --pitch: #1F7A3D;
+  --pitch-2: #248A46;
+  --chalk: rgba(255, 255, 255, .7);
+  --on-pitch: #F1F5EC;
+  --wash: #D3E2C6; /* the field away from the stands: plain grass, marked in white */
   --display: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
   --stencil: "Big Shoulders Stencil Display", "Big Shoulders Display", Impact, sans-serif;
   --dots: "Doto", ui-monospace, monospace;
@@ -44,7 +49,9 @@
   color-scheme: light;
 }
 * { box-sizing: border-box; }
-body { margin: 0; background: var(--concrete-lt); color: var(--ink); font: 17px/1.5 var(--body); }
+/* Below a short page's footer, the footer's colour carries on instead of more grass. */
+html { background: var(--turf); }
+body { margin: 0; background: var(--wash); color: var(--ink); font: 17px/1.5 var(--body); }
 .wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
 h1, h2, h3 { font-family: var(--display); font-weight: 900; text-transform: uppercase; line-height: .92; margin: 0; text-wrap: balance; }
 a { color: inherit; }
@@ -59,7 +66,7 @@ a { color: inherit; }
 }
 
 /* cabeçalho */
-header { background: var(--ink); color: var(--paper); }
+header { background: var(--turf); color: var(--paper); }
 header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 12px; flex-wrap: wrap; }
 .brand { display: flex; align-items: center; gap: 12px; text-decoration: none; }
 .brand img { width: 48px; height: 48px; }
@@ -70,12 +77,15 @@ nav a:hover { color: var(--lamp); }
 nav a.cta { background: var(--ticket); color: var(--ink); }
 nav a.cta:hover { background: var(--lamp); color: var(--ink); }
 
-/* muro de concreto com o placar */
-.wall { background: var(--concrete); background-image: repeating-linear-gradient(0deg, transparent 0 58px, var(--seam) 58px 60px), repeating-linear-gradient(90deg, transparent 0 118px, var(--seam) 118px 120px); }
+/* gramado cortado em faixas, com as linhas de cal */
+.wall { position: relative; overflow: hidden; background-color: var(--pitch); background-image: repeating-linear-gradient(90deg, var(--pitch) 0 90px, var(--pitch-2) 90px 180px); }
+.wall::before { content: ""; position: absolute; right: -160px; top: -160px; width: 420px; height: 420px; border: 5px solid var(--chalk); border-radius: 50%; pointer-events: none; }
+.wall::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; border-top: 5px solid #fff; pointer-events: none; } /* the goal line: the penalty area below hangs from it */
+.wall > .wrap { position: relative; }
 .hero .wrap { display: flex; flex-direction: column; gap: 24px; padding-block: 40px 48px; }
-.hero h1 { font-size: clamp(52px, 9vw, 124px); color: var(--paper); text-shadow: 4px 4px 0 var(--ink); }
-.hero .lead { margin: 0; max-width: 40em; font-size: 19px; background: var(--paper); padding: 14px 18px; border: 3px solid var(--ink); }
-.scoreboard { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .5fr) minmax(0, 1.4fr); border: 10px solid #5E5B55; box-shadow: inset 0 0 0 3px #000, 6px 6px 0 var(--ink); }
+.hero h1 { font-size: clamp(52px, 9vw, 124px); color: #fff; text-shadow: 5px 5px 0 var(--turf); }
+.hero .lead { margin: 0; max-width: 40em; font-size: 19px; background: var(--paper); padding: 14px 18px; border: 3px solid var(--turf); }
+.scoreboard { display: grid; grid-template-columns: minmax(0, 1.25fr) minmax(0, .5fr) minmax(0, 1.4fr); border: 10px solid var(--turf); box-shadow: inset 0 0 0 3px #000, 6px 6px 0 rgba(0, 0, 0, .35); }
 .scoreboard > div { min-width: 0; border-right: 6px solid #000; }
 .scoreboard > div:last-child { border-right: 0; }
 .scoreboard .play { display: flex; align-items: center; padding: 16px; }
@@ -95,7 +105,12 @@ nav a.cta:hover { background: var(--lamp); color: var(--ink); }
 .ranking .n { font-variant-numeric: tabular-nums; }
 
 /* ingresso de inscrição */
-.signup .wrap { padding-block: 48px; }
+/* the ticket stands in the penalty area; the halfway line leads to the teams */
+.signup .wrap { padding-block: 0; }
+.area { position: relative; border: 5px solid #fff; border-top: 0; padding: 40px 36px 44px; }
+.arc { position: absolute; left: 50%; bottom: -62px; width: 160px; height: 60px; margin-left: -80px; border: 5px solid #fff; border-top: 0; border-radius: 0 0 80px 80px; }
+.halfway { position: relative; border-top: 5px solid #fff; margin: 110px 0 56px; }
+.halfway::after { content: ""; position: absolute; left: 50%; top: -12px; width: 20px; height: 20px; margin-left: -10px; border-radius: 50%; background: #fff; }
 .ticket { background: var(--paper); display: flex; flex-wrap: wrap; border: 3px solid var(--ink); }
 .ticket .stub { flex: 0 0 210px; border-right: 3px dashed var(--ink); padding: 20px; display: flex; flex-direction: column; justify-content: space-between; gap: 12px; background: var(--ticket); }
 .ticket .stub h2 { font-size: 40px; }
@@ -112,7 +127,7 @@ nav a.cta:hover { background: var(--lamp); color: var(--ink); }
 .ticket .row { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; }
 .ticket label.field { flex: 1 1 260px; display: flex; flex-direction: column; gap: 6px; font-weight: 600; }
 .ticket input[type=email], .ticket input[type=text] { font: 17px var(--body); padding: 12px; border: 3px solid var(--ink); background: #fff; color: var(--ink); width: 100%; }
-.btn { display: inline-block; font: 900 24px/1 var(--display); text-transform: uppercase; letter-spacing: .06em; background: var(--ink); color: var(--paper); border: 0; padding: 15px 26px; min-height: 52px; cursor: pointer; text-decoration: none; }
+.btn { display: inline-block; font: 900 24px/1 var(--display); text-transform: uppercase; letter-spacing: .06em; background: var(--turf); color: var(--paper); border: 0; padding: 15px 26px; min-height: 52px; cursor: pointer; text-decoration: none; }
 .btn:hover { background: #000; color: var(--lamp); }
 .ticket .fine { font-size: 14px; color: var(--ink-soft); margin: 0; }
 
@@ -128,29 +143,33 @@ section.block .wrap { padding-block: 8px 52px; }
 .torcida .club { font-weight: 600; font-size: 14px; color: var(--ink-soft); text-transform: uppercase; letter-spacing: .06em; }
 .torcida .last { flex: 1; margin: 0; font-size: 16px; }
 .torcida .last b { display: block; font: 800 15px/1.2 var(--display); text-transform: uppercase; letter-spacing: .05em; color: var(--ink-soft); }
-.torcida .foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; border-top: 2px dashed var(--concrete); padding-top: 10px; font-weight: 600; font-size: 15px; }
+.torcida .foot { display: flex; justify-content: space-between; align-items: center; gap: 10px; border-top: 2px dashed #9AA88F; padding-top: 10px; font-weight: 600; font-size: 15px; }
 .torcida .foot a { font: 800 18px/1 var(--display); text-transform: uppercase; letter-spacing: .05em; text-decoration: none; border-bottom: 3px solid var(--c); padding: 8px 0 3px; }
 
 /* por que Geral */
-.why { background: var(--paper); border-top: 6px solid var(--ink); }
+.why { background: var(--turf); color: var(--on-pitch); border-block: 5px solid var(--chalk); }
 .why .wrap { display: flex; flex-wrap: wrap; gap: 36px; align-items: center; padding-block: 52px; }
 .why img { width: 240px; height: 240px; flex: none; }
 .why .text { flex: 1 1 420px; min-width: 0; display: flex; flex-direction: column; gap: 14px; }
-.why h2 { font-size: clamp(40px, 5vw, 64px); }
+.why h2 { font-size: clamp(40px, 5vw, 64px); color: #fff; }
 .why p { margin: 0; font-size: 18px; max-width: 60ch; }
 
 /* intervalo: joguinhos e pedidos */
+.intervalo.wall .wrap { padding-bottom: 64px; }
+.intervalo.wall::before { display: none; } /* the circle would cross the intro text */
+.intervalo.wall h2 { color: #fff; text-shadow: 4px 4px 0 var(--turf); }
+.intervalo.wall .head p { color: var(--on-pitch); }
 .intervalo .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); grid-auto-rows: 1fr; gap: 14px; }
-.mini { padding: 20px; display: flex; flex-direction: column; gap: 12px; color: #D9D4C8; border: 8px solid #5E5B55; min-width: 0; }
+.mini { padding: 20px; display: flex; flex-direction: column; gap: 12px; color: #D9D4C8; border: 8px solid var(--turf); min-width: 0; }
 .mini .lamp.tag { font-size: 15px; opacity: .75; }
 .mini .lamp.title { font-size: 30px; line-height: 1.1; }
 .mini p { margin: 0; font-size: 15px; flex: 1; }
 .play-card { text-decoration: none; }
 .play-card:hover { border-color: var(--ticket); }
-.mini .go.soon { color: #8E8B84; }
+.mini .go.soon { color: #8F978A; }
 .mini .go { margin-top: auto; font: 800 20px/1 var(--display); text-transform: uppercase; letter-spacing: .06em; color: var(--lamp); }
 
-footer { background: var(--ink); color: var(--concrete-lt); }
+footer { background: var(--turf); color: #C9D6C2; }
 footer .wrap { padding-block: 22px 30px; display: flex; justify-content: space-between; gap: 16px; flex-wrap: wrap; font-size: 14px; }
 
 @media (max-width: 900px) {
@@ -160,6 +179,9 @@ footer .wrap { padding-block: 22px 30px; display: flex; justify-content: space-b
   .scoreboard .clockbox { flex-direction: row; flex-wrap: wrap; gap: 16px; }
 }
 @media (max-width: 640px) {
+  .area { padding: 20px 12px 32px; }
+  .halfway { margin: 96px 0 40px; }
+  .wall::before { right: -110px; top: -110px; width: 200px; height: 200px; }
   .ticket .stub { flex-basis: 100%; border-right: 0; border-bottom: 3px dashed var(--ink); }
   .ranking li { gap: 10px; padding: 6px 14px; }
   .why img { width: 140px; height: 140px; }
@@ -175,7 +197,7 @@ footer .wrap { padding-block: 22px 30px; display: flex; justify-content: space-b
 .btn.secondary { background: transparent; color: var(--ink); border: 3px solid var(--ink); }
 .btn.secondary:hover { background: var(--ink); color: var(--paper); }
 .error { background: var(--ink); color: var(--paper); padding: 10px 12px; margin: 0; font-weight: 600; }
-.bolao-board { padding: 16px; border: 10px solid #5E5B55; max-width: 560px; }
+.bolao-board { padding: 16px; border: 10px solid var(--turf); max-width: 560px; }
 .ranking li.me { outline: 3px solid var(--lamp); outline-offset: 2px; }
 .score-inputs { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; font: 700 22px/1 var(--display); text-transform: uppercase; }
 .score-inputs input, input.nick { font: 16px var(--body); padding: 10px; border: 3px solid var(--ink); background: var(--paper); color: var(--ink); width: 5em; }
