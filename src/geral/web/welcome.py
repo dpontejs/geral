@@ -15,6 +15,12 @@ STRIPE_ROW = re.compile(r'height="5"[^>]*>.*?</tr>', re.DOTALL)
 
 def welcome_text(team: Team) -> tuple[str, str]:
     title = f"Boas-vindas à {team.newsletter}!"
+    if team.slug == "geral":  # the edição geral follows no club's calendar
+        return title, (
+            "Toda segunda de manhã, o futebol brasileiro da semana numa edição só: resultados, "
+            "tabela e as principais notícias, da Série A à D. Abaixo vai a última edição, para "
+            "você já ir lendo."
+        )
     text = (
         f"A newsletter segue a agenda do {team.name}: um pré-jogo no dia da partida, com "
         "escalações, palpites e onde assistir; um pós-jogo na manhã seguinte, com placar e "

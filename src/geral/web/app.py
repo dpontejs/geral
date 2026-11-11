@@ -26,6 +26,7 @@ from pydantic import AwareDatetime, BaseModel, Field
 
 from geral.config import Settings, get_settings
 from geral.games import craque, onde_jogou, quem_e
+from geral.general import GENERAL_EDITION, GENERAL_SLUG
 from geral.send.resend_sender import UNSUBSCRIBE_PLACEHOLDER, personalize
 from geral.teams import Team, load_teams
 from geral.web.bolao import TZ, BolaoStore
@@ -155,6 +156,10 @@ def create_app(
     catalog = teams if teams is not None else load_teams()
     # Teams people can see and join; unlisted ones (moving in) still work for links and the API.
     listed = {slug: team for slug, team in catalog.items() if team.listed}
+    clubs = dict(catalog)  # the torcidas only, for "already here" on team requests
+    # The edição geral is joined like a team (links, API, saved edition) but is not a torcida.
+    catalog = {**catalog, GENERAL_SLUG: GENERAL_EDITION}
+    joinable = {**listed, GENERAL_SLUG: GENERAL_EDITION}
     legacy_team = catalog.get(settings.LEGACY_TEAM or "")
     legacy_secret = settings.LEGACY_SUBSCRIBE_SECRET if legacy_team else None
     legacy_hosts = {h.strip().lower() for h in settings.LEGACY_HOSTS.split(",") if h.strip()}
@@ -169,7 +174,7 @@ def create_app(
     # are often shared by several clubs). Teams moving in count as here too.
     known = {
         team_key(word): team
-        for team in catalog.values()
+        for team in clubs.values()
         for word in (team.slug, team.name, team.newsletter)
     }
     public_url = settings.PUBLIC_URL.rstrip("/")
@@ -192,6 +197,7 @@ def create_app(
             "index.html.j2",
             status,
             teams=list(listed.values()),
+            general=GENERAL_EDITION,
             editions=store.latest_editions(),
             counts=counts,
             ranking=sorted(listed.values(), key=lambda t: (-counts.get(t.slug, 0), t.newsletter)),
@@ -304,7 +310,8 @@ def create_app(
     async def subscribe(request: Request):
         form = await request.form()
         email = normalize(str(form.get("email", "")))
-        chosen = [listed[s] for s in dict.fromkeys(map(str, form.getlist("team"))) if s in listed]
+        picks = dict.fromkeys(map(str, form.getlist("team")))
+        chosen = [joinable[s] for s in picks if s in joinable]
         check_inbox = (
             "Confira seu e-mail",
             "Se o endereço estiver certo, você vai receber um link para confirmar a inscrição. "

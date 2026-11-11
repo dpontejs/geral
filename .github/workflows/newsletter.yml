@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       team:
-        description: "Torcida (slug do teams.toml, ex.: vasco)"
+        description: "Torcida (slug do teams.toml, ex.: vasco) ou geral (edição geral)"
         type: string
         required: true
       edition:
@@ -109,6 +109,15 @@ jobs:
           PUBLISH_ONLY: ${{ inputs.publish_only && 'true' || 'false' }}
           SKIP_IF_SENT: ${{ github.event_name == 'schedule' && 'true' || (inputs.skip_if_sent && 'true' || 'false') }}
         run: |
+          if [ "$TEAM" = "geral" ]; then
+            # The edição geral (Série A to D): Mondays, dispatched by the VPS with the date.
+            args=(--send)
+            if [ "$SKIP_IF_SENT" = "true" ]; then args+=(--skip-if-sent); fi
+            if [ -n "$REFERENCE_DATE" ]; then args+=(--date "$REFERENCE_DATE"); fi
+            echo "DRY_RUN=$DRY_RUN SKIP_IF_SENT=$SKIP_IF_SENT edição geral date=${REFERENCE_DATE:-hoje}"
+            uv run python -m geral edicao-geral "${args[@]}"
+            exit 0
+          fi
           args=(--team "$TEAM" --edition "$EDITION")
           if [ "$SKIP_IF_SENT" = "true" ]; then args+=(--skip-if-sent); fi
           if [ -n "$REFERENCE_DATE" ]; then args+=(--date "$REFERENCE_DATE"); fi

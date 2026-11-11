@@ -53,11 +53,31 @@ class GeneralEdition:
 
     @property
     def label(self) -> str:
-        return f"Edição geral — {self.end:%d/%m/%Y}"
+        return general_label(self.end.date())
 
     @property
     def subject(self) -> str:
         return f"Geral — {self.label}: {self.headline}"
+
+
+GRACE = timedelta(hours=3)  # like the team editions: due from 8h to 11h
+
+
+def general_label(day: date) -> str:
+    return f"Edição geral — {day:%d/%m/%Y}"
+
+
+def due_general(now: datetime, latest_subject: str | None) -> date | None:
+    """The Monday whose edição geral is due now (8h to 11h, not sent yet), or None."""
+    local = now.astimezone(TZ)
+    if local.weekday() != 0:
+        return None
+    send_at = datetime.combine(local.date(), SEND_TIME, tzinfo=TZ)
+    if not send_at <= local < send_at + GRACE:
+        return None
+    if latest_subject and f"— {general_label(local.date())}" in latest_subject:
+        return None
+    return local.date()
 
 
 def week_window(day: date) -> tuple[datetime, datetime]:

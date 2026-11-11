@@ -33,7 +33,8 @@
   <tr><td align="center" style="padding-bottom: 14px;">
     {% if logo_url %}<img src="{{ logo_url }}" alt="Geral" width="120" style="display: block; border: 0; margin: 0 auto;">{% else %}<span style="font-size: 32px; font-weight: 900; letter-spacing: 3px;">GERAL</span>{% endif %}
   </td></tr>
-  <tr><td style="padding: 0 4px 18px 4px;">
+  <tr><td height="5" style="height: 5px; line-height: 5px; font-size: 0; background-color: {{ ticket }};">&nbsp;</td></tr>
+  <tr><td style="padding: 14px 4px 18px 4px;">
     <p class="kicker" style="margin: 0;">{{ e.label }}</p>
     <h1 class="headline">{{ e.headline }}</h1>
     {% if e.intro %}<p class="intro">{{ e.intro }}</p>{% endif %}
