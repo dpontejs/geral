@@ -15,7 +15,7 @@
     </form>
     {% endif %}
     {% else %}
-    <a class="btn" href="/">Voltar para a Geral</a>
+    <a class="btn" href="{{ link_url or '/' }}">{{ link_label or 'Voltar para a Geral' }}</a>
     {% endif %}
   </div></div>
 </section>

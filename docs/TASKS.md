@@ -37,7 +37,8 @@ Ordem de execução. Cada fatia vira um PR; a página da fatia fica em `docs/fea
 - [x] Pernambucano: segundo leitor, para o formato `tabela-context` (fases e tabela da página, jogos pelo GraphQL do ge); o Náutico entra no 2º turno (Frevo)
 
 ## Fatia 3 — Pedido de time e ranking de torcidas
-- [ ] Formulário "meu time não está aqui" (time + e-mail opcional para avisar quando nascer)
+- [x] Formulário "meu time não está aqui" (time + e-mail opcional para avisar quando nascer) e os mais pedidos (`docs/features/pedido-de-time.md`)
+- [ ] Comando que avisa por e-mail quem pediu, quando a torcida nascer
 - [ ] Página pública de ranking: inscritos por time e por série
 
 ## Fatia 4 — Edição geral por série
