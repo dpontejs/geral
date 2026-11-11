@@ -36,10 +36,21 @@ def test_portal_scoreboard_ranks_teams_by_subscribers(client, store) -> None:
     assert {name for name, _ in rows} == {"Timbu", "Almirante", "Porco", "Elefante", "Urubu"}
 
 
+def test_portal_scoreboard_keeps_the_names_in_lamp_yellow(client) -> None:
+    board = client.get("/").text.split('id="placar"', 1)[1].split("</section>", 1)[0]
+
+    assert 'class="dot"' not in board and 'class="bar"' not in board
+    assert "--team-lamp" not in board and '<li><span class="name">' in board
+
+
 def test_portal_scoreboard_clock_shows_brasilia_time(client) -> None:
     page = client.get("/").text
 
-    assert '<time class="clock" datetime="2026-11-10T09:00-03:00">09:00</time>' in page
+    # the colon is two lamps drawn in CSS: the font's colon looked like a "+"
+    assert (
+        '<time class="clock" datetime="2026-11-10T09:00-03:00" aria-label="09:00">'
+        '09<span class="colon" aria-hidden="true"></span>00</time>'
+    ) in page
 
 
 def test_portal_scoreboard_plays_the_goal_animation(client) -> None:
@@ -130,3 +141,10 @@ def test_unlisted_team_is_hidden_from_portal_and_signup(store, mailer, clock) ->
 
     assert "Timbu News" not in page and 'value="nautico"' not in page
     assert signup.status_code == 400 and store.get("ana@x.com") is None
+
+
+def test_portal_clock_never_breaks_between_hours_and_minutes(client) -> None:
+    # The drawn colon is an element of its own: without nowrap a narrow column split "17:04".
+    page = client.get("/").text
+
+    assert re.search(r"\.clock \{[^}]*white-space: nowrap", page)

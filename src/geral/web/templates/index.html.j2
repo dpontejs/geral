@@ -8,15 +8,14 @@
     <div class="scoreboard">
       <div class="board play">{{ scoreboard_animation() | safe }}</div>
       <div class="board clockbox">
-        <time class="clock" datetime="{{ clock.isoformat(timespec='minutes') }}">{{ clock.strftime("%H:%M") }}</time>
-        <span class="bar" aria-hidden="true"></span>
+        <time class="clock" datetime="{{ clock.isoformat(timespec='minutes') }}" aria-label="{{ clock.strftime("%H:%M") }}">{{ clock.strftime("%H") }}<span class="colon" aria-hidden="true"></span>{{ clock.strftime("%M") }}</time>
         <span class="lamp total">{{ total }}</span>
         <small class="lamp">na Geral</small>
       </div>
       <div class="board">
-        <ol class="ranking" aria-label="Placar da Geral: inscritos por torcida">
+        <ol class="ranking lamps" aria-label="Placar da Geral: inscritos por torcida">
           {% for team in ranking %}
-          <li><span class="dot" style="--c: {{ team.accent }}" aria-hidden="true"></span><span class="name">{{ team.newsletter | replace(" News", "") }}</span><span class="n">{{ counts.get(team.slug, 0) }}</span></li>
+          <li><span class="name">{{ team.newsletter | replace(" News", "") }}</span><span class="n">{{ counts.get(team.slug, 0) }}</span></li>
           {% endfor %}
         </ol>
       </div>
