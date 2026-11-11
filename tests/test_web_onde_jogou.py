@@ -6,7 +6,7 @@ from webkit import make_client
 from geral.games.onde_jogou import by_number, load, pool
 from geral.teams import load_teams
 
-DAY = datetime(2026, 11, 19, 12, 0, tzinfo=UTC)  # puzzle #8 (launch 2026-11-12)
+DAY = datetime(2026, 11, 18, 12, 0, tzinfo=UTC)  # puzzle #8 (launch 2026-11-11)
 API = "/api/jogos/onde-jogou"
 
 

@@ -682,7 +682,7 @@ def create_app(
             jogador=onde_jogou.by_number(players, number),
             # Tells the page the day's player changed (data update) without naming them.
             player_key=hashlib.sha256(
-                f"{secret}:{onde_jogou.by_number(players, number).wikidata}".encode()
+                f"{secret}:{number}:{onde_jogou.by_number(players, number).wikidata}".encode()
             ).hexdigest()[:12],
             given={qid: data.clubes[qid].nome for qid in given_clubs(edition)},
             clubs=sorted(

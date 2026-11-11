@@ -35,7 +35,7 @@ O arquivo de carreiras também vai servir ao "Quem é?" (próximo PR).
   torcida = quem passou pelo clube cujo `nome` é o `name` do time no `teams.toml`),
   `judge(jogador, palpites, desistiu) -> Verdict` (`slots` com anos e o clube só se acertado ou no
   fim, `achados`, `total` de clubes distintos, `erros`, `over` com tudo achado, 3 erros ou
-  desistência). `LAUNCH = 2026-11-12`; ordem diária de `daily.py`.
+  desistência). `LAUNCH = 2026-11-11`; ordem diária de `daily.py`.
 - Rotas, no molde do Craque do dia:
 
 ```python

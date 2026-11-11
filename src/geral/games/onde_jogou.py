@@ -22,7 +22,7 @@ HERE = Path(__file__).parent
 CAREERS = HERE / "carreiras.json"
 CLUB_FIXES = HERE / "clubes.toml"
 PLAYERS = HERE / "jogadores.toml"
-LAUNCH = date(2026, 11, 12)  # puzzle #1: no later than the deploy, or two days share #1
+LAUNCH = date(2026, 11, 11)  # puzzle #1: no later than the deploy, or two days share #1
 MAX_WRONG = 3
 MIN_CLUBS = {"geral": 3, "team": 2}  # distinct clubs a career needs to be a puzzle
 # National and youth teams are not clubs of a career.
