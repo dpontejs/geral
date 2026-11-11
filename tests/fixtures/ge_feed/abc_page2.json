@@ -1,0 +1,427 @@
+{
+ "id": "4b8faafe-65bb-4857-8f02-b73ede244276",
+ "items": [
+  {
+   "id": "04dbc23cc0528a4bed3e0c5ad7619fa0",
+   "feedId": "64a95829-60be-4ce6-ad74-e76599b0c532",
+   "type": "materia",
+   "lastPublication": "2026-10-29T17:47:46.681Z",
+   "publication": "2026-10-29T17:14:20.058Z",
+   "content": {
+    "category": "8f83055d-7069-4078-a689-d74910dca3a5",
+    "chapeu": {
+     "image": {},
+     "label": ""
+    },
+    "image": {
+     "cropOptions": {},
+     "sizes": {
+      "L": {
+       "height": 608,
+       "url": "https://s2-ge.glbimg.com/TBRTv413UH8cXcCRQpxYFWucgKw=/1080x608/top/smart/https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2025/u/f/H2VqB7S0yby1zlhw6Mug/whatsapp-image-2025-12-01-at-19.07.08.jpeg",
+       "width": 1080
+      }
+     },
+     "url": "https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2025/u/f/H2VqB7S0yby1zlhw6Mug/whatsapp-image-2025-12-01-at-19.07.08.jpeg"
+    },
+    "recommendationSummary": "Defensor de 27 anos é o sexto reforço anunciado oficialmente pelo Alvinegro para a temporada 2027",
+    "recommendationTitle": "ABC contrata zagueiro Léo Coltro, ex-Ituano e Guarani",
+    "section": "abc",
+    "summary": "Defensor de 27 anos é o sexto reforço anunciado oficialmente pelo Alvinegro para a temporada 2027",
+    "title": "ABC contrata zagueiro Léo Coltro, ex-Ituano e Guarani",
+    "url": "https://ge.globo.com/rn/futebol/times/abc/noticia/2026/10/29/abc-contrata-zagueiro-leo-coltro-ex-ituano-e-guarani.ghtml",
+    "video": null
+   },
+   "draft": false,
+   "area": "",
+   "parentId": null,
+   "children": null,
+   "isPublishing": false,
+   "created": "2026-10-29T17:14:20.058Z",
+   "modified": "2026-10-29T17:47:46.681Z",
+   "tenantId": "ge",
+   "age": 1122638,
+   "kind": "automatic"
+  },
+  {
+   "id": "2599129f404b27172bb77aa3a9fbd4df",
+   "feedId": "64a95829-60be-4ce6-ad74-e76599b0c532",
+   "type": "materia",
+   "lastPublication": "2026-10-28T21:46:43.184Z",
+   "publication": "2026-10-28T21:46:42.601Z",
+   "content": {
+    "category": "8f83055d-7069-4078-a689-d74910dca3a5",
+    "chapeu": {
+     "image": {},
+     "label": ""
+    },
+    "image": {
+     "cropOptions": {},
+     "sizes": {
+      "L": {
+       "height": 608,
+       "url": "https://s2-ge.glbimg.com/q5uV4uiWWXrcFHnelgd-jgeB290=/1080x608/top/smart/https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/g/u/JvAfgCSWex196MqpOfrA/gui-santos.jpeg",
+       "width": 1080
+      }
+     },
+     "url": "https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/g/u/JvAfgCSWex196MqpOfrA/gui-santos.jpeg"
+    },
+    "recommendationSummary": "Novo reforço alvinegro para a temporada 2027 também participou de campanha do título da Copa Paulista 2026 com o São José-SP",
+    "recommendationTitle": "ABC anuncia atacante Guilherme Santos, ex-Portuguesa e Botafogo-PB",
+    "section": "abc",
+    "summary": "Novo reforço alvinegro para a temporada 2027 também participou de campanha do título da Copa Paulista 2026 com o São José-SP",
+    "title": "ABC anuncia atacante Guilherme Santos, ex-Portuguesa e Botafogo-PB",
+    "url": "https://ge.globo.com/rn/futebol/times/abc/noticia/2026/10/28/abc-anuncia-atacante-guilherme-santos-ex-portuguesa-e-botafogo-pb.ghtml",
+    "video": null
+   },
+   "draft": false,
+   "area": "",
+   "parentId": null,
+   "children": null,
+   "isPublishing": false,
+   "created": "2026-10-28T21:46:42.601Z",
+   "modified": "2026-10-28T21:46:43.184Z",
+   "tenantId": "ge",
+   "age": 1192696,
+   "kind": "automatic"
+  },
+  {
+   "id": "93b05696d4e10f74afa3a15cfb813b39",
+   "feedId": "64a95829-60be-4ce6-ad74-e76599b0c532",
+   "type": "materia",
+   "lastPublication": "2026-10-27T19:18:20.368Z",
+   "publication": "2026-10-27T19:18:19.674Z",
+   "content": {
+    "category": "8f83055d-7069-4078-a689-d74910dca3a5",
+    "chapeu": {
+     "image": {},
+     "label": ""
+    },
+    "image": {
+     "cropOptions": {},
+     "sizes": {
+      "L": {
+       "height": 608,
+       "url": "https://s2-ge.glbimg.com/yDIaVnw_9WtZTWi9FBOt9bN88Ac=/1080x608/top/smart/https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/h/1/Jnvtv1TLCY2Or37Gpmug/darlan.jpg",
+       "width": 1080
+      }
+     },
+     "url": "https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/h/1/Jnvtv1TLCY2Or37Gpmug/darlan.jpg"
+    },
+    "recommendationSummary": "Jogador de 25 anos reforça o Alvinegro na temporada 2027. Ele foi campeão capixaba pelo Rio Branco-ES em 2025",
+    "recommendationTitle": "ABC anuncia zagueiro Darlan Santos, ex-Rio Branco-ES",
+    "section": "abc",
+    "summary": "Jogador de 25 anos reforça o Alvinegro na temporada 2027. Ele foi campeão capixaba pelo Rio Branco-ES em 2025",
+    "title": "ABC anuncia zagueiro Darlan Santos, ex-Rio Branco-ES",
+    "url": "https://ge.globo.com/rn/futebol/times/abc/noticia/2026/10/27/abc-anuncia-zagueiro-darlan-santos-ex-rio-branco-es.ghtml",
+    "video": null
+   },
+   "draft": false,
+   "area": "",
+   "parentId": null,
+   "children": null,
+   "isPublishing": false,
+   "created": "2026-10-27T19:18:19.674Z",
+   "modified": "2026-10-27T19:18:20.368Z",
+   "tenantId": "ge",
+   "age": 1287999,
+   "kind": "automatic"
+  },
+  {
+   "id": "d72cd947f78cdf969f3b7e10d7cf073c",
+   "feedId": "64a95829-60be-4ce6-ad74-e76599b0c532",
+   "type": "materia",
+   "lastPublication": "2026-10-27T19:11:04.072Z",
+   "publication": "2026-10-27T19:11:03.4Z",
+   "content": {
+    "category": "176e0a5a-4fa1-4ba1-81d7-ff1fe74e15a6",
+    "chapeu": {
+     "image": {},
+     "label": ""
+    },
+    "image": {
+     "cropOptions": {},
+     "sizes": {
+      "L": {
+       "height": 608,
+       "url": "https://s2-ge.glbimg.com/PX__RJE0AEfMUa8ScrDJy7luqyI=/1080x608/top/smart/https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2025/N/B/VQRoEDQr6AlePAJlrOng/img-2101.jpg",
+       "width": 1080
+      }
+     },
+     "url": "https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2025/N/B/VQRoEDQr6AlePAJlrOng/img-2101.jpg"
+    },
+    "recommendationSummary": "Capa-Preta manteve um percentual dos direitos econômicos do defensor, que foi campeão capixaba pelo clube em 2025",
+    "recommendationTitle": "Rio Branco-ES rescinde com zagueiro Darlan, anunciado pelo ABC para 2027",
+    "section": "rio branco-es",
+    "summary": "Capa-Preta manteve um percentual dos direitos econômicos do defensor, que foi campeão capixaba pelo clube em 2025",
+    "title": "Rio Branco-ES rescinde com zagueiro Darlan, anunciado pelo ABC para 2027",
+    "url": "https://ge.globo.com/es/futebol/times/rio-branco-es/noticia/2026/10/27/rio-branco-es-rescinde-com-zagueiro-darlan-anunciado-pelo-abc-para-2027.ghtml",
+    "video": null
+   },
+   "draft": false,
+   "area": "",
+   "parentId": null,
+   "children": null,
+   "isPublishing": false,
+   "created": "2026-10-27T19:11:03.400Z",
+   "modified": "2026-10-27T19:11:04.072Z",
+   "tenantId": "ge",
+   "age": 1288435,
+   "kind": "automatic"
+  },
+  {
+   "id": "2314a122dd57021728b7cf484bc6ba0e",
+   "feedId": "64a95829-60be-4ce6-ad74-e76599b0c532",
+   "type": "materia",
+   "lastPublication": "2026-10-26T19:47:42.349Z",
+   "publication": "2026-10-26T19:47:41.71Z",
+   "content": {
+    "category": "8f83055d-7069-4078-a689-d74910dca3a5",
+    "chapeu": {
+     "image": {},
+     "label": ""
+    },
+    "image": {
+     "cropOptions": {},
+     "sizes": {
+      "L": {
+       "height": 608,
+       "url": "https://s2-ge.glbimg.com/lCP2z7DX5mxLR4tQvyixznKA17U=/1080x608/top/smart/https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/K/3/t26zn1TpAFgKVecmhvAw/rodrigo.jpg",
+       "width": 1080
+      }
+     },
+     "url": "https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/K/3/t26zn1TpAFgKVecmhvAw/rodrigo.jpg"
+    },
+    "recommendationSummary": "Ponta de 31 anos disputou a Série C 2026 pelo Itabaiana. Alvinegro também anunciou a permanência do zagueiro Fabão para a temporada 2027,",
+    "recommendationTitle": "ABC contrata atacante Rodrigo Alves, ex-Itabaiana e Remo",
+    "section": "abc",
+    "summary": "Ponta de 31 anos disputou a Série C 2026 pelo Itabaiana. Alvinegro também anunciou a permanência do zagueiro Fabão para a temporada 2027",
+    "title": "ABC contrata atacante Rodrigo Alves, ex-Itabaiana e Remo",
+    "url": "https://ge.globo.com/rn/futebol/times/abc/noticia/2026/10/26/abc-contrata-atacante-rodrigo-alves-ex-itabaiana-e-remo.ghtml",
+    "video": null
+   },
+   "draft": false,
+   "area": "",
+   "parentId": null,
+   "children": null,
+   "isPublishing": false,
+   "created": "2026-10-26T19:47:41.710Z",
+   "modified": "2026-10-26T19:47:42.349Z",
+   "tenantId": "ge",
+   "age": 1372637,
+   "kind": "automatic"
+  },
+  {
+   "id": "4664d2357941e33dff904206db17f4f7",
+   "feedId": "64a95829-60be-4ce6-ad74-e76599b0c532",
+   "type": "materia",
+   "lastPublication": "2026-10-23T17:44:05.994Z",
+   "publication": "2026-10-23T17:36:01.15Z",
+   "content": {
+    "category": "8f83055d-7069-4078-a689-d74910dca3a5",
+    "chapeu": {
+     "image": {},
+     "label": ""
+    },
+    "image": {
+     "cropOptions": {},
+     "sizes": {
+      "L": {
+       "height": 608,
+       "url": "https://s2-ge.glbimg.com/HQJU9eeOTXTdEExfojd4bBKjJKU=/1080x608/top/smart/https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/H/G/WOBKc8TPimC57EXa5RAQ/55457319201-cec4e6dcc4-k.jpg",
+       "width": 1080
+      }
+     },
+     "url": "https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/H/G/WOBKc8TPimC57EXa5RAQ/55457319201-cec4e6dcc4-k.jpg"
+    },
+    "recommendationSummary": "Jogador de 27 anos disputou 12 jogos na temporada 2026 e não marcou gols. Na carreira, passou ainda por Cianorte e Portuguesa Santista",
+    "recommendationTitle": "ABC contrata atacante Márcio Maranhão, do Botafogo-SP",
+    "section": "abc",
+    "summary": "Jogador de 27 anos disputou 12 jogos na temporada 2026 e não marcou gols. Na carreira, passou ainda por Cianorte e Portuguesa Santista",
+    "title": "ABC contrata atacante Márcio Maranhão, do Botafogo-SP",
+    "url": "https://ge.globo.com/rn/futebol/times/abc/noticia/2026/10/23/abc-contrata-atacante-marcio-maranhao-do-botafogo-sp.ghtml",
+    "video": null
+   },
+   "draft": false,
+   "area": "",
+   "parentId": null,
+   "children": null,
+   "isPublishing": false,
+   "created": "2026-10-23T17:36:01.150Z",
+   "modified": "2026-10-23T17:44:05.994Z",
+   "tenantId": "ge",
+   "age": 1639737,
+   "kind": "automatic"
+  },
+  {
+   "id": "0b6249b80aa4fb75901ab1f95c4cf03d",
+   "feedId": "64a95829-60be-4ce6-ad74-e76599b0c532",
+   "type": "materia",
+   "lastPublication": "2026-10-23T03:43:29.234Z",
+   "publication": "2026-10-23T03:43:28.655Z",
+   "content": {
+    "category": "8f83055d-7069-4078-a689-d74910dca3a5",
+    "chapeu": {
+     "image": {},
+     "label": ""
+    },
+    "image": {
+     "cropOptions": {},
+     "sizes": {
+      "L": {
+       "height": 608,
+       "url": "https://s2-ge.glbimg.com/cR71tlq-4laBpIWSbattGGYZsnk=/1080x608/top/smart/https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2025/d/F/xBb9W9RgOaC3q894F0Qg/1488368952.jpg",
+       "width": 1080
+      }
+     },
+     "url": "https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2025/d/F/xBb9W9RgOaC3q894F0Qg/1488368952.jpg"
+    },
+    "recommendationSummary": "Jogador de 33 anos foi campeão potiguar pelo ABC em 2020 e retorna para a temporada 2027",
+    "recommendationTitle": "ABC acerta volta do lateral-direito Pedro Costa, ex-Santa Cruz e Remo",
+    "section": "abc",
+    "summary": "Jogador de 33 anos foi campeão potiguar pelo ABC em 2020 e retorna para a temporada 2027",
+    "title": "ABC acerta retorno do lateral-direito Pedro Costa, ex-Santa Cruz e Remo",
+    "url": "https://ge.globo.com/rn/futebol/times/abc/noticia/2026/10/23/abc-acerta-retorno-do-lateral-direito-pedro-costa-ex-santa-cruz-e-remo.ghtml",
+    "video": null
+   },
+   "draft": false,
+   "area": "",
+   "parentId": null,
+   "children": null,
+   "isPublishing": false,
+   "created": "2026-10-23T03:43:28.655Z",
+   "modified": "2026-10-23T03:43:29.234Z",
+   "tenantId": "ge",
+   "age": 1689690,
+   "kind": "automatic"
+  },
+  {
+   "id": "fb84de216b86db3c04f68d61ae29feff",
+   "feedId": "64a95829-60be-4ce6-ad74-e76599b0c532",
+   "type": "materia",
+   "lastPublication": "2026-10-20T17:54:36.977Z",
+   "publication": "2026-10-20T17:19:25.615Z",
+   "content": {
+    "category": "8f83055d-7069-4078-a689-d74910dca3a5",
+    "chapeu": {
+     "image": {},
+     "label": ""
+    },
+    "image": {
+     "cropOptions": {},
+     "sizes": {
+      "L": {
+       "height": 608,
+       "url": "https://s2-ge.glbimg.com/7FFeMKZa6M1ECt2fwdLm1JpW3VA=/1080x608/top/smart/https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/d/8/WAa3NARVWplv5CAMHVtg/55498649927-ec6f056708-k.jpg",
+       "width": 1080
+      }
+     },
+     "url": "https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/d/8/WAa3NARVWplv5CAMHVtg/55498649927-ec6f056708-k.jpg"
+    },
+    "recommendationSummary": "Jogador de 25 anos integrou elenco alvinegro na conquista do acesso à Série C e marcou um gol em 21 jogos disputados na temporada",
+    "recommendationTitle": "ABC garante permanência do atacante Rikelmi para a temporada 2027",
+    "section": "abc",
+    "summary": "Jogador de 25 anos integrou elenco alvinegro na conquista do acesso à Série C e marcou um gol em 21 jogos disputados na temporada",
+    "title": "ABC garante permanência do atacante Rikelmi para a temporada 2027",
+    "url": "https://ge.globo.com/rn/futebol/times/abc/noticia/2026/10/20/abc-garante-permanencia-do-atacante-rikelmi-para-a-temporada-2027.ghtml",
+    "video": null
+   },
+   "draft": false,
+   "area": "",
+   "parentId": null,
+   "children": null,
+   "isPublishing": false,
+   "created": "2026-10-20T17:19:25.615Z",
+   "modified": "2026-10-20T17:54:36.977Z",
+   "tenantId": "ge",
+   "age": 1899933,
+   "kind": "automatic"
+  },
+  {
+   "id": "aa0c794b13a5072b27beb087fb1724e3",
+   "feedId": "64a95829-60be-4ce6-ad74-e76599b0c532",
+   "type": "materia",
+   "lastPublication": "2026-10-19T19:40:34.996Z",
+   "publication": "2026-10-19T17:55:27.211Z",
+   "content": {
+    "category": "8f83055d-7069-4078-a689-d74910dca3a5",
+    "chapeu": {
+     "image": {},
+     "label": ""
+    },
+    "image": {
+     "cropOptions": {},
+     "sizes": {
+      "L": {
+       "height": 608,
+       "url": "https://s2-ge.glbimg.com/664gS68ri-qeI2Uj6CySe_ZMNNI=/1080x608/top/smart/https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/b/e/yCf9UDTI6aEosAPJ1NCQ/geilson-2.jpg",
+       "width": 1080
+      }
+     },
+     "url": "https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/b/e/yCf9UDTI6aEosAPJ1NCQ/geilson-2.jpg"
+    },
+    "recommendationSummary": "Jogador de 25 anos também fez parte do grupo que conquistou acesso à Série C e participou de 31 jogos com a camisa alvinegra na temporada",
+    "recommendationTitle": "ABC renova com volante Geilson para a temporada 2027",
+    "section": "abc",
+    "summary": "Jogador de 25 anos também fez parte do grupo que conquistou acesso à Série C e participou de 31 jogos com a camisa alvinegra na temporada 2026",
+    "title": "ABC renova com volante Geilson para a temporada 2027",
+    "url": "https://ge.globo.com/rn/futebol/times/abc/noticia/2026/10/19/abc-renova-com-volante-geilson-para-a-temporada-2027.ghtml",
+    "video": null
+   },
+   "draft": false,
+   "area": "",
+   "parentId": null,
+   "children": null,
+   "isPublishing": false,
+   "created": "2026-10-19T17:55:27.211Z",
+   "modified": "2026-10-19T19:40:34.996Z",
+   "tenantId": "ge",
+   "age": 1984171,
+   "kind": "automatic"
+  },
+  {
+   "id": "1f70ba295b89ca0b23c947ee7473c750",
+   "feedId": "64a95829-60be-4ce6-ad74-e76599b0c532",
+   "type": "materia",
+   "lastPublication": "2026-10-18T07:00:02.678Z",
+   "publication": "2026-10-18T07:00:01.609Z",
+   "content": {
+    "category": "fb6f729c-a068-4495-8b28-02eb482618b0",
+    "chapeu": {
+     "image": {},
+     "label": ""
+    },
+    "image": {
+     "cropOptions": {},
+     "sizes": {
+      "L": {
+       "height": 608,
+       "url": "https://s2-ge.glbimg.com/G9CzxlucFwEgAoIQfWMDgodRZkg=/1080x608/top/smart/https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/Z/z/erzZYKT2uVUXEwtnSHrw/whatsapp-image-2026-09-12-at-17.29.07.jpeg",
+       "width": 1080
+      }
+     },
+     "url": "https://i.s3.glbimg.com/v1/AUTH_bc8228b6673f488aa253bbcb03c80ec5/internal_photos/bs/2026/Z/z/erzZYKT2uVUXEwtnSHrw/whatsapp-image-2026-09-12-at-17.29.07.jpeg"
+    },
+    "recommendationSummary": "Com a queda do Confiança, o Botafogo-PB chegará a 24 edições na Série C em 2027, consolidando-se como recordista em jogos e em temporadas seguidas na competição.",
+    "recommendationTitle": "Botafogo-PB se aproxima de recorde de participações na Série C",
+    "section": "brasileirão série c",
+    "summary": "Garantido na Terceirona de 2027, Belo chega a 24 participações e conta com rebaixamento do clube sergipano para se aproximar do topo do ranking",
+    "title": "Botafogo-PB fica a uma edição de igualar o Confiança como líder de participações na Série C; veja lista",
+    "url": "https://ge.globo.com/pb/futebol/brasileirao-serie-c/noticia/2026/10/18/botafogo-pb-fica-a-uma-edicao-de-igualar-o-confianca-como-lider-de-participacoes-na-serie-c-veja-lista.ghtml",
+    "video": null
+   },
+   "draft": false,
+   "area": "",
+   "parentId": null,
+   "children": null,
+   "isPublishing": false,
+   "created": "2026-10-18T07:00:01.609Z",
+   "modified": "2026-10-18T07:00:02.678Z",
+   "tenantId": "ge",
+   "age": 2109897,
+   "kind": "automatic"
+  }
+ ],
+ "nextPage": 3,
+ "perPage": 0
+}
