@@ -1,0 +1,28 @@
+{% if moved_in -%}
+{{ team.newsletter | upper }}, AGORA NA GERAL
+
+A {{ team.newsletter }} continua a mesma: o mesmo nome, antes e depois de cada jogo do {{ team.name }}, e o mesmo bolão, com seus pontos e seu apelido.
+
+A novidade é que agora ela faz parte da Geral, uma casa com newsletters de vários times, cada uma no mesmo estilo.
+
+- Quer acompanhar outro time também? Escolha no portal: {{ public_url }}
+- O bolão agora vale em todas as torcidas: cada time tem o seu ranking.
+- Você não precisa fazer nada. Os links dos e-mails antigos (palpite, ranking, descadastro) continuam funcionando.
+
+Até o próximo jogo,
+{{ team.newsletter }}, na Geral
+{%- else -%}
+NOVIDADES NA GERAL
+
+A {{ team.newsletter }}, do {{ team.name }}, chegou à Geral. Ela já tinha leitores e um bolão animado, e agora os dois fazem parte da casa.
+
+- O bolão agora vale em todas as torcidas: na edição de pré-jogo do seu time tem a cartela para palpitar, e no pós-jogo sai o quadro com quem cravou.
+- Quer acompanhar outro time também? Escolha no portal: {{ public_url }}
+- Para você nada muda: suas inscrições e seus links continuam valendo.
+
+Até o próximo jogo,
+Geral
+{%- endif %}
+
+
+Não quer mais receber nada da Geral? Sair de todas as listas: {{ unsubscribe_url }}

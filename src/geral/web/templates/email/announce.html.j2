@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="pt-BR">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>{{ subject }}</title></head>
+<body style="margin:0;padding:0;background-color:#EFE4CC;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#EFE4CC;">
+<tr><td align="center" style="padding:16px 8px;">
+<table role="presentation" width="600" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background-color:#ffffff;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Helvetica,Arial,sans-serif;color:#1E1E1E;">
+  <tr><td style="background-color:#EFE4CC;padding:16px 24px 12px 24px;">
+    <img src="{{ public_url }}/static/{{ team.slug if moved_in else 'geral' }}/logo-email.png" alt="{{ team.newsletter if moved_in else 'Geral' }}" width="320" style="display:block;border:0;color:#1E1E1E;font-size:26px;font-weight:800;max-width:100%;height:auto;">
+  </td></tr>
+  <tr><td style="background-color:{{ accent }};height:5px;line-height:5px;font-size:5px;">&nbsp;</td></tr>
+  <tr><td style="padding:24px;font-size:15px;line-height:1.55;color:#222222;">
+    {% if moved_in %}
+    <p style="font-size:22px;font-weight:800;margin:0 0 12px 0;color:#1E1E1E;">A {{ team.newsletter }} agora faz parte da Geral</p>
+    <p style="margin:0 0 12px 0;">A {{ team.newsletter }} continua a mesma: o mesmo nome, antes e depois de cada jogo do {{ team.name }}, e o mesmo bolão, com seus pontos e seu apelido.</p>
+    <p style="margin:0 0 12px 0;">A novidade é que agora ela faz parte da <strong>Geral</strong>, uma casa com newsletters de vários times, cada uma no mesmo estilo.</p>
+    <ul style="margin:0 0 20px 0;padding-left:20px;">
+      <li style="margin-bottom:6px;"><strong>Quer acompanhar outro time também?</strong> É só escolher no portal.</li>
+      <li style="margin-bottom:6px;"><strong>O bolão agora vale em todas as torcidas:</strong> cada time tem o seu ranking.</li>
+      <li><strong>Você não precisa fazer nada.</strong> Os links dos e-mails antigos (palpite, ranking, descadastro) continuam funcionando.</li>
+    </ul>
+    {% else %}
+    <p style="font-size:22px;font-weight:800;margin:0 0 12px 0;color:#1E1E1E;">A {{ team.newsletter }} chegou à Geral</p>
+    <p style="margin:0 0 12px 0;">A newsletter do {{ team.name }} já tinha leitores e um bolão animado, e agora os dois fazem parte da casa.</p>
+    <ul style="margin:0 0 20px 0;padding-left:20px;">
+      <li style="margin-bottom:6px;"><strong>O bolão agora vale em todas as torcidas:</strong> na edição de pré-jogo do seu time tem a cartela para palpitar, e no pós-jogo sai o quadro com quem cravou.</li>
+      <li style="margin-bottom:6px;"><strong>Quer acompanhar outro time também?</strong> É só escolher no portal.</li>
+      <li><strong>Para você nada muda:</strong> suas inscrições e seus links continuam valendo.</li>
+    </ul>
+    {% endif %}
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td style="background-color:#1E1E1E;">
+      <a href="{{ public_url }}" style="display:inline-block;padding:12px 22px;color:#EFE4CC;font-size:16px;font-weight:800;text-decoration:none;">Ver os times da Geral</a>
+    </td></tr></table>
+    <p style="margin:20px 0 0 0;">{% if moved_in %}Até o próximo jogo,<br>{{ team.newsletter }}, na Geral{% else %}Até o próximo jogo,<br>Geral{% endif %}</p>
+  </td></tr>
+  <tr><td style="padding:16px 24px;border-top:1px solid #E5DCC8;font-size:12px;line-height:1.5;color:#6B6B6B;">
+    Não quer mais receber nada da Geral? <a href="{{ unsubscribe_url }}" style="color:#6B6B6B;">Sair de todas as listas</a>.
+  </td></tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>

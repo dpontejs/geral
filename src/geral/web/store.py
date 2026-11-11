@@ -7,7 +7,7 @@ until a confirmation link is clicked. Leaving the last team unsubscribes the e-m
 import sqlite3
 from contextlib import closing
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from enum import Enum
 from pathlib import Path
 
@@ -36,6 +36,13 @@ CREATE TABLE IF NOT EXISTS subscriptions (
 CREATE TABLE IF NOT EXISTS confirmations_sent (
     email TEXT NOT NULL,
     sent_at TEXT NOT NULL
+);
+-- One-off announcements (`geral announce`): who already got each one, so a rerun skips them.
+CREATE TABLE IF NOT EXISTS announcements_sent (
+    name TEXT NOT NULL,
+    email TEXT NOT NULL,
+    sent_at TEXT NOT NULL,
+    PRIMARY KEY (name, email)
 );
 CREATE TABLE IF NOT EXISTS editions (
     team TEXT PRIMARY KEY,
@@ -218,6 +225,36 @@ class SubscriberStore:
             team,
         )
         return [email for (email,) in rows]
+
+    def everyone_active(self) -> list[str]:
+        """Active e-mails following at least one team, each once."""
+        rows = self._run(
+            "SELECT DISTINCT u.email FROM subscribers u JOIN subscriptions s USING (email)"
+            " WHERE u.status = 'active' AND s.status = 'active' ORDER BY u.email"
+        )
+        return [email for (email,) in rows]
+
+    def active_since_before(self, team: str, before: datetime) -> set[str]:
+        """Active followers of `team` since before `before` (for a moved-in team: the import)."""
+        rows = self._run(
+            "SELECT s.email FROM subscriptions s JOIN subscribers u USING (email)"
+            " WHERE s.team = ? AND s.status = 'active' AND u.status = 'active'"
+            " AND s.activated_at < ?",
+            team,
+            before.astimezone(UTC).isoformat(),  # stored times are UTC ISO strings
+        )
+        return {email for (email,) in rows}
+
+    def announced(self, name: str) -> set[str]:
+        rows = self._run("SELECT email FROM announcements_sent WHERE name = ?", name)
+        return {email for (email,) in rows}
+
+    def mark_announced(self, name: str, emails: list[str], now: datetime) -> None:
+        with closing(self._connect()) as db, db:
+            db.executemany(
+                "INSERT OR IGNORE INTO announcements_sent (name, email, sent_at) VALUES (?, ?, ?)",
+                [(name, normalize(email), now.isoformat()) for email in emails],
+            )
 
     def counts(self) -> dict[str, int]:
         """Active subscribers per team (the Geral scoreboard)."""
