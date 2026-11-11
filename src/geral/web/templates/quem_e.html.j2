@@ -1,0 +1,50 @@
+{% extends "base.html.j2" %}
+{% set label = team.name if team else "Geral" %}
+{% block title %}Quem é? #{{ number }} · {{ label }} · Geral{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/geral/jogos.css">{% endblock %}
+{% block content %}
+<section class="jogo wall">
+  <div class="wrap" id="qe" data-edition="{{ edition }}" data-number="{{ number }}" data-label="{{ label }}" data-player="{{ player_key }}" data-max="{{ max_guesses }}">
+    <h1>Quem é?</h1>
+    <p class="lead">Um jogador por dia, o mesmo para todo mundo. A carreira inteira está no placar: adivinhe quem é em até {{ max_guesses }} chutes.</p>
+    <nav class="editions" aria-label="Edições">
+      {% for slug, t in editions %}
+      <a href="/jogos/quem-e{% if slug != 'geral' %}/{{ slug }}{% endif %}"{% if slug == edition %} aria-current="page"{% endif %}>{{ t.name if t else "Geral" }}</a>
+      {% endfor %}
+    </nav>
+
+    <div class="board match">
+      <span class="lamp meta">#{{ number }} · {{ label }} · {{ jogador.clubes | length }} passagens</span>
+      <span class="lamp player blink" id="qe-name">? ? ?</span>
+      <ol class="career">
+        {% for s in jogador.clubes %}<li class="slot"><span class="years">{{ s.inicio }}{% if s.fim is none %}–{% elif s.fim != s.inicio %}–{{ s.fim }}{% endif %}</span><span class="slot-club given">{{ clubes[s.clube].nome }}</span></li>
+        {% endfor %}
+      </ol>
+    </div>
+
+    <ul class="hints" id="qe-hints"></ul>
+    <ol class="tries" id="qe-tries" aria-live="polite"></ol>
+
+    <form class="picker" id="qe-form" role="search">
+      <div class="picker-top">
+        <label class="picker-search">Buscar jogador<input id="qe-search" type="search" autocomplete="off" spellcheck="false" placeholder="Digite o nome"></label>
+      </div>
+      <ul class="club-grid" id="qe-results" aria-live="polite"></ul>
+      <nav class="pager" aria-label="Páginas"><button type="button" id="qe-prev" aria-label="Página anterior">‹</button><span id="qe-page"></span><button type="button" id="qe-next" aria-label="Próxima página">›</button></nav>
+    </form>
+    <script type="application/json" id="qe-player-data">{{ players | tojson }}</script>
+    <p class="how" id="qe-error" role="alert" hidden></p>
+
+    <div class="result" id="qe-result" hidden>
+      <h2 id="qe-title"></h2>
+      <span class="final" id="qe-final"></span>
+      <div class="actions"><button class="btn" type="button" id="qe-share">Compartilhar</button><span id="qe-copied" role="status"></span></div>
+      <div class="stats"><span><b id="qe-streak">0</b>sequência</span><span><b id="qe-wins">0</b>acertos</span><span><b id="qe-played">0</b>jogos</span></div>
+    </div>
+
+    <p class="how">Busque o jogador e toque no nome. Depois de 3 erros aparece a posição; depois de 4, a inicial do nome. Só clubes profissionais, sem seleção. Amanhã tem outro.</p>
+    <p class="credit">Carreiras: <a href="https://www.wikidata.org/">Wikidata</a> (CC0), revisadas pela Geral. Achou um erro? Responda qualquer newsletter.</p>
+  </div>
+</section>
+<script src="/static/geral/quem-e.js" defer></script>
+{% endblock %}

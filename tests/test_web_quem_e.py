@@ -1,0 +1,78 @@
+from datetime import UTC, datetime
+
+import pytest
+from webkit import make_client
+
+from geral.games import quem_e
+from geral.games.onde_jogou import load
+from geral.teams import load_teams
+
+DAY = datetime(2026, 11, 18, 12, 0, tzinfo=UTC)  # puzzle #8 (launch 2026-11-11)
+API = "/api/jogos/quem-e"
+
+
+@pytest.fixture
+def game(store, mailer, clock):
+    clock.now = DAY
+    return make_client(store, mailer, clock)
+
+
+def today(edition="geral", number=8):
+    data = load()
+    teams = {slug: t.name for slug, t in load_teams().items() if t.listed}
+    return data, quem_e.by_number(quem_e.pool(data, edition, teams), number)
+
+
+def test_game_page_shows_the_career_not_the_name(game) -> None:
+    data, jogador = today()
+
+    page = game.get("/jogos/quem-e").text
+
+    assert "#8" in page and page.count('class="slot"') == len(jogador.clubes)
+    for stint in jogador.clubes:
+        assert data.clubes[stint.clube].nome in page
+    assert jogador.wikidata not in page.split('id="qe-player-data"')[0]
+    assert f'class="lamp player">{jogador.nome}<' not in page
+
+
+def test_team_edition_page(game) -> None:
+    assert game.get("/jogos/quem-e/flamengo").status_code == 200
+
+
+@pytest.mark.parametrize("edition", ["abc", "xyz"])
+def test_edition_without_players_is_404(game, edition) -> None:
+    assert game.get(f"/jogos/quem-e/{edition}").status_code == 404
+    assert game.post(f"{API}/{edition}/8", json={"palpites": ["Q1"]}).status_code == 404
+
+
+def test_api_judges_player_guesses(game) -> None:
+    data, jogador = today()
+    other = next(j for j in data.jogadores if j.wikidata != jogador.wikidata)
+
+    miss = game.post(f"{API}/geral/8", json={"palpites": [other.wikidata]}).json()
+    hit = game.post(f"{API}/geral/8", json={"palpites": [other.wikidata, jogador.wikidata]}).json()
+
+    assert miss["rows"] == [{"nome": other.nome, "certo": False}] and miss["reveal"] is None
+    assert hit["solved"] and hit["reveal"]["nome"] == jogador.nome
+
+
+def test_api_rejects_unknown_player(game) -> None:
+    assert game.post(f"{API}/geral/8", json={"palpites": ["Q0"]}).status_code == 422
+
+
+@pytest.mark.parametrize("body", [{"palpites": "Q1"}, {"palpites": ["Q1"] * 7}, {}])
+def test_api_rejects_malformed_bodies(game, body) -> None:
+    assert game.post(f"{API}/geral/8", json=body).status_code == 422
+
+
+@pytest.mark.parametrize("number", [0, 9])
+def test_api_rejects_future_or_zero_puzzle(game, number) -> None:
+    data, jogador = today()
+
+    response = game.post(f"{API}/geral/{number}", json={"palpites": [jogador.wikidata]})
+
+    assert response.status_code == 404
+
+
+def test_portal_links_who_game(game) -> None:
+    assert 'href="/jogos/quem-e"' in game.get("/").text
