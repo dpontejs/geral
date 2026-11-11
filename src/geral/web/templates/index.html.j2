@@ -42,6 +42,7 @@
           {% endfor %}
           {% if general %}<label class="pick" style="--c: {{ general.accent }}"><input type="checkbox" id="p-{{ general.slug }}" name="team" value="{{ general.slug }}"{% if general.slug in picked %} checked{% endif %}><img src="/static/{{ general.slug }}/icon-512.png" alt="">{{ general.newsletter }}</label>{% endif %}
         </div>
+        <p class="fine">Seu time não está aqui? <a href="/pedir">Peça o seu →</a></p>
         <div class="row">
           <label class="field" for="email">Seu e-mail<input id="email" name="email" type="email" placeholder="voce@email.com" autocomplete="email" value="{{ email or '' }}" required></label>
           <button class="btn" type="submit">Passar na roleta</button>
