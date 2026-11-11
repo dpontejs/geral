@@ -2,9 +2,11 @@
 
 import re
 
+import pytest
 from fastapi.testclient import TestClient
 from webkit import AUTH
 
+from geral.web.mailer import MailError
 from geral.web.team_requests import TeamRequestStore, team_key
 
 
@@ -165,3 +167,56 @@ def test_portal_card_links_to_request_page_with_top_request(client) -> None:
         ask(from_ip(client, f"10.0.0.{i}"), "Remo")
     card = client.get("/").text.split('href="/pedir"', 1)[1].split("</a>", 1)[0]
     assert "Remo" in card
+
+
+# --- found by hand: one request, then "Ver os mais pedidos" looked empty ---------------------
+
+
+def test_request_page_explains_the_list_while_no_team_has_three(client) -> None:
+    ask(client, "Remo", "ana@example.com")
+
+    page = client.get("/pedir").text
+
+    assert "Nenhum time chegou a 3 pedidos ainda" in page
+
+
+def test_request_answer_says_when_the_team_shows_up_in_the_list(client) -> None:
+    page = ask(client, "Remo", "ana@example.com").text
+
+    assert "aparece na lista dos mais pedidos quando juntar 3 pedidos" in page
+
+
+# --- the owner hears about every new request --------------------------------------------------
+
+
+@pytest.fixture
+def notified(store, mailer, clock):
+    from webkit import make_client
+
+    return make_client(store, mailer, clock, NOTIFY_EMAIL="dono@example.com")
+
+
+def test_new_request_notifies_the_owner(notified, mailer) -> None:
+    ask(notified, "Remo", "ana@example.com")
+
+    ((to, subject, text),) = mailer.notifications
+    assert to == "dono@example.com"
+    assert subject == "Pedido de time: Remo"
+    assert "1 pedido" in text and "ana@example.com" in text
+
+
+def test_repeated_request_does_not_notify_again(notified, mailer) -> None:
+    ask(notified, "Remo")
+    ask(notified, "Remo", "ana@example.com")
+
+    assert len(mailer.notifications) == 1
+
+
+def test_request_notification_failure_keeps_the_request(notified, mailer, store) -> None:
+    def broken(to, subject, text):
+        raise MailError("Resend is down")
+
+    mailer.send_notification = broken
+
+    assert ask(notified, "Remo").status_code == 200
+    assert votes(store) == {"Remo": 1}

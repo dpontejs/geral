@@ -22,14 +22,16 @@
         <p class="fine">Com e-mail, você recebe uma mensagem só, quando a torcida nascer. Ele não aparece em lugar nenhum.</p>
       </div>
     </form>
-    {% if top %}
     <div class="sheet" style="margin-top: 24px;">
       <h1>Mais pedidos</h1>
+      {% if top %}
       <ol class="requests">
         {% for t in top %}<li><b>{{ t.name }}</b> · {{ t.votes }} pedido{% if t.votes != 1 %}s{% endif %}</li>{% endfor %}
       </ol>
+      {% else %}
+      <p>Nenhum time chegou a {{ min_votes }} pedidos ainda. Quando chegar, ele aparece aqui.</p>
+      {% endif %}
     </div>
-    {% endif %}
   </div>
 </section>
 {% endblock %}

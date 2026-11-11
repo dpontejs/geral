@@ -33,7 +33,7 @@ from geral.web.bolao import TZ, BolaoStore
 from geral.web.mailer import Mailer, MailError, mailer_from_settings
 from geral.web.scoreboard import animation_svg
 from geral.web.store import RequestResult, SubscriberStore, normalize
-from geral.web.team_requests import TeamRequestStore, network, team_key
+from geral.web.team_requests import PUBLIC_MIN_VOTES, TeamRequestStore, network, team_key
 from geral.web.tokens import make_token, read_token
 from geral.web.welcome import add_welcome
 
@@ -405,6 +405,22 @@ def create_app(
             )
         except MailError as e:
             logger.error("New subscriber notification failed: %s", e)
+
+    def notify_request(name: str, votes: int, position: int, email: str) -> None:
+        """Tell the owner about a new vote for a team, like a new subscriber."""
+        if not settings.NOTIFY_EMAIL:
+            return
+        plural = "s" if votes != 1 else ""
+        try:
+            mailer.send_notification(
+                settings.NOTIFY_EMAIL,
+                f"Pedido de time: {name}",
+                f"{name}: {votes} pedido{plural}, {position}º entre os mais pedidos.\n"
+                f"E-mail para avisar: {email or 'não informado'}\n\n"
+                f"Todos os pedidos: GET {public_url}/api/team-requests (token da API)\n",
+            )
+        except MailError as e:
+            logger.error("Team request notification failed: %s", e)
 
     def send_latest_edition(email: str, team: Team) -> bool:
         edition = store.latest_edition(team.slug)
@@ -808,7 +824,12 @@ def create_app(
 
     @app.get("/pedir", response_class=HTMLResponse)
     def request_page(request: Request):
-        return page(request, "pedir.html.j2", top=team_requests.top(TOP_REQUESTS))
+        return page(
+            request,
+            "pedir.html.j2",
+            top=team_requests.top(TOP_REQUESTS),
+            min_votes=PUBLIC_MIN_VOTES,
+        )
 
     @app.post("/pedir", response_class=HTMLResponse)
     async def request_team(request: Request):
@@ -818,7 +839,10 @@ def create_app(
 
         def again(error: str) -> HTMLResponse:
             top = team_requests.top(TOP_REQUESTS)
-            return page(request, "pedir.html.j2", 400, error=error, team=name, email=email, top=top)
+            return page(
+                request, "pedir.html.j2", 400, error=error, team=name, email=email, top=top,
+                min_votes=PUBLIC_MIN_VOTES,
+            )  # fmt: skip
 
         if form.get("website"):  # honeypot: only bots fill the hidden field
             return message(request, "Pedido anotado", "Valeu! Seu pedido foi anotado.")
@@ -843,13 +867,20 @@ def create_app(
                 request, "Muitos pedidos", "Espere um pouco e tente de novo.", status=429
             )
         voter = hmac.new(secret.encode(), voter_network.encode(), "sha256").hexdigest()
-        team_requests.add(name, voter, email or None, now())
+        new_vote = team_requests.add(name, voter, email or None, now())
         position, requested = team_requests.position(team_key(name)) or (0, None)
         votes = requested.votes if requested else 1
+        shown = requested.name if requested else name
         text = (
-            f"{requested.name if requested else name} está em {position}º entre os mais pedidos,"
+            f"{shown} está em {position}º entre os mais pedidos,"
             f" com {votes} pedido{'s' if votes != 1 else ''}."
         )
+        if votes < PUBLIC_MIN_VOTES:
+            text += (
+                f" Ele aparece na lista dos mais pedidos quando juntar {PUBLIC_MIN_VOTES} pedidos."
+            )
+        if new_vote:
+            notify_request(shown, votes, position, email)
         if email:
             text += " Você recebe um e-mail só, quando a torcida nascer."
         return message(
