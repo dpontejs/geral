@@ -6,7 +6,6 @@ Matches come from the free Brasileirão dataset (github.com/adaoduque/Brasileira
 
 import csv
 import io
-import random
 import re
 from dataclasses import dataclass
 from datetime import date, datetime
@@ -14,6 +13,8 @@ from pathlib import Path
 from typing import Literal
 
 from pydantic import BaseModel
+
+from geral.games.daily import number_on, pick, shuffled
 
 DATA = Path(__file__).with_name("brasileirao.csv")
 FIELDS = (
@@ -151,16 +152,15 @@ def _memorable(m: Match, club: str | None) -> bool:
 def pool(matches: list[Match], club: str | None) -> list[Match]:
     """Matches of `club` (None: the whole Série A) in the edition's fixed daily order."""
     games = sorted((m for m in matches if _memorable(m, club)), key=lambda m: m.id)
-    random.Random(f"quanto-foi:{club or 'geral'}").shuffle(games)
-    return games
+    return shuffled(games, f"quanto-foi:{club or 'geral'}")
 
 
 def puzzle_number(day: date) -> int:
-    return (day - LAUNCH).days + 1
+    return number_on(day, LAUNCH)
 
 
 def by_number(games: list[Match], number: int) -> Puzzle:
-    return Puzzle(number, games[(number - 1) % len(games)])
+    return Puzzle(number, pick(games, number))
 
 
 def puzzle(games: list[Match], day: date) -> Puzzle:
