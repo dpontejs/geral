@@ -21,7 +21,10 @@ from geral.schedule import due as due_slot
 from geral.send.recipients import (
     LatestEdition,
     latest_edition,
+    preview_summary,
     publish_latest_edition,
+    register_match,
+    report_result,
     resolve_recipients,
 )
 from geral.send.resend_sender import (
@@ -170,11 +173,13 @@ def preview(
     )
     html_path = out or Path("out") / f"{club.slug}-{resolved.end:%Y-%m-%d}.html"
     html_path.parent.mkdir(parents=True, exist_ok=True)
+    _bolao(newsletter, settings, club, write=False)
     html, text = render(
         newsletter,
         unsubscribe_url=pipeline.unsubscribe_url(settings),
         logo_url=_brand_logo(settings, club),
         note=note,
+        page_url=settings.PUBLIC_URL,
     )
 
     html_path.write_text(html, encoding="utf-8")
@@ -304,6 +309,7 @@ def run(
 
             # The page link only shows up once subscriptions are live (API token configured).
             subscribe = settings.PUBLIC_URL.rstrip("/") if settings.SUBSCRIBERS_API_TOKEN else None
+            _bolao(newsletter, settings, club, write=not settings.DRY_RUN)
 
             def render_edition(note: str | None) -> tuple[str, str]:
                 return render(
@@ -312,6 +318,7 @@ def run(
                     subscribe_url=subscribe,
                     logo_url=_brand_logo(settings, club),
                     note=note,
+                    page_url=subscribe,
                 )
 
             html, text = render_edition(note)
@@ -368,6 +375,45 @@ def run(
                 report.output_tokens = usage.output_tokens
             report.problems = problems.messages
             _publish_report(report)
+
+
+def _bolao(newsletter: Newsletter, settings, team: Team, write: bool) -> None:
+    """Open the team's bolão on the pre-game and fetch its result for the post-game.
+
+    Only real sends (and --publish-only) write to the page; previews and dry runs read a summary
+    that is not stored. A page failure leaves the edition without the card or the board.
+    """
+    if not settings.SUBSCRIBERS_API_TOKEN:
+        return
+    edition, upcoming, played = newsletter.edition, newsletter.next_match, newsletter.last_match
+    try:
+        # Only the edition's own match: a rescheduled game or an earlier one in another
+        # competition must not open (or close) the bolão with the wrong opponent and deadline.
+        if edition.kind == "pre" and upcoming and upcoming.match_id == edition.match_id:
+            if write:
+                register_match(
+                    settings,
+                    team.slug,
+                    edition.match_id,
+                    upcoming.opponent,
+                    upcoming.is_home,
+                    upcoming.date,
+                )
+            newsletter.bolao_open = True
+        elif (
+            edition.kind == "post"
+            and played
+            and (edition.match_id is None or str(played.fixture_id) == edition.match_id)
+        ):
+            score = (
+                (played.home_goals, played.away_goals)
+                if played.is_home
+                else (played.away_goals, played.home_goals)
+            )
+            summarize = report_result if write else preview_summary
+            newsletter.bolao = summarize(settings, team.slug, str(played.fixture_id), *score)
+    except (httpx.HTTPError, ValueError) as e:  # ValueError: a reply that isn't a summary
+        logger.warning("Bolão left out of the edition, the page failed: %s", e)
 
 
 def _already_sent(settings, team: Team, label: str) -> bool:

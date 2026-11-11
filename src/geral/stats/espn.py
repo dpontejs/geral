@@ -137,6 +137,7 @@ class ESPNStatsClient:
             venue=(competition.get("venue") or {}).get("fullName"),
             is_home=ours["homeAway"] == "home",
             opponent_logo=_logo(theirs["team"]),
+            match_id=str(event["id"]),
         )
 
     def get_fixtures(self, now: datetime) -> list[Fixture]:

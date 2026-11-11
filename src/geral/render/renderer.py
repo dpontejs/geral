@@ -128,6 +128,7 @@ def render(
     unsubscribe_url: str | None = None,
     subscribe_url: str | None = None,
     logo_url: str | None = None,
+    page_url: str | None = None,
     note: str | None = None,
 ) -> tuple[str, str]:
     """Render the newsletter as (html with inlined CSS, plain text); `note` adds a box."""
@@ -138,6 +139,8 @@ def render(
         "note": note,
         # The newsletter's own mascot logo; never the club crest. None: the name in text.
         "logo_url": logo_url,
+        # The Geral page: enables the bolão card and board, which link to it.
+        "page_url": page_url.rstrip("/") if page_url else None,
         "standings": standings_window(newsletter.standings),
         "unsubscribe_url": unsubscribe_url,
         "subscribe_url": subscribe_url,

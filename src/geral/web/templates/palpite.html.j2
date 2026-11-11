@@ -1,0 +1,50 @@
+{% extends "base.html.j2" %}
+{% block title %}Bolão · {{ team.newsletter }}{% endblock %}
+{% set home, away = (team.name, match.opponent) if match.home else (match.opponent, team.name) %}
+{# Our team first, as in the e-mail card (our goals in the rows, theirs in the columns). #}
+{% macro line(ours, theirs) -%}
+{{ team.name }} {{ ours }} x {{ theirs }} {{ match.opponent }}
+{%- endmacro %}
+{% block content %}
+<section class="msg" style="--c: {{ team.accent }}">
+  <div class="wrap">
+    <span class="eyebrow">Bolão da {{ team.newsletter }} · {{ home }} x {{ away }}</span>
+    {% if mode == "closed" %}
+    <h1>Bolão fechado</h1>
+    <p>A bola já rolou.
+      {% if bet %}Seu palpite: <strong>{{ line(bet[0], bet[1]) }}</strong>.
+      {% else %}Você não palpitou neste jogo.{% endif %}
+      O resultado do bolão chega no pós-jogo.</p>
+    <a class="btn" href="/bolao/{{ team.slug }}?t={{ token | urlencode }}" style="width:auto;text-decoration:none">Ver o ranking</a>
+    {% elif mode == "done" %}
+    <h1>Palpite registrado ✓</h1>
+    <p>{{ line(score[0], score[1]) }}, por <strong>{{ nickname }}</strong>. Dá para trocar até o apito: é só clicar em outro placar no e-mail.</p>
+    <a class="btn" href="/bolao/{{ team.slug }}?t={{ token | urlencode }}" style="width:auto;text-decoration:none">Ver o ranking</a>
+    {% else %}
+    <form method="post" action="/palpite" style="display:block">
+      <input type="hidden" name="t" value="{{ token }}">
+      <input type="hidden" name="c" value="{{ team.slug }}">
+      <input type="hidden" name="m" value="{{ match.match_id }}">
+      {% if mode == "other" %}
+      <h1>Qual placar você crava?</h1>
+      <p class="score-inputs">
+        <label>{{ team.name }} <input type="number" name="ours" min="0" max="9" required></label>
+        <span>x</span>
+        <label><input type="number" name="theirs" min="0" max="9" required> {{ match.opponent }}</label>
+      </p>
+      {% else %}
+      <input type="hidden" name="p" value="{{ score[0] }}-{{ score[1] }}">
+      <h1>Cravar {{ line(score[0], score[1]) }}?</h1>
+      {% endif %}
+      {% if not nickname %}
+      <p>Primeira vez no bolão? Escolha um apelido para o ranking (o seu e-mail nunca aparece).</p>
+      <label class="field" for="nickname">Apelido</label>
+      <input id="nickname" type="text" name="nickname" minlength="3" maxlength="20" required autocomplete="nickname" class="nick">
+      {% endif %}
+      {% if problem %}<p class="error" role="alert">{{ problem }}</p>{% endif %}
+      <button type="submit" class="btn" style="width:auto;margin-top:16px">Confirmar</button>
+    </form>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
