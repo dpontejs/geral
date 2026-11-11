@@ -26,6 +26,10 @@ Ordem de execução. Cada fatia vira um PR; a página da fatia fica em `docs/fea
 - [ ] O app da Geral atende `urubunews.diegoponte.dev` e `flamengo.diegoponte.dev` com os mesmos tokens (links já enviados seguem funcionando)
 - [ ] Desligar o envio da Urubu no repositório antigo só depois da primeira edição enviada pela Geral
 
+## Em outro chat
+- [ ] Revisão de design do portal (tirar a "cara de IA"), na linha da identidade da Geral
+- [ ] Exploração dos joguinhos e da gamificação ("7 a 0", cartola simples); o bolão fica na parte 2a
+
 ## Fatia 2b — Dados das Séries C, D e estaduais (ABC)
 - [ ] Cliente da API de tabelas do ge (`api.globoesporte.globo.com/tabela/{tUUID}/fase/{slug}/...`): jogos, resultados e classificação; tUUID e fases lidos da página do campeonato a cada execução
 - [ ] Autores dos gols pela página de jogo da CBF (`registros`), com fallback no lance a lance do ge
