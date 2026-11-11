@@ -138,3 +138,81 @@ def test_old_fixed_editions_are_gone(calendar) -> None:
     result = CliRunner().invoke(cli.app, ["run", "--team", "flamengo", "--edition", "monday"])
 
     assert result.exit_code == 2
+
+
+# --- due --all: every team with subscribers, from the page's own database -------------------
+
+
+def match_for(team: str) -> Fixture:
+    return BAHIA.model_copy(update={"match_id": f"m-{team}", "away": team})
+
+
+@pytest.fixture
+def geral_db(monkeypatch, tmp_path):
+    from geral.web.store import SubscriberStore
+
+    db = tmp_path / "subscribers.db"
+    monkeypatch.setenv("SUBSCRIBERS_DB", str(db))
+    monkeypatch.setattr(cli, "_fixtures", lambda team, settings, now: [match_for(team.slug)])
+    monkeypatch.setattr(cli, "_now", lambda: datetime(2026, 10, 18, 12, 45, tzinfo=TZ))
+    return SubscriberStore(db)
+
+
+def follow(store, email: str, teams: list[str]) -> None:
+    store.request(email, teams, LAST_SENT)
+    store.confirm(email, LAST_SENT)
+
+
+def test_due_all_lists_only_teams_with_subscribers(geral_db) -> None:
+    follow(geral_db, "ana@example.com", ["vasco", "nautico"])
+
+    result = CliRunner().invoke(cli.app, ["due", "--all"])
+
+    assert result.exit_code == 0, result.output
+    assert result.stdout.splitlines() == [
+        "vasco\tpre\t2026-10-18\tPré-jogo — 18/10/2026",
+        "nautico\tpre\t2026-10-18\tPré-jogo — 18/10/2026",
+    ]
+
+
+def test_due_all_uses_each_team_latest_edition(geral_db) -> None:
+    follow(geral_db, "ana@example.com", ["vasco", "nautico"])
+    sent = datetime(2026, 10, 18, 12, 30, tzinfo=TZ)
+    geral_db.set_latest_edition(
+        "vasco", "Almirante News — Pré-jogo — 18/10/2026: x", "h", "t", sent
+    )
+
+    result = CliRunner().invoke(cli.app, ["due", "--all"])
+
+    assert [line.split("\t")[0] for line in result.stdout.splitlines()] == ["nautico"]
+
+
+def test_due_all_prints_nothing_when_nothing_is_due(geral_db) -> None:
+    follow(geral_db, "ana@example.com", ["vasco"])
+    with pytest.MonkeyPatch.context() as m:
+        m.setattr(cli, "_now", lambda: datetime(2026, 10, 18, 10, 0, tzinfo=TZ))
+        result = CliRunner().invoke(cli.app, ["due", "--all"])
+
+    assert result.exit_code == 0 and result.stdout == ""
+
+
+def test_due_all_when_espn_fails_for_a_team_the_others_go_on(geral_db) -> None:
+    follow(geral_db, "ana@example.com", ["vasco", "abc"])
+
+    def fixtures(team, settings, now):
+        if team.slug == "vasco":
+            raise StatsUnavailable("espn down")
+        return [match_for(team.slug)]
+
+    with pytest.MonkeyPatch.context() as m:
+        m.setattr(cli, "_fixtures", fixtures)
+        result = CliRunner().invoke(cli.app, ["due", "--all"])
+
+    assert result.exit_code == 0, result.output
+    assert [line.split("\t")[0] for line in result.stdout.splitlines()] == ["abc"]
+
+
+def test_due_needs_a_team_or_all() -> None:
+    result = CliRunner().invoke(cli.app, ["due"])
+
+    assert result.exit_code == 2
