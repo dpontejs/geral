@@ -5,6 +5,7 @@ window of ticks; CSS keyframes switch the layers on and off, so the page needs n
 With reduced motion the board holds still on the last frame: the goal.
 """
 
+import colorsys
 from dataclasses import dataclass
 from functools import cache
 
@@ -229,3 +230,17 @@ def animation_svg() -> str:
         f'<g fill="#FFC21A">{"".join(groups)}</g>'
         "</svg>"
     )
+
+
+WHITE_LAMP = "#F2EEE4"  # a plain lamp: clubs in black (or white) shirts light up like this
+LAMP_LIGHTNESS = 0.6  # dark club colors would vanish on the black board
+
+
+def lamp_color(accent: str) -> str:
+    """The club color as a lit lamp: same hue, bright enough to glow on the black board."""
+    r, g, b = (int(accent[i : i + 2], 16) / 255 for i in (1, 3, 5))
+    hue, lightness, saturation = colorsys.rgb_to_hls(r, g, b)
+    if saturation < 0.15 or lightness < 0.05 or lightness > 0.95:  # black, white or gray
+        return WHITE_LAMP
+    lit = colorsys.hls_to_rgb(hue, max(lightness, LAMP_LIGHTNESS), saturation)
+    return "#" + "".join(f"{round(c * 255):02X}" for c in lit)

@@ -36,6 +36,16 @@ def test_portal_scoreboard_ranks_teams_by_subscribers(client, store) -> None:
     assert {name for name, _ in rows} == {"Timbu", "Almirante", "Porco", "Elefante", "Urubu"}
 
 
+def test_portal_scoreboard_lights_each_name_in_its_club_color(client) -> None:
+    from geral.web.scoreboard import WHITE_LAMP, lamp_color
+
+    board = client.get("/").text.split('id="placar"', 1)[1].split("</section>", 1)[0]
+
+    assert 'class="dot"' not in board and 'class="bar"' not in board
+    assert f'<li style="--team-lamp: {WHITE_LAMP}">' in board  # black shirts light up white
+    assert f'<li style="--team-lamp: {lamp_color("#C60000")}">' in board
+
+
 def test_portal_scoreboard_clock_shows_brasilia_time(client) -> None:
     page = client.get("/").text
 

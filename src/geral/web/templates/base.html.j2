@@ -82,12 +82,14 @@ nav a.cta:hover { background: var(--lamp); color: var(--ink); }
 .lance { display: block; width: 100%; height: auto; }
 .scoreboard .clockbox { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; padding: 16px 8px; text-align: center; }
 .clock { font-size: clamp(34px, 4vw, 54px); letter-spacing: .02em; }
-.clockbox .bar { width: 70%; height: 18px; background: #000; }
 .clockbox .total { font-size: clamp(28px, 3vw, 40px); }
 .clockbox small { font-size: 13px; letter-spacing: .14em; }
 .ranking { list-style: none; margin: 0; padding: 14px 0; display: flex; flex-direction: column; justify-content: center; gap: 2px; height: 100%; }
 .ranking li { display: grid; grid-template-columns: 14px minmax(0, 1fr) auto; gap: 16px; align-items: center; padding: 7px 22px; }
 .ranking .dot { width: 14px; height: 14px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 2px var(--paper); }
+/* Portal board: each fanbase lights up in its club color (black shirts in a plain white lamp). */
+.ranking.lamps li { grid-template-columns: minmax(0, 1fr) auto; }
+.ranking.lamps .name, .ranking.lamps .n { color: var(--team-lamp, var(--lamp)); text-shadow: 0 0 6px color-mix(in srgb, var(--team-lamp, var(--lamp)) 55%, transparent), 0 0 18px color-mix(in srgb, var(--team-lamp, var(--lamp)) 25%, transparent); }
 .ranking .name, .ranking .n { font-size: clamp(26px, 3.4vw, 46px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ranking .n { font-variant-numeric: tabular-nums; }
 
@@ -157,7 +159,6 @@ footer .wrap { padding-block: 22px 30px; display: flex; justify-content: space-b
   .scoreboard > div { border-right: 0; border-bottom: 6px solid #000; }
   .scoreboard > div:last-child { border-bottom: 0; }
   .scoreboard .clockbox { flex-direction: row; flex-wrap: wrap; gap: 16px; }
-  .clockbox .bar { display: none; }
 }
 @media (max-width: 640px) {
   .ticket .stub { flex-basis: 100%; border-right: 0; border-bottom: 3px dashed var(--ink); }

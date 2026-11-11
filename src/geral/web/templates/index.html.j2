@@ -9,14 +9,13 @@
       <div class="board play">{{ scoreboard_animation() | safe }}</div>
       <div class="board clockbox">
         <time class="clock" datetime="{{ clock.isoformat(timespec='minutes') }}">{{ clock.strftime("%H:%M") }}</time>
-        <span class="bar" aria-hidden="true"></span>
         <span class="lamp total">{{ total }}</span>
         <small class="lamp">na Geral</small>
       </div>
       <div class="board">
-        <ol class="ranking" aria-label="Placar da Geral: inscritos por torcida">
+        <ol class="ranking lamps" aria-label="Placar da Geral: inscritos por torcida">
           {% for team in ranking %}
-          <li><span class="dot" style="--c: {{ team.accent }}" aria-hidden="true"></span><span class="name">{{ team.newsletter | replace(" News", "") }}</span><span class="n">{{ counts.get(team.slug, 0) }}</span></li>
+          <li style="--team-lamp: {{ team.accent | lamp }}"><span class="name">{{ team.newsletter | replace(" News", "") }}</span><span class="n">{{ counts.get(team.slug, 0) }}</span></li>
           {% endfor %}
         </ol>
       </div>
