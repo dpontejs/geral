@@ -114,3 +114,14 @@ def test_portal_links_the_game(game) -> None:
 
     assert 'href="/jogos/quanto-foi"' in page
     assert "7 a 0" not in page
+
+
+def test_each_team_gets_its_own_scoreboard_line(game, matches) -> None:
+    match = today(matches)
+
+    page = game.get("/jogos/quanto-foi").text
+
+    for team in (match.home, match.away):
+        assert (
+            f'<span class="lamp team">{team}</span><span class="lamp goals blink">?</span>' in page
+        )
