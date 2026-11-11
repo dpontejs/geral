@@ -1,0 +1,43 @@
+{% extends "base.html.j2" %}
+{% set label = team.name if team else "Geral" %}
+{% block title %}Craque do dia #{{ number }} · {{ label }} · Geral{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/geral/jogos.css">{% endblock %}
+{% block content %}
+<section class="jogo wall">
+  <div class="wrap" id="cd" data-edition="{{ edition }}" data-number="{{ number }}" data-label="{{ label }}" data-max="{{ max_guesses }}" data-letters="{{ letters }}">
+    <h1>Craque do dia</h1>
+    <p class="lead">Um ídolo ou artilheiro por dia, o mesmo para todo mundo. Chute o nome de guerra: você tem {{ max_guesses }} tentativas, e cada letra diz se está no lugar certo.</p>
+    <nav class="editions" aria-label="Edições">
+      {% for slug, t in editions %}
+      <a href="/jogos/craque-do-dia{% if slug != 'geral' %}/{{ slug }}{% endif %}"{% if slug == edition %} aria-current="page"{% endif %}>{{ t.name if t else "Geral" }}</a>
+      {% endfor %}
+    </nav>
+
+    <div class="board match">
+      <span class="lamp meta">#{{ number }} · {{ label }} · {{ letters }} letras</span>
+      <div class="word" aria-label="{{ letters }} letras">{% for _ in range(letters) %}<span class="tile">?</span>{% endfor %}</div>
+    </div>
+
+    <form class="guess" id="cd-form">
+      <label>Nome de guerra<input class="word-input" id="cd-word" name="word" type="text" maxlength="{{ letters }}" autocomplete="off" autocapitalize="characters" spellcheck="false" required></label>
+      <button class="btn" type="submit">Chutar</button>
+    </form>
+    <p class="how" id="cd-error" role="alert" hidden></p>
+
+    <ol class="words" id="cd-tries" aria-live="polite"></ol>
+    <ul class="hints" id="cd-hints"></ul>
+
+    <div class="result" id="cd-result" hidden>
+      <h2 id="cd-title"></h2>
+      <span class="final" id="cd-final"></span>
+      <p id="cd-fact" style="margin:0"></p>
+      <div class="actions"><button class="btn" type="button" id="cd-share">Compartilhar</button><span id="cd-copied" role="status"></span></div>
+      <div class="stats"><span><b id="cd-streak">0</b>sequência</span><span><b id="cd-wins">0</b>acertos</span><span><b id="cd-played">0</b>jogos</span></div>
+    </div>
+
+    <p class="how">Verde: letra no lugar certo. Amarelo: a letra está no nome, em outro lugar. Cinza: não está. Acentos não contam. Depois de 3 erros aparece a posição; depois de 4, a época. Amanhã tem outro.</p>
+    <p class="credit">Listas montadas à mão pela Geral. Achou um erro? Responda qualquer newsletter.</p>
+  </div>
+</section>
+<script src="/static/geral/craque.js" defer></script>
+{% endblock %}

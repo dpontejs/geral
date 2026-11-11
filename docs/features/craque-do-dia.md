@@ -1,7 +1,7 @@
 # "Craque do dia": o Wordle dos ídolos de cada torcida
 
 - **Data:** 2026-11-11
-- **Status:** proposta
+- **Status:** aprovada
 - **ADRs:** —
 
 ## Objetivo
@@ -54,17 +54,17 @@ class WordGuessesIn(BaseModel):
 
 ## Critérios de aceite (como testes)
 
-- [ ] `test_lists_follow_the_rules`: toda entrada real tem uma palavra de 3 a 10 letras, campos
+- [x] `test_lists_follow_the_rules`: toda entrada real tem uma palavra de 3 a 10 letras, campos
       preenchidos e nenhum nome repetido na torcida.
-- [ ] `test_normalize_drops_accents_and_case`: "Nenê" → "NENE".
-- [ ] `test_judge_marks_letters_like_wordle`: resposta "ZICO", chute "COCO" → nao, nao, certo, certo.
-- [ ] `test_judge_reveals_only_when_over` e `test_judge_gives_hints_after_misses`.
-- [ ] `test_geral_mixes_all_lists` e `test_team_edition_only_has_its_list`.
-- [ ] `test_api_rejects_wrong_length_or_symbols`: tamanho errado ou "Z1CO" → 422.
-- [ ] `test_api_rejects_future_puzzle` e `test_unknown_edition_is_404`.
-- [ ] `test_game_page_does_not_leak_the_name`: o HTML mostra o tamanho, não o nome.
-- [ ] `test_quanto_foi_order_is_unchanged`: a extração do `daily.py` não muda o jogo do dia.
-- [ ] `test_portal_links_the_word_game`.
+- [x] `test_normalize_drops_accents_and_case`: "Nenê" → "NENE".
+- [x] `test_judge_marks_letters_like_wordle`: resposta "ZICO", chute "COCO" → nao, nao, certo, certo.
+- [x] `test_judge_reveals_only_when_over` e `test_judge_gives_hints_after_misses`.
+- [x] `test_geral_mixes_all_lists` e `test_team_edition_only_has_its_list`.
+- [x] `test_api_rejects_wrong_length_or_symbols`: tamanho errado ou "Z1CO" → 422.
+- [x] `test_api_rejects_future_puzzle` e `test_unknown_edition_is_404`.
+- [x] `test_game_page_does_not_leak_the_name`: o HTML mostra o tamanho, não o nome.
+- [x] `test_quanto_foi_order_is_unchanged`: a extração do `daily.py` não muda o jogo do dia.
+- [x] `test_portal_links_the_word_game`.
 
 ## Verificação ponta a ponta
 
@@ -78,3 +78,5 @@ uv run pytest && uv run uvicorn geral.web.app:create_app --factory
 - Curadoria: o primeiro rascunho das listas é meu e pode errar época, posição ou fato (mais no ABC
   e no Náutico). As listas passam pela revisão do dev antes do merge.
 - Cola: como no "Quanto foi?", seis chutes revelam a resposta. Aceito.
+- Uma torcida só ganha edição própria com 30+ nomes (`MIN_LIST`); listas menores (ABC e Náutico,
+  por enquanto) entram só na edição geral até serem completadas.

@@ -23,7 +23,7 @@ from jinja2 import select_autoescape
 from pydantic import AwareDatetime, BaseModel, Field
 
 from geral.config import Settings, get_settings
-from geral.games import quanto_foi
+from geral.games import craque, quanto_foi
 from geral.games.quanto_foi import Match
 from geral.send.resend_sender import UNSUBSCRIBE_PLACEHOLDER, personalize
 from geral.teams import Team, load_teams
@@ -114,6 +114,12 @@ def unsubscribe_purpose(team: str | None) -> str:
 Goals = Annotated[int, Field(ge=0, le=20)]
 
 
+class WordGuessesIn(BaseModel):
+    guesses: list[Annotated[str, Field(max_length=20)]] = Field(
+        min_length=1, max_length=craque.MAX_GUESSES
+    )
+
+
 class GuessesIn(BaseModel):
     guesses: list[tuple[Goals, Goals]] = Field(min_length=1, max_length=quanto_foi.MAX_GUESSES)
 
@@ -193,6 +199,22 @@ def create_app(
     def today_number() -> int:
         # Before the launch everyone plays puzzle #1.
         return max(1, quanto_foi.puzzle_number(now().astimezone(BRASILIA).date()))
+
+    craque_pools: dict[str, list[craque.Craque]] = {}
+
+    def craque_editions() -> dict[str, list[craque.Craque]]:
+        """'geral' plus every listed team whose curated list is complete, built on first use."""
+        if not craque_pools:
+            lists = craque.load_lists()
+            built = {"geral": craque.pool(lists, "geral")}
+            for slug in listed:
+                if games := craque.pool(lists, slug):
+                    built[slug] = games
+            craque_pools.update(built)  # published at once, like the Quanto foi? pools
+        return craque_pools
+
+    def craque_number() -> int:
+        return max(1, craque.puzzle_number(now().astimezone(BRASILIA).date()))
 
     app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
     if legacy_team:
@@ -629,6 +651,41 @@ def create_app(
             return JSONResponse({"detail": "puzzle not found"}, status_code=404)
         match = quanto_foi.by_number(games, number).match
         return quanto_foi.judge(match, [tuple(g) for g in body.guesses])
+
+    @app.get("/jogos/craque-do-dia", response_class=HTMLResponse)
+    @app.get("/jogos/craque-do-dia/{edition}", response_class=HTMLResponse)
+    def craque_page(request: Request, edition: str = "geral"):
+        games = craque_editions().get(edition)
+        if not games:
+            return message(
+                request,
+                "Jogo não encontrado",
+                "Essa torcida ainda não tem o Craque do dia. Jogue a edição geral enquanto isso.",
+                status=404,
+            )
+        number = craque_number()
+        return page(
+            request,
+            "craque.html.j2",
+            edition=edition,
+            team=catalog.get(edition),
+            number=number,
+            letters=len(craque.by_number(games, number).answer),
+            editions=[(slug, catalog.get(slug)) for slug in craque_editions()],
+            max_guesses=craque.MAX_GUESSES,
+        )
+
+    @app.post("/api/jogos/craque-do-dia/{edition}/{number}")
+    def craque_guess(edition: str, number: int, body: WordGuessesIn):
+        games = craque_editions().get(edition)
+        if not games or not 1 <= number <= craque_number():
+            return JSONResponse({"detail": "puzzle not found"}, status_code=404)
+        answer = craque.by_number(games, number)
+        if not all(craque.valid_guess(answer, g) for g in body.guesses):
+            return JSONResponse(
+                {"detail": f"cada chute precisa de {len(answer.answer)} letras"}, status_code=422
+            )
+        return craque.judge(answer, body.guesses)
 
     @app.get("/version.json")
     def version():
