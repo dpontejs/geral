@@ -284,6 +284,8 @@ def create_app(
                 html,
                 text,
                 link("/unsubscribe", unsubscribe_purpose(team.slug), email),
+                # The stored edition keeps the bolão card: the newcomer can bet before kickoff.
+                bet_token=make_token(secret, "bet", email, now()),
             )
         except MailError as e:
             logger.error("Welcome edition of %s failed: %s", team.slug, e)

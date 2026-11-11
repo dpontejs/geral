@@ -92,7 +92,7 @@ def test_confirm_activates_teams_and_welcomes_with_each_latest_edition(
 
     assert response.status_code == 200 and "Inscrição confirmada" in response.text
     assert store.teams_of(ANA) == ["abc", "vasco"]
-    [(email, team, subject, html, text, unsubscribe)] = mailer.editions
+    [(email, team, subject, html, text, unsubscribe, _)] = mailer.editions
     assert (email, team) == (ANA, "vasco")
     assert subject == "Boas-vindas! Pós-jogo do Vasco"
     assert "Boas-vindas à Almirante News!" in html and text.startswith("Boas-vindas")
@@ -306,3 +306,13 @@ def test_get_subscribe_goes_back_to_the_portal(client) -> None:
     response = client.get("/subscribe", follow_redirects=False)
 
     assert response.status_code == 303 and response.headers["location"] == "/"
+
+
+def test_welcome_edition_fills_the_bet_token(client, mailer) -> None:
+    publish(client, "vasco")
+    sign_up(client, ANA, ["vasco"])
+
+    confirm_last(client, mailer)
+
+    [edition] = mailer.editions
+    assert read_token(SECRET, "bet", edition[6], NOW) == ANA
