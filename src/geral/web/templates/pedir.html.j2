@@ -1,0 +1,35 @@
+{% extends "base.html.j2" %}
+{% block title %}Peça seu time · Geral{% endblock %}
+{% block content %}
+<section class="msg wall">
+  <div class="wrap">
+    <form class="ticket" method="post" action="/pedir">
+      <div class="stub">
+        <h2>Seu<br>time?</h2>
+        <span>Quando juntar gente, a gente acende a newsletter.</span>
+      </div>
+      <div class="body">
+        <h3>Peça a sua torcida</h3>
+        {% if error %}<p class="error" role="alert">{{ error }}</p>{% endif %}
+        <div class="hidden-field" aria-hidden="true"><label for="website">Não preencha</label><input id="website" name="website" tabindex="-1" autocomplete="off"></div>
+        <div class="row">
+          <label class="field" for="team">Time<input id="team" name="team" type="text" placeholder="Sampaio Corrêa" maxlength="40" value="{{ team or '' }}" required></label>
+        </div>
+        <div class="row">
+          <label class="field" for="email">Seu e-mail (opcional)<input id="email" name="email" type="email" placeholder="voce@email.com" autocomplete="email" value="{{ email or '' }}"></label>
+          <button class="btn" type="submit">Pedir</button>
+        </div>
+        <p class="fine">Com e-mail, você recebe uma mensagem só, quando a torcida nascer. Ele não aparece em lugar nenhum.</p>
+      </div>
+    </form>
+    {% if top %}
+    <div class="sheet" style="margin-top: 24px;">
+      <h1>Mais pedidos</h1>
+      <ol class="requests">
+        {% for t in top %}<li><b>{{ t.name }}</b> · {{ t.votes }} pedido{% if t.votes != 1 %}s{% endif %}</li>{% endfor %}
+      </ol>
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

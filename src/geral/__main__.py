@@ -16,7 +16,7 @@ from geral.edition import edition_from_slot, resolve_match_edition
 from geral.models import Edition, Newsletter
 from geral.render.renderer import render
 from geral.report import ProblemCollector, RunReport
-from geral.schedule import LABELS, TZ, Fixture, Slot, label_of, plan
+from geral.schedule import DEFAULT_WINDOW, LABELS, TZ, Fixture, Slot, label_of, plan
 from geral.schedule import due as due_slot
 from geral.send.recipients import (
     LatestEdition,
@@ -172,7 +172,7 @@ def preview(
     resolved = _resolve(club, edition, date)
     settings = get_settings()
     newsletter = pipeline.build_newsletter(
-        resolved, club, settings, published_topics=_published_topics(settings, club)
+        resolved, club, settings, published_topics=_published_topics(settings, club, resolved)
     )
     html_path = out or Path("out") / f"{club.slug}-{resolved.end:%Y-%m-%d}.html"
     html_path.parent.mkdir(parents=True, exist_ok=True)
@@ -298,7 +298,7 @@ def run(
                 settings,
                 llm=llm,
                 report=report,
-                published_topics=_published_topics(settings, club),
+                published_topics=_published_topics(settings, club, resolved),
             )
             _fill_report(report, newsletter)
             if resolved.kind == "post" and newsletter.last_match is None:
@@ -578,6 +578,16 @@ def _resolve(team: Team, edition: str, date: datetime | None) -> Edition:
     day = date.date() if date else now.date()
     last_sent = latest.published_at if latest else None
     resolved = resolve_match_edition(edition, day, fixtures, last_sent)  # type: ignore[arg-type]
+    if resolved is None and edition == "news" and day == now.date():
+        # An extra news edition, asked by hand: from the last send (or the default window) to
+        # now. The planned editions go on; the next news one counts from this send.
+        # A send made today is ignored, as for planned editions: re-running today's extra
+        # edition keeps the window it had, instead of starting at that send.
+        before_today = last_sent is not None and last_sent.date() < now.date()
+        start = last_sent if before_today else now - DEFAULT_WINDOW
+        return Edition(
+            kind="news", start=start, end=now, label=f"{LABELS['news']} — {now:%d/%m/%Y}"
+        )
     if resolved is None:
         typer.echo(f"Nenhuma edição {LABELS[edition]} prevista em {day:%d/%m/%Y}.")
         raise typer.Exit(code=1)
@@ -592,10 +602,15 @@ def _fixtures(team: Team, settings, now: datetime) -> list[Fixture]:
     return stats_client_for(team, tz_name=settings.TIMEZONE).get_fixtures(now)
 
 
-def _published_topics(settings, team: Team) -> list[str]:
-    """Topics of the edition already sent, so the model does not repeat them."""
+def _published_topics(settings, team: Team, edition: Edition) -> list[str]:
+    """Topics of the edition already sent, so the model does not repeat them.
+
+    None when that edition is this one: a re-run must not drop its own topics.
+    """
     latest = _latest(settings, team)
-    return latest.topic_titles if latest else []
+    if latest is None or label_of(latest.subject) == edition.label:
+        return []
+    return latest.topic_titles
 
 
 def _latest(settings, team: Team) -> LatestEdition | None:

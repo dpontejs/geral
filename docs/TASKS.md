@@ -33,11 +33,12 @@ Ordem de execução. Cada fatia vira um PR; a página da fatia fica em `docs/fea
 ## Fatia 2b — Dados das Séries C, D e estaduais (ABC)
 - [x] Cliente da API de tabelas do ge (`api.globoesporte.globo.com/tabela/{tUUID}/fase/{slug}/...`): jogos, resultados e classificação; tUUID e fases lidos da página do campeonato a cada execução (`docs/features/dados-serie-c.md`)
 - [x] Autores dos gols pela API de jogos da CBF (Séries C e D) e pênaltis do mata-mata pelo ge; o estadual fica só com o placar (a CBF não o tem e o HTML do jogo no ge não traz os lances)
-- [ ] Notícias do time pelo feed JSON da página do ge (no lugar da raspagem do HTML)
-- [ ] Pernambucano: segundo parser, para o formato `tabela-context`
+- [x] Notícias do time pelo feed JSON da página do ge (no lugar da raspagem do HTML, que fica de reserva)
+- [x] Pernambucano: segundo leitor, para o formato `tabela-context` (fases e tabela da página, jogos pelo GraphQL do ge); o Náutico entra no 2º turno (Frevo)
 
 ## Fatia 3 — Pedido de time e ranking de torcidas
-- [ ] Formulário "meu time não está aqui" (time + e-mail opcional para avisar quando nascer)
+- [x] Formulário "meu time não está aqui" (time + e-mail opcional para avisar quando nascer) e os mais pedidos (`docs/features/pedido-de-time.md`)
+- [ ] Comando que avisa por e-mail quem pediu, quando a torcida nascer
 - [ ] Página pública de ranking: inscritos por time e por série
 
 ## Fatia 4 — Edição geral por série
