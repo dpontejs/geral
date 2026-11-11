@@ -63,15 +63,20 @@ class TeamRequestStore:
     def _connect(self) -> sqlite3.Connection:
         return sqlite3.connect(self.path)
 
-    def add(self, name: str, voter: str, email: str | None, now: datetime) -> None:
-        """Count `voter`'s vote for the team; asking again only fills a missing e-mail."""
+    def add(self, name: str, voter: str, email: str | None, now: datetime) -> bool:
+        """Count `voter`'s vote for the team (True: a new vote); asking again fills the e-mail."""
         with closing(self._connect()) as db, db:
+            seen = db.execute(
+                "SELECT 1 FROM team_requests WHERE team_key = ? AND voter = ?",
+                (team_key(name), voter),
+            ).fetchone()
             db.execute(
                 "INSERT INTO team_requests (team_key, team_name, voter, email, created_at)"
                 " VALUES (?, ?, ?, ?, ?) ON CONFLICT (team_key, voter) DO UPDATE SET"
                 " email = COALESCE(excluded.email, team_requests.email)",
                 (team_key(name), name.strip(), voter, email, now.isoformat()),
             )
+        return seen is None
 
     def top(self, limit: int = 10, min_votes: int = PUBLIC_MIN_VOTES) -> list[RequestedTeam]:
         """Most requested teams first (ties: the earliest asked), from `min_votes` votes."""
