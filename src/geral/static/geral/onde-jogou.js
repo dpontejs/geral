@@ -142,6 +142,7 @@
         const button = el("button", `club ${marks.get(club.nome) || ""}`.trim());
         button.type = "button";
         button.append(el("span", "club-name", club.nome), el("span", "club-country", club.pais));
+        button.title = club.nome; // the full name when two lines cut it
         button.disabled = marks.has(club.nome) || busy;
         button.addEventListener("click", () => guess(club.nome));
         li.append(button);
