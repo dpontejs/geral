@@ -18,14 +18,15 @@ seus mascotes.
 
 ## Contratos
 
-- Paleta (tons de anos 60-70, nenhum é cor de clube):
+- Paleta neutra, de foto de jornal antigo (o verde de pôster foi descartado: lembrava o Palmeiras):
 
   | Papel | Cor | Uso |
   |---|---|---|
-  | papel de jornal antigo | `#EFE4CC` | fundo |
-  | concreto | `#8E8B84` | arquibancada, traços secundários |
-  | gramado desbotado | `#3E6B48` | destaque principal |
-  | amarelo de ingresso | `#E3B23C` | destaque secundário (selos, "edição geral") |
+  | concreto | `#8E8B84` | destaque principal, fundo do ícone |
+  | concreto claro | `#B9B5AC` | arquibancada, traços secundários |
+  | papel de jornal antigo | `#EFE4CC` | fundo da página e do e-mail, camisa do geraldino |
+  | pele desbotada | `#C99A73` | só a pele do geraldino |
+  | amarelo de ingresso | `#E3B23C` | só detalhes: radinho, selos, "edição geral" |
   | tinta | `#1E1E1E` | contorno e texto |
 
 - Mascote: o **geraldino**, torcedor da Geral, em pé, radinho de pilha colado no ouvido, camisa
@@ -36,15 +37,16 @@ seus mascotes.
 
 ## Prompt do ícone (Nano Banana)
 
-> Retro 1970s Brazilian football poster style mascot logo: a "geraldino", an ordinary fan standing
-> in the old concrete stadium terraces, holding a small transistor radio against his ear, other arm
-> raised shouting a goal, plain shirt with no team colors, mustache, joyful and passionate face,
-> three-quarter view. Behind him, the curved concrete roof edge of a huge old round stadium. Bold
-> flat vector shapes, slight screen-print feel but no textures that break at small size, thick
-> #1E1E1E outline, no gradients, no text. Everything fits completely inside a solid #3E6B48
-> circle with a thin #EFE4CC ring; nothing crosses the circle edge. Transparent background outside
-> the circle. Readable at 32 px. Only these colors: #3E6B48, #EFE4CC, #8E8B84, #E3B23C and
-> #1E1E1E. No club crest, no club colors, no flags of real clubs, no stadium logo.
+> Retro 1970s Brazilian newspaper illustration style mascot logo: a "geraldino", an ordinary fan
+> standing in the old concrete stadium terraces, holding a small transistor radio against his ear,
+> other arm raised shouting a goal, plain shirt with no team colors, mustache, joyful and passionate
+> face, three-quarter view. Behind him, the curved concrete roof edge and terraces of a huge old
+> round stadium. Bold flat vector shapes, thick #1E1E1E outline, no gradients, no textures, no
+> text. Everything fits completely inside a solid #8E8B84 circle with a thin #EFE4CC ring; nothing
+> crosses the circle edge. Transparent background outside the circle. Readable at 32 px. Colors:
+> circle background #8E8B84; terraces and roof #B9B5AC; shirt #EFE4CC; skin #C99A73; hair, mustache
+> and outlines #1E1E1E; the radio is the only #E3B23C element. No green, no other colors. No club
+> crest, no club colors, no flags, no stadium logo.
 
 ## Critérios de aceite
 
