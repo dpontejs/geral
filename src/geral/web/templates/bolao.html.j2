@@ -1,0 +1,25 @@
+{% extends "base.html.j2" %}
+{% block title %}Bolão {{ season }} · {{ team.newsletter }}{% endblock %}
+{% block content %}
+<section class="msg">
+  <div class="wrap">
+    <span class="eyebrow">Bolão {{ season }} · {{ team.newsletter }}</span>
+    <h1>Ranking da temporada</h1>
+    {% if rows %}
+    <div class="placar" style="margin-top:20px">
+      <table>
+        <thead><tr><th>#</th><th>Apelido</th><th style="text-align:right">Pontos</th><th style="text-align:right">Cravadas</th></tr></thead>
+        <tbody>
+        {% for r in rows %}
+        <tr{% if r.nickname == me %} class="me"{% endif %}><td class="pos">{{ loop.index }}</td><td>{{ r.nickname }}{% if loop.first and r.points %} 👑{% endif %}</td><td class="n">{{ r.points }}</td><td class="n">{{ r.exact }}</td></tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+    <p>Placar exato vale 5; vencedor e saldo, 3; só o resultado, 2.</p>
+    {% else %}
+    <p>Ninguém palpitou ainda nesta temporada. O próximo pré-jogo da {{ team.newsletter }} traz a cartela.</p>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}
