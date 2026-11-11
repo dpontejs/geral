@@ -24,6 +24,7 @@ class Game:
     started: bool = False  # ge's `jogo_ja_comecou`
     home_penalties: int | None = None
     away_penalties: int | None = None
+    canceled: bool = False
 
     def involves(self, team_id: int) -> bool:
         return team_id in (self.home_id, self.away_id)

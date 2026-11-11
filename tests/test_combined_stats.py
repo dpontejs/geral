@@ -149,13 +149,14 @@ def test_combined_preview_routes_by_league() -> None:
     assert client.get_preview("401", "bra.copa_do_nordeste").opponent == "Y"
 
 
-def test_combined_ge_failure_keeps_espn_calendar_when_espn_has_the_main_league() -> None:
+def test_combined_ge_failure_is_unavailable_even_with_espn_main_league() -> None:
+    # Going on without ge could plan a news edition over a state-league pre-game and lose it;
+    # unavailable only delays: `due` tries again in 10 minutes.
     espn = Fake(get_fixtures=[fixture("401", "bra.2", 10)])
     ge = Fake(get_fixtures=StatsUnavailable("ge down"))
 
-    fixtures = CombinedStatsClient(espn, ge, get_team("nautico")).get_fixtures(at(1))
-
-    assert [f.match_id for f in fixtures] == ["401"]
+    with pytest.raises(StatsUnavailable):
+        CombinedStatsClient(espn, ge, get_team("nautico")).get_fixtures(at(1))
 
 
 def test_combined_ge_failure_is_unavailable_when_ge_has_the_main_league() -> None:

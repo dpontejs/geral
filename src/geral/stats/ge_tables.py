@@ -319,7 +319,9 @@ class GETablesClient:
     def _fixture(self, game: Game, now: datetime) -> Fixture:
         # ge has no "postponed": a match that never started hours after its time was put off.
         no_show = game.kickoff + NO_SHOW + (timedelta() if game.time_valid else timedelta(days=1))
-        if game.kickoff > now:
+        if game.canceled:
+            state = "postponed"
+        elif game.kickoff > now:
             state = "pre"
         elif game.finished(now):
             state = "post"

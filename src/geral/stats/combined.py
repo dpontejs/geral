@@ -1,15 +1,12 @@
 """ESPN plus ge's tables: one stats client for teams in competitions ESPN does not cover."""
 
-import logging
 from datetime import datetime
 
 from geral.models import MatchPreview, MatchStats, NextMatch, StandingRow, TeamMoment
 from geral.schedule import Fixture
-from geral.stats.espn import FORM_SIZE, ESPNStatsClient, StatsUnavailable
+from geral.stats.espn import FORM_SIZE, ESPNStatsClient
 from geral.stats.ge_tables import LEAGUE_PREFIX, GETablesClient
 from geral.teams import Team
-
-logger = logging.getLogger(__name__)
 
 
 def stats_client_for(team: Team, tz_name: str = "America/Sao_Paulo"):
@@ -37,15 +34,12 @@ class CombinedStatsClient:
         return self.team.league_name if self._espn_table else self.ge.table_name
 
     def get_fixtures(self, now: datetime) -> list[Fixture]:
-        """Both calendars. ESPN unknown makes it unknown; ge unknown too, unless the team's main
-        league is on ESPN (a state league on ge must not stop the Série B editions)."""
-        fixtures = self.espn.get_fixtures(now)
-        try:
-            fixtures += self.ge.get_fixtures(now)
-        except StatsUnavailable as e:
-            if not self._espn_table:
-                raise
-            logger.warning("ge calendar unavailable, going on with ESPN's: %s", e)
+        """Both calendars; either one unknown makes the whole calendar unknown.
+
+        Going on without ge could plan a news edition over a state-league pre-game and lose it
+        for good; unknown only delays it, since `due` tries again in 10 minutes.
+        """
+        fixtures = self.espn.get_fixtures(now) + self.ge.get_fixtures(now)
         return sorted(fixtures, key=lambda f: f.kickoff)
 
     def get_last_match(self, start: datetime, end: datetime) -> MatchStats | None:

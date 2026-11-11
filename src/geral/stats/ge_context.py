@@ -28,6 +28,7 @@ MATCH_FIELDS = """
   startDate
   startHour
   moment
+  canceled
   firstContestant { ... on Team { id popularName } }
   secondContestant { ... on Team { id popularName } }
   scoreboard { home away penalty { home away } }
@@ -67,7 +68,9 @@ def load(context: dict, name: str, client: httpx.Client, team_id: int, tz: ZoneI
         "categorySlug": standings["category"]["slug"],
     }
     phases = standings["multisportStandings"]
-    current = next((i for i, p in enumerate(phases) if p["phase"].get("actual")), len(phases) - 1)
+    current = next((i for i, p in enumerate(phases) if p["phase"].get("actual")), None)
+    if current is None:  # between stages: the last phase that already has teams or matches
+        current = max((i for i, p in enumerate(phases) if _has_data(p)), default=0)
     games: dict[int, Game] = {}
     groups = None
     for index, phase in enumerate(phases):
@@ -82,7 +85,11 @@ def load(context: dict, name: str, client: httpx.Client, team_id: int, tz: ZoneI
                     if event.get("match")
                 ]
             else:
-                matches = _rounds(client, {**base_filter, "phaseSlug": phase["phase"]["slug"]})
+                total = max(
+                    (s.get("totalRounds") or 0 for s in phase.get("standing") or []), default=0
+                )
+                filter_ = {**base_filter, "phaseSlug": phase["phase"]["slug"]}
+                matches = _rounds(client, filter_, total)
         except Exception as e:
             if index <= current:
                 raise
@@ -101,8 +108,19 @@ def load(context: dict, name: str, client: httpx.Client, team_id: int, tz: ZoneI
     return Competition(name=name, games=list(games.values()), groups=groups)
 
 
-def _rounds(client: httpx.Client, filter_: dict) -> list[dict]:
-    """Every round's matches, up to the first round without any."""
+def _has_data(phase: dict) -> bool:
+    for standing in phase.get("standing") or []:
+        for rating in standing.get("ratings") or []:
+            if ((rating.get("contestant") or {}).get("contestantData") or {}).get("id"):
+                return True
+        for bracket in standing.get("brackets") or []:
+            if any((e.get("match") or {}).get("id") for e in bracket.get("events") or []):
+                return True
+    return False
+
+
+def _rounds(client: httpx.Client, filter_: dict, total: int) -> list[dict]:
+    """Rounds 1..`total` (the phase's round count) and on, until an empty one after it."""
     matches: list[dict] = []
     for n in range(1, MAX_ROUNDS + 1):
         response = client.post(
@@ -123,7 +141,7 @@ def _rounds(client: httpx.Client, filter_: dict) -> list[dict]:
                 found += [e["match"] for e in item.get("events") or [] if e.get("match")]
             elif item.get("match"):
                 found.append(item["match"])
-        if not found:
+        if not found and n > total:
             break
         matches += found
     return matches
@@ -136,8 +154,8 @@ def _game(match: dict, competition: str, tz: ZoneInfo) -> Game | None:
     hour = match.get("startHour")
     at = time.fromisoformat(hour) if hour else time(0, 0)
     home, away = match["firstContestant"], match["secondContestant"]
-    if not (isinstance(home["popularName"], str) and isinstance(away["popularName"], str)):
-        raise ValueError("a side without name")
+    if not int(match["id"]) or not all(side["id"] and side["popularName"] for side in (home, away)):
+        raise ValueError("a tie still without both teams")
     score = match.get("scoreboard") or {}
     penalty = score.get("penalty") or {}
     pens = (penalty.get("home"), penalty.get("away"))
@@ -153,7 +171,10 @@ def _game(match: dict, competition: str, tz: ZoneInfo) -> Game | None:
         home_goals=score.get("home"),
         away_goals=score.get("away"),
         venue=(match.get("location") or {}).get("popularName"),
-        started=match.get("moment") not in (None, "FUTURE"),
+        # PAST without a score never started (put off); a score or a live moment did.
+        started=score.get("home") is not None
+        or match.get("moment") not in (None, "FUTURE", "PAST"),
+        canceled=bool(match.get("canceled")),
         home_penalties=pens[0] if None not in pens else None,
         away_penalties=pens[1] if None not in pens else None,
     )
