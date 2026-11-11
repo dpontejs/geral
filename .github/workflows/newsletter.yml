@@ -33,6 +33,10 @@ on:
         description: "Aviso no quadro \"Novidades\" (opcional; o assunto ganha \"Novidades!\")"
         type: string
         required: false
+      publish_only:
+        description: "Só publicar no portal (primeira edição de uma torcida; não envia e-mail)"
+        type: boolean
+        default: false
 
 permissions:
   contents: read
@@ -102,13 +106,15 @@ jobs:
           EDITION: ${{ inputs.edition || 'auto' }}
           REFERENCE_DATE: ${{ inputs.date }}
           NOTE: ${{ inputs.note }}
+          PUBLISH_ONLY: ${{ inputs.publish_only && 'true' || 'false' }}
           SKIP_IF_SENT: ${{ github.event_name == 'schedule' && 'true' || (inputs.skip_if_sent && 'true' || 'false') }}
         run: |
           args=(--team "$TEAM" --edition "$EDITION")
           if [ "$SKIP_IF_SENT" = "true" ]; then args+=(--skip-if-sent); fi
           if [ -n "$REFERENCE_DATE" ]; then args+=(--date "$REFERENCE_DATE"); fi
           if [ -n "$NOTE" ]; then args+=(--note "$NOTE"); fi
-          echo "DRY_RUN=$DRY_RUN SKIP_IF_SENT=$SKIP_IF_SENT team=$TEAM edition=$EDITION date=${REFERENCE_DATE:-hoje}"
+          if [ "$PUBLISH_ONLY" = "true" ]; then args+=(--publish-only); fi
+          echo "DRY_RUN=$DRY_RUN SKIP_IF_SENT=$SKIP_IF_SENT PUBLISH_ONLY=$PUBLISH_ONLY team=$TEAM edition=$EDITION date=${REFERENCE_DATE:-hoje}"
           uv run python -m geral run "${args[@]}"
 
       - name: Upload rendered newsletter

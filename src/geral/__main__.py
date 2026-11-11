@@ -247,10 +247,22 @@ def run(
         ),
     ] = False,
     note: NoteOption = None,
+    publish_only: Annotated[
+        bool,
+        typer.Option(
+            "--publish-only",
+            help="Build and publish on the page (portal, welcome e-mails) without sending",
+        ),
+    ] = False,
 ) -> None:
     """Build, render, save to out/ and send the newsletter (respects DRY_RUN)."""
     _setup_logging()
     club = _team(team)
+    if publish_only and not get_settings().SUBSCRIBERS_API_TOKEN:
+        typer.echo(
+            "--publish-only precisa de SUBSCRIBERS_API_TOKEN para publicar no portal.", err=True
+        )
+        raise typer.Exit(code=2)
     resolved = _resolve(club, edition, date)
     settings = get_settings()
     report = RunReport(edition=f"{club.newsletter} — {resolved.label}", outcome="interrompida")
@@ -267,8 +279,8 @@ def run(
     with ProblemCollector() as problems:
         try:
             # Resolved before building: a team nobody follows costs no collection, no Gemini.
-            resolved_recipients = resolve_recipients(settings, club.slug)
-            if not resolved_recipients.recipients and not settings.DRY_RUN:
+            resolved_recipients = None if publish_only else resolve_recipients(settings, club.slug)
+            if resolved_recipients and not resolved_recipients.recipients and not settings.DRY_RUN:
                 report.outcome = "nada a enviar: sem inscritos"
                 typer.echo(f"{resolved.label}: nada a enviar, sem inscritos na {club.newsletter}.")
                 return
@@ -311,11 +323,20 @@ def run(
                 text.replace(UNSUBSCRIBE_PLACEHOLDER, mailto), encoding="utf-8"
             )
 
+            plain_subject = build_subject(newsletter)
+            if publish_only:
+                # First edition of a new team (or a refresh): portal and welcome e-mails only.
+                plain_html, plain_text = render_edition(None) if note else (html, text)
+                publish_latest_edition(settings, club.slug, plain_subject, plain_html, plain_text)
+                report.outcome = "publicada no portal (sem envio)"
+                typer.echo(
+                    f"{resolved.label}: publicada no portal, sem envio; cópia em {html_path}"
+                )
+                return
             recipients = resolved_recipients.recipients
             report.recipients = len(recipients)
             report.subscribers = resolved_recipients.from_api
             # The page keeps the plain edition: new subscribers get no stale announcement.
-            plain_subject = build_subject(newsletter)
             subject = f"Novidades! {plain_subject}" if note else plain_subject
             try:
                 ids = ResendSender.from_settings(settings, club).send(

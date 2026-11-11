@@ -609,3 +609,36 @@ def test_run_without_recipients_does_not_build(env, monkeypatch) -> None:
 
     assert result.exit_code == 0, result.output
     assert "sem inscritos" in result.output
+
+
+@respx.mock
+def test_publish_only_builds_and_publishes_without_sending(env) -> None:
+    env.setenv("SUBSCRIBERS_API_TOKEN", "tok")
+    env.setenv("PUBLIC_URL", "https://news.test")
+    env.setenv("NEWSLETTER_RECIPIENTS", "a@x.com")
+    use(env, [ARTICLE], MATCH)
+    respx.get("https://news.test/api/teams/flamengo/latest-edition").mock(
+        return_value=httpx.Response(404)
+    )
+    subscribers = respx.get(API, params={"team": "flamengo"})
+    publish = respx.put("https://news.test/api/teams/flamengo/latest-edition").mock(
+        return_value=httpx.Response(204)
+    )
+    resend = respx.post(RESEND_URL)
+    args = ["run", "--team", "flamengo", "--edition", "news", "--date", "2026-10-12"]
+
+    result = CliRunner().invoke(cli.app, [*args, "--publish-only"])
+
+    assert result.exit_code == 0, result.output
+    assert publish.called and not resend.called and not subscribers.called
+    assert UNSUBSCRIBE_PLACEHOLDER in json.loads(publish.calls.last.request.content)["html"]
+    assert "publicada no portal" in result.output
+
+
+def test_publish_only_needs_the_page_token(env) -> None:
+    use(env, [ARTICLE], MATCH)
+    args = ["run", "--team", "flamengo", "--edition", "news", "--date", "2026-10-12"]
+
+    result = CliRunner().invoke(cli.app, [*args, "--publish-only"])
+
+    assert result.exit_code == 2
