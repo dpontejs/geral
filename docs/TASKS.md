@@ -15,6 +15,12 @@ Ordem de execução. Cada fatia vira um PR; a página da fatia fica em `docs/fea
 - [ ] `resenha due` devolvendo edições vencidas de todos os times com inscrito ativo
 - [ ] Decidir cota do LLM (ver PLAN §5)
 
+## Fatia 2b — Dados das Séries C, D e estaduais (ABC)
+- [ ] Cliente da API de tabelas do ge (`api.globoesporte.globo.com/tabela/{tUUID}/fase/{slug}/...`): jogos, resultados e classificação; tUUID e fases lidos da página do campeonato a cada execução
+- [ ] Autores dos gols pela página de jogo da CBF (`registros`), com fallback no lance a lance do ge
+- [ ] Notícias do time pelo feed JSON da página do ge (no lugar da raspagem do HTML)
+- [ ] Pernambucano: segundo parser, para o formato `tabela-context`
+
 ## Fatia 3 — Pedido de time e ranking de torcidas
 - [ ] Formulário "meu time não está aqui" (time + e-mail opcional para avisar quando nascer)
 - [ ] Página pública de ranking: inscritos por time e por série
