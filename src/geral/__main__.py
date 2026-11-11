@@ -16,7 +16,7 @@ from geral.edition import edition_from_slot, resolve_match_edition
 from geral.models import Edition, Newsletter
 from geral.render.renderer import render
 from geral.report import ProblemCollector, RunReport
-from geral.schedule import LABELS, TZ, Fixture, Slot, label_of, plan
+from geral.schedule import DEFAULT_WINDOW, LABELS, TZ, Fixture, Slot, label_of, plan
 from geral.schedule import due as due_slot
 from geral.send.recipients import (
     LatestEdition,
@@ -578,6 +578,13 @@ def _resolve(team: Team, edition: str, date: datetime | None) -> Edition:
     day = date.date() if date else now.date()
     last_sent = latest.published_at if latest else None
     resolved = resolve_match_edition(edition, day, fixtures, last_sent)  # type: ignore[arg-type]
+    if resolved is None and edition == "news" and day == now.date():
+        # An extra news edition, asked by hand: from the last send (or the default window) to
+        # now. The planned editions go on; the next news one counts from this send.
+        start = last_sent if last_sent is not None and last_sent < now else now - DEFAULT_WINDOW
+        return Edition(
+            kind="news", start=start, end=now, label=f"{LABELS['news']} — {now:%d/%m/%Y}"
+        )
     if resolved is None:
         typer.echo(f"Nenhuma edição {LABELS[edition]} prevista em {day:%d/%m/%Y}.")
         raise typer.Exit(code=1)

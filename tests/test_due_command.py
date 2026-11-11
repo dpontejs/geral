@@ -248,3 +248,45 @@ def test_due_fixtures_come_from_espn_and_ge(monkeypatch) -> None:
 
     assert fixtures == [ge_match]
     assert seen == [get_team("abc")]
+
+
+def test_run_news_without_slot_today_builds_an_extra_edition(calendar) -> None:
+    from geral import pipeline
+
+    seen = {}
+
+    def fake_build(edition, team, settings, **kwargs):
+        seen["edition"] = edition
+        raise RuntimeError("stop after resolving")
+
+    now = datetime(2026, 10, 20, 14, 30, tzinfo=TZ)
+    calendar.setattr(cli, "_now", lambda: now)
+    calendar.setattr(pipeline, "build_newsletter", fake_build)
+
+    CliRunner().invoke(cli.app, ["run", "--team", "flamengo", "--edition", "news"])
+
+    edition = seen["edition"]
+    assert (edition.kind, edition.label) == ("news", "Notícias — 20/10/2026")
+    assert (edition.start, edition.end) == (LAST_SENT, now)  # since the last send
+    assert edition.match_id is None
+
+
+def test_run_news_without_slot_on_another_day_still_exits_1(calendar) -> None:
+    calendar.setattr(cli, "_now", lambda: datetime(2026, 10, 20, 14, 30, tzinfo=TZ))
+
+    result = CliRunner().invoke(
+        cli.app, ["run", "--team", "flamengo", "--edition", "news", "--date", "2026-10-21"]
+    )
+
+    assert result.exit_code == 1
+    assert "Nenhuma edição Notícias prevista em 21/10/2026" in result.output
+
+
+def test_extra_news_edition_keeps_the_next_monday(calendar) -> None:
+    from geral.schedule import plan
+
+    sent = datetime(2026, 11, 11, 15, 0, tzinfo=TZ)
+
+    slots = plan([], sent, sent, "Notícias — 11/11/2026")
+
+    assert slots[0].label == "Notícias — 16/11/2026"
