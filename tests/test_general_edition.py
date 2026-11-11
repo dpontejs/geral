@@ -3,6 +3,7 @@
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
+import pytest
 from fakes import FakeLLMClient
 from typer.testing import CliRunner
 
@@ -11,6 +12,7 @@ from geral.general.collect import SerieWeek
 from geral.general.edition import GeneralSummary, build_general, week_window
 from geral.general.render import render_general
 from geral.models import Article, StandingRow
+from geral.send.resend_sender import UNSUBSCRIBE_PLACEHOLDER
 from geral.stats.ge_models import Game
 from geral.summarizer.client import LLMError
 
@@ -217,3 +219,59 @@ def test_edicao_geral_without_gemini_key_still_builds(monkeypatch, tmp_path) -> 
 
     assert result.exit_code == 0, result.output
     assert "Flamengo 2 x 1 Palmeiras" in out.with_suffix(".txt").read_text()
+
+
+def test_edicao_geral_publish_only_puts_it_on_the_portal_without_sending(
+    monkeypatch, tmp_path
+) -> None:
+    # The first edition: on the page (and in the welcome e-mail) before any Monday send.
+    sent, published = [], []
+    monkeypatch.setenv("SUBSCRIBERS_API_TOKEN", "tok")
+    monkeypatch.setenv("DRY_RUN", "false")
+    monkeypatch.setattr(cli, "collect_week", lambda start, end: WEEKS)
+    monkeypatch.setattr(cli, "get_llm_client", lambda settings: FakeLLMClient(responder))
+    monkeypatch.setattr(cli.ResendSender, "send", lambda self, *a: sent.append(a) or [])
+    monkeypatch.setattr(cli, "resolve_recipients", lambda *a: pytest.fail("no recipients"))
+    monkeypatch.setattr(
+        cli,
+        "publish_latest_edition",
+        lambda settings, team, subject, html, text: published.append((team, subject, html)),
+    )
+
+    result = CliRunner().invoke(
+        cli.app,
+        [
+            "edicao-geral",
+            "--date",
+            "2026-11-09",
+            "--out",
+            str(tmp_path / "g.html"),
+            "--publish-only",
+        ],
+    )
+
+    assert result.exit_code == 0, result.output
+    assert sent == []
+    ((team, subject, html),) = published
+    assert team == "geral"
+    assert subject == "Geral — Edição geral — 09/11/2026: Flamengo abre vantagem"
+    assert UNSUBSCRIBE_PLACEHOLDER in html
+
+
+def test_edicao_geral_publish_only_needs_the_portal_token(monkeypatch, tmp_path) -> None:
+    monkeypatch.delenv("SUBSCRIBERS_API_TOKEN", raising=False)
+
+    result = CliRunner().invoke(
+        cli.app,
+        [
+            "edicao-geral",
+            "--date",
+            "2026-11-09",
+            "--out",
+            str(tmp_path / "g.html"),
+            "--publish-only",
+        ],
+    )
+
+    assert result.exit_code != 0
+    assert "SUBSCRIBERS_API_TOKEN" in result.output

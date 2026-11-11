@@ -34,7 +34,7 @@ on:
         type: string
         required: false
       publish_only:
-        description: "Só publicar no portal (primeira edição de uma torcida; não envia e-mail)"
+        description: "Só publicar no portal (primeira edição de uma torcida ou da edição geral; não envia e-mail)"
         type: boolean
         default: false
 
@@ -114,7 +114,9 @@ jobs:
             args=(--send)
             if [ "$SKIP_IF_SENT" = "true" ]; then args+=(--skip-if-sent); fi
             if [ -n "$REFERENCE_DATE" ]; then args+=(--date "$REFERENCE_DATE"); fi
-            echo "DRY_RUN=$DRY_RUN SKIP_IF_SENT=$SKIP_IF_SENT edição geral date=${REFERENCE_DATE:-hoje}"
+            # Publish only (the first edition): on the portal and in the welcome e-mail, no send.
+            if [ "$PUBLISH_ONLY" = "true" ]; then args=(--publish-only); if [ -n "$REFERENCE_DATE" ]; then args+=(--date "$REFERENCE_DATE"); fi; fi
+            echo "DRY_RUN=$DRY_RUN SKIP_IF_SENT=$SKIP_IF_SENT PUBLISH_ONLY=$PUBLISH_ONLY edição geral date=${REFERENCE_DATE:-hoje}"
             uv run python -m geral edicao-geral "${args[@]}"
             exit 0
           fi
