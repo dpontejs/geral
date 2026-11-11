@@ -77,4 +77,5 @@ Gemini (`google-genai`), ESPN (API pública), Jinja2 + `premailer`, Resend, Fast
 | 2026-11-10 | Repositório novo, começando por uma **cópia** do código da Urubu News generalizada por time (sem pacote compartilhado) | a Urubu News segue estável e com identidade própria; um pacote comum só vale a pena se os dois continuarem evoluindo juntos |
 | 2026-11-10 | Times num catálogo `teams.toml` versionado, não no banco | time novo exige configurar e verificar fontes à mão; o pedido de time só conta votos |
 | 2026-11-10 | Nome do hub: **Geral** (antes "Resenha", provisório) | o setor do Maracanã onde todas as torcidas se misturavam; cada newsletter é uma torcida dentro da Geral |
+| 2026-11-10 | A Geral assume a Urubu News: Flamengo no catálogo, inscritos, envio e bolão migram | `docs/adr/0001-geral-assume-a-urubu-news.md` |
 | 2026-11-10 | Fóruns por último | login, moderação e spam custam mais que todo o resto junto |

@@ -9,13 +9,21 @@ Ordem de execução. Cada fatia vira um PR; a página da fatia fica em `docs/fea
 - [x] T4: prompts e templates parametrizados pelo time (nome, torcida, cores, escudo)
 - [x] T5: CLI `geral preview --team <slug>` e `geral run --team <slug>`
 
-## Fatia 2 — Inscrição com escolha de times
-- [ ] Inscrição com um ou mais times, confirmação por e-mail, descadastro por time e geral
-- [ ] `/api/subscribers?team=<slug>` e envio só para quem assina o time
-- [ ] `geral due` devolvendo edições vencidas de todos os times com inscrito ativo
+## Fatia 2 — Portal e inscrição por torcida
+- [ ] Portar o app web da Urubu News (inscrição com confirmação, descadastro, boas-vindas, edição guardada) com `team` em tudo: um e-mail, várias torcidas; descadastro por torcida e geral
+- [ ] Página inicial no visual do rascunho aprovado (https://claude.ai/artifact/4TwD5bpDS9NBmFoN6onH5b): torcidas, ingresso, "seu time ainda não chegou?", placar
+- [ ] Servir as marcas em `/static/<time>/` e preencher `brand_logo` no `teams.toml`
+- [ ] Edição guardada por torcida: cada envio real publica a última edição daquela torcida; quem se inscreve recebe a última de cada torcida escolhida (boas-vindas)
+- [ ] `/api/subscribers?team=<slug>` e envio só para quem assina a torcida
+- [ ] `geral due` devolvendo as edições vencidas de todas as torcidas com inscrito ativo, e disparo pela VPS
 - [ ] Decidir cota do LLM (ver PLAN §5)
-- [ ] Urubu News na coleção da Geral (a primeira torcida): cartão, inscrição e placar; decidir se a Geral só lista e aponta para `urubunews.diegoponte.dev` ou se assume os inscritos dela
-- [ ] Rascunho do portal aprovado: https://claude.ai/artifact/4TwD5bpDS9NBmFoN6onH5b
+
+## Fatia 2a — A Urubu News entra na Geral (`docs/adr/0001-geral-assume-a-urubu-news.md`)
+- [ ] Flamengo no `teams.toml` com a marca Urubu News (logo, cor, outras modalidades)
+- [ ] Portar o bolão por torcida (cartela, palpite, ranking da temporada) e somar no placar da Geral
+- [ ] Migrar inscritos, palpites e ranking do SQLite da Urubu, com `team = flamengo`
+- [ ] O app da Geral atende `urubunews.diegoponte.dev` e `flamengo.diegoponte.dev` com os mesmos tokens (links já enviados seguem funcionando)
+- [ ] Desligar o envio da Urubu no repositório antigo só depois da primeira edição enviada pela Geral
 
 ## Fatia 2b — Dados das Séries C, D e estaduais (ABC)
 - [ ] Cliente da API de tabelas do ge (`api.globoesporte.globo.com/tabela/{tUUID}/fase/{slug}/...`): jogos, resultados e classificação; tUUID e fases lidos da página do campeonato a cada execução
@@ -29,7 +37,7 @@ Ordem de execução. Cada fatia vira um PR; a página da fatia fica em `docs/fea
 
 ## Fatia 4 — Edição geral por série
 
-## Fatia 5 — Palpites (cartola simples)
+## Fatia 5 — Cartola simples (o bolão por torcida já vem na 2a)
 
 ## Fatia 6 — Joguinhos "7 a 0"
 
