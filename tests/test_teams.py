@@ -159,11 +159,12 @@ def test_ge_tables_require_ge_id():
         )
 
 
-def test_abc_follows_serie_c_and_potiguar_on_ge():
+def test_abc_follows_series_c_and_d_and_potiguar_on_ge():
+    # Série D 2026 holds the ABC's last matches (form, last game) until the 2027 season.
     abc = load_teams()["abc"]
 
     assert abc.ge_id == 350
-    assert set(abc.ge_tables) == {"Série C", "Potiguar"}
+    assert set(abc.ge_tables) == {"Série C", "Série D", "Potiguar"}
 
 
 def test_cbf_tables_need_cbf_id_and_a_ge_table():
@@ -175,8 +176,11 @@ def test_cbf_tables_need_cbf_id_and_a_ge_table():
         Team.model_validate(abc.model_dump() | {"cbf_tables": {"Série Z": "x"}})
 
 
-def test_abc_takes_serie_c_goals_from_cbf():
+def test_abc_takes_series_c_and_d_goals_from_cbf():
     abc = load_teams()["abc"]
 
     assert abc.cbf_id == 20042
-    assert abc.cbf_tables == {"Série C": "campeonato-brasileiro/serie-c"}
+    assert abc.cbf_tables == {
+        "Série C": "campeonato-brasileiro/serie-c",
+        "Série D": "campeonato-brasileiro/serie-d",
+    }

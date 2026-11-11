@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 
 import pytest
@@ -290,3 +290,28 @@ def test_extra_news_edition_keeps_the_next_monday(calendar) -> None:
     slots = plan([], sent, sent, "Notícias — 11/11/2026")
 
     assert slots[0].label == "Notícias — 16/11/2026"
+
+
+def test_rerun_of_todays_extra_edition_keeps_the_window_before_todays_send(calendar) -> None:
+    from geral import pipeline
+
+    seen = {}
+
+    def fake_build(edition, team, settings, **kwargs):
+        seen["edition"] = edition
+        raise RuntimeError("stop after resolving")
+
+    now = datetime(2026, 10, 20, 19, 0, tzinfo=TZ)
+    sent_today = LatestEdition(
+        subject="Urubu News — Notícias — 20/10/2026: x",
+        published_at=datetime(2026, 10, 20, 18, 5, tzinfo=TZ),
+        text="",
+    )
+    calendar.setattr(cli, "_now", lambda: now)
+    calendar.setattr(cli, "_latest", lambda settings, team: sent_today)
+    calendar.setattr(pipeline, "build_newsletter", fake_build)
+
+    CliRunner().invoke(cli.app, ["run", "--team", "flamengo", "--edition", "news"])
+
+    assert seen["edition"].start == now - timedelta(days=3)  # not 18:05 today
+    assert seen["edition"].label == "Notícias — 20/10/2026"
