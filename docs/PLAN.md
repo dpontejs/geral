@@ -62,10 +62,9 @@ Gemini (`google-genai`), ESPN (API pública), Jinja2 + `premailer`, Resend, Fast
 
 ## 5. Riscos
 
-- **Cota do LLM**: o Gemini Flash gratuito dá ~20 chamadas/dia por modelo e uma edição gasta 4.
-  Com mais de ~4 times por dia estoura. Saídas: só gerar edição de time com inscrito ativo,
-  compartilhar a coleta entre times, e/ou plano pago (centavos por edição). Decidir na fatia 2,
-  quando houver mais de um time com inscrito — se mudar de fornecedor, registrar ADR.
+- **Custo do LLM**: a chave do Gemini é paga (confirmado pelo dono em 2026-11-10), então a cota
+  gratuita (~20 chamadas/dia por modelo) deixa de limitar. Cada edição gasta 4 chamadas; o custo
+  cresce com torcidas × edições. Gerar edição só para torcida com inscrito ativo segue valendo.
 - **ESPN não documentada**: se mudar, a seção de estatísticas some (comportamento já herdado).
 - **Fontes por time**: o ge tem página por clube; times de Série C/D têm pouca cobertura, então a
   edição desses times pode ser curta. Aceitável.
@@ -78,4 +77,5 @@ Gemini (`google-genai`), ESPN (API pública), Jinja2 + `premailer`, Resend, Fast
 | 2026-11-10 | Times num catálogo `teams.toml` versionado, não no banco | time novo exige configurar e verificar fontes à mão; o pedido de time só conta votos |
 | 2026-11-10 | Nome do hub: **Geral** (antes "Resenha", provisório) | o setor do Maracanã onde todas as torcidas se misturavam; cada newsletter é uma torcida dentro da Geral |
 | 2026-11-10 | A Geral assume a Urubu News: Flamengo no catálogo, inscritos, envio e bolão migram | `docs/adr/0001-geral-assume-a-urubu-news.md` |
+| 2026-11-10 | Gemini com chave paga, modelo Flash padrão (`GEMINI_MODEL`) | cota gratuita não comporta várias torcidas; orçamento aprovado pelo dono |
 | 2026-11-10 | Fóruns por último | login, moderação e spam custam mais que todo o resto junto |
