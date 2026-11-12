@@ -5,6 +5,7 @@
 {% block content %}
 <section class="jogo wall">
   <div class="wrap" id="cd" data-edition="{{ edition }}" data-number="{{ number }}" data-archive="{{ '1' if archive else '0' }}" data-label="{{ label }}" data-max="{{ max_guesses }}" data-letters="{{ letters }}">
+    {% include "_game_tabs.html.j2" %}
     <h1>Craque do dia</h1>
     {% if archive %}<p class="archive-note">Jogo de {{ day }} · não conta na sequência · <a href="{{ today_url }}">Jogar o de hoje →</a></p>{% endif %}
     <p class="lead">Um ídolo ou artilheiro por dia, o mesmo para todo mundo. Chute o nome do craque, como a torcida chama: você tem {{ max_guesses }} tentativas, e cada letra diz se está no lugar certo.</p>

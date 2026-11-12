@@ -322,6 +322,45 @@ def create_app(
         }
         return shown, context
 
+    def games() -> list[dict]:
+        """The daily games, in the order the site shows them."""
+        return [
+            {
+                "path": "craque-do-dia",
+                "name": "Craque do dia",
+                "desc": "Adivinhe o ídolo ou artilheiro do dia, letra por letra, em seis chutes.",
+                "editions": craque_editions(),
+                "number": craque_number(),
+            },
+            {
+                "path": "onde-jogou",
+                "name": "Onde jogou?",
+                "desc": "Um craque por dia: diga por quais clubes ele passou antes de errar "
+                "três vezes.",
+                "editions": career_editions(),
+                "number": career_number(),
+            },
+            {
+                "path": "quem-e",
+                "name": "Quem é?",
+                "desc": "A carreira inteira no placar, clubes e anos: adivinhe o jogador em seis "
+                "chutes.",
+                "editions": who_editions(),
+                "number": who_number(),
+            },
+        ]
+
+    def game_tabs(current: str, edition: str) -> list[dict]:
+        """Switch games keeping the edition when the other game has it (else its geral)."""
+        return [
+            {
+                "name": g["name"],
+                "url": game_url(g["path"], edition if edition in g["editions"] else "geral"),
+                "current": g["path"] == current,
+            }
+            for g in games()
+        ]
+
     def career_number() -> int:
         return max(1, onde_jogou.puzzle_number(now().astimezone(BRASILIA).date()))
 
@@ -347,21 +386,38 @@ def create_app(
             return RedirectResponse(f"{public_url}/", status_code=301)
         return portal(request)
 
+    def no_edition(request: Request) -> HTMLResponse:
+        return message(
+            request,
+            "Edição não encontrada",
+            "Essa torcida ainda não tem edição publicada. Volte para a Geral e se inscreva "
+            "para receber a primeira.",
+            status=404,
+        )
+
     @app.get("/t/{team}", response_class=HTMLResponse)
     def team_page(request: Request, team: str):
-        """The team's latest edition, to read on the site; personal links point to the portal."""
+        """The team's latest edition inside the site's frame (header, way back home)."""
         edition = store.latest_edition(team) if team in catalog else None
         if edition is None:
-            return message(
-                request,
-                "Edição não encontrada",
-                "Essa torcida ainda não tem edição publicada. Volte para a Geral e se inscreva "
-                "para receber a primeira.",
-                status=404,
-            )
+            return no_edition(request)
+        newsletter = catalog[team].newsletter
+        # "Geral — Edição geral — 09/11/2026: ..." or "Elefante News — Notícias — ...": no names
+        headline = edition.subject.removeprefix("Geral — ").removeprefix(f"{newsletter} — ")
+        return page(request, "edicao.html.j2", team=catalog[team], headline=headline)
+
+    @app.get("/t/{team}/edicao", response_class=HTMLResponse)
+    def team_edition(request: Request, team: str):
+        """The newsletter itself, as e-mailed; personal links point to the portal."""
+        edition = store.latest_edition(team) if team in catalog else None
+        if edition is None:
+            return no_edition(request)
         # A public page: no bet card (the links are personal) and no personal unsubscribe.
-        html = personalize(edition.html, None)
-        return HTMLResponse(html.replace(UNSUBSCRIBE_PLACEHOLDER, f"{public_url}/"))
+        html = personalize(edition.html, None).replace(UNSUBSCRIBE_PLACEHOLDER, f"{public_url}/")
+        # Shown in a frame on /t/<team>: its links open on the whole page.
+        base = '<base target="_top">'
+        html = html.replace("<head>", f"<head>{base}", 1) if "<head>" in html else base + html
+        return HTMLResponse(html)
 
     @app.get("/subscribe")
     def subscribe_reload():
@@ -758,6 +814,21 @@ def create_app(
         score = (result.our_goals, result.their_goals)
         return bolao.summary(team, match_id, score, persist=True)
 
+    @app.get("/jogos", response_class=HTMLResponse)
+    def games_page(request: Request):
+        shown = [
+            g
+            | {
+                "url": game_url(g["path"], "geral"),
+                "edition_links": [
+                    ((listed[slug].name if slug in listed else "Geral"), game_url(g["path"], slug))
+                    for slug in g["editions"]
+                ],
+            }
+            for g in games()
+        ]
+        return page(request, "jogos.html.j2", games=shown)
+
     @app.get("/jogos/craque-do-dia", response_class=HTMLResponse)
     @app.get("/jogos/craque-do-dia/{edition}", response_class=HTMLResponse)
     @app.get("/jogos/craque-do-dia/{edition}/{number}", response_class=HTMLResponse)
@@ -780,6 +851,7 @@ def create_app(
             request,
             "craque.html.j2",
             edition=edition,
+            tabs=game_tabs("craque-do-dia", edition),
             team=listed.get(edition),
             number=number,
             **when,
@@ -824,6 +896,7 @@ def create_app(
             request,
             "onde_jogou.html.j2",
             edition=edition,
+            tabs=game_tabs("onde-jogou", edition),
             team=listed.get(edition),
             number=number,
             **when,
@@ -880,6 +953,7 @@ def create_app(
             request,
             "quem_e.html.j2",
             edition=edition,
+            tabs=game_tabs("quem-e", edition),
             team=listed.get(edition),
             number=number,
             **when,

@@ -1,0 +1,1 @@
+<nav class="game-tabs" aria-label="Joguinhos">{% for t in tabs %}<a href="{{ t.url }}"{% if t.current and not archive %} aria-current="page"{% endif %}>{{ t.name }}</a>{% endfor %}<a class="all" href="/jogos">Todos os joguinhos</a></nav>

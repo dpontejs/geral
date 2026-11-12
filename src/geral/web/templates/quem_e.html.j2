@@ -5,6 +5,7 @@
 {% block content %}
 <section class="jogo wall">
   <div class="wrap" id="qe" data-edition="{{ edition }}" data-number="{{ number }}" data-archive="{{ '1' if archive else '0' }}" data-label="{{ label }}" data-player="{{ player_key }}" data-max="{{ max_guesses }}">
+    {% include "_game_tabs.html.j2" %}
     <h1>Quem é?</h1>
     {% if archive %}<p class="archive-note">Jogo de {{ day }} · não conta na sequência · <a href="{{ today_url }}">Jogar o de hoje →</a></p>{% endif %}
     <p class="lead">Um jogador por dia, o mesmo para todo mundo. A carreira inteira está no placar: adivinhe quem é em até {{ max_guesses }} chutes.</p>

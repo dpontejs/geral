@@ -76,7 +76,7 @@ def test_portal_keeps_email_and_picks_after_an_error(client) -> None:
 def test_team_page_shows_latest_edition_without_personal_links(client) -> None:
     publish(client, "abc", "Elefante News — Notícias — 09/11/2026: ABC acerta com goleiro")
 
-    page = client.get("/t/abc")
+    page = client.get("/t/abc/edicao")  # the newsletter itself, framed by /t/abc
 
     assert page.status_code == 200
     assert UNSUBSCRIBE_PLACEHOLDER not in page.text
@@ -121,7 +121,7 @@ def test_team_page_drops_the_bet_card(client) -> None:
     edition = {"subject": "S", "html": html + UNSUBSCRIBE_PLACEHOLDER, "text": "t"}
     client.put("/api/teams/vasco/latest-edition", json=edition, headers=AUTH)
 
-    page = client.get("/t/vasco").text
+    page = client.get("/t/vasco/edicao").text
 
     assert "palpite" not in page and BET_TOKEN_PLACEHOLDER not in page
 

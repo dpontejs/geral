@@ -105,3 +105,22 @@ select.chip { appearance: auto; }
 .past a small { font: 600 13px/1 var(--body); color: var(--ink-soft); }
 .past a[aria-current] { background: var(--ink); color: var(--lamp); }
 .past a[aria-current] small { color: var(--lamp); }
+
+/* troca de joguinho */
+.game-tabs { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.game-tabs a { font: 800 17px/1 var(--display); text-transform: uppercase; letter-spacing: .05em; text-decoration: none; padding: 11px 14px; min-height: 44px; box-sizing: border-box; display: inline-flex; align-items: center; background: var(--turf); color: var(--paper); border: 3px solid var(--turf); }
+.game-tabs a[aria-current] { background: var(--board); color: var(--lamp); border-color: var(--board); }
+.game-tabs a:hover { color: var(--lamp); }
+.game-tabs a.all { margin-left: auto; background: transparent; border-color: transparent; color: #fff; text-shadow: var(--on-grass); }
+
+/* página dos joguinhos */
+.hub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+.hub-card { display: flex; flex-direction: column; gap: 14px; padding: 24px; border: 10px solid var(--turf); color: #D9D4C8; box-shadow: 6px 6px 0 rgba(0, 0, 0, .35); }
+.hub-card .tag { font-size: 16px; opacity: .8; }
+.hub-card .title { font-size: 40px; line-height: 1.05; margin: 0; }
+.hub-card p { margin: 0; font-size: 16px; flex: 1; }
+.hub-card .play { align-self: flex-start; background: var(--ticket); color: var(--ink); }
+.hub-card .play:hover { background: var(--lamp); color: var(--ink); }
+.hub-editions { display: flex; flex-wrap: wrap; gap: 6px; }
+.hub-editions a { font: 700 14px/1 var(--body); color: var(--paper); text-decoration: none; border: 2px solid #5E6B60; padding: 10px 12px; min-height: 40px; box-sizing: border-box; display: inline-flex; align-items: center; }
+.hub-editions a:hover { border-color: var(--lamp); color: var(--lamp); }

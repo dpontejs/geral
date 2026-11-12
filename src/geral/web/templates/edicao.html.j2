@@ -1,0 +1,36 @@
+{% extends "base.html.j2" %}
+{% block title %}{{ team.newsletter }} · última edição · Geral{% endblock %}
+{% block content %}
+<section class="edition-head wall">
+  <div class="wrap">
+    <a class="back" href="/">← Voltar para a Geral</a>
+    <h1>{{ team.newsletter }}</h1>
+    <p class="lead">Última edição: <b>{{ headline }}</b></p>
+    <a class="btn" href="/#signup">Receber no e-mail</a>
+  </div>
+</section>
+<section class="edition-body">
+  <div class="wrap">
+    {# The newsletter keeps its own look (an e-mail layout); its links open on the whole page. #}
+    <iframe class="edition-frame" src="/t/{{ team.slug }}/edicao" title="{{ team.newsletter }}: última edição" loading="eager"></iframe>
+  </div>
+</section>
+<script>
+  // Same origin: grow the frame to the newsletter's height, so the page scrolls as one.
+  (() => {
+    const frame = document.querySelector(".edition-frame");
+    const fit = () => {
+      try {
+        frame.style.height = frame.contentDocument.documentElement.scrollHeight + "px";
+      } catch {
+        /* keep the CSS height */
+      }
+    };
+    frame.addEventListener("load", () => {
+      fit();
+      setTimeout(fit, 500); // images and fonts settle
+    });
+    addEventListener("resize", fit);
+  })();
+</script>
+{% endblock %}

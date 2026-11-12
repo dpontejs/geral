@@ -168,6 +168,7 @@ section.block .wrap { padding-block: 8px 52px; }
 .mini p { margin: 0; font-size: 15px; flex: 1; }
 .play-card { text-decoration: none; }
 .play-card:hover { border-color: var(--ticket); }
+.intervalo .head .more { color: var(--lamp); font-weight: 700; white-space: nowrap; }
 .mini .go.soon { color: #8F978A; }
 .mini .go { margin-top: auto; font: 800 20px/1 var(--display); text-transform: uppercase; letter-spacing: .06em; color: var(--lamp); }
 
@@ -189,6 +190,16 @@ footer .wrap { padding-block: 22px 30px; display: flex; justify-content: space-b
   .why img { width: 140px; height: 140px; }
   .brand b { font-size: 32px; }
 }
+
+/* página da edição */
+.edition-head .wrap { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; padding-block: 28px 44px; }
+.edition-head h1 { font-size: clamp(44px, 7vw, 88px); color: #fff; text-shadow: 5px 5px 0 var(--turf); }
+.edition-head .lead { margin: 0; max-width: 46em; font-size: 18px; background: var(--paper); padding: 12px 16px; border: 3px solid var(--turf); }
+.edition-head .btn { background: var(--ticket); color: var(--ink); }
+.back { font: 800 17px/1 var(--display); text-transform: uppercase; letter-spacing: .05em; color: #fff; text-decoration: none; padding: 10px 0; text-shadow: var(--on-grass); }
+.back:hover { color: var(--lamp); }
+.edition-body .wrap { padding-block: 32px 56px; }
+.edition-frame { display: block; width: 100%; max-width: 680px; height: 2200px; margin: 0 auto; border: 3px solid var(--ink); background: #fff; box-shadow: 6px 6px 0 rgba(0, 0, 0, .2); }
 
 /* páginas de mensagem */
 .msg .wrap { padding-block: 56px 72px; max-width: 760px; }
@@ -213,9 +224,10 @@ input.nick { width: min(100%, 320px); display: block; }
   <div class="wrap">
     <a class="brand" href="/" aria-label="Geral, início"><img src="/static/geral/icon-512.png" alt=""><b>GERAL</b></a>
     <nav aria-label="Seções">
+      {% if request.url.path != "/" %}<a href="/">Início</a>{% endif %}
       <a href="/#torcidas">Torcidas</a>
       <a href="/#placar">Placar</a>
-      <a href="/#intervalo">Joguinhos</a>
+      <a href="/jogos">Joguinhos</a>
       <a href="/pedir">Peça seu time</a>
       <a class="cta" href="/#signup">Entrar na Geral</a>
     </nav>
