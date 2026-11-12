@@ -22,7 +22,7 @@ from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, Redirect
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from jinja2 import select_autoescape
-from pydantic import AwareDatetime, BaseModel, Field
+from pydantic import AwareDatetime, BaseModel, Field, model_validator
 
 from geral.config import Settings, get_settings
 from geral.games import calendario, craque, onde_jogou, quem_e
@@ -120,9 +120,14 @@ def unsubscribe_purpose(team: str | None) -> str:
 
 
 class PlayerGuessesIn(BaseModel):
-    palpites: list[Annotated[str, Field(max_length=20)]] = Field(
-        min_length=1, max_length=quem_e.MAX_GUESSES
-    )
+    palpites: list[Annotated[str, Field(max_length=20)]] = Field(max_length=quem_e.MAX_GUESSES)
+    desistiu: bool = False
+
+    @model_validator(mode="after")
+    def guess_or_give_up(self) -> "PlayerGuessesIn":
+        if not self.palpites and not self.desistiu:
+            raise ValueError("palpites: pelo menos um, ou desistiu")
+        return self
 
 
 class ClubGuessesIn(BaseModel):
@@ -830,7 +835,8 @@ def create_app(
         known = {j.wikidata for j in data.jogadores}
         if unknown := [q for q in body.palpites if q not in known]:
             return JSONResponse({"detail": f"Jogador desconhecido: {unknown[0]}"}, status_code=422)
-        return quem_e.judge(data, daily_player("quem-e", edition, players, number), body.palpites)
+        jogador = daily_player("quem-e", edition, players, number)
+        return quem_e.judge(data, jogador, body.palpites, body.desistiu)
 
     @app.get("/pedir", response_class=HTMLResponse)
     def request_page(request: Request):

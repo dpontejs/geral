@@ -50,3 +50,13 @@ def test_quem_e_order_differs_from_onde_jogou(data) -> None:
 
     assert sorted(p.nome for p in who) == sorted(p.nome for p in where)
     assert onde_jogou.pool(data, "geral", TEAMS, game="onde-jogou") == where
+
+
+def test_giving_up_reveals_the_player_without_solving(data) -> None:
+    romario = player(data, "Romário")
+
+    early = quem_e.judge(data, romario, [], desistiu=True)
+    later = quem_e.judge(data, romario, ["Q2"], desistiu=True)
+
+    assert early.over and not early.solved and early.reveal.nome == "Romário"
+    assert later.over and not later.solved and [r.nome for r in later.rows] == ["Edmundo"]

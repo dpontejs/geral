@@ -94,3 +94,27 @@ def test_a_frozen_answer_wins_over_the_daily_order(store, mailer, clock, monkeyp
 
     assert verdict["solved"]
     assert page.count('class="slot"') == len(frozen.clubes)
+
+
+def test_api_gives_up_with_or_without_guesses(game) -> None:
+    data, jogador = today()
+    other = next(j for j in data.jogadores if j.wikidata != jogador.wikidata)
+
+    early = game.post(f"{API}/geral/8", json={"palpites": [], "desistiu": True}).json()
+    later = game.post(
+        f"{API}/geral/8", json={"palpites": [other.wikidata], "desistiu": True}
+    ).json()
+
+    for verdict in (early, later):
+        assert verdict["over"] and not verdict["solved"]
+        assert verdict["reveal"]["nome"] == jogador.nome
+
+
+def test_api_needs_a_guess_unless_giving_up(game) -> None:
+    assert game.post(f"{API}/geral/8", json={"palpites": []}).status_code == 422
+
+
+def test_game_page_has_a_give_up_button(game) -> None:
+    page = game.get("/jogos/quem-e").text
+
+    assert 'id="qe-give-up"' in page and ">Desistir<" in page
