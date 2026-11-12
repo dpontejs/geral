@@ -78,6 +78,24 @@ def test_portal_links_who_game(game) -> None:
     assert 'href="/jogos/quem-e"' in game.get("/").text
 
 
+def test_a_frozen_answer_wins_over_the_daily_order(store, mailer, clock, monkeypatch) -> None:
+    from geral.games import calendario
+
+    data, today_player = today()
+    frozen = next(j for j in quem_e.pool(data, "geral", {}) if j.wikidata != today_player.wikidata)
+    monkeypatch.setattr(
+        calendario, "load", lambda path=None: {"quem-e": {"geral": [""] * 7 + [frozen.wikidata]}}
+    )
+    clock.now = DAY
+    client = make_client(store, mailer, clock)
+
+    verdict = client.post(f"{API}/geral/8", json={"palpites": [frozen.wikidata]}).json()
+    page = client.get("/jogos/quem-e").text
+
+    assert verdict["solved"]
+    assert page.count('class="slot"') == len(frozen.clubes)
+
+
 def test_api_gives_up_with_or_without_guesses(game) -> None:
     data, jogador = today()
     other = next(j for j in data.jogadores if j.wikidata != jogador.wikidata)

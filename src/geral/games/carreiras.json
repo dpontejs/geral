@@ -84,6 +84,11 @@
    "apelidos": [],
    "pais": "Espanha"
   },
+  "Q1052219": {
+   "nome": "Ceará Sporting Club",
+   "apelidos": [],
+   "pais": "Brasil"
+  },
   "Q1056948": {
    "nome": "Lekhwiya Sports Club",
    "apelidos": [],
@@ -135,20 +140,25 @@
    ],
    "pais": "Países Baixos"
   },
-  "Q120064": {
-   "nome": "Luftëtari Gjirokastër",
-   "apelidos": [],
-   "pais": "Albânia"
-  },
   "Q12236": {
    "nome": "Real Racing Club de Santander",
    "apelidos": [],
    "pais": "Espanha"
   },
+  "Q126334": {
+   "nome": "Racing Club de Strasbourg Alsace",
+   "apelidos": [],
+   "pais": "França"
+  },
   "Q127921": {
    "nome": "Club Deportivo Jorge Wilstermann",
    "apelidos": [],
    "pais": "Bolívia"
+  },
+  "Q1280895": {
+   "nome": "Club Necaxa",
+   "apelidos": [],
+   "pais": "México"
   },
   "Q128446": {
    "nome": "Porto",
@@ -184,6 +194,11 @@
    ],
    "pais": "França"
   },
+  "Q13361030": {
+   "nome": "New York City FC",
+   "apelidos": [],
+   "pais": "Estados Unidos"
+  },
   "Q13391": {
    "nome": "U.S. Lecce",
    "apelidos": [],
@@ -204,6 +219,11 @@
    "apelidos": [],
    "pais": "Chipre"
   },
+  "Q1421829": {
+   "nome": "Instituto Atlético Central Córdoba",
+   "apelidos": [],
+   "pais": "Argentina"
+  },
   "Q1422": {
    "nome": "Juventus",
    "apelidos": [
@@ -220,6 +240,11 @@
    "nome": "Portuguesa Fútbol Club",
    "apelidos": [],
    "pais": "Venezuela"
+  },
+  "Q1480985": {
+   "nome": "Club Atlético Morelia",
+   "apelidos": [],
+   "pais": "México"
   },
   "Q1508285": {
    "nome": "Paysandu Sport Club",
@@ -292,11 +317,6 @@
    "nome": "Sociedade Esportiva e Recreativa Caxias do Sul",
    "apelidos": [],
    "pais": "Brasil"
-  },
-  "Q170703": {
-   "nome": "Club Atlético Boca Juniors",
-   "apelidos": [],
-   "pais": "Argentina"
   },
   "Q172476": {
    "nome": "Bordeaux",
@@ -440,6 +460,11 @@
    ],
    "pais": "Rússia"
   },
+  "Q19490": {
+   "nome": "Nottingham Forest Football Club",
+   "apelidos": [],
+   "pais": "Inglaterra"
+  },
   "Q19509": {
    "nome": "Rennes",
    "apelidos": [
@@ -524,6 +549,11 @@
     "ACF Fiorentina"
    ],
    "pais": "Itália"
+  },
+  "Q207373": {
+   "nome": "Club Social y Deportivo Colo-Colo",
+   "apelidos": [],
+   "pais": "Chile"
   },
   "Q2074": {
    "nome": "Genoa",
@@ -616,24 +646,22 @@
    "pais": "Brasil"
   },
   "Q2332493": {
-   "nome": "Botafogo Futebol Clube",
-   "apelidos": [],
-   "pais": "Brasil"
-  },
-  "Q2340403": {
-   "nome": "Bauru Atlético Clube",
-   "apelidos": [],
-   "pais": "Brasil"
-  },
-  "Q2341011": {
-   "nome": "Associação Atlética Portuguesa",
-   "apelidos": [],
+   "nome": "Botafogo-SP",
+   "apelidos": [
+    "Botafogo Futebol Clube",
+    "Botafogo de Ribeirão Preto"
+   ],
    "pais": "Brasil"
   },
   "Q2419887": {
    "nome": "Mogi Mirim Esporte Clube",
    "apelidos": [],
    "pais": "Brasil"
+  },
+  "Q243311": {
+   "nome": "Sacrofano",
+   "apelidos": [],
+   "pais": "Itália"
   },
   "Q247731": {
    "nome": "Kaizer Chiefs Football Club",
@@ -675,10 +703,10 @@
    "apelidos": [],
    "pais": "Brasil"
   },
-  "Q2590133": {
-   "nome": "Guaratinguetá Futebol Ltda.",
+  "Q2602791": {
+   "nome": "Club Atlético Boca Unidos",
    "apelidos": [],
-   "pais": "Brasil"
+   "pais": "Argentina"
   },
   "Q2627402": {
    "nome": "Esporte Clube Noroeste",
@@ -784,6 +812,11 @@
    "apelidos": [],
    "pais": "Itália"
   },
+  "Q2819504": {
+   "nome": "AS Excelsior",
+   "apelidos": [],
+   "pais": "França"
+  },
   "Q283545": {
    "nome": "Al-Sadd",
    "apelidos": [
@@ -828,6 +861,19 @@
    "apelidos": [],
    "pais": "Rússia"
   },
+  "Q2911646": {
+   "nome": "Botafogo-PB",
+   "apelidos": [
+    "Belo",
+    "Botafogo Futebol Clube"
+   ],
+   "pais": "Brasil"
+  },
+  "Q2945011": {
+   "nome": "Cuiabá Esporte Clube",
+   "apelidos": [],
+   "pais": "Brasil"
+  },
   "Q296050": {
    "nome": "AO Kavala",
    "apelidos": [],
@@ -835,6 +881,11 @@
   },
   "Q3058500": {
    "nome": "Esporte Clube Internacional de Lages",
+   "apelidos": [],
+   "pais": "Brasil"
+  },
+  "Q3058513": {
+   "nome": "Esporte Clube Primeiro Passo Vitória da Conquista",
    "apelidos": [],
    "pais": "Brasil"
   },
@@ -895,11 +946,6 @@
    ],
    "pais": "Brasil"
   },
-  "Q3354098": {
-   "nome": "Operário Futebol Clube Ltda.",
-   "apelidos": [],
-   "pais": "Brasil"
-  },
   "Q338285": {
    "nome": "América-MG",
    "apelidos": [
@@ -919,16 +965,6 @@
     "Adelaide United Football Club"
    ],
    "pais": "Austrália"
-  },
-  "Q3554893": {
-   "nome": "Vasco da Gama Futebol Clube",
-   "apelidos": [],
-   "pais": "Brasil"
-  },
-  "Q3590749": {
-   "nome": "Paraguay Olympic football team",
-   "apelidos": [],
-   "pais": "Outros"
   },
   "Q35933": {
    "nome": "Corinthians",
@@ -959,6 +995,11 @@
    "apelidos": [],
    "pais": "Brasil"
   },
+  "Q383358": {
+   "nome": "Albirex Niigata",
+   "apelidos": [],
+   "pais": "Japão"
+  },
   "Q38568": {
    "nome": "São Paulo",
    "apelidos": [
@@ -966,11 +1007,6 @@
     "São Paulo Futebol Clube"
    ],
    "pais": "Brasil"
-  },
-  "Q4120643": {
-   "nome": "Persma Manado",
-   "apelidos": [],
-   "pais": "Indonésia"
   },
   "Q424943": {
    "nome": "Al-Ahli (Emirados Árabes Unidos)",
@@ -988,6 +1024,11 @@
    "nome": "Bacabal Esporte Clube",
    "apelidos": [],
    "pais": "Brasil"
+  },
+  "Q44441": {
+   "nome": "Al-Ahli",
+   "apelidos": [],
+   "pais": "Arábia Saudita"
   },
   "Q4512": {
    "nome": "Verein für Bewegungsspiele Stuttgart 1893",
@@ -1045,13 +1086,13 @@
    ],
    "pais": "França"
   },
-  "Q4859851": {
-   "nome": "Barcelona Esporte Clube",
+  "Q4863138": {
+   "nome": "Barra Mansa Futebol Clube",
    "apelidos": [],
    "pais": "Brasil"
   },
-  "Q4863138": {
-   "nome": "Barra Mansa Futebol Clube",
+  "Q48855349": {
+   "nome": "Clube Esportivo Operário Várzea-Grandense",
    "apelidos": [],
    "pais": "Brasil"
   },
@@ -1105,6 +1146,11 @@
    "apelidos": [],
    "pais": "Argentina"
   },
+  "Q5136492": {
+   "nome": "Clube Atlético Taboão da Serra",
+   "apelidos": [],
+   "pais": "Brasil"
+  },
   "Q515178": {
    "nome": "Deportivo Pereira",
    "apelidos": [],
@@ -1130,11 +1176,6 @@
    "apelidos": [],
    "pais": "San Marino"
   },
-  "Q537552": {
-   "nome": "Tianjin Jinmen Tiger Football Club",
-   "apelidos": [],
-   "pais": "China"
-  },
   "Q5399143": {
    "nome": "Esporte Clube Tupy",
    "apelidos": [],
@@ -1144,6 +1185,11 @@
    "nome": "Red Bull Bragantino",
    "apelidos": [],
    "pais": "Brasil"
+  },
+  "Q552880": {
+   "nome": "Tianjin Tianhai Football Club",
+   "apelidos": [],
+   "pais": "China"
   },
   "Q564216": {
    "nome": "Shanghai Port",
@@ -1170,6 +1216,11 @@
    "apelidos": [],
    "pais": "Japão"
   },
+  "Q59962": {
+   "nome": "Club Atlético Belgrano",
+   "apelidos": [],
+   "pais": "Argentina"
+  },
   "Q603023": {
    "nome": "Club Deportivo Universidad César Vallejo",
    "apelidos": [],
@@ -1189,11 +1240,6 @@
    "nome": "Querétaro Fútbol Club",
    "apelidos": [],
    "pais": "México"
-  },
-  "Q60785879": {
-   "nome": "A.S. Excelsior",
-   "apelidos": [],
-   "pais": "França"
   },
   "Q620499": {
    "nome": "Tokyo Verdy",
@@ -1258,11 +1304,6 @@
    "apelidos": [],
    "pais": "Alemanha"
   },
-  "Q668": {
-   "nome": "Índia",
-   "apelidos": [],
-   "pais": "Índia"
-  },
   "Q693297": {
    "nome": "Kabuscorp Sport Clube do Palanca",
    "apelidos": [],
@@ -1288,6 +1329,11 @@
    "nome": "Pedrabranca Futebol Clube",
    "apelidos": [],
    "pais": "Brasil"
+  },
+  "Q719383": {
+   "nome": "Club de Deportes Unión La Calera",
+   "apelidos": [],
+   "pais": "Chile"
   },
   "Q719439": {
    "nome": "Club Social de Deportes Rangers de Talca",
@@ -1326,16 +1372,6 @@
   },
   "Q73971": {
    "nome": "Clube Náutico Capibaribe",
-   "apelidos": [],
-   "pais": "Brasil"
-  },
-  "Q7419428": {
-   "nome": "Santa Cruz Recreativo Esporte Clube",
-   "apelidos": [],
-   "pais": "Brasil"
-  },
-  "Q749603": {
-   "nome": "São José Esporte Clube",
    "apelidos": [],
    "pais": "Brasil"
   },
@@ -1530,6 +1566,11 @@
    ],
    "pais": "Espanha"
   },
+  "Q8806": {
+   "nome": "Getafe Club de Fútbol",
+   "apelidos": [],
+   "pais": "Espanha"
+  },
   "Q8823": {
    "nome": "Levante Unión Deportiva",
    "apelidos": [],
@@ -1556,6 +1597,11 @@
    "nome": "Club Cerro Porteño",
    "apelidos": [],
    "pais": "Paraguai"
+  },
+  "Q96045907": {
+   "nome": "Mazatlán Fútbol Club",
+   "apelidos": [],
+   "pais": "México"
   },
   "Q9616": {
    "nome": "Chelsea",
@@ -1601,34 +1647,24 @@
     {
      "clube": "Q5014111",
      "inicio": 1980,
-     "fim": 1989
+     "fim": 1993
     },
     {
      "clube": "Q204675",
      "inicio": 1989,
-     "fim": 1990
-    },
-    {
-     "clube": "Q5014111",
-     "inicio": 1990,
-     "fim": 1990
+     "fim": 1989
     },
     {
      "clube": "Q2662116",
      "inicio": 1991,
      "fim": 1991
-    },
-    {
-     "clube": "Q5014111",
-     "inicio": 1992,
-     "fim": 1993
     }
    ]
   },
   {
    "wikidata": "Q178649",
    "nome": "Romário",
-   "posicao": "Atacante",
+   "posicao": "Centroavante",
    "clubes": [
     {
      "clube": "Q5014111",
@@ -1681,12 +1717,12 @@
      "fim": 2006
     },
     {
-     "clube": "Q354059",
+     "clube": "Q972741",
      "inicio": 2006,
      "fim": 2006
     },
     {
-     "clube": "Q972741",
+     "clube": "Q354059",
      "inicio": 2006,
      "fim": 2006
     },
@@ -1709,7 +1745,7 @@
    "clubes": [
     {
      "clube": "Q219098",
-     "inicio": 1992,
+     "inicio": 1993,
      "fim": 1995
     },
     {
@@ -1740,7 +1776,7 @@
     {
      "clube": "Q5014111",
      "inicio": 2013,
-     "fim": 2014
+     "fim": 2013
     }
    ]
   },
@@ -1751,8 +1787,8 @@
    "clubes": [
     {
      "clube": "Q274465",
-     "inicio": 1983,
-     "fim": 1983
+     "inicio": 1982,
+     "fim": 1982
     },
     {
      "clube": "Q17479",
@@ -1762,7 +1798,7 @@
     {
      "clube": "Q5014111",
      "inicio": 1989,
-     "fim": 1991
+     "fim": 1992
     },
     {
      "clube": "Q8760",
@@ -1775,17 +1811,17 @@
      "fim": 1996
     },
     {
-     "clube": "Q188277",
-     "inicio": 1997,
-     "fim": 1997
-    },
-    {
      "clube": "Q10329",
-     "inicio": 1997,
+     "inicio": 1996,
      "fim": 1997
     },
     {
      "clube": "Q274465",
+     "inicio": 1997,
+     "fim": 1997
+    },
+    {
+     "clube": "Q188277",
      "inicio": 1997,
      "fim": 1997
     },
@@ -1812,7 +1848,7 @@
     {
      "clube": "Q5014111",
      "inicio": 2001,
-     "fim": 2002
+     "fim": 2001
     },
     {
      "clube": "Q309480",
@@ -1828,23 +1864,13 @@
    "clubes": [
     {
      "clube": "Q188277",
-     "inicio": 1989,
+     "inicio": 1987,
      "fim": 1993
     },
     {
      "clube": "Q198032",
-     "inicio": 1993,
+     "inicio": 1992,
      "fim": 1993
-    },
-    {
-     "clube": "Q274465",
-     "inicio": 1993,
-     "fim": 1993
-    },
-    {
-     "clube": "Q198032",
-     "inicio": 1994,
-     "fim": 1994
     },
     {
      "clube": "Q274465",
@@ -1934,13 +1960,18 @@
    "posicao": "Atacante",
    "clubes": [
     {
+     "clube": "Q1133475",
+     "inicio": 1993,
+     "fim": 1993
+    },
+    {
      "clube": "Q838534",
      "inicio": 1993,
      "fim": 1993
     },
     {
      "clube": "Q1133475",
-     "inicio": 1993,
+     "inicio": 1994,
      "fim": 1995
     },
     {
@@ -1979,12 +2010,12 @@
      "fim": 2004
     },
     {
-     "clube": "Q249662",
+     "clube": "Q38568",
      "inicio": 2005,
      "fim": 2005
     },
     {
-     "clube": "Q38568",
+     "clube": "Q249662",
      "inicio": 2005,
      "fim": 2005
     },
@@ -2002,11 +2033,6 @@
      "clube": "Q290940",
      "inicio": 2007,
      "fim": 2008
-    },
-    {
-     "clube": "Q2590133",
-     "inicio": 2009,
-     "fim": 2009
     }
    ]
   },
@@ -2051,11 +2077,6 @@
      "fim": 2000
     },
     {
-     "clube": "Q80964",
-     "inicio": 2001,
-     "fim": 2001
-    },
-    {
      "clube": "Q218883",
      "inicio": 2001,
      "fim": 2001
@@ -2075,22 +2096,22 @@
   {
    "wikidata": "Q311872",
    "nome": "Philippe Coutinho",
-   "posicao": "Ponta",
+   "posicao": "Meia-atacante",
    "clubes": [
+    {
+     "clube": "Q5014111",
+     "inicio": 2008,
+     "fim": 2010
+    },
     {
      "clube": "Q631",
      "inicio": 2008,
      "fim": 2013
     },
     {
-     "clube": "Q5014111",
-     "inicio": 2009,
-     "fim": 2010
-    },
-    {
      "clube": "Q8780",
      "inicio": 2012,
-     "fim": 2012
+     "fim": 2013
     },
     {
      "clube": "Q1130849",
@@ -2109,7 +2130,7 @@
     },
     {
      "clube": "Q18711",
-     "inicio": 2022,
+     "inicio": 2021,
      "fim": 2025
     },
     {
@@ -2145,9 +2166,19 @@
      "fim": 2013
     },
     {
-     "clube": "Q17479",
+     "clube": "Q188277",
      "inicio": 2013,
-     "fim": null
+     "fim": 2021
+    },
+    {
+     "clube": "Q219120",
+     "inicio": 2022,
+     "fim": 2022
+    },
+    {
+     "clube": "Q506832",
+     "inicio": 2022,
+     "fim": 2022
     }
    ]
   },
@@ -2159,17 +2190,17 @@
     {
      "clube": "Q1422177",
      "inicio": 1999,
-     "fim": 2001
-    },
-    {
-     "clube": "Q80964",
-     "inicio": 2001,
      "fim": 2003
     },
     {
-     "clube": "Q80955",
+     "clube": "Q80964",
      "inicio": 2002,
-     "fim": 2004
+     "fim": 2002
+    },
+    {
+     "clube": "Q80955",
+     "inicio": 2003,
+     "fim": 2003
     },
     {
      "clube": "Q8835",
@@ -2212,13 +2243,33 @@
      "fim": 2015
     },
     {
-     "clube": "Q3554893",
+     "clube": "Q5014111",
      "inicio": 2015,
-     "fim": null
+     "fim": 2018
     },
     {
      "clube": "Q38568",
-     "inicio": 2015,
+     "inicio": 2018,
+     "fim": 2019
+    },
+    {
+     "clube": "Q80987",
+     "inicio": 2019,
+     "fim": 2021
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 2021,
+     "fim": 2023
+    },
+    {
+     "clube": "Q910453",
+     "inicio": 2023,
+     "fim": 2025
+    },
+    {
+     "clube": "Q2911646",
+     "inicio": 2026,
      "fim": null
     }
    ]
@@ -2226,7 +2277,7 @@
   {
    "wikidata": "Q10394490",
    "nome": "Yago Pikachu",
-   "posicao": "Meio-campista",
+   "posicao": "Lateral",
    "clubes": [
     {
      "clube": "Q1508285",
@@ -2236,6 +2287,26 @@
     {
      "clube": "Q5014111",
      "inicio": 2016,
+     "fim": 2021
+    },
+    {
+     "clube": "Q188841",
+     "inicio": 2021,
+     "fim": 2022
+    },
+    {
+     "clube": "Q823384",
+     "inicio": 2022,
+     "fim": 2023
+    },
+    {
+     "clube": "Q188841",
+     "inicio": 2023,
+     "fim": 2025
+    },
+    {
+     "clube": "Q2552872",
+     "inicio": 2026,
      "fim": null
     }
    ]
@@ -2246,8 +2317,23 @@
    "posicao": "Atacante",
    "clubes": [
     {
+     "clube": "Q5014111",
+     "inicio": 2017,
+     "fim": 2018
+    },
+    {
      "clube": "Q104761",
      "inicio": 2018,
+     "fim": 2023
+    },
+    {
+     "clube": "Q270995",
+     "inicio": 2023,
+     "fim": 2024
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 2025,
      "fim": null
     }
    ]
@@ -2260,7 +2346,17 @@
     {
      "clube": "Q5014111",
      "inicio": 2019,
+     "fim": 2021
+    },
+    {
+     "clube": "Q13361030",
+     "inicio": 2021,
      "fim": null
+    },
+    {
+     "clube": "Q35933",
+     "inicio": 2024,
+     "fim": 2025
     }
    ]
   },
@@ -2271,17 +2367,12 @@
    "clubes": [
     {
      "clube": "Q324589",
-     "inicio": 2008,
-     "fim": 2009
+     "inicio": 2007,
+     "fim": 2012
     },
     {
      "clube": "Q853053",
      "inicio": 2009,
-     "fim": 2010
-    },
-    {
-     "clube": "Q324589",
-     "inicio": 2010,
      "fim": 2010
     },
     {
@@ -2300,23 +2391,33 @@
      "fim": 2012
     },
     {
-     "clube": "Q736937",
-     "inicio": 2015,
-     "fim": 2016
+     "clube": "Q332527",
+     "inicio": 2012,
+     "fim": 2015
     },
     {
-     "clube": "Q332527",
+     "clube": "Q736937",
      "inicio": 2015,
-     "fim": 2017
+     "fim": 2019
     },
     {
      "clube": "Q633223",
      "inicio": 2016,
-     "fim": null
+     "fim": 2017
+    },
+    {
+     "clube": "Q332527",
+     "inicio": 2018,
+     "fim": 2020
     },
     {
      "clube": "Q5014111",
-     "inicio": 2019,
+     "inicio": 2020,
+     "fim": 2022
+    },
+    {
+     "clube": "Q80987",
+     "inicio": 2022,
      "fim": null
     }
    ]
@@ -2325,7 +2426,33 @@
    "wikidata": "Q106171073",
    "nome": "Andrey Santos",
    "posicao": "",
-   "clubes": []
+   "clubes": [
+    {
+     "clube": "Q5014111",
+     "inicio": 2021,
+     "fim": 2023
+    },
+    {
+     "clube": "Q19490",
+     "inicio": 2023,
+     "fim": 2024
+    },
+    {
+     "clube": "Q9616",
+     "inicio": 2023,
+     "fim": 2026
+    },
+    {
+     "clube": "Q126334",
+     "inicio": 2024,
+     "fim": 2025
+    },
+    {
+     "clube": "Q18656",
+     "inicio": 2026,
+     "fim": null
+    }
+   ]
   },
   {
    "wikidata": "Q15146754",
@@ -2350,11 +2477,36 @@
     {
      "clube": "Q18640",
      "inicio": 2014,
-     "fim": 2015
+     "fim": 2016
     },
     {
      "clube": "Q80897",
      "inicio": 2015,
+     "fim": 2016
+    },
+    {
+     "clube": "Q2602791",
+     "inicio": 2017,
+     "fim": 2018
+    },
+    {
+     "clube": "Q1421829",
+     "inicio": 2018,
+     "fim": 2019
+    },
+    {
+     "clube": "Q59962",
+     "inicio": 2019,
+     "fim": 2023
+    },
+    {
+     "clube": "Q5014111",
+     "inicio": 2023,
+     "fim": 2026
+    },
+    {
+     "clube": "Q914086",
+     "inicio": 2026,
      "fim": null
     }
    ]
@@ -2365,7 +2517,7 @@
    "posicao": "Meia",
    "clubes": [
     {
-     "clube": "Q60785879",
+     "clube": "Q2819504",
      "inicio": 2004,
      "fim": 2005
     },
@@ -2422,14 +2574,9 @@
      "fim": 1989
     },
     {
-     "clube": "Q849823",
-     "inicio": 1989,
-     "fim": 1989
-    },
-    {
      "clube": "Q1893",
      "inicio": 1989,
-     "fim": 1991
+     "fim": 1990
     },
     {
      "clube": "Q105853",
@@ -2455,11 +2602,6 @@
      "clube": "Q2735045",
      "inicio": 1997,
      "fim": 1997
-    },
-    {
-     "clube": "Q3241573",
-     "inicio": 1998,
-     "fim": 1998
     },
     {
      "clube": "Q3241574",
@@ -2500,7 +2642,7 @@
     },
     {
      "clube": "Q80964",
-     "inicio": 1962,
+     "inicio": 1961,
      "fim": 1977
     }
    ]
@@ -2551,12 +2693,12 @@
      "fim": 1999
     },
     {
-     "clube": "Q816779",
+     "clube": "Q38568",
      "inicio": 2000,
      "fim": 2000
     },
     {
-     "clube": "Q38568",
+     "clube": "Q816779",
      "inicio": 2000,
      "fim": 2000
     },
@@ -2629,7 +2771,7 @@
     },
     {
      "clube": "Q972741",
-     "inicio": 2005,
+     "inicio": 2006,
      "fim": 2007
     }
    ]
@@ -2637,16 +2779,11 @@
   {
    "wikidata": "Q483577",
    "nome": "Rivaldo",
-   "posicao": "Meio-campista",
+   "posicao": "Atacante",
    "clubes": [
     {
-     "clube": "Q1422177",
-     "inicio": 1989,
-     "fim": 1990
-    },
-    {
      "clube": "Q508440",
-     "inicio": 1991,
+     "inicio": 1988,
      "fim": 1992
     },
     {
@@ -2697,7 +2834,7 @@
     {
      "clube": "Q628763",
      "inicio": 2008,
-     "fim": 2010
+     "fim": 2011
     },
     {
      "clube": "Q38568",
@@ -2728,16 +2865,16 @@
    "clubes": [
     {
      "clube": "Q38568",
-     "inicio": 1990,
+     "inicio": 1989,
      "fim": 1994
     },
     {
-     "clube": "Q910453",
+     "clube": "Q10308",
      "inicio": 1995,
      "fim": 1995
     },
     {
-     "clube": "Q10308",
+     "clube": "Q910453",
      "inicio": 1995,
      "fim": 1995
     },
@@ -2765,7 +2902,7 @@
    "clubes": [
     {
      "clube": "Q17479",
-     "inicio": 1989,
+     "inicio": 1988,
      "fim": 1993
     },
     {
@@ -2821,11 +2958,6 @@
      "clube": "Q914086",
      "inicio": 1989,
      "fim": 1994
-    },
-    {
-     "clube": "Q3590749",
-     "inicio": 1992,
-     "fim": 1992
     },
     {
      "clube": "Q221695",
@@ -2895,11 +3027,6 @@
      "fim": 2002
     },
     {
-     "clube": "Q2693",
-     "inicio": 2002,
-     "fim": 2002
-    },
-    {
      "clube": "Q188277",
      "inicio": 2002,
      "fim": 2004
@@ -2927,14 +3054,19 @@
      "fim": 2003
     },
     {
-     "clube": "Q10300",
+     "clube": "Q207373",
      "inicio": 2003,
+     "fim": 2006
+    },
+    {
+     "clube": "Q10300",
+     "inicio": 2004,
      "fim": 2004
     },
     {
      "clube": "Q219235",
      "inicio": 2004,
-     "fim": 2005
+     "fim": 2004
     },
     {
      "clube": "Q80964",
@@ -2957,9 +3089,34 @@
      "fim": 2017
     },
     {
-     "clube": "Q332524",
-     "inicio": 2015,
-     "fim": null
+     "clube": "Q207373",
+     "inicio": 2017,
+     "fim": 2019
+    },
+    {
+     "clube": "Q1480985",
+     "inicio": 2020,
+     "fim": 2020
+    },
+    {
+     "clube": "Q96045907",
+     "inicio": 2020,
+     "fim": 2020
+    },
+    {
+     "clube": "Q207373",
+     "inicio": 2020,
+     "fim": 2021
+    },
+    {
+     "clube": "Q719383",
+     "inicio": 2021,
+     "fim": 2021
+    },
+    {
+     "clube": "Q1280895",
+     "inicio": 2022,
+     "fim": 2022
     }
    ]
   },
@@ -2971,7 +3128,7 @@
     {
      "clube": "Q221695",
      "inicio": 1998,
-     "fim": 1999
+     "fim": 2000
     },
     {
      "clube": "Q2868221",
@@ -3001,7 +3158,12 @@
     {
      "clube": "Q80964",
      "inicio": 2013,
-     "fim": null
+     "fim": 2019
+    },
+    {
+     "clube": "Q1052219",
+     "inicio": 2020,
+     "fim": 2020
     }
    ]
   },
@@ -3055,12 +3217,12 @@
     {
      "clube": "Q221695",
      "inicio": 2014,
-     "fim": 2015
+     "fim": 2014
     },
     {
      "clube": "Q80964",
      "inicio": 2015,
-     "fim": null
+     "fim": 2024
     },
     {
      "clube": "Q1056948",
@@ -3069,6 +3231,11 @@
     },
     {
      "clube": "Q188277",
+     "inicio": 2025,
+     "fim": 2025
+    },
+    {
+     "clube": "Q270995",
      "inicio": 2025,
      "fim": null
     }
@@ -3080,14 +3247,14 @@
    "posicao": "Goleiro",
    "clubes": [
     {
-     "clube": "Q2552872",
+     "clube": "Q35933",
      "inicio": 2006,
-     "fim": 2007
+     "fim": 2009
     },
     {
-     "clube": "Q35933",
+     "clube": "Q2552872",
      "inicio": 2007,
-     "fim": 2009
+     "fim": 2007
     },
     {
      "clube": "Q966183",
@@ -3113,6 +3280,16 @@
      "clube": "Q506832",
      "inicio": 2012,
      "fim": 2017
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 2018,
+     "fim": 2026
+    },
+    {
+     "clube": "Q221695",
+     "inicio": 2026,
+     "fim": null
     }
    ]
   },
@@ -3127,8 +3304,18 @@
      "fim": 2014
     },
     {
-     "clube": "Q170703",
+     "clube": "Q324589",
+     "inicio": 2014,
+     "fim": 2016
+    },
+    {
+     "clube": "Q1543",
      "inicio": 2016,
+     "fim": 2019
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 2018,
      "fim": null
     }
    ]
@@ -3156,6 +3343,46 @@
     {
      "clube": "Q8823",
      "inicio": 2015,
+     "fim": 2017
+    },
+    {
+     "clube": "Q223620",
+     "inicio": 2016,
+     "fim": 2017
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 2017,
+     "fim": 2022
+    },
+    {
+     "clube": "Q8806",
+     "inicio": 2020,
+     "fim": 2020
+    },
+    {
+     "clube": "Q223620",
+     "inicio": 2020,
+     "fim": 2021
+    },
+    {
+     "clube": "Q2945011",
+     "inicio": 2022,
+     "fim": 2024
+    },
+    {
+     "clube": "Q270995",
+     "inicio": 2024,
+     "fim": 2025
+    },
+    {
+     "clube": "Q188841",
+     "inicio": 2025,
+     "fim": 2026
+    },
+    {
+     "clube": "Q249643",
+     "inicio": 2026,
      "fim": null
     }
    ]
@@ -3198,7 +3425,7 @@
     {
      "clube": "Q188841",
      "inicio": 2024,
-     "fim": 2026
+     "fim": 2025
     },
     {
      "clube": "Q478317",
@@ -3238,7 +3465,48 @@
    "wikidata": "Q28748046",
    "nome": "Rony",
    "posicao": "Atacante",
-   "clubes": []
+   "clubes": [
+    {
+     "clube": "Q2552872",
+     "inicio": 2014,
+     "fim": 2015
+    },
+    {
+     "clube": "Q188277",
+     "inicio": 2015,
+     "fim": 2018
+    },
+    {
+     "clube": "Q73971",
+     "inicio": 2016,
+     "fim": 2016
+    },
+    {
+     "clube": "Q383358",
+     "inicio": 2017,
+     "fim": 2017
+    },
+    {
+     "clube": "Q506832",
+     "inicio": 2018,
+     "fim": 2020
+    },
+    {
+     "clube": "Q80964",
+     "inicio": 2020,
+     "fim": 2025
+    },
+    {
+     "clube": "Q270995",
+     "inicio": 2025,
+     "fim": 2026
+    },
+    {
+     "clube": "Q80955",
+     "inicio": 2026,
+     "fim": null
+    }
+   ]
   },
   {
    "wikidata": "Q110644260",
@@ -3257,7 +3525,7 @@
     },
     {
      "clube": "Q704",
-     "inicio": 2025,
+     "inicio": 2026,
      "fim": 2026
     }
    ]
@@ -3311,11 +3579,6 @@
      "clube": "Q38568",
      "inicio": 2004,
      "fim": 2004
-    },
-    {
-     "clube": "Q4120643",
-     "inicio": 2006,
-     "fim": 2006
     }
    ]
   },
@@ -3324,11 +3587,6 @@
    "nome": "Mazinho",
    "posicao": "Meio-campista",
    "clubes": [
-    {
-     "clube": "Q7419428",
-     "inicio": 1983,
-     "fim": 1985
-    },
     {
      "clube": "Q5014111",
      "inicio": 1985,
@@ -3388,7 +3646,7 @@
     },
     {
      "clube": "Q5014111",
-     "inicio": 1979,
+     "inicio": 1978,
      "fim": 1980
     },
     {
@@ -3404,12 +3662,12 @@
     {
      "clube": "Q80964",
      "inicio": 1984,
-     "fim": 1985
+     "fim": 1986
     },
     {
      "clube": "Q219098",
-     "inicio": 1986,
-     "fim": 1986
+     "inicio": 1987,
+     "fim": 1987
     }
    ]
   },
@@ -3451,11 +3709,6 @@
      "fim": 1987
     },
     {
-     "clube": "Q5014111",
-     "inicio": 1987,
-     "fim": 1987
-    },
-    {
      "clube": "Q478317",
      "inicio": 1987,
      "fim": 1988
@@ -3471,14 +3724,14 @@
      "fim": 1991
     },
     {
+     "clube": "Q3058500",
+     "inicio": 1991,
+     "fim": 1991
+    },
+    {
      "clube": "Q572957",
      "inicio": 1991,
      "fim": 1992
-    },
-    {
-     "clube": "Q17479",
-     "inicio": 1993,
-     "fim": 1993
     },
     {
      "clube": "Q4749635",
@@ -3486,12 +3739,12 @@
      "fim": 1994
     },
     {
-     "clube": "Q4817902",
+     "clube": "Q429998",
      "inicio": 1995,
      "fim": 1995
     },
     {
-     "clube": "Q429998",
+     "clube": "Q4817902",
      "inicio": 1995,
      "fim": 1995
     },
@@ -3563,7 +3816,7 @@
      "fim": 1994
     },
     {
-     "clube": "Q3354098",
+     "clube": "Q48855349",
      "inicio": 1994,
      "fim": 1994
     },
@@ -3674,6 +3927,11 @@
    "posicao": "Atacante",
    "clubes": [
     {
+     "clube": "Q17479",
+     "inicio": 1973,
+     "fim": 1973
+    },
+    {
      "clube": "Q739701",
      "inicio": 1974,
      "fim": 1975
@@ -3686,25 +3944,20 @@
     {
      "clube": "Q80987",
      "inicio": 1978,
-     "fim": 1980
+     "fim": 1979
     },
     {
      "clube": "Q768253",
-     "inicio": 1980,
+     "inicio": 1979,
      "fim": 1980
     },
     {
      "clube": "Q17479",
      "inicio": 1980,
-     "fim": 1982
+     "fim": 1984
     },
     {
      "clube": "Q80958",
-     "inicio": 1983,
-     "fim": 1983
-    },
-    {
-     "clube": "Q17479",
      "inicio": 1984,
      "fim": 1984
     },
@@ -3739,14 +3992,14 @@
      "fim": 1988
     },
     {
-     "clube": "Q508440",
-     "inicio": 1991,
-     "fim": 1992
+     "clube": "Q17479",
+     "inicio": 1990,
+     "fim": 1990
     },
     {
-     "clube": "Q120064",
-     "inicio": 1992,
-     "fim": 1992
+     "clube": "Q508440",
+     "inicio": 1991,
+     "fim": 1993
     }
    ]
   },
@@ -3808,9 +4061,14 @@
      "fim": 2004
     },
     {
+     "clube": "Q2508289",
+     "inicio": 2005,
+     "fim": 2005
+    },
+    {
      "clube": "Q525573",
      "inicio": 2007,
-     "fim": 2010
+     "fim": 2009
     }
    ]
   },
@@ -3821,13 +4079,13 @@
    "clubes": [
     {
      "clube": "Q17479",
-     "inicio": 1992,
+     "inicio": 1993,
      "fim": 1997
     },
     {
      "clube": "Q8682",
-     "inicio": 1997,
-     "fim": 2002
+     "inicio": 1998,
+     "fim": 2003
     },
     {
      "clube": "Q172476",
@@ -3842,7 +4100,7 @@
     {
      "clube": "Q17479",
      "inicio": 2006,
-     "fim": 2007
+     "fim": 2006
     },
     {
      "clube": "Q10315",
@@ -3852,7 +4110,7 @@
     {
      "clube": "Q8823",
      "inicio": 2007,
-     "fim": 2008
+     "fim": 2007
     },
     {
      "clube": "Q2735045",
@@ -3914,7 +4172,7 @@
     {
      "clube": "Q17479",
      "inicio": 2000,
-     "fim": 2001
+     "fim": 2002
     },
     {
      "clube": "Q5014111",
@@ -3924,7 +4182,7 @@
     {
      "clube": "Q725367",
      "inicio": 2003,
-     "fim": 2003
+     "fim": 2004
     },
     {
      "clube": "Q5014111",
@@ -3933,7 +4191,7 @@
     },
     {
      "clube": "Q309480",
-     "inicio": 2004,
+     "inicio": 2005,
      "fim": 2005
     },
     {
@@ -4053,7 +4311,7 @@
     {
      "clube": "Q1543",
      "inicio": 2008,
-     "fim": 2010
+     "fim": 2011
     },
     {
      "clube": "Q17479",
@@ -4088,11 +4346,6 @@
    "posicao": "Atacante",
    "clubes": [
     {
-     "clube": "Q572957",
-     "inicio": 1991,
-     "fim": 2001
-    },
-    {
      "clube": "Q15789",
      "inicio": 2004,
      "fim": 2006
@@ -4123,14 +4376,14 @@
      "fim": 2023
     },
     {
-     "clube": "Q249643",
+     "clube": "Q276533",
      "inicio": 2023,
      "fim": 2023
     },
     {
-     "clube": "Q276533",
+     "clube": "Q249643",
      "inicio": 2023,
-     "fim": 2023
+     "fim": 2024
     },
     {
      "clube": "Q603023",
@@ -4151,7 +4404,7 @@
    "clubes": [
     {
      "clube": "Q80955",
-     "inicio": 1997,
+     "inicio": 2002,
      "fim": 2004
     },
     {
@@ -4182,12 +4435,12 @@
     {
      "clube": "Q6601875",
      "inicio": 2014,
-     "fim": null
+     "fim": 2016
     },
     {
      "clube": "Q17479",
      "inicio": 2016,
-     "fim": null
+     "fim": 2022
     }
    ]
   },
@@ -4214,7 +4467,7 @@
     {
      "clube": "Q15789",
      "inicio": 2011,
-     "fim": null
+     "fim": 2019
     },
     {
      "clube": "Q17479",
@@ -4227,9 +4480,19 @@
      "fim": 2021
     },
     {
+     "clube": "Q221695",
+     "inicio": 2021,
+     "fim": 2022
+    },
+    {
      "clube": "Q38568",
      "inicio": 2022,
      "fim": 2024
+    },
+    {
+     "clube": "Q478317",
+     "inicio": 2025,
+     "fim": 2025
     }
    ]
   },
@@ -4241,16 +4504,41 @@
     {
      "clube": "Q80987",
      "inicio": 2014,
-     "fim": 2015
+     "fim": 2016
     },
     {
      "clube": "Q2739",
      "inicio": 2016,
-     "fim": 2016
+     "fim": 2019
     },
     {
-     "clube": "Q80987",
-     "inicio": 2016,
+     "clube": "Q2052",
+     "inicio": 2018,
+     "fim": 2019
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 2019,
+     "fim": 2021
+    },
+    {
+     "clube": "Q132885",
+     "inicio": 2021,
+     "fim": 2023
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 2023,
+     "fim": 2025
+    },
+    {
+     "clube": "Q29108",
+     "inicio": 2025,
+     "fim": 2026
+    },
+    {
+     "clube": "Q188277",
+     "inicio": 2026,
      "fim": null
     }
    ]
@@ -4263,7 +4551,7 @@
     {
      "clube": "Q844238",
      "inicio": 2012,
-     "fim": 2015
+     "fim": 2014
     },
     {
      "clube": "Q188277",
@@ -4323,7 +4611,23 @@
    "wikidata": "Q47491410",
    "nome": "Pedro",
    "posicao": "Atacante",
-   "clubes": []
+   "clubes": [
+    {
+     "clube": "Q80987",
+     "inicio": 2016,
+     "fim": 2019
+    },
+    {
+     "clube": "Q2052",
+     "inicio": 2019,
+     "fim": 2020
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 2020,
+     "fim": null
+    }
+   ]
   },
   {
    "wikidata": "Q19956526",
@@ -4332,7 +4636,7 @@
    "clubes": [
     {
      "clube": "Q188277",
-     "inicio": 2011,
+     "inicio": 2012,
      "fim": 2013
     },
     {
@@ -4353,6 +4657,16 @@
     {
      "clube": "Q101859",
      "inicio": 2016,
+     "fim": 2017
+    },
+    {
+     "clube": "Q80955",
+     "inicio": 2017,
+     "fim": 2019
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 2019,
      "fim": null
     }
    ]
@@ -4370,22 +4684,27 @@
     {
      "clube": "Q290940",
      "inicio": 2008,
-     "fim": 2010
+     "fim": 2011
     },
     {
      "clube": "Q478317",
      "inicio": 2011,
-     "fim": 2012
+     "fim": 2013
     },
     {
      "clube": "Q188277",
      "inicio": 2013,
-     "fim": 2014
+     "fim": 2015
     },
     {
      "clube": "Q424943",
      "inicio": 2015,
-     "fim": null
+     "fim": 2017
+    },
+    {
+     "clube": "Q17479",
+     "inicio": 2017,
+     "fim": 2023
     },
     {
      "clube": "Q198032",
@@ -4407,7 +4726,7 @@
     {
      "clube": "Q81888",
      "inicio": 2004,
-     "fim": 2005
+     "fim": 2008
     },
     {
      "clube": "Q8760",
@@ -4439,13 +4758,8 @@
   {
    "wikidata": "Q12897",
    "nome": "Pelé",
-   "posicao": "Meio-campista",
+   "posicao": "Atacante",
    "clubes": [
-    {
-     "clube": "Q2340403",
-     "inicio": 1953,
-     "fim": 1956
-    },
     {
      "clube": "Q80955",
      "inicio": 1956,
@@ -4461,8 +4775,13 @@
   {
    "wikidata": "Q180642",
    "nome": "Garrincha",
-   "posicao": "Atacante",
+   "posicao": "Meia-atacante",
    "clubes": [
+    {
+     "clube": "Q4817902",
+     "inicio": 1951,
+     "fim": 1951
+    },
     {
      "clube": "Q80958",
      "inicio": 1953,
@@ -4472,16 +4791,6 @@
      "clube": "Q35933",
      "inicio": 1966,
      "fim": 1966
-    },
-    {
-     "clube": "Q2341011",
-     "inicio": 1967,
-     "fim": 1967
-    },
-    {
-     "clube": "Q5014111",
-     "inicio": 1967,
-     "fim": 1967
     },
     {
      "clube": "Q332524",
@@ -4494,8 +4803,13 @@
      "fim": 1969
     },
     {
+     "clube": "Q243311",
+     "inicio": 1970,
+     "fim": 1971
+    },
+    {
      "clube": "Q2018179",
-     "inicio": 1972,
+     "inicio": 1971,
      "fim": 1972
     }
    ]
@@ -4503,11 +4817,11 @@
   {
    "wikidata": "Q102331",
    "nome": "Sócrates",
-   "posicao": "Meio-campista",
+   "posicao": "Atacante",
    "clubes": [
     {
      "clube": "Q2332493",
-     "inicio": 1974,
+     "inicio": 1973,
      "fim": 1978
     },
     {
@@ -4554,12 +4868,12 @@
     },
     {
      "clube": "Q80987",
-     "inicio": 1974,
+     "inicio": 1975,
      "fim": 1978
     },
     {
      "clube": "Q73965",
-     "inicio": 1979,
+     "inicio": 1978,
      "fim": 1981
     }
    ]
@@ -4576,8 +4890,8 @@
     },
     {
      "clube": "Q188277",
-     "inicio": 1964,
-     "fim": 1971
+     "inicio": 1963,
+     "fim": 1972
     },
     {
      "clube": "Q5014111",
@@ -4593,7 +4907,7 @@
    "clubes": [
     {
      "clube": "Q80958",
-     "inicio": 1959,
+     "inicio": 1962,
      "fim": 1974
     },
     {
@@ -4608,18 +4922,13 @@
     },
     {
      "clube": "Q188277",
-     "inicio": 1975,
-     "fim": 1977
-    },
-    {
-     "clube": "Q204675",
-     "inicio": 1977,
-     "fim": 1977
+     "inicio": 1976,
+     "fim": 1976
     },
     {
      "clube": "Q1458264",
      "inicio": 1977,
-     "fim": 1978
+     "fim": 1977
     },
     {
      "clube": "Q2627402",
@@ -4629,7 +4938,7 @@
     {
      "clube": "Q3334769",
      "inicio": 1979,
-     "fim": 1980
+     "fim": 1979
     },
     {
      "clube": "Q127921",
@@ -4682,11 +4991,6 @@
      "clube": "Q7579313",
      "inicio": 1998,
      "fim": 1998
-    },
-    {
-     "clube": "Q749603",
-     "inicio": 1999,
-     "fim": 1999
     },
     {
      "clube": "Q2508225",
@@ -4744,7 +5048,7 @@
    "clubes": [
     {
      "clube": "Q38568",
-     "inicio": 2001,
+     "inicio": 2000,
      "fim": 2003
     },
     {
@@ -4812,7 +5116,7 @@
     {
      "clube": "Q130521",
      "inicio": 2015,
-     "fim": 2015
+     "fim": 2016
     },
     {
      "clube": "Q270995",
@@ -4822,7 +5126,7 @@
     {
      "clube": "Q372599",
      "inicio": 2018,
-     "fim": 2018
+     "fim": 2019
     },
     {
      "clube": "Q857938",
@@ -4881,7 +5185,7 @@
     {
      "clube": "Q270995",
      "inicio": 1992,
-     "fim": 1992
+     "fim": 1993
     },
     {
      "clube": "Q80964",
@@ -4910,7 +5214,7 @@
     },
     {
      "clube": "Q19353",
-     "inicio": 2012,
+     "inicio": 2011,
      "fim": 2012
     },
     {
@@ -5021,7 +5325,7 @@
    "clubes": [
     {
      "clube": "Q38568",
-     "inicio": 1995,
+     "inicio": 1994,
      "fim": 1998
     },
     {
@@ -5047,7 +5351,7 @@
     {
      "clube": "Q642291",
      "inicio": 2007,
-     "fim": 2008
+     "fim": 2007
     },
     {
      "clube": "Q80964",
@@ -5074,22 +5378,32 @@
   {
    "wikidata": "Q62786",
    "nome": "Hulk",
-   "posicao": "Atacante",
+   "posicao": "Meia",
    "clubes": [
     {
      "clube": "Q274465",
      "inicio": 2004,
-     "fim": 2005
+     "fim": 2006
     },
     {
      "clube": "Q874016",
      "inicio": 2005,
-     "fim": 2008
+     "fim": 2006
     },
     {
      "clube": "Q586787",
      "inicio": 2006,
-     "fim": 2006
+     "fim": 2007
+    },
+    {
+     "clube": "Q620499",
+     "inicio": 2006,
+     "fim": 2007
+    },
+    {
+     "clube": "Q874016",
+     "inicio": 2006,
+     "fim": 2008
     },
     {
      "clube": "Q620499",
@@ -5172,7 +5486,7 @@
    "clubes": [
     {
      "clube": "Q219120",
-     "inicio": 1997,
+     "inicio": 1998,
      "fim": 2000
     },
     {
@@ -5201,9 +5515,9 @@
      "fim": 2015
     },
     {
-     "clube": "Q537552",
+     "clube": "Q552880",
      "inicio": 2016,
-     "fim": 2017
+     "fim": 2016
     },
     {
      "clube": "Q5014111",
@@ -5220,11 +5534,11 @@
     {
      "clube": "Q80955",
      "inicio": 2001,
-     "fim": 2004
+     "fim": 2005
     },
     {
      "clube": "Q172969",
-     "inicio": 2004,
+     "inicio": 2005,
      "fim": 2007
     },
     {
@@ -5260,7 +5574,7 @@
     {
      "clube": "Q80955",
      "inicio": 2015,
-     "fim": null
+     "fim": 2016
     }
    ]
   },
@@ -5276,7 +5590,7 @@
     },
     {
      "clube": "Q80845",
-     "inicio": 1998,
+     "inicio": 1997,
      "fim": 2000
     },
     {
@@ -5322,7 +5636,7 @@
     {
      "clube": "Q522566",
      "inicio": 2018,
-     "fim": 2019
+     "fim": 2020
     }
    ]
   },
@@ -5332,39 +5646,19 @@
    "posicao": "Zagueiro",
    "clubes": [
     {
-     "clube": "Q80987",
-     "inicio": 1998,
-     "fim": 2000
-    },
-    {
-     "clube": "Q4859851",
-     "inicio": 2000,
-     "fim": 2001
-    },
-    {
-     "clube": "Q80987",
-     "inicio": 2001,
-     "fim": 2001
-    },
-    {
      "clube": "Q7159367",
      "inicio": 2002,
      "fim": 2003
     },
     {
      "clube": "Q910453",
-     "inicio": 2003,
-     "fim": 2004
-    },
-    {
-     "clube": "Q128446",
      "inicio": 2004,
-     "fim": 2005
+     "fim": 2004
     },
     {
      "clube": "Q17497",
      "inicio": 2005,
-     "fim": 2005
+     "fim": 2006
     },
     {
      "clube": "Q80987",
@@ -5411,7 +5705,7 @@
     {
      "clube": "Q80987",
      "inicio": 2005,
-     "fim": 2006
+     "fim": 2007
     },
     {
      "clube": "Q8682",
@@ -5426,23 +5720,23 @@
     {
      "clube": "Q80987",
      "inicio": 2023,
-     "fim": 2025
+     "fim": 2024
     }
    ]
   },
   {
    "wikidata": "Q172720",
    "nome": "Daniel Alves",
-   "posicao": "Zagueiro",
+   "posicao": "Lateral",
    "clubes": [
     {
      "clube": "Q198032",
      "inicio": 2001,
-     "fim": 2002
+     "fim": 2003
     },
     {
      "clube": "Q10329",
-     "inicio": 2002,
+     "inicio": 2003,
      "fim": 2008
     },
     {
@@ -5467,7 +5761,7 @@
     },
     {
      "clube": "Q7156",
-     "inicio": 2022,
+     "inicio": 2021,
      "fim": 2022
     },
     {
@@ -5483,13 +5777,8 @@
    "posicao": "Zagueiro",
    "clubes": [
     {
-     "clube": "Q38568",
-     "inicio": 1999,
-     "fim": 2001
-    },
-    {
      "clube": "Q274465",
-     "inicio": 2001,
+     "inicio": 2006,
      "fim": 2007
     },
     {
@@ -5515,7 +5804,7 @@
     {
      "clube": "Q9617",
      "inicio": 2019,
-     "fim": 2020
+     "fim": 2021
     },
     {
      "clube": "Q17479",
@@ -5537,7 +5826,7 @@
   {
    "wikidata": "Q616664",
    "nome": "Casemiro",
-   "posicao": "Meio-campista",
+   "posicao": "Defensive midfielder",
    "clubes": [
     {
      "clube": "Q38568",
@@ -5596,7 +5885,7 @@
   {
    "wikidata": "Q602525",
    "nome": "Roberto Firmino",
-   "posicao": "Atacante",
+   "posicao": "Meia",
    "clubes": [
     {
      "clube": "Q218334",
@@ -5614,7 +5903,7 @@
      "fim": 2023
     },
     {
-     "clube": "Q668",
+     "clube": "Q44441",
      "inicio": 2023,
      "fim": 2025
     },
@@ -5628,7 +5917,7 @@
   {
    "wikidata": "Q28973866",
    "nome": "Vinícius Júnior",
-   "posicao": "Atacante",
+   "posicao": "Meia-atacante",
    "clubes": [
     {
      "clube": "Q17479",
@@ -5664,11 +5953,6 @@
    "nome": "Raphinha",
    "posicao": "Atacante",
    "clubes": [
-    {
-     "clube": "Q374069",
-     "inicio": 2015,
-     "fim": 2015
-    },
     {
      "clube": "Q223450",
      "inicio": 2016,
@@ -5780,11 +6064,11 @@
     {
      "clube": "Q3084434",
      "inicio": 2011,
-     "fim": 2012
+     "fim": 2013
     },
     {
      "clube": "Q622432",
-     "inicio": 2012,
+     "inicio": 2013,
      "fim": 2015
     },
     {
@@ -5822,12 +6106,12 @@
     {
      "clube": "Q9616",
      "inicio": 2012,
-     "fim": 2016
+     "fim": 2017
     },
     {
      "clube": "Q564216",
      "inicio": 2017,
-     "fim": 2023
+     "fim": 2024
     },
     {
      "clube": "Q38568",
@@ -5901,7 +6185,7 @@
     {
      "clube": "Q38568",
      "inicio": 2010,
-     "fim": 2013
+     "fim": 2012
     },
     {
      "clube": "Q483020",
@@ -5953,7 +6237,7 @@
     {
      "clube": "Q221695",
      "inicio": 2021,
-     "fim": 2021
+     "fim": 2022
     },
     {
      "clube": "Q204357",
@@ -6040,7 +6324,22 @@
     {
      "clube": "Q1045524",
      "inicio": 2014,
-     "fim": null
+     "fim": 2016
+    },
+    {
+     "clube": "Q2553450",
+     "inicio": 2017,
+     "fim": 2017
+    },
+    {
+     "clube": "Q5136492",
+     "inicio": 2017,
+     "fim": 2019
+    },
+    {
+     "clube": "Q3058513",
+     "inicio": 2018,
+     "fim": 2018
     }
    ]
   },
@@ -6051,7 +6350,7 @@
    "clubes": [
     {
      "clube": "Q5014111",
-     "inicio": 1990,
+     "inicio": 1991,
      "fim": 1992
     },
     {
@@ -6060,9 +6359,14 @@
      "fim": 1995
     },
     {
+     "clube": "Q2693",
+     "inicio": 1994,
+     "fim": 1994
+    },
+    {
      "clube": "Q17479",
      "inicio": 1995,
-     "fim": 1995
+     "fim": 1996
     },
     {
      "clube": "Q35933",
@@ -6076,7 +6380,7 @@
     },
     {
      "clube": "Q2052",
-     "inicio": 1997,
+     "inicio": 1998,
      "fim": 1999
     },
     {
@@ -6112,7 +6416,7 @@
     {
      "clube": "Q5014111",
      "inicio": 2003,
-     "fim": 2004
+     "fim": 2003
     },
     {
      "clube": "Q80987",
@@ -6120,12 +6424,12 @@
      "fim": 2004
     },
     {
-     "clube": "Q218334",
+     "clube": "Q3345324",
      "inicio": 2005,
      "fim": 2005
     },
     {
-     "clube": "Q3345324",
+     "clube": "Q218334",
      "inicio": 2005,
      "fim": 2005
     },
@@ -6197,7 +6501,18 @@
    "wikidata": "Q115332579",
    "nome": "Estêvão",
    "posicao": "",
-   "clubes": []
+   "clubes": [
+    {
+     "clube": "Q80964",
+     "inicio": 2023,
+     "fim": 2025
+    },
+    {
+     "clube": "Q9616",
+     "inicio": 2025,
+     "fim": null
+    }
+   ]
   },
   {
    "wikidata": "Q311424",

@@ -1,0 +1,4 @@
+# Clubs in a Wikipedia career infobox that point to no Wikidata id: the plain name or the linked
+# page title, then the club's Wikidata id. Read by scripts/import_carreiras.py.
+"Clube Atlético Bragantino" = "Q541744"  # Red Bull Bragantino
+"Confiança" = "Q739701"  # Associação Desportiva Confiança

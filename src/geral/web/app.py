@@ -25,7 +25,7 @@ from jinja2 import select_autoescape
 from pydantic import AwareDatetime, BaseModel, Field, model_validator
 
 from geral.config import Settings, get_settings
-from geral.games import craque, onde_jogou, quem_e
+from geral.games import calendario, craque, onde_jogou, quem_e
 from geral.general import GENERAL_EDITION, GENERAL_SLUG
 from geral.send.resend_sender import UNSUBSCRIBE_PLACEHOLDER, personalize
 from geral.teams import Team, load_teams
@@ -261,6 +261,15 @@ def create_app(
 
     def who_number() -> int:
         return max(1, quem_e.puzzle_number(now().astimezone(BRASILIA).date()))
+
+    def daily_player(
+        game: str, edition: str, players: list[onde_jogou.Jogador], number: int
+    ) -> onde_jogou.Jogador:
+        """The day's player: frozen in the calendar once played, else the edition's order."""
+        if "calendar" not in career_state:
+            career_state["calendar"] = calendario.load()
+        frozen = calendario.answers(career_state["calendar"], game, edition)
+        return calendario.pick(players, number, frozen, key=lambda j: j.wikidata)
 
     def career_number() -> int:
         return max(1, onde_jogou.puzzle_number(now().astimezone(BRASILIA).date()))
@@ -746,17 +755,18 @@ def create_app(
             )
         number = career_number()
         data = careers()
+        jogador = daily_player("onde-jogou", edition, players, number)
         return page(
             request,
             "onde_jogou.html.j2",
             edition=edition,
             team=listed.get(edition),
             number=number,
-            jogador=onde_jogou.by_number(players, number),
+            jogador=jogador,
             # Tells the page the day's player changed (data update) without naming them.
-            player_key=hashlib.sha256(
-                f"{secret}:{number}:{onde_jogou.by_number(players, number).wikidata}".encode()
-            ).hexdigest()[:12],
+            player_key=hashlib.sha256(f"{secret}:{number}:{jogador.wikidata}".encode()).hexdigest()[
+                :12
+            ],
             given={qid: data.clubes[qid].nome for qid in given_clubs(edition)},
             clubs=sorted(
                 (
@@ -780,7 +790,7 @@ def create_app(
             if (club := onde_jogou.resolve(data, text)) is None:
                 return JSONResponse({"detail": f"Clube desconhecido: {text}"}, status_code=422)
             clubs.append(club)
-        jogador = onde_jogou.by_number(players, number)
+        jogador = daily_player("onde-jogou", edition, players, number)
         return onde_jogou.judge(data, jogador, clubs, body.desistiu, given_clubs(edition))
 
     @app.get("/jogos/quem-e", response_class=HTMLResponse)
@@ -796,7 +806,7 @@ def create_app(
             )
         number = who_number()
         data = careers()
-        jogador = quem_e.by_number(players, number)
+        jogador = daily_player("quem-e", edition, players, number)
         return page(
             request,
             "quem_e.html.j2",
@@ -825,7 +835,8 @@ def create_app(
         known = {j.wikidata for j in data.jogadores}
         if unknown := [q for q in body.palpites if q not in known]:
             return JSONResponse({"detail": f"Jogador desconhecido: {unknown[0]}"}, status_code=422)
-        return quem_e.judge(data, quem_e.by_number(players, number), body.palpites, body.desistiu)
+        jogador = daily_player("quem-e", edition, players, number)
+        return quem_e.judge(data, jogador, body.palpites, body.desistiu)
 
     @app.get("/pedir", response_class=HTMLResponse)
     def request_page(request: Request):
