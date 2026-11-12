@@ -10,7 +10,7 @@
     <p class="lead">Um ídolo ou artilheiro por dia, o mesmo para todo mundo. Chute o nome do craque, como a torcida chama: você tem {{ max_guesses }} tentativas, e cada letra diz se está no lugar certo.</p>
     <nav class="editions" aria-label="Edições">
       {% for slug, t in editions %}
-      <a href="/jogos/craque-do-dia{% if slug != 'geral' %}/{{ slug }}{% endif %}"{% if slug == edition %} aria-current="page"{% endif %}>{{ t.name if t else "Geral" }}</a>
+      <a href="/jogos/craque-do-dia{% if slug != 'geral' %}/{{ slug }}{% endif %}"{% if slug == edition and not archive %} aria-current="page"{% endif %}>{{ t.name if t else "Geral" }}</a>
       {% endfor %}
     </nav>
 

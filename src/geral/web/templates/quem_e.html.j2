@@ -10,7 +10,7 @@
     <p class="lead">Um jogador por dia, o mesmo para todo mundo. A carreira inteira está no placar: adivinhe quem é em até {{ max_guesses }} chutes.</p>
     <nav class="editions" aria-label="Edições">
       {% for slug, t in editions %}
-      <a href="/jogos/quem-e{% if slug != 'geral' %}/{{ slug }}{% endif %}"{% if slug == edition %} aria-current="page"{% endif %}>{{ t.name if t else "Geral" }}</a>
+      <a href="/jogos/quem-e{% if slug != 'geral' %}/{{ slug }}{% endif %}"{% if slug == edition and not archive %} aria-current="page"{% endif %}>{{ t.name if t else "Geral" }}</a>
       {% endfor %}
     </nav>
 

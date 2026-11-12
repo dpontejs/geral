@@ -32,6 +32,11 @@
   const plain = (text) =>
     text.normalize("NFKD").replace(/[̀-ͯ]/g, "").toUpperCase().trim();
 
+  // Today's game is also kept under its number, for when it shows up among the past ones.
+  const save = () => {
+    write(KEY, day);
+    if (!archive) write(`${KEY}:${number}`, day);
+  };
   let day = read(KEY, null);
   if (!day && archive) {
     // Played on its own day as "today's game": show it as it was left.
@@ -119,7 +124,7 @@
     day.guesses.push(word);
     try {
       await judge();
-      write(KEY, day);
+      save();
       form.reset();
       input.focus();
     } catch {

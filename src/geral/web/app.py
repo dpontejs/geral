@@ -61,6 +61,7 @@ SCORE_RE = re.compile(r"^(\d)-(\d)$")
 NICKNAME_RE = re.compile(r"^[\w' -]+$")
 STATIC = Path(__file__).resolve().parents[1] / "static"
 # The scoreboard clock: Brasília time, no daylight saving since 2019 (no tzdata in the image).
+PAST_LISTED = 30  # past puzzles linked on a game page; older ones stay playable by address
 BRASILIA = timezone(timedelta(hours=-3))
 
 templates = Jinja2Templates(directory=Path(__file__).parent / "templates")
@@ -284,16 +285,18 @@ def create_app(
         return f"/jogos/{path}" if edition == "geral" else f"/jogos/{path}/{edition}"
 
     def which_puzzle(
-        request: Request, path: str, edition: str, number: int | None, today: int, launch
+        request: Request, path: str, edition: str, asked: str | None, today: int, launch
     ) -> tuple[int, dict] | Response:
         """Today's puzzle, or a past one (`number`), with what the page needs to show which.
 
         Today's own number goes to today's address; a future (or zero) number is not found.
         A past puzzle is played like today's, but it doesn't count in the streak.
         """
+        # "3" only: "03", "abc" or "-1" would be the same page twice or a raw error.
+        number = int(asked) if asked and re.fullmatch(r"[1-9]\d{0,4}", asked) else None
         if number == today:
             return RedirectResponse(game_url(path, edition), status_code=307)
-        if number is not None and not 1 <= number < today:
+        if asked is not None and (number is None or not 1 <= number < today):
             return message(
                 request,
                 "Jogo não encontrado",
@@ -309,7 +312,7 @@ def create_app(
 
         past = [
             {"number": n, "day": day(n), "url": game_url(path, edition, n)}
-            for n in range(today - 1, 0, -1)
+            for n in range(today - 1, max(0, today - 1 - PAST_LISTED), -1)
         ]
         context = {
             "archive": number is not None,
@@ -758,7 +761,7 @@ def create_app(
     @app.get("/jogos/craque-do-dia", response_class=HTMLResponse)
     @app.get("/jogos/craque-do-dia/{edition}", response_class=HTMLResponse)
     @app.get("/jogos/craque-do-dia/{edition}/{number}", response_class=HTMLResponse)
-    def craque_page(request: Request, edition: str = "geral", number: int | None = None):
+    def craque_page(request: Request, edition: str = "geral", number: str | None = None):
         games = craque_editions().get(edition)
         if not games:
             return message(
@@ -800,7 +803,7 @@ def create_app(
     @app.get("/jogos/onde-jogou", response_class=HTMLResponse)
     @app.get("/jogos/onde-jogou/{edition}", response_class=HTMLResponse)
     @app.get("/jogos/onde-jogou/{edition}/{number}", response_class=HTMLResponse)
-    def onde_jogou_page(request: Request, edition: str = "geral", number: int | None = None):
+    def onde_jogou_page(request: Request, edition: str = "geral", number: str | None = None):
         players = career_editions().get(edition)
         if not players:
             return message(
@@ -858,7 +861,7 @@ def create_app(
     @app.get("/jogos/quem-e", response_class=HTMLResponse)
     @app.get("/jogos/quem-e/{edition}", response_class=HTMLResponse)
     @app.get("/jogos/quem-e/{edition}/{number}", response_class=HTMLResponse)
-    def quem_e_page(request: Request, edition: str = "geral", number: int | None = None):
+    def quem_e_page(request: Request, edition: str = "geral", number: str | None = None):
         players = who_editions().get(edition)
         if not players:
             return message(

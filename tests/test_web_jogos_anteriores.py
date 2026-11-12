@@ -24,7 +24,9 @@ def test_a_past_puzzle_has_its_own_page_marked_as_past(game, path) -> None:
     assert page.status_code == 200
     assert 'data-number="3"' in page.text and 'data-archive="1"' in page.text
     assert "13/11" in page.text and "não conta na sequência" in page.text
-    assert f'href="/jogos/{path}"' in page.text  # back to today's game
+    note = page.text.split('class="archive-note"')[1].split("</p>")[0]
+    assert f'href="/jogos/{path}"' in note  # back to today's game
+    assert page.text.count('aria-current="page"') == 1  # the past number, not the edition too
     assert 'class="stats"' not in page.text
 
 
@@ -37,8 +39,8 @@ def test_todays_number_goes_to_todays_page(game, path) -> None:
 
 
 @pytest.mark.parametrize("path", GAMES)
-@pytest.mark.parametrize("number", [0, 9])
-def test_future_or_zero_puzzle_is_404(game, path, number) -> None:
+@pytest.mark.parametrize("number", ["0", "9", "abc", "03", "-1"])
+def test_future_zero_or_malformed_puzzle_is_404(game, path, number) -> None:
     assert game.get(f"/jogos/{path}/geral/{number}").status_code == 404
 
 
@@ -94,3 +96,14 @@ def test_freeze_craque_records_every_edition_by_answer(tmp_path) -> None:
     geral = craque.pool(lists, "geral")
     assert frozen["geral"] == [craque.by_number(geral, n).answer for n in (1, 2, 3)]
     assert set(frozen) == {"geral"} | {s for s in lists if craque.pool(lists, s)}
+
+
+def test_the_past_list_keeps_the_last_thirty(store, mailer, clock) -> None:
+    clock.now = datetime(2027, 1, 30, 12, 0, tzinfo=UTC)  # puzzle #81
+    client = make_client(store, mailer, clock)
+
+    page = client.get("/jogos/quem-e").text
+
+    assert 'href="/jogos/quem-e/geral/80"' in page and 'href="/jogos/quem-e/geral/51"' in page
+    assert 'href="/jogos/quem-e/geral/50"' not in page
+    assert client.get("/jogos/quem-e/geral/1").status_code == 200  # still playable by address

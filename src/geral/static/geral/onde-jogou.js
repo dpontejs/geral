@@ -59,6 +59,11 @@
   clubs.sort((a, b) => rank.get(a.pais) - rank.get(b.pais) || a.nome.localeCompare(b.nome, "pt"));
   const TOP = 8; // countries shown as chips; the rest go in a menu
 
+  // Today's game is also kept under its number, for when it shows up among the past ones.
+  const save = () => {
+    write(KEY, day);
+    if (!archive) write(`${KEY}:${number}`, day);
+  };
   let day = read(KEY, null);
   if (!day && archive) {
     // Played on its own day as "today's game": show it as it was left.
@@ -222,7 +227,7 @@
   const restart = () => {
     day = { number, player, palpites: [], desistiu: false };
     verdict = null;
-    write(KEY, day);
+    save();
     form.hidden = false;
     error("A lista de clubes mudou e o jogo de hoje recomeçou.");
   };
@@ -234,7 +239,7 @@
     drawResults();
     try {
       await judge();
-      write(KEY, day);
+      save();
       error("");
     } catch (problem) {
       if (problem.status === 422) restart();

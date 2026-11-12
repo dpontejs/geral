@@ -39,6 +39,11 @@
 
   const players = JSON.parse($("qe-player-data").textContent).map((p) => ({ ...p, key: plain(p.nome) }));
 
+  // Today's game is also kept under its number, for when it shows up among the past ones.
+  const save = () => {
+    write(KEY, day);
+    if (!archive) write(`${KEY}:${number}`, day);
+  };
   let day = read(KEY, null);
   if (!day && archive) {
     // Played on its own day as "today's game": show it as it was left.
@@ -149,7 +154,7 @@
   const restart = () => {
     day = { number, player, palpites: [], desistiu: false };
     verdict = null;
-    write(KEY, day);
+    save();
     form.hidden = false;
     $("qe-tries").replaceChildren();
     $("qe-hints").replaceChildren();
@@ -163,7 +168,7 @@
     drawResults();
     try {
       await judge();
-      write(KEY, day);
+      save();
       error("");
       search.value = "";
       page = 0;
