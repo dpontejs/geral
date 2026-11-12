@@ -26,6 +26,9 @@ CANO = """{{Infobox football biography
         ("2014-2015", (2014, 2015)),
         ("1978&ndash;1990", (1978, 1990)),
         ("{{nowrap|1978–1990}}", (1978, 1990)),
+        ("1978{{ndash}}1990", (1978, 1990)),
+        ("1998–99", (1998, 1999)),
+        ("1999–00", (1999, 2000)),
         ("", None),
         ("?", None),
     ],
@@ -98,3 +101,23 @@ def test_career_rows_take_hand_made_links_for_pages_without_an_id() -> None:
     )
 
     assert unknown == [] and rows[0]["club"] == "Q541744"
+
+
+def test_parse_career_reads_underscored_infobox_and_templated_plain_names() -> None:
+    text = (
+        "{{Infobox_football_biography\n"
+        "| years1 = 2011 | clubs1 = → {{nowrap|Deportivo Pereira}} (loan)\n}}"
+    )
+
+    assert parse_career(text) == [Stint(2011, 2011, "Deportivo Pereira")]
+
+
+def test_unreadable_stints_are_reported_not_dropped() -> None:
+    text = (
+        "{{Infobox football biography\n| years1 = ? | clubs1 = [[Somewhere FC]]\n"
+        "| years2 = 2001 | clubs2 = \n}}"  # a year with no club: a real infobox quirk, skipped
+    )
+
+    rows, unknown = career_rows("Q1", parse_career(text), {}, {}, "")
+
+    assert rows == [] and unknown == ["Somewhere FC (anos ilegíveis)"]

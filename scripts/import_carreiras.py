@@ -168,10 +168,16 @@ def club_info(client: httpx.Client, qids: list[str]) -> dict[str, dict[str, str]
     return info
 
 
-def download_wikipedia(client: httpx.Client, qids: list[str], known: set[str]) -> dict:
-    """Everything the Wikipedia careers need, as one JSON-friendly dict (cached as is)."""
-    partial = WIKI_CACHE.with_suffix(".parcial.json")  # the slow part, kept if a later step fails
-    if partial.exists():
+def download_wikipedia(
+    client: httpx.Client, qids: list[str], known: set[str], resume: bool
+) -> dict:
+    """Everything the Wikipedia careers need, as one JSON-friendly dict (cached as is).
+
+    The slow part (pages and links) is kept apart until the end, so `--cache` can resume a run
+    that failed later; a plain run always downloads it again (transfers change).
+    """
+    partial = WIKI_CACHE.with_suffix(".parcial.json")
+    if resume and partial.exists():
         texts, clubs = json.loads(partial.read_text(encoding="utf-8")).values()
     else:
         titles = enwiki_titles(client, qids)
@@ -182,7 +188,10 @@ def download_wikipedia(client: httpx.Client, qids: list[str], known: set[str]) -
         clubs = page_qids(client, targets)
         partial.parent.mkdir(parents=True, exist_ok=True)
         partial.write_text(json.dumps({"texts": texts, "clubs": clubs}), encoding="utf-8")
-    info = club_info(client, sorted(set(clubs.values()) - known))
+    # Hand-made links too: their clubs need a name and a country like any other.
+    ids = set(clubs.values()) | set(load_links().values())
+    info = club_info(client, sorted(ids - known))
+    partial.unlink(missing_ok=True)
     return {"texts": texts, "clubs": clubs, "info": info}
 
 
@@ -229,7 +238,9 @@ def main() -> None:
         wiki = json.loads(WIKI_CACHE.read_text(encoding="utf-8"))
     else:
         with httpx.Client(headers=HEADERS, timeout=120) as client:
-            wiki = download_wikipedia(client, qids, {r["club"] for r in rows})
+            wiki = download_wikipedia(
+                client, qids, {r["club"] for r in rows}, resume="--cache" in sys.argv
+            )
         WIKI_CACHE.parent.mkdir(parents=True, exist_ok=True)
         WIKI_CACHE.write_text(json.dumps(wiki, ensure_ascii=False), encoding="utf-8")
     rows, unknown, fallback = merge(rows, wiki)

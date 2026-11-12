@@ -12,12 +12,14 @@ from dataclasses import dataclass
 from pathlib import Path
 
 LINKS = Path(__file__).with_name("wikipedia_links.toml")
-YEARS = re.compile(r"(\d{4})\s*(?:([–—-])\s*(\d{4})?)?")
+YEARS = re.compile(r"(\d{4})\s*(?:([–—-])\s*(\d{4}|\d{2}(?!\d))?)?")
+DASH = re.compile(r"\{\{\s*(?:s?ndash|snd|spaced ndash)\s*\}\}", re.IGNORECASE)
+WRAPPER = re.compile(r"\{\{[^{}|]*\|([^{}]*)\}\}")  # {{nowrap|...}} keeps what it wraps
 
 
 @dataclass(frozen=True)
 class Stint:
-    start: int
+    start: int | None  # None: the years could not be read (reported, not dropped)
     end: int | None  # None: still there
     target: str  # the linked page title, or the plain club name when unlinked
 
@@ -25,19 +27,23 @@ class Stint:
 def years(text: str) -> tuple[int, int | None] | None:
     """'2007–2012' -> (2007, 2012); '2011' -> (2011, 2011); '2022–' -> (2022, None)."""
     text = html.unescape(text)  # "1978&ndash;1990"
+    text = DASH.sub("–", text)  # "1978{{ndash}}1990"
     text = re.sub(r"\{\{\s*0\s*\}\}", "", text)  # {{0}}: a padding digit, not a year
-    text = re.sub(r"\{\{[^{}|]*\|([^{}]*)\}\}", r"\1", text)  # {{nowrap|1978–1990}}
+    text = WRAPPER.sub(r"\1", text)  # {{nowrap|1978–1990}}
     match = YEARS.search(text)
     if not match:
         return None
     start, dash, end = match.groups()
+    if end and len(end) == 2:  # "1998–99", "1999–00": the end in the start's century, or the next
+        century = int(start[:2]) + (1 if end < start[2:] else 0)
+        end = f"{century}{end}"
     if end:
         return int(start), int(end)
     return (int(start), None) if dash else (int(start), int(start))
 
 
 def _infobox(wikitext: str) -> str:
-    start = re.search(r"\{\{\s*Infobox football biography", wikitext, re.IGNORECASE)
+    start = re.search(r"\{\{\s*Infobox[ _]football[ _]biography", wikitext, re.IGNORECASE)
     if not start:
         return ""
     depth, i = 0, start.start()
@@ -88,7 +94,8 @@ def _club(text: str) -> str:
     link = re.search(r"\[\[([^\]|#]+)", text)
     if link:
         return link.group(1).strip()
-    plain = re.sub(r"\{\{[^}]*\}\}|'''?|\(loan\)|→", "", text)
+    plain = WRAPPER.sub(r"\1", text)  # {{nowrap|Deportivo Pereira}}
+    plain = re.sub(r"\{\{[^}]*\}\}|'''?|\(loan\)|→", "", plain)
     return " ".join(plain.split())
 
 
@@ -100,8 +107,8 @@ def parse_career(wikitext: str) -> list[Stint]:
     for n in numbers:
         club = _club(params[f"clubs{n}"])
         span = years(params.get(f"years{n}", ""))
-        if club and span:
-            stints.append(Stint(span[0], span[1], club))
+        if club:  # a year with no club happens in real infoboxes: nothing to keep
+            stints.append(Stint(*(span or (None, None)), club))
     return stints
 
 
@@ -119,6 +126,9 @@ def career_rows(
     """
     rows, unknown = [], []
     for stint in stints:
+        if stint.start is None:
+            unknown.append(f"{stint.target} (anos ilegíveis)")
+            continue
         club = (links or {}).get(stint.target) or clubs.get(stint.target)
         if club is None:
             unknown.append(stint.target)
