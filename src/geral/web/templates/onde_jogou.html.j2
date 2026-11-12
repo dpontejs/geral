@@ -4,8 +4,9 @@
 {% block head %}<link rel="stylesheet" href="/static/geral/jogos.css">{% endblock %}
 {% block content %}
 <section class="jogo wall">
-  <div class="wrap" id="oj" data-edition="{{ edition }}" data-number="{{ number }}" data-label="{{ label }}" data-player="{{ player_key }}" data-max="{{ max_wrong }}">
+  <div class="wrap" id="oj" data-edition="{{ edition }}" data-number="{{ number }}" data-archive="{{ '1' if archive else '0' }}" data-label="{{ label }}" data-player="{{ player_key }}" data-max="{{ max_wrong }}">
     <h1>Onde jogou?</h1>
+    {% if archive %}<p class="archive-note">Jogo de {{ day }} · não conta na sequência · <a href="{{ today_url }}">Jogar o de hoje →</a></p>{% endif %}
     <p class="lead">Um jogador por dia, o mesmo para todo mundo. Diga por quais clubes ele passou: cada acerto acende as passagens daquele clube. Você pode errar {{ max_wrong }} vezes.{% if team %} As passagens pelo {{ team.name }} já vêm acesas e não contam no placar.{% endif %}</p>
     <nav class="editions" aria-label="Edições">
       {% for slug, t in editions %}
@@ -39,10 +40,11 @@
       <h2 id="oj-title"></h2>
       <span class="final" id="oj-final"></span>
       <div class="actions"><button class="btn" type="button" id="oj-share">Compartilhar</button><span id="oj-copied" role="status"></span></div>
-      <div class="stats"><span><b id="oj-streak">0</b>sequência</span><span><b id="oj-wins">0</b>completos</span><span><b id="oj-played">0</b>jogos</span></div>
+      {% if not archive %}<div class="stats"><span><b id="oj-streak">0</b>sequência</span><span><b id="oj-wins">0</b>completos</span><span><b id="oj-played">0</b>jogos</span></div>{% endif %}
     </div>
 
     <p class="how">Busque pelo nome ou filtre pelo país e toque no clube. Clube que ele não defendeu conta como erro; com {{ max_wrong }} erros, ou desistindo, a carreira inteira aparece. Só clubes profissionais, sem seleção. Amanhã tem outro.</p>
+    {% if past %}<nav class="past" aria-label="Jogos anteriores"><h2>Jogos anteriores</h2><ul>{% for p in past %}<li><a href="{{ p.url }}"{% if archive and p.number == number %} aria-current="page"{% endif %}>#{{ p.number }} <small>{{ p.day }}</small></a></li>{% endfor %}</ul></nav>{% endif %}
     <p class="credit">Carreiras: <a href="https://en.wikipedia.org/">Wikipédia</a> (<a href="https://creativecommons.org/licenses/by-sa/4.0/deed.pt-br">CC BY-SA</a>) e <a href="https://www.wikidata.org/">Wikidata</a>, revisadas pela Geral. Achou um erro? Responda qualquer newsletter.</p>
   </div>
 </section>

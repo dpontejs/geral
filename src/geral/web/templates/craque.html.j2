@@ -4,8 +4,9 @@
 {% block head %}<link rel="stylesheet" href="/static/geral/jogos.css">{% endblock %}
 {% block content %}
 <section class="jogo wall">
-  <div class="wrap" id="cd" data-edition="{{ edition }}" data-number="{{ number }}" data-label="{{ label }}" data-max="{{ max_guesses }}" data-letters="{{ letters }}">
+  <div class="wrap" id="cd" data-edition="{{ edition }}" data-number="{{ number }}" data-archive="{{ '1' if archive else '0' }}" data-label="{{ label }}" data-max="{{ max_guesses }}" data-letters="{{ letters }}">
     <h1>Craque do dia</h1>
+    {% if archive %}<p class="archive-note">Jogo de {{ day }} · não conta na sequência · <a href="{{ today_url }}">Jogar o de hoje →</a></p>{% endif %}
     <p class="lead">Um ídolo ou artilheiro por dia, o mesmo para todo mundo. Chute o nome do craque, como a torcida chama: você tem {{ max_guesses }} tentativas, e cada letra diz se está no lugar certo.</p>
     <nav class="editions" aria-label="Edições">
       {% for slug, t in editions %}
@@ -32,10 +33,11 @@
       <span class="final" id="cd-final"></span>
       <p id="cd-fact" style="margin:0"></p>
       <div class="actions"><button class="btn" type="button" id="cd-share">Compartilhar</button><span id="cd-copied" role="status"></span></div>
-      <div class="stats"><span><b id="cd-streak">0</b>sequência</span><span><b id="cd-wins">0</b>acertos</span><span><b id="cd-played">0</b>jogos</span></div>
+      {% if not archive %}<div class="stats"><span><b id="cd-streak">0</b>sequência</span><span><b id="cd-wins">0</b>acertos</span><span><b id="cd-played">0</b>jogos</span></div>{% endif %}
     </div>
 
     <p class="how">Verde: letra no lugar certo. Amarelo: a letra está no nome, em outro lugar. Cinza: não está. Acentos não contam. Depois de 3 erros aparece a posição; depois de 4, a época. Amanhã tem outro.</p>
+    {% if past %}<nav class="past" aria-label="Jogos anteriores"><h2>Jogos anteriores</h2><ul>{% for p in past %}<li><a href="{{ p.url }}"{% if archive and p.number == number %} aria-current="page"{% endif %}>#{{ p.number }} <small>{{ p.day }}</small></a></li>{% endfor %}</ul></nav>{% endif %}
     <p class="credit">Listas montadas à mão pela Geral. Achou um erro? Responda qualquer newsletter.</p>
   </div>
 </section>

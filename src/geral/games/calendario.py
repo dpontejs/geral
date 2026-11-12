@@ -64,3 +64,20 @@ def freeze_games(path: Path, data: "Data", teams: dict[str, str], until: int) ->
                 for n in range(1, until + 1)
             ]
             freeze(path, game, edition, ids)
+
+
+def freeze_craque(path: Path, lists: dict, until: int) -> None:
+    """Freeze #1..#until of every "Craque do dia" edition, by answer, with these lists.
+
+    The lists are edited by hand: run `scripts/congelar_calendario.py` before changing one.
+    """
+    from geral.games import craque
+
+    editions = ["geral", *(slug for slug in sorted(lists) if slug != "geral")]
+    for edition in editions:
+        games = craque.pool(lists, edition)
+        if not games:
+            continue
+        known = answers(load(path), "craque-do-dia", edition)
+        ids = [pick(games, n, known, key=lambda c: c.answer).answer for n in range(1, until + 1)]
+        freeze(path, "craque-do-dia", edition, ids)

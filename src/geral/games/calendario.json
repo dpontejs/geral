@@ -42,5 +42,27 @@
    "Q380405",
    "Q445541"
   ]
+ },
+ "craque-do-dia": {
+  "geral": [
+   "NUNES",
+   "LEONIDAS",
+   "CANO"
+  ],
+  "flamengo": [
+   "GERSON",
+   "BEBETO",
+   "ARRASCAETA"
+  ],
+  "palmeiras": [
+   "RONY",
+   "ENDRICK",
+   "MARCOS"
+  ],
+  "vasco": [
+   "DEDE",
+   "MANECA",
+   "RIASCOS"
+  ]
  }
 }

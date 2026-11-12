@@ -271,6 +271,54 @@ def create_app(
         frozen = calendario.answers(career_state["calendar"], game, edition)
         return calendario.pick(players, number, frozen, key=lambda j: j.wikidata)
 
+    def daily_craque(edition: str, games: list[craque.Craque], number: int) -> craque.Craque:
+        """The day's craque: frozen in the calendar once played, else the edition's order."""
+        if "calendar" not in career_state:
+            career_state["calendar"] = calendario.load()
+        frozen = calendario.answers(career_state["calendar"], "craque-do-dia", edition)
+        return calendario.pick(games, number, frozen, key=lambda c: c.answer)
+
+    def game_url(path: str, edition: str, number: int | None = None) -> str:
+        if number is not None:
+            return f"/jogos/{path}/{edition}/{number}"
+        return f"/jogos/{path}" if edition == "geral" else f"/jogos/{path}/{edition}"
+
+    def which_puzzle(
+        request: Request, path: str, edition: str, number: int | None, today: int, launch
+    ) -> tuple[int, dict] | Response:
+        """Today's puzzle, or a past one (`number`), with what the page needs to show which.
+
+        Today's own number goes to today's address; a future (or zero) number is not found.
+        A past puzzle is played like today's, but it doesn't count in the streak.
+        """
+        if number == today:
+            return RedirectResponse(game_url(path, edition), status_code=307)
+        if number is not None and not 1 <= number < today:
+            return message(
+                request,
+                "Jogo não encontrado",
+                "Esse número ainda não saiu. O jogo de hoje está esperando por você.",
+                status=404,
+                link_url=game_url(path, edition),
+                link_label="Jogar o de hoje",
+            )
+        shown = number or today
+
+        def day(n: int) -> str:
+            return (launch + timedelta(days=n - 1)).strftime("%d/%m")
+
+        past = [
+            {"number": n, "day": day(n), "url": game_url(path, edition, n)}
+            for n in range(today - 1, 0, -1)
+        ]
+        context = {
+            "archive": number is not None,
+            "day": day(shown),
+            "today_url": game_url(path, edition),
+            "past": past,
+        }
+        return shown, context
+
     def career_number() -> int:
         return max(1, onde_jogou.puzzle_number(now().astimezone(BRASILIA).date()))
 
@@ -709,7 +757,8 @@ def create_app(
 
     @app.get("/jogos/craque-do-dia", response_class=HTMLResponse)
     @app.get("/jogos/craque-do-dia/{edition}", response_class=HTMLResponse)
-    def craque_page(request: Request, edition: str = "geral"):
+    @app.get("/jogos/craque-do-dia/{edition}/{number}", response_class=HTMLResponse)
+    def craque_page(request: Request, edition: str = "geral", number: int | None = None):
         games = craque_editions().get(edition)
         if not games:
             return message(
@@ -718,14 +767,20 @@ def create_app(
                 "Essa torcida ainda não tem o Craque do dia. Jogue a edição geral enquanto isso.",
                 status=404,
             )
-        number = craque_number()
+        found = which_puzzle(
+            request, "craque-do-dia", edition, number, craque_number(), craque.LAUNCH
+        )
+        if isinstance(found, Response):
+            return found
+        number, when = found
         return page(
             request,
             "craque.html.j2",
             edition=edition,
             team=listed.get(edition),
             number=number,
-            letters=len(craque.by_number(games, number).answer),
+            **when,
+            letters=len(daily_craque(edition, games, number).answer),
             editions=[(slug, listed.get(slug)) for slug in craque_editions()],
             max_guesses=craque.MAX_GUESSES,
         )
@@ -735,7 +790,7 @@ def create_app(
         games = craque_editions().get(edition)
         if not games or not 1 <= number <= craque_number():
             return JSONResponse({"detail": "puzzle not found"}, status_code=404)
-        answer = craque.by_number(games, number)
+        answer = daily_craque(edition, games, number)
         if not all(craque.valid_guess(answer, g) for g in body.guesses):
             return JSONResponse(
                 {"detail": f"cada chute precisa de {len(answer.answer)} letras"}, status_code=422
@@ -744,7 +799,8 @@ def create_app(
 
     @app.get("/jogos/onde-jogou", response_class=HTMLResponse)
     @app.get("/jogos/onde-jogou/{edition}", response_class=HTMLResponse)
-    def onde_jogou_page(request: Request, edition: str = "geral"):
+    @app.get("/jogos/onde-jogou/{edition}/{number}", response_class=HTMLResponse)
+    def onde_jogou_page(request: Request, edition: str = "geral", number: int | None = None):
         players = career_editions().get(edition)
         if not players:
             return message(
@@ -753,7 +809,12 @@ def create_app(
                 "Essa torcida ainda não tem o Onde jogou?. Jogue a edição geral enquanto isso.",
                 status=404,
             )
-        number = career_number()
+        found = which_puzzle(
+            request, "onde-jogou", edition, number, career_number(), onde_jogou.LAUNCH
+        )
+        if isinstance(found, Response):
+            return found
+        number, when = found
         data = careers()
         jogador = daily_player("onde-jogou", edition, players, number)
         return page(
@@ -762,6 +823,7 @@ def create_app(
             edition=edition,
             team=listed.get(edition),
             number=number,
+            **when,
             jogador=jogador,
             # Tells the page the day's player changed (data update) without naming them.
             player_key=hashlib.sha256(f"{secret}:{number}:{jogador.wikidata}".encode()).hexdigest()[
@@ -795,7 +857,8 @@ def create_app(
 
     @app.get("/jogos/quem-e", response_class=HTMLResponse)
     @app.get("/jogos/quem-e/{edition}", response_class=HTMLResponse)
-    def quem_e_page(request: Request, edition: str = "geral"):
+    @app.get("/jogos/quem-e/{edition}/{number}", response_class=HTMLResponse)
+    def quem_e_page(request: Request, edition: str = "geral", number: int | None = None):
         players = who_editions().get(edition)
         if not players:
             return message(
@@ -804,7 +867,10 @@ def create_app(
                 "Essa torcida ainda não tem o Quem é?. Jogue a edição geral enquanto isso.",
                 status=404,
             )
-        number = who_number()
+        found = which_puzzle(request, "quem-e", edition, number, who_number(), quem_e.LAUNCH)
+        if isinstance(found, Response):
+            return found
+        number, when = found
         data = careers()
         jogador = daily_player("quem-e", edition, players, number)
         return page(
@@ -813,6 +879,7 @@ def create_app(
             edition=edition,
             team=listed.get(edition),
             number=number,
+            **when,
             jogador=jogador,
             clubes=data.clubes,
             player_key=hashlib.sha256(

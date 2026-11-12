@@ -1,8 +1,8 @@
-"""Freeze the daily answers of the careers games up to tomorrow (Brasília), with the current data.
+"""Freeze the daily answers of every game up to tomorrow (Brasília), with the current data.
 
 `import_carreiras.py` runs this before writing new careers, so a data update never changes a
-puzzle already played (or today's, mid-day). Run it by hand with `--carreiras <file>` to freeze
-with another careers file, e.g. the one before an update.
+puzzle already played (or today's, mid-day). Run it by hand before editing a "Craque do dia" list
+(`src/geral/games/craques/`), and with `--carreiras <file>` to freeze with another careers file.
 """
 
 import sys
@@ -10,7 +10,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 from zoneinfo import ZoneInfo
 
-from geral.games import calendario, onde_jogou
+from geral.games import calendario, craque, onde_jogou
 from geral.teams import load_teams
 
 BRASILIA = ZoneInfo("America/Sao_Paulo")
@@ -21,6 +21,7 @@ def freeze_until_tomorrow(careers: Path = onde_jogou.CAREERS) -> int:
     until = onde_jogou.puzzle_number(tomorrow)
     teams = {slug: team.name for slug, team in load_teams().items() if team.listed}
     calendario.freeze_games(calendario.CALENDAR, onde_jogou.load(careers), teams, until)
+    calendario.freeze_craque(calendario.CALENDAR, craque.load_lists(), until)
     return until
 
 

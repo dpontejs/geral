@@ -6,11 +6,12 @@
   if (!root) return;
   const { edition, label, player } = root.dataset;
   const number = Number(root.dataset.number);
+  const archive = root.dataset.archive === "1"; // a past puzzle: its own save, no streak
   const max = Number(root.dataset.max);
   const $ = (id) => document.getElementById(id);
   const form = $("oj-form");
   const search = $("oj-search");
-  const KEY = `onde-jogou:${edition}`;
+  const KEY = archive ? `onde-jogou:${edition}:${number}` : `onde-jogou:${edition}`;
   const PAGE = 12;
   const ALL = "Todos";
 
@@ -59,6 +60,11 @@
   const TOP = 8; // countries shown as chips; the rest go in a menu
 
   let day = read(KEY, null);
+  if (!day && archive) {
+    // Played on its own day as "today's game": show it as it was left.
+    const daily = read(`onde-jogou:${edition}`, null);
+    if (daily && daily.number === number) day = daily;
+  }
   // A new day, or the list changed today's player: start over.
   if (!day || day.number !== number || day.player !== player) {
     day = { number, player, palpites: [], desistiu: false };
@@ -158,6 +164,7 @@
   };
 
   const finish = () => {
+    if (archive) return; // past puzzles don't count in the streak
     const stats = read(`${KEY}:stats`, { streak: 0, wins: 0, played: 0, last: 0, counted: 0 });
     if (stats.counted !== number) {
       stats.played += 1;

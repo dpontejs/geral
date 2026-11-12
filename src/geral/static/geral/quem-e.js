@@ -6,11 +6,12 @@
   if (!root) return;
   const { edition, label, player } = root.dataset;
   const number = Number(root.dataset.number);
+  const archive = root.dataset.archive === "1"; // a past puzzle: its own save, no streak
   const max = Number(root.dataset.max);
   const $ = (id) => document.getElementById(id);
   const form = $("qe-form");
   const search = $("qe-search");
-  const KEY = `quem-e:${edition}`;
+  const KEY = archive ? `quem-e:${edition}:${number}` : `quem-e:${edition}`;
   const PAGE = 12;
 
   const read = (key, fallback) => {
@@ -39,6 +40,11 @@
   const players = JSON.parse($("qe-player-data").textContent).map((p) => ({ ...p, key: plain(p.nome) }));
 
   let day = read(KEY, null);
+  if (!day && archive) {
+    // Played on its own day as "today's game": show it as it was left.
+    const daily = read(`quem-e:${edition}`, null);
+    if (daily && daily.number === number) day = daily;
+  }
   // A new day, or the list changed today's player: start over.
   if (!day || day.number !== number || day.player !== player) {
     day = { number, player, palpites: [], desistiu: false };
@@ -85,6 +91,7 @@
   };
 
   const finish = () => {
+    if (archive) return; // past puzzles don't count in the streak
     const stats = read(`${KEY}:stats`, { streak: 0, wins: 0, played: 0, last: 0, counted: 0 });
     if (stats.counted !== number) {
       stats.played += 1;

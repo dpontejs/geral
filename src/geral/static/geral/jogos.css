@@ -94,3 +94,14 @@ select.chip { appearance: auto; }
 /* Players have a one-line name and no country: smaller squares, two columns on a phone. */
 #qe-results { grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); grid-auto-rows: 56px; }
 #qe-results .club { justify-content: center; }
+
+/* jogos anteriores */
+.archive-note { margin: 0; align-self: flex-start; background: var(--paper); color: var(--ink); border: 3px solid var(--ink); padding: 8px 12px; font-weight: 600; }
+.archive-note a { font-weight: 700; }
+.past { display: flex; flex-direction: column; gap: 12px; }
+.past h2 { font-size: 28px; color: #fff; text-shadow: 3px 3px 0 var(--turf); margin: 0; }
+.past ul { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.past a { display: inline-flex; align-items: baseline; gap: 6px; min-height: 44px; box-sizing: border-box; padding: 10px 12px; background: var(--paper); color: var(--ink); border: 3px solid var(--ink); font: 800 18px/1 var(--display); text-decoration: none; }
+.past a small { font: 600 13px/1 var(--body); color: var(--ink-soft); }
+.past a[aria-current] { background: var(--ink); color: var(--lamp); }
+.past a[aria-current] small { color: var(--lamp); }
