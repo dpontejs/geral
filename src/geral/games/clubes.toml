@@ -330,3 +330,11 @@ apelidos = ["FC Anji Makhachkala", "Anzhi"]
 
 [Q1492]
 ignorar = true  # a cidade de Barcelona, listada como clube na carreira do Valdivia
+
+[Q2332493]  # Ribeirão Preto (SP): Sócrates, Weverton
+nome = "Botafogo-SP"
+apelidos = ["Botafogo de Ribeirão Preto"]
+
+[Q2911646]  # João Pessoa (PB): Nenê
+nome = "Botafogo-PB"
+apelidos = ["Belo"]

@@ -22,6 +22,17 @@ O arquivo de carreiras também vai servir ao "Quem é?" (próximo PR).
 
 - `src/geral/games/jogadores.toml`: a lista curada (`nome` como a torcida chama, `wikidata`).
   `scripts/find_wikidata.py` ajuda a montar; a revisão é humana.
+- Fonte das carreiras (desde 12/11/2026): o quadro de carreira da Wikipédia em inglês
+  (`Infobox football biography`, campos `yearsN`/`clubsN`, empréstimos incluídos), lido por
+  `geral/games/wikipedia.py`; cada clube é um link cuja página dá o id do Wikidata, então nomes,
+  apelidos e `clubes.toml` seguem iguais. O Wikidata ficou para posição, nome e país dos clubes e
+  para quem não tem quadro na Wikipédia. Motivo: o Wikidata atrasa transferências (Cano ainda no
+  Vasco, Vegetti no Colón); o Transfermarkt foi descartado (sem API, termos proíbem raspagem).
+  Créditos nas páginas: Wikipédia (CC BY-SA) e Wikidata.
+- Calendário congelado (`src/geral/games/calendario.json`, `geral/games/calendario.py`): as
+  respostas já jogadas (e a de amanhã) de cada jogo e edição, por id do Wikidata. A importação
+  congela antes de gravar dados novos (`scripts/congelar_calendario.py`), então uma atualização
+  não troca o jogo do dia nem os números antigos; só os números seguintes seguem a ordem nova.
 - `scripts/import_carreiras.py`: consultas SPARQL ao Wikidata em blocos (com pausa e `Retry-After`;
   a resposta bruta fica em `~/.cache/geral/`, e `--cache` refaz o arquivo sem consultar de novo)
   e `convert(rows) -> dict` puro, que tira seleções e base, descarta passagens sem ano de início,
@@ -74,6 +85,6 @@ uv run uvicorn geral.web.app:create_app --factory  # jogar /jogos/onde-jogou e /
 
 ## Riscos e dúvidas abertas
 
-- Wikidata tem erros (o Romário aparece com um "Ajax" sem data). O arquivo gerado passa por
-  revisão antes do merge; correção vai no Wikidata ou em `clubes.toml`.
+- As fontes têm erros (o Romário aparecia com um "Ajax" sem data no Wikidata). O arquivo gerado
+  passa por revisão antes do merge; correção vai na fonte ou em `clubes.toml`.
 - Empréstimos curtos contam como clube: o torcedor pode achar injusto. Ajustável depois.
