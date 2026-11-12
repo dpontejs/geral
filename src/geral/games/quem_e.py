@@ -46,12 +46,13 @@ class Verdict(BaseModel):
     reveal: Reveal | None
 
 
-def judge(data: Data, jogador: Jogador, palpites: list[str]) -> Verdict:
-    """`palpites`: Wikidata ids of the players picked (the API rejects unknown ones)."""
+def judge(data: Data, jogador: Jogador, palpites: list[str], desistiu: bool = False) -> Verdict:
+    """`palpites`: Wikidata ids of the players picked (the API rejects unknown ones);
+    `desistiu`: the player gave up, so the game ends and the answer shows."""
     names = {j.wikidata: j.nome for j in data.jogadores}
     guesses = list(dict.fromkeys(palpites))  # a repeated guess counts once
     solved = jogador.wikidata in guesses
-    over = solved or len(guesses) >= MAX_GUESSES
+    over = solved or desistiu or len(guesses) >= MAX_GUESSES
     misses = len(guesses) - (1 if solved else 0)
     hints = []
     if misses >= POSITION_HINT_AFTER and jogador.posicao:

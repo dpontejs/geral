@@ -76,3 +76,27 @@ def test_api_rejects_future_or_zero_puzzle(game, number) -> None:
 
 def test_portal_links_who_game(game) -> None:
     assert 'href="/jogos/quem-e"' in game.get("/").text
+
+
+def test_api_gives_up_with_or_without_guesses(game) -> None:
+    data, jogador = today()
+    other = next(j for j in data.jogadores if j.wikidata != jogador.wikidata)
+
+    early = game.post(f"{API}/geral/8", json={"palpites": [], "desistiu": True}).json()
+    later = game.post(
+        f"{API}/geral/8", json={"palpites": [other.wikidata], "desistiu": True}
+    ).json()
+
+    for verdict in (early, later):
+        assert verdict["over"] and not verdict["solved"]
+        assert verdict["reveal"]["nome"] == jogador.nome
+
+
+def test_api_needs_a_guess_unless_giving_up(game) -> None:
+    assert game.post(f"{API}/geral/8", json={"palpites": []}).status_code == 422
+
+
+def test_game_page_has_a_give_up_button(game) -> None:
+    page = game.get("/jogos/quem-e").text
+
+    assert 'id="qe-give-up"' in page and ">Desistir<" in page
