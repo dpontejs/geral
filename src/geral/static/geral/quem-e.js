@@ -40,7 +40,9 @@
 
   let day = read(KEY, null);
   // A new day, or the list changed today's player: start over.
-  if (!day || day.number !== number || day.player !== player) day = { number, player, palpites: [] };
+  if (!day || day.number !== number || day.player !== player) {
+    day = { number, player, palpites: [], desistiu: false };
+  }
   let verdict = null;
   let busy = false;
   let page = 0;
@@ -125,7 +127,7 @@
     const response = await fetch(`/api/jogos/quem-e/${edition}/${number}`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ palpites: day.palpites }),
+      body: JSON.stringify({ palpites: day.palpites, desistiu: Boolean(day.desistiu) }),
     });
     if (!response.ok) {
       const problem = new Error(`HTTP ${response.status}`);
@@ -138,7 +140,7 @@
 
   // Saved picks the server no longer knows (the player list changed): start today over.
   const restart = () => {
-    day = { number, player, palpites: [] };
+    day = { number, player, palpites: [], desistiu: false };
     verdict = null;
     write(KEY, day);
     form.hidden = false;
@@ -147,10 +149,10 @@
     error("A lista de jogadores mudou e o jogo de hoje recomeçou.");
   };
 
-  const guess = async (id) => {
-    if (busy || day.palpites.length >= max) return;
+  const play = async (change, undo) => {
+    if (busy) return;
     busy = true; // one pick in flight at a time
-    day.palpites.push(id);
+    change();
     drawResults();
     try {
       await judge();
@@ -161,13 +163,21 @@
     } catch (problem) {
       if (problem.status === 422) restart();
       else {
-        day.palpites.pop();
+        undo();
         error("Não deu para conferir agora. Tente de novo.");
       }
     } finally {
       busy = false;
       drawResults();
     }
+  };
+
+  const guess = (id) => {
+    if (day.palpites.length >= max) return;
+    play(
+      () => day.palpites.push(id),
+      () => day.palpites.pop(),
+    );
   };
 
   search.addEventListener("input", () => {
@@ -179,6 +189,12 @@
     const found = matches();
     if (found.length === 1 && !day.palpites.includes(found[0].id)) guess(found[0].id);
   });
+  $("qe-give-up").addEventListener("click", () =>
+    play(
+      () => (day.desistiu = true),
+      () => (day.desistiu = false),
+    ),
+  );
   $("qe-prev").addEventListener("click", () => {
     page -= 1;
     drawResults();
@@ -190,7 +206,8 @@
 
   $("qe-share").addEventListener("click", async () => {
     const score = verdict.solved ? verdict.rows.length : "X";
-    const squares = verdict.rows.map((row) => (row.certo ? "🟩" : "🟥")).join("");
+    // Giving up before any guess still shares a line, not an empty one.
+    const squares = verdict.rows.map((row) => (row.certo ? "🟩" : "🟥")).join("") || "🏳️";
     const text = `Quem é? #${number} · ${label} ${score}/${max}\n${squares}\n${location.href}`;
     try {
       if (navigator.share) await navigator.share({ text });
@@ -204,7 +221,7 @@
   });
 
   drawResults();
-  if (day.palpites.length) {
+  if (day.palpites.length || day.desistiu) {
     form.hidden = true; // until we know whether today's game is over
     judge().catch((problem) => {
       if (problem.status === 422) restart();
