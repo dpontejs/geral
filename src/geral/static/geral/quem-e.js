@@ -206,7 +206,8 @@
 
   $("qe-share").addEventListener("click", async () => {
     const score = verdict.solved ? verdict.rows.length : "X";
-    const squares = verdict.rows.map((row) => (row.certo ? "🟩" : "🟥")).join("");
+    // Giving up before any guess still shares a line, not an empty one.
+    const squares = verdict.rows.map((row) => (row.certo ? "🟩" : "🟥")).join("") || "🏳️";
     const text = `Quem é? #${number} · ${label} ${score}/${max}\n${squares}\n${location.href}`;
     try {
       if (navigator.share) await navigator.share({ text });
