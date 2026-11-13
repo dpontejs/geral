@@ -14,6 +14,8 @@ from pathlib import Path
 LINKS = Path(__file__).with_name("wikipedia_links.toml")
 YEARS = re.compile(r"(\d{4})\s*(?:([–—-])\s*(\d{4}|\d{2}(?!\d))?)?")
 DASH = re.compile(r"\{\{\s*(?:s?ndash|snd|spaced ndash)\s*\}\}", re.IGNORECASE)
+SELECAO_PAGE = "Brazil national football team"  # the senior team; U-20 and Olympic have own pages
+SQUAD_PLAYER = re.compile(r"\{\{\s*nat fs (?:g )?player\b[^\n]*?\|\s*name\s*=\s*\[\[([^\]|#]+)")
 WRAPPER = re.compile(r"\{\{[^{}|]*\|([^{}]*)\}\}")  # {{nowrap|...}} keeps what it wraps
 
 
@@ -110,6 +112,18 @@ def parse_career(wikitext: str) -> list[Stint]:
         if club:  # a year with no club happens in real infoboxes: nothing to keep
             stints.append(Stint(*(span or (None, None)), club))
     return stints
+
+
+def national_teams(wikitext: str) -> list[str]:
+    """The national teams of the infobox (youth and Olympic included), as linked page titles."""
+    params = _params(_infobox(wikitext))
+    numbers = sorted(int(k[12:]) for k in params if re.fullmatch(r"nationalteam\d+", k))
+    return [team for n in numbers if (team := _club(params[f"nationalteam{n}"]))]
+
+
+def squad_players(wikitext: str) -> list[str]:
+    """The linked players of a "FIFA World Cup squads" page (`{{nat fs g player|name=[[…]]}}`)."""
+    return SQUAD_PLAYER.findall(wikitext)
 
 
 def career_rows(

@@ -1,6 +1,14 @@
 import pytest
 
-from geral.games.wikipedia import Stint, career_rows, parse_career, years
+from geral.games.wikipedia import (
+    SELECAO_PAGE,
+    Stint,
+    career_rows,
+    national_teams,
+    parse_career,
+    squad_players,
+    years,
+)
 
 CANO = """{{Infobox football biography
 | name = Germán Cano
@@ -121,3 +129,30 @@ def test_unreadable_stints_are_reported_not_dropped() -> None:
     rows, unknown = career_rows("Q1", parse_career(text), {}, {}, "")
 
     assert rows == [] and unknown == ["Somewhere FC (anos ilegíveis)"]
+
+
+def test_national_teams_reads_the_senior_teams_only() -> None:
+    text = """{{Infobox football biography
+| name = Someone
+| nationalyears1 = 2003 | nationalteam1 = [[Brazil national under-20 football team|Brazil U20]]
+| nationalyears2 = 2008 | nationalteam2 = [[Brazil Olympic football team|Brazil U23]]
+| nationalyears3 = 2006–2014 | nationalteam3 = {{nowrap|[[Brazil national football team|Brazil]]}}
+}}"""
+    assert national_teams(text) == [
+        "Brazil national under-20 football team",
+        "Brazil Olympic football team",
+        "Brazil national football team",
+    ]
+    youth_only = text.replace("[[Brazil national football team|Brazil]]", "")
+    assert SELECAO_PAGE in national_teams(text)
+    assert SELECAO_PAGE not in national_teams(youth_only)
+
+
+def test_squad_players_reads_the_nat_fs_links() -> None:
+    text = """==Group A==
+{{nat fs g start}}
+{{nat fs g player|no=1|pos=GK|name=[[Hernán Galíndez]]|club=[[S.D. Aucas|Aucas]]}}
+{{nat fs g player|no=2|pos=DF|name=[[Félix Torres (footballer, born 1997)|Félix Torres]]}}
+{{nat fs g player|no=3|pos=DF|name=Unlinked Person|club=[[Santos Laguna]]}}
+{{nat fs end}}"""
+    assert squad_players(text) == ["Hernán Galíndez", "Félix Torres (footballer, born 1997)"]
