@@ -555,9 +555,9 @@
    "pais": "Brasil"
   },
   "Q109558591": {
-   "nome": "Bela Vista Futebol Clube",
+   "nome": "Bela Vista",
    "apelidos": [
-    "Bela Vista"
+    "Bela Vista Futebol Clube"
    ],
    "pais": "Brasil"
   },
@@ -989,9 +989,9 @@
    "pais": "Paraguai"
   },
   "Q1392845": {
-   "nome": "Nacional Esporte Clube Ltda",
+   "nome": "Nacional-MG",
    "apelidos": [
-    "Nacional-MG"
+    "Nacional Esporte Clube Ltda"
    ],
    "pais": "Brasil"
   },
@@ -1048,9 +1048,9 @@
    "pais": "Bulgária"
   },
   "Q14646887": {
-   "nome": "São Gonçalo Futebol Clube (Rio Grande do Norte)",
+   "nome": "São Gonçalo",
    "apelidos": [
-    "São Gonçalo"
+    "São Gonçalo Futebol Clube (Rio Grande do Norte)"
    ],
    "pais": "Brasil"
   },
@@ -1166,9 +1166,9 @@
    "pais": "Brasil"
   },
   "Q16320": {
-   "nome": "Club Atlético Peñarol",
+   "nome": "Peñarol",
    "apelidos": [
-    "Peñarol"
+    "Club Atlético Peñarol"
    ],
    "pais": "Uruguai"
   },
@@ -2035,9 +2035,9 @@
    "pais": "Portugal"
   },
   "Q216503": {
-   "nome": "Marítimo Funchal",
+   "nome": "Marítimo",
    "apelidos": [
-    "Marítimo"
+    "Marítimo Funchal"
    ],
    "pais": "Portugal"
   },
@@ -2777,9 +2777,9 @@
    "pais": "Inglaterra"
   },
   "Q2714208": {
-   "nome": "Canoas Sport Club",
+   "nome": "Canoas",
    "apelidos": [
-    "Canoas"
+    "Canoas Sport Club"
    ],
    "pais": "Brasil"
   },
@@ -3050,9 +3050,9 @@
    "pais": "Brasil"
   },
   "Q2868228": {
-   "nome": "Associação Atlética Rioverdense",
+   "nome": "Rioverdense",
    "apelidos": [
-    "Rioverdense"
+    "Associação Atlética Rioverdense"
    ],
    "pais": "Brasil"
   },
@@ -3477,9 +3477,9 @@
    "pais": "Brasil"
   },
   "Q3187885": {
-   "nome": "Juazeiro Social Clube",
+   "nome": "Juazeiro",
    "apelidos": [
-    "Juazeiro"
+    "Juazeiro Social Clube"
    ],
    "pais": "Brasil"
   },
@@ -4517,9 +4517,9 @@
    "pais": "Outros"
   },
   "Q499616": {
-   "nome": "Club Nacional de Football",
+   "nome": "Nacional",
    "apelidos": [
-    "Nacional"
+    "Club Nacional de Football"
    ],
    "pais": "Uruguai"
   },
@@ -5452,9 +5452,9 @@
    "pais": "Brasil"
   },
   "Q65165267": {
-   "nome": "Betim Futebol",
+   "nome": "Betim",
    "apelidos": [
-    "Betim"
+    "Betim Futebol"
    ],
    "pais": "Brasil"
   },
@@ -8355,7 +8355,7 @@
   {
    "wikidata": "Q9661984",
    "nome": "Borçato",
-   "posicao": "Volante, zagueiro",
+   "posicao": "Volante e zagueiro",
    "clubes": [
     {
      "clube": "Q2622531",
@@ -10219,7 +10219,7 @@
   {
    "wikidata": "Q619109",
    "nome": "Eduardo Neto",
-   "posicao": "Volante, zagueiro, e Lateral-esquerdo",
+   "posicao": "Volante, zagueiro e Lateral-esquerdo",
    "clubes": [
     {
      "clube": "Q198032",
@@ -10374,7 +10374,7 @@
   {
    "wikidata": "Q3051783",
    "nome": "Eltinho",
-   "posicao": "Lateral-esquerdo, Volante, MeiaAtacante",
+   "posicao": "Lateral-esquerdo, Volante e MeiaAtacante",
    "clubes": [
     {
      "clube": "Q838534",
@@ -17217,7 +17217,7 @@
   {
    "wikidata": "Q20048242",
    "nome": "Michel Benhami",
-   "posicao": "Volante, lateral-esquerdo",
+   "posicao": "Volante e lateral-esquerdo",
    "clubes": [
     {
      "clube": "Q1029041",
@@ -17902,7 +17902,7 @@
   {
    "wikidata": "Q7560555",
    "nome": "Somália (Paulo Rogério Reis Silva)",
-   "posicao": "Volante, lateral, meia",
+   "posicao": "Volante, lateral e meia",
    "clubes": [
     {
      "clube": "Q2627475",
@@ -18222,7 +18222,7 @@
   {
    "wikidata": "Q20641376",
    "nome": "Rafinha (Rafael Diniz Alves e Silva)",
-   "posicao": "Meia, atacante",
+   "posicao": "Meia e atacante",
    "clubes": [
     {
      "clube": "Q3277878",
@@ -20378,7 +20378,7 @@
   {
    "wikidata": "Q10371759",
    "nome": "Simão",
-   "posicao": "Lateral-direito, meio-campista",
+   "posicao": "Lateral-direito e meio-campista",
    "clubes": [
     {
      "clube": "Q1133475",
@@ -20452,7 +20452,7 @@
   },
   {
    "wikidata": "Q20048396",
-   "nome": "Suéliton",
+   "nome": "Suéliton (Suéliton Florencio Nogueira)",
    "posicao": "Zagueiro",
    "clubes": [
     {
@@ -20553,7 +20553,7 @@
   },
   {
    "wikidata": "Q3774512",
-   "nome": "Sueliton",
+   "nome": "Sueliton (Sueliton Pereira de Aguiar)",
    "posicao": "Lateral-direito",
    "clubes": [
     {
@@ -22685,7 +22685,7 @@
   },
   {
    "wikidata": "Q794626",
-   "nome": "Aílton",
+   "nome": "Aílton (Aílton do Nascimento Correia)",
    "posicao": "Meia",
    "clubes": [
     {
@@ -22790,7 +22790,7 @@
   },
   {
    "wikidata": "Q17318941",
-   "nome": "Ailton",
+   "nome": "Ailton (Ailton Ferreira Silva)",
    "posicao": "Lateral-esquerdo",
    "clubes": [
     {
@@ -25880,7 +25880,7 @@
   {
    "wikidata": "Q584219",
    "nome": "César Prates",
-   "posicao": "Lateral-direito e lateral-esquerdo e meia",
+   "posicao": "Lateral-direito, lateral-esquerdo e meia",
    "clubes": [
     {
      "clube": "Q80845",
@@ -26255,7 +26255,7 @@
   {
    "wikidata": "Q16939873",
    "nome": "Cleisson",
-   "posicao": "Volante",
+   "posicao": "Atacante e volante",
    "clubes": [
     {
      "clube": "Q188277",
@@ -27715,7 +27715,7 @@
   {
    "wikidata": "Q10270535",
    "nome": "Edson Gaúcho",
-   "posicao": "",
+   "posicao": "Zagueiro",
    "clubes": [
     {
      "clube": "Q5136497",
@@ -30400,7 +30400,7 @@
   {
    "wikidata": "Q16940068",
    "nome": "Héctor Cincunegui",
-   "posicao": "Lateral-direito / esquerdo",
+   "posicao": "Lateral-direito e esquerdo",
    "clubes": [
     {
      "clube": "Q642335",
@@ -36313,7 +36313,7 @@
   {
    "wikidata": "Q7116576",
    "nome": "Oziel",
-   "posicao": "Lateral-direito e volante e meia",
+   "posicao": "Lateral-direito, volante e meia",
    "clubes": [
     {
      "clube": "Q80958",
@@ -41424,7 +41424,7 @@
   {
    "wikidata": "Q124153493",
    "nome": "Wallace Pernambucano",
-   "posicao": "Meia, atacante",
+   "posicao": "Meia e atacante",
    "clubes": [
     {
      "clube": "Q4810230",
@@ -42014,7 +42014,7 @@
   {
    "wikidata": "Q4020202",
    "nome": "Willian Magrão",
-   "posicao": "Volante e/ou zagueiro",
+   "posicao": "Volante e e ou zagueiro",
    "clubes": [
     {
      "clube": "Q221695",

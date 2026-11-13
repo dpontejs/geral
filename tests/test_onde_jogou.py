@@ -342,9 +342,9 @@ def test_real_abc_edition_has_a_month_of_players() -> None:
 def test_real_player_names_are_unique() -> None:
     from collections import Counter
 
-    from geral.games.onde_jogou import load
+    from geral.games.onde_jogou import load, normalize
 
-    names = Counter(j.nome for j in load().jogadores)
+    names = Counter(normalize(j.nome) for j in load().jogadores)  # the picker ignores accents
 
     assert [n for n, k in names.items() if k > 1] == []
 

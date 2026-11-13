@@ -89,8 +89,9 @@ def position(raw: str) -> str:
     text = LINE.sub(" e ", plain(raw))
     text = re.sub(r"\bex[- ]", "", text, flags=re.IGNORECASE)  # retired: the career is the point
     text = text.replace("(", " e ").replace(")", " ")  # "Treinador (ex meio-campista)"
-    parts = [" ".join(p.split()) for p in re.split(r"(?<!\S)e(?!\S)", text)]
-    text = " e ".join(p for p in parts if p and not STAFF.search(p))  # a coach's years
+    parts = [" ".join(p.split()) for p in re.split(r"(?<!\S)e(?!\S)|[,/;]", text)]
+    kept = [p for p in parts if p and not STAFF.search(p)]  # a coach's years
+    text = " e ".join([", ".join(kept[:-1]), kept[-1]]) if len(kept) > 1 else "".join(kept)
     return text[:1].upper() + text[1:]
 
 
@@ -145,7 +146,11 @@ def build(
         kept.append({"wikidata": page["qid"], "nome": player["nome"], "pagina": title})
 
     careers = convert(kept, rows, fixes)
-    _name_clashes_in_full(careers["clubes"], info, fixes, taken or {})
+    players_at: dict[str, int] = {}
+    for jogador in careers["jogadores"]:
+        for qid in {s["clube"] for s in jogador["clubes"]}:
+            players_at[qid] = players_at.get(qid, 0) + 1
+    _name_clashes_in_full(careers["clubes"], info, fixes, taken or {}, players_at)
     pages_of = {p["wikidata"]: p["pagina"] for p in kept}
     for jogador in careers["jogadores"]:
         jogador["edicoes"] = editions[pages_of[jogador["wikidata"]]]
@@ -336,30 +341,42 @@ def club_info(client: httpx.Client, qids: list[str], pause: float = 1) -> dict[s
 
 
 def _name_clashes_in_full(
-    clubes: dict[str, dict], info: dict[str, dict], fixes: dict[str, dict], taken: dict[str, str]
+    clubes: dict[str, dict],
+    info: dict[str, dict],
+    fixes: dict[str, dict],
+    taken: dict[str, str],
+    players_at: dict[str, int],
 ) -> None:
-    """Two clubs shown as "Nacional" can't both be typed: the new ones take the full label, and
-    the country too when the full label is shared ("Club Atlético River Plate (Uruguai)")."""
+    """Two clubs shown as "Peñarol" can't both be typed. A club of the main file (or named in
+    clubes.toml) keeps its name; otherwise the club with the most players does (ties: lowest
+    id). The others take the full label, and the country too when the label is also shared."""
 
-    def owners(names: dict[str, str]) -> dict[str, set[str]]:
-        found: dict[str, set[str]] = {}
-        for qid, name in names.items():
-            found.setdefault(normalize(name), set()).add(qid)
-        return found
+    def fixed(qid: str) -> bool:
+        return qid in taken or "nome" in fixes.get(qid, {})
 
-    def free(qid: str) -> bool:  # named here, not by the main file or clubes.toml
-        return qid not in taken and "nome" not in fixes.get(qid, {})
+    def keeper(group: set[str]) -> set[str]:
+        held = {q for q in group if fixed(q)}
+        if held:
+            return held
+        return {min(group, key=lambda q: (-players_at.get(q, 0), int(q[1:])))}
 
     names = {**{q: c["nome"] for q, c in clubes.items() if q not in taken}, **taken}
     for step in ("label", "country"):
-        clashes = owners(names)
-        for qid in [q for q in clubes if free(q) and len(clashes[normalize(names[q])]) > 1]:
-            about = info.get(qid, {})
-            if step == "label" and about.get("label"):
-                names[qid] = about["label"]
-            elif step == "country" and about.get("country"):
-                names[qid] = f"{names[qid]} ({about['country']})"
+        groups: dict[str, set[str]] = {}
+        for qid, name in names.items():
+            groups.setdefault(normalize(name), set()).add(qid)
+        for group in (g for g in groups.values() if len(g) > 1):
+            for qid in (
+                group - keeper(group) if step == "label" else group - {*filter(fixed, group)}
+            ):
+                about = info.get(qid, {})
+                if qid not in clubes or fixed(qid):
+                    continue
+                if step == "label" and about.get("label"):
+                    names[qid] = about["label"]
+                elif step == "country" and about.get("country"):
+                    names[qid] = f"{names[qid]} ({about['country']})"
     for qid, club in clubes.items():
-        if free(qid) and names[qid] != club["nome"]:
+        if not fixed(qid) and names[qid] != club["nome"]:
             aliases = (set(club["apelidos"]) | {club["nome"]}) - {names[qid]}
             club.update(nome=names[qid], apelidos=sorted(aliases))
