@@ -77,3 +77,43 @@ def test_labels_prefer_brazilian_portuguese(monkeypatch) -> None:
             "Q2": "Only English",
             "Q3": "",
         }
+
+
+@respx.mock
+def test_with_statement_pages_through_the_search(monkeypatch) -> None:
+    monkeypatch.setattr(mediawiki.time, "sleep", lambda s: None)
+    route = respx.get(mediawiki.WIKIDATA).mock(
+        side_effect=[
+            httpx.Response(
+                200,
+                json={
+                    "continue": {"sroffset": 2, "continue": "-||"},
+                    "query": {"search": [{"title": "Q1"}, {"title": "Q2"}]},
+                },
+            ),
+            httpx.Response(200, json={"query": {"search": [{"title": "Q3"}]}}),
+        ]
+    )
+    with httpx.Client() as client:
+        assert mediawiki.with_statement(client, "P54", "Q17479") == ["Q1", "Q2", "Q3"]
+    first = route.calls[0].request.url.params
+    assert first["srsearch"] == "haswbstatement:P54=Q17479"
+    assert route.calls[1].request.url.params["sroffset"] == "2"
+
+
+@respx.mock
+def test_entities_come_in_batches_of_fifty(monkeypatch) -> None:
+    monkeypatch.setattr(mediawiki.time, "sleep", lambda s: None)
+
+    def answer(request: httpx.Request) -> httpx.Response:
+        ids = request.url.params["ids"].split("|")
+        assert len(ids) <= 50
+        assert request.url.params["props"] == "sitelinks"
+        return httpx.Response(200, json={"entities": {q: {"id": q} for q in ids}})
+
+    route = respx.get(mediawiki.WIKIDATA).mock(side_effect=answer)
+    qids = [f"Q{n}" for n in range(1, 121)]
+    with httpx.Client() as client:
+        found = mediawiki.entities(client, qids, "sitelinks")
+    assert sorted(found) == sorted(qids)
+    assert route.call_count == 3

@@ -1,7 +1,8 @@
 """Download the jogo da velha base: who played for the board clubs or the Seleção, and where.
 
-Who enters and the categories come from Wikidata; careers (clubs, loans, years) and the Seleção
-come from the English Wikipedia infobox when there is one, as in "Onde jogou?". Copa = the
+Who enters and the categories come from Wikidata, through its API (the SPARQL service throttles
+hard); careers (clubs, loans, years) and the Seleção come from the English Wikipedia infobox when
+there is one, as in "Onde jogou?". Copa = the
 "{year} FIFA World Cup squads" pages plus Wikidata's P1344 on the editions it covers well.
 """
 
@@ -10,14 +11,13 @@ from collections import Counter
 
 import httpx
 
-from geral.games.mediawiki import enwiki_titles, labels, page_qids, sparql, wikitexts
+from geral.games.mediawiki import entities, labels, page_qids, wikitexts, with_statement
 from geral.games.onde_jogou import COUNTRY_NAMES
 from geral.games.wikipedia import national_teams, parse_career, squad_players
 
 MIN_FAMA = 3  # Wikipedias a player needs to enter (keeps the base at 3–6 thousand)
 SELECAO = "Q83459"  # the senior Brazil team
 BRAZIL = "Q155"
-CHUNK = 100  # players per SPARQL query
 # P1344 is well filled for these editions (1930–2018); 2022 is thin and 2026 mixes qualifiers.
 EDITIONS = {
     "Q48432", "Q1477177", "Q131591", "Q132515", "Q131075", "Q132533", "Q160813", "Q134202",
@@ -38,36 +38,30 @@ POSITION_GROUPS = {
     "Q11681748": "atacante",
 }  # fmt: skip
 
-MEMBERS = """
-SELECT ?player ?fama WHERE {
-  ?player wdt:P54 wd:%s ; wikibase:sitelinks ?fama .
-  FILTER(?fama >= %d)
-}
-"""
-FACTS = """
-SELECT ?player ?prop ?value WHERE {
-  VALUES ?player { %s }
-  VALUES ?prop { wdt:P413 wdt:P1532 wdt:P27 wdt:P1344 }
-  ?player ?prop ?value .
-}
-"""
-CAREERS = """
-SELECT ?player ?club ?start ?end WHERE {
-  VALUES ?player { %s }
-  ?player p:P54 ?st . ?st ps:P54 ?club .
-  OPTIONAL { ?st pq:P580 ?start }
-  OPTIONAL { ?st pq:P582 ?end }
-}
-"""
+
+def _values(entity: dict, prop: str) -> list[dict]:
+    """The statements of `prop` that are not deprecated, with an item as value."""
+    return [
+        c
+        for c in entity.get("claims", {}).get(prop, [])
+        if c.get("rank") != "deprecated" and isinstance(_value(c.get("mainsnak", {})), dict)
+    ]
 
 
-def _id(binding: dict, key: str) -> str:
-    return binding.get(key, {}).get("value", "").rsplit("/", 1)[-1]
+def _value(snak: dict):
+    return snak.get("datavalue", {}).get("value")
 
 
-def _year(binding: dict, key: str) -> int | None:
-    value = binding.get(key, {}).get("value", "")
-    return int(value[:4]) if value[:4].isdigit() and int(value[:4]) >= 1850 else None
+def _ids(entity: dict, prop: str) -> list[str]:
+    return [_value(c["mainsnak"])["id"] for c in _values(entity, prop)]
+
+
+def _year(claim: dict, prop: str) -> int | None:
+    for snak in claim.get("qualifiers", {}).get(prop, []):
+        time = (_value(snak) or {}).get("time", "")
+        if time[1:5].isdigit() and int(time[1:5]) >= 1850:
+            return int(time[1:5])
+    return None
 
 
 def _span(starts: list[int], ends: list[int | None]) -> str:
@@ -79,9 +73,9 @@ def _span(starts: list[int], ends: list[int | None]) -> str:
     return f"{min(starts)}–{max(e for e in ends if e is not None)}"
 
 
-def _chunks(ids: list[str]):
-    for i in range(0, len(ids), CHUNK):
-        yield " ".join(f"wd:{q}" for q in ids[i : i + CHUNK])
+def _label(entity: dict) -> str:
+    found = entity.get("labels", {})
+    return next((found[lang]["value"] for lang in ("pt-br", "pt", "en") if lang in found), "")
 
 
 def build_base(
@@ -89,24 +83,30 @@ def build_base(
 ) -> tuple[dict, list[str]]:
     """The `base.json` dict and the report lines."""
     report: list[str] = []
-    fama: dict[str, int] = {}
+    candidates = set()
     for club in [*sorted(clubs), SELECAO]:
-        for b in sparql(client, MEMBERS % (club, min_fama)):
-            if int(b["fama"]["value"]) >= min_fama:
-                fama[_id(b, "player")] = int(b["fama"]["value"])
-    ids = sorted(fama)
-    names = labels(client, ids)  # the SPARQL label service is too slow for thousands
-    print(f"  wikidata: {len(ids)} players with fama >= {min_fama}", flush=True)
-
-    facts: dict[str, dict[str, list[str]]] = {q: {} for q in ids}
-    stints: dict[str, list[tuple[str, int | None, int | None]]] = {q: [] for q in ids}
-    for values in _chunks(ids):
-        for b in sparql(client, FACTS % values):
-            facts[_id(b, "player")].setdefault(_id(b, "prop"), []).append(_id(b, "value"))
-        for b in sparql(client, CAREERS % values):
-            stints[_id(b, "player")].append((_id(b, "club"), _year(b, "start"), _year(b, "end")))
-
-    titles = enwiki_titles(client, ids)
+        candidates |= set(with_statement(client, "P54", club))
+    print(f"  wikidata: {len(candidates)} players in the board clubs or the Seleção", flush=True)
+    links = entities(client, sorted(candidates), "sitelinks")
+    fama = {q: len(e.get("sitelinks", {})) for q, e in links.items() if e.get("sitelinks")}
+    ids = sorted(q for q, n in fama.items() if n >= min_fama)
+    titles = {
+        q: links[q]["sitelinks"]["enwiki"]["title"]
+        for q in ids
+        if "enwiki" in links[q]["sitelinks"]
+    }
+    about = entities(client, ids, "labels|claims", "pt-br|pt|en")
+    names = {q: _label(about.get(q, {})) for q in ids}
+    facts = {
+        q: {p: _ids(about.get(q, {}), p) for p in ("P413", "P1532", "P27", "P1344")} for q in ids
+    }
+    stints = {
+        q: [
+            (_value(c["mainsnak"])["id"], _year(c, "P580"), _year(c, "P582"))
+            for c in _values(about.get(q, {}), "P54")
+        ]
+        for q in ids
+    }
     pages = wikitexts(client, sorted(set(titles.values())))
     texts = {q: pages.get(t, "") for q, t in titles.items()}
     careers = {q: parse_career(text) for q, text in texts.items()}

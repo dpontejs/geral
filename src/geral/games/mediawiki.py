@@ -112,3 +112,30 @@ def labels(client: httpx.Client, qids: list[str]) -> dict[str, str]:
                 (found[lang]["value"] for lang in ("pt-br", "pt", "en") if lang in found), ""
             )
     return names
+
+
+def with_statement(client: httpx.Client, prop: str, value: str) -> list[str]:
+    """Every Wikidata item with `prop` = `value` (the search index; no SPARQL)."""
+    params = {"action": "query", "list": "search", "srsearch": f"haswbstatement:{prop}={value}"}
+    params |= {"srnamespace": 0, "srlimit": 500, "srprop": ""}
+    found = []
+    while True:
+        answer = api(client, WIKIDATA, params)
+        found += [hit["title"] for hit in answer["query"]["search"]]
+        if "continue" not in answer:
+            return found
+        params |= answer["continue"]
+
+
+def entities(
+    client: httpx.Client, qids: list[str], props: str, languages: str = ""
+) -> dict[str, dict]:
+    """Wikidata id -> its entity (only `props`, e.g. 'labels|claims'), fifty per call."""
+    found = {}
+    for i in range(0, len(qids), BATCH):
+        params = {"action": "wbgetentities", "ids": "|".join(qids[i : i + BATCH]), "props": props}
+        if languages:
+            params["languages"] = languages
+        found |= api(client, WIKIDATA, params)["entities"]
+        print(f"  wikidata: {min(i + BATCH, len(qids))}/{len(qids)} items ({props})", flush=True)
+    return found

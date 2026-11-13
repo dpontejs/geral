@@ -11,59 +11,65 @@ from geral.games.velha.base import load
 
 FIXTURES = Path(__file__).parent / "fixtures" / "velha"
 CLUBS = {"Q5014111": "Vasco", "Q221695": "Grêmio", "Q80964": "Palmeiras"}
-WD = "http://www.wikidata.org/entity/"
 
 
-def _b(**values: str) -> dict:
-    return {
-        k: {"value": WD + v if v.startswith("Q") or v.startswith("P") else v}
-        for k, v in values.items()
-    }
+def _claim(qid: str, start: str = "", end: str = "", rank: str = "normal") -> dict:
+    qualifiers = {}
+    for prop, year in (("P580", start), ("P582", end)):
+        if year:
+            time = {"time": f"+{year}-01-01T00:00:00Z"}
+            qualifiers[prop] = [{"datavalue": {"value": time}}]
+    snak = {"datavalue": {"value": {"id": qid}}}
+    return {"mainsnak": snak, "qualifiers": qualifiers, "rank": rank}
 
 
-def _sparql(request: httpx.Request) -> httpx.Response:
-    query = request.url.params["query"]
-    assert "wikibase:label" not in query  # the label service is slow: names come from the API
-    if "wikibase:sitelinks" in query:  # members of one club or of the Seleção
-        rows = []
-        if "wd:Q5014111" in query:
-            rows = [
-                _b(player="Q1", fama="50"),
-                _b(player="Q3", fama="30"),
-                _b(player="Q4", fama="1"),
-            ]
-        elif "wd:Q221695" in query:
-            rows = [_b(player="Q2", fama="20")]
-        elif "wd:Q83459" in query:
-            rows = [_b(player="Q1", fama="50")]
-        return httpx.Response(200, json={"results": {"bindings": rows}})
-    if "P1344" in query:  # facts
-        assert "wd:Q4" not in query  # below MIN_FAMA: never asked about
-        rows = [
-            _b(player="Q1", prop="P413", value="Q280658"),
-            _b(player="Q1", prop="P27", value="Q155"),
-            _b(player="Q2", prop="P413", value="Q193592"),
-            _b(player="Q2", prop="P1532", value="Q77"),
-            _b(player="Q2", prop="P27", value="Q77"),
-            _b(player="Q3", prop="P413", value="Q201330"),
-            _b(player="Q3", prop="P413", value="Q12345"),  # no group: reported
-            _b(player="Q3", prop="P1344", value="Q132515"),  # 1950
-            _b(player="Q3", prop="P1344", value="Q20730966"),  # a qualifier, not a Copa
-        ]
-        return httpx.Response(200, json={"results": {"bindings": rows}})
-    if "p:P54" in query:  # Wikidata careers (used without an infobox)
-        rows = [
-            _b(
-                player="Q3",
-                club="Q5014111",
-                start="1950-01-01T00:00:00Z",
-                end="1960-01-01T00:00:00Z",
-            ),
-            _b(player="Q3", club="Q83459", start="1949-01-01T00:00:00Z"),
-            _b(player="Q1", club="Q80845"),  # ignored: Edmundo has an infobox
-        ]
-        return httpx.Response(200, json={"results": {"bindings": rows}})
-    raise AssertionError(query)
+MEMBERS = {"Q5014111": ["Q1", "Q3", "Q4"], "Q221695": ["Q2"], "Q83459": ["Q1"]}
+FAMA = {"Q1": 50, "Q2": 20, "Q3": 30, "Q4": 1}
+ENWIKI = {"Q1": "Edmundo", "Q2": "Uruguaio (footballer)"}
+NAMES = {"Q1": "Edmundo", "Q2": "Uruguaio", "Q3": "Barbosa", "Q77": "Uruguai"}
+CLAIMS = {
+    "Q1": {
+        "P413": [_claim("Q280658")],
+        "P27": [_claim("Q155")],
+        "P54": [_claim("Q80845")],  # ignored: Edmundo has an infobox
+    },
+    "Q2": {"P413": [_claim("Q193592")], "P1532": [_claim("Q77")], "P27": [_claim("Q77")]},
+    "Q3": {
+        "P413": [_claim("Q201330"), _claim("Q12345")],  # Q12345 has no group: reported
+        "P1344": [_claim("Q132515"), _claim("Q20730966")],  # 1950; a qualifier is no Copa
+        "P54": [
+            _claim("Q5014111", "1950", "1960"),
+            _claim("Q83459", "1949"),
+            _claim("Q221695", "1940", "1941", rank="deprecated"),
+        ],
+    },
+}
+
+
+def _wikidata(request: httpx.Request) -> httpx.Response:
+    params = request.url.params
+    if params.get("list") == "search":
+        club = params["srsearch"].removeprefix("haswbstatement:P54=")
+        hits = [{"title": q} for q in MEMBERS.get(club, [])]
+        return httpx.Response(200, json={"query": {"search": hits}})
+    ids = params["ids"].split("|")
+    if params["props"] == "sitelinks":
+        entities = {
+            q: {
+                "sitelinks": {f"wiki{n}": {"title": "x"} for n in range(FAMA[q] - 1)}
+                | ({"enwiki": {"title": ENWIKI[q]}} if q in ENWIKI else {"xwiki": {"title": "x"}})
+            }
+            for q in ids
+        }
+    elif params["props"] == "labels|claims":
+        assert "Q4" not in ids  # below the minimum fama: never asked about
+        entities = {
+            q: {"labels": {"pt-br": {"value": NAMES[q]}}, "claims": CLAIMS.get(q, {})} for q in ids
+        }
+    else:
+        assert params["props"] == "labels"
+        entities = {q: {"labels": {"pt-br": {"value": NAMES[q]}}} for q in ids}
+    return httpx.Response(200, json={"entities": entities})
 
 
 PAGES = {
@@ -107,28 +113,11 @@ def _enwiki(request: httpx.Request) -> httpx.Response:
     return httpx.Response(200, json={"query": {"pages": pages, "redirects": redirects}})
 
 
-LABELS = {"Q1": "Edmundo", "Q2": "Uruguaio", "Q3": "Barbosa", "Q77": "Uruguai"}
-
-
-def _wikidata(request: httpx.Request) -> httpx.Response:
-    params = request.url.params
-    ids = params["ids"].split("|")
-    if params["props"] == "labels":
-        assert params["languages"] == "pt-br|pt|en"
-        entities = {q: {"labels": {"pt-br": {"value": LABELS[q]}}} for q in ids}
-        return httpx.Response(200, json={"entities": entities})
-    titles = {"Q1": "Edmundo", "Q2": "Uruguaio (footballer)"}
-    entities = {
-        q: {"sitelinks": {"enwiki": {"title": titles[q]}}} if q in titles else {} for q in ids
-    }
-    return httpx.Response(200, json={"entities": entities})
-
-
 @pytest.fixture
 def network(monkeypatch):
     monkeypatch.setattr(mediawiki.time, "sleep", lambda s: None)
     with respx.mock:
-        respx.get(mediawiki.SPARQL).mock(side_effect=_sparql)
+        respx.get(mediawiki.SPARQL).mock(side_effect=AssertionError("no SPARQL: rate limited"))
         respx.get(mediawiki.ENWIKI).mock(side_effect=_enwiki)
         respx.get(mediawiki.WIKIDATA).mock(side_effect=_wikidata)
         yield
