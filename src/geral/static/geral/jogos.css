@@ -1,7 +1,7 @@
 /* Shared by the Geral games: page, board, guesses, result. */
 .jogo .wrap { display: flex; flex-direction: column; gap: 22px; padding-block: 36px 48px; }
 .jogo h1 { font-size: clamp(52px, 8vw, 104px); color: #fff; text-shadow: 5px 5px 0 var(--turf); }
-.jogo .lead { margin: 0; max-width: 44em; background: var(--paper); border: 3px solid var(--ink); padding: 12px 16px; }
+.jogo .lead { margin: 0; max-width: none; background: var(--paper); border: 3px solid var(--ink); padding: 12px 16px; }
 .editions { display: flex; flex-wrap: wrap; gap: 8px; }
 .editions a { font: 800 18px/1 var(--display); text-transform: uppercase; letter-spacing: .04em; text-decoration: none; padding: 12px 14px; background: var(--paper); border: 3px solid var(--ink); }
 .editions a[aria-current] { background: var(--ink); color: var(--lamp); }
@@ -105,3 +105,28 @@ select.chip { appearance: auto; }
 .past a small { font: 600 13px/1 var(--body); color: var(--ink-soft); }
 .past a[aria-current] { background: var(--ink); color: var(--lamp); }
 .past a[aria-current] small { color: var(--lamp); }
+
+/* troca de joguinho */
+.game-tabs { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.game-tabs a { font: 800 17px/1 var(--display); text-transform: uppercase; letter-spacing: .05em; text-decoration: none; padding: 11px 14px; min-height: 44px; box-sizing: border-box; display: inline-flex; align-items: center; background: var(--turf); color: var(--paper); border: 3px solid var(--turf); }
+.game-tabs a[aria-current] { background: var(--board); color: var(--lamp); border-color: var(--board); }
+.game-tabs a:hover { color: var(--lamp); }
+.game-tabs a.all { margin-left: auto; background: transparent; border-color: transparent; color: #fff; text-shadow: var(--on-grass); }
+
+/* página dos joguinhos */
+.hub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
+.hub-card { position: relative; display: flex; flex-direction: column; gap: 16px; padding: 24px; border: 10px solid var(--turf); color: #D9D4C8; box-shadow: 6px 6px 0 rgba(0, 0, 0, .35); }
+/* like the Intervalo cards on the home page: the frame lights up */
+.hub-card:hover, .hub-card:focus-within { border-color: var(--ticket); }
+.hub-main { display: flex; flex-direction: column; gap: 14px; flex: 1; color: inherit; text-decoration: none; }
+.hub-main::after { content: ""; position: absolute; inset: 0; } /* the whole card is the link */
+.hub-main:focus-visible { outline: none; } /* the card shows it, below */
+.hub-card:has(.hub-main:focus-visible) { outline: 4px solid var(--lamp); outline-offset: 4px; }
+.hub-card .tag { font-size: 16px; opacity: .8; }
+.hub-card .title { font-size: 40px; line-height: 1.05; margin: 0; }
+.hub-card p { margin: 0; font-size: 16px; flex: 1; }
+.hub-card .go { font: 800 22px/1 var(--display); text-transform: uppercase; letter-spacing: .06em; color: var(--lamp); }
+.hub-editions { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 6px; pointer-events: none; } /* gaps fall through to the card */
+.hub-editions a { pointer-events: auto; }
+.hub-editions a { font: 700 14px/1 var(--body); color: var(--paper); text-decoration: none; border: 2px solid #5E6B60; padding: 10px 12px; min-height: 40px; box-sizing: border-box; display: inline-flex; align-items: center; }
+.hub-editions a:hover { border-color: var(--lamp); color: var(--lamp); }

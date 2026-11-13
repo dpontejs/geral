@@ -1,10 +1,11 @@
 {% extends "base.html.j2" %}
 {% set label = team.name if team else "Geral" %}
 {% block title %}Craque do dia #{{ number }} · {{ label }} · Geral{% endblock %}
-{% block head %}<link rel="stylesheet" href="/static/geral/jogos.css">{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/geral/jogos.css?v={{ asset_version }}">{% endblock %}
 {% block content %}
 <section class="jogo wall">
   <div class="wrap" id="cd" data-edition="{{ edition }}" data-number="{{ number }}" data-archive="{{ '1' if archive else '0' }}" data-label="{{ label }}" data-max="{{ max_guesses }}" data-letters="{{ letters }}">
+    {% include "_game_tabs.html.j2" %}
     <h1>Craque do dia</h1>
     {% if archive %}<p class="archive-note">Jogo de {{ day }} · não conta na sequência · <a href="{{ today_url }}">Jogar o de hoje →</a></p>{% endif %}
     <p class="lead">Um ídolo ou artilheiro por dia, o mesmo para todo mundo. Chute o nome do craque, como a torcida chama: você tem {{ max_guesses }} tentativas, e cada letra diz se está no lugar certo.</p>
@@ -41,5 +42,5 @@
     <p class="credit">Listas montadas à mão pela Geral. Achou um erro? Responda qualquer newsletter.</p>
   </div>
 </section>
-<script src="/static/geral/craque.js" defer></script>
+<script src="/static/geral/craque.js?v={{ asset_version }}" defer></script>
 {% endblock %}

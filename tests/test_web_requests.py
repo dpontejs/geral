@@ -155,17 +155,17 @@ def test_api_team_requests_needs_token_and_lists_emails(client) -> None:
     assert listed == [{"key": "remo", "name": "Remo", "votes": 2, "emails": ["ana@example.com"]}]
 
 
-def test_portal_card_links_to_request_page_with_top_request(client) -> None:
+def test_portal_strip_links_to_request_page_with_top_request(client) -> None:
     page = client.get("/").text
     assert 'href="/pedir"' in page
 
     ask(client, "Remo")
-    card = client.get("/").text.split('play-card" href="/pedir"', 1)[1].split("</a>", 1)[0]
+    card = client.get("/").text.split('class="pedir-strip" href="/pedir"', 1)[1].split("</a>", 1)[0]
     assert "Remo" not in card  # under 3 votes it stays out of the home
 
     for i in range(2, 4):
         ask(from_ip(client, f"10.0.0.{i}"), "Remo")
-    card = client.get("/").text.split('play-card" href="/pedir"', 1)[1].split("</a>", 1)[0]
+    card = client.get("/").text.split('class="pedir-strip" href="/pedir"', 1)[1].split("</a>", 1)[0]
     assert "Remo" in card
 
 

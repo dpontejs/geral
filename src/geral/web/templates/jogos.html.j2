@@ -1,0 +1,25 @@
+{% extends "base.html.j2" %}
+{% block title %}Joguinhos · Geral{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/geral/jogos.css?v={{ asset_version }}">{% endblock %}
+{% block content %}
+<section class="jogo hub wall">
+  <div class="wrap">
+    <h1>Joguinhos</h1>
+    <p class="lead">Um jogo novo por dia em cada um, o mesmo para todo mundo. Cada um tem a edição da sua torcida, e dá para jogar os dias anteriores.</p>
+    <div class="hub-grid">
+      {% for g in games %}
+      <article class="board hub-card">
+        {# The whole card plays today's game; the edition links sit above that link. #}
+        <a class="hub-main" href="{{ g.url }}">
+          <span class="lamp tag">#{{ g.number }} · hoje</span>
+          <h2 class="lamp title">{{ g.name }}</h2>
+          <p>{{ g.desc }}</p>
+          <span class="go">Jogar o de hoje →</span>
+        </a>
+        <nav class="hub-editions" aria-label="Edições do {{ g.name }}">{% for label, url in g.edition_links %}<a href="{{ url }}">{{ label }}</a>{% endfor %}</nav>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endblock %}
