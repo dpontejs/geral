@@ -35,6 +35,17 @@ O arquivo de carreiras também vai servir ao "Quem é?" (próximo PR).
   para quem não tem quadro na Wikipédia. Motivo: o Wikidata atrasa transferências (Cano ainda no
   Vasco, Vegetti no Colón); o Transfermarkt foi descartado (sem API, termos proíbem raspagem).
   Créditos nas páginas: Wikipédia (CC BY-SA) e Wikidata.
+- Segunda fonte, só para edições de time (desde 13/11/2026): o quadro "Info/Futebolista" da
+  Wikipédia em português (colunas `ano` e `clubes` linha a linha; `{{Futebol X}}` expandido pela
+  API), lido por `geral/games/ptwiki.py`. Motivo: os ídolos do ABC quase não têm quadro em inglês.
+  `src/geral/games/jogadores_pt.toml` (`pagina`, `nome`, `edicao`; sugerido por
+  `scripts/import_carreiras_pt.py --categoria "<categoria>" <slug>`, revisão humana) →
+  `scripts/import_carreiras_pt.py` → `src/geral/games/carreiras_pt.json`, no mesmo formato e com
+  `edicoes` por jogador. `onde_jogou.load` soma os dois arquivos (o principal vence em jogador e
+  nome de clube; apelidos se somam). Um jogador com `edicoes` só entra nessas edições: nem na
+  geral nem no seletor do "Quem é?" de outras edições. Um clube novo cujo nome curto já existe
+  recebe o nome completo; link para desambiguação não vale como clube. Arquivo separado para não
+  mexer no importador principal (o PR do jogo da velha o altera) e não ser apagado por ele.
 - Calendário congelado (`src/geral/games/calendario.json`, `geral/games/calendario.py`): as
   respostas já jogadas (e a de amanhã) de cada jogo e edição, por id do Wikidata. A importação
   congela antes de gravar dados novos (`scripts/congelar_calendario.py`), então uma atualização

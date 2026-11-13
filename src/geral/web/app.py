@@ -1005,7 +1005,11 @@ def create_app(
                 f"{secret}:quem-e:{number}:{jogador.wikidata}".encode()
             ).hexdigest()[:12],
             players=sorted(
-                ({"id": j.wikidata, "nome": j.nome} for j in data.jogadores),
+                (
+                    {"id": j.wikidata, "nome": j.nome}
+                    for j in data.jogadores
+                    if not j.edicoes or edition in j.edicoes  # team-only players stay home
+                ),
                 key=lambda p: p["nome"],
             ),
             editions=[(slug, listed.get(slug)) for slug in who_editions()],
