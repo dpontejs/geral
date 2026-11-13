@@ -65,7 +65,7 @@ def test_small_text_on_the_striped_grass_gets_a_shadow_to_stay_readable(client) 
     css = JOGOS_CSS.read_text()
 
     assert re.search(r"\.intervalo\.wall \.head p \{[^}]*text-shadow", page)
-    for rule in (".how", ".credit", ".guess label", ".tries .n"):
+    for rule in (".how", ".credit", ".tries .n"):
         assert re.search(re.escape(rule) + r" \{[^}]*text-shadow", css), rule
 
 

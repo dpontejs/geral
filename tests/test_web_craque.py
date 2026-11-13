@@ -25,7 +25,7 @@ def test_game_page_shows_the_length_not_the_name(game) -> None:
     page = game.get("/jogos/craque-do-dia")
 
     assert page.status_code == 200 and "#9" in page.text
-    assert page.text.count('class="tile"') == len(craque.answer)
+    assert f"{len(craque.answer)} letras" in page.text
     assert craque.completo not in page.text and craque.fato not in page.text
 
 
@@ -33,7 +33,7 @@ def test_team_edition_page(game) -> None:
     page = game.get("/jogos/craque-do-dia/vasco")
 
     assert page.status_code == 200
-    assert page.text.count('class="tile"') == len(today("vasco").answer)
+    assert f"{len(today('vasco').answer)} letras" in page.text
 
 
 @pytest.mark.parametrize("edition", ["abc", "xyz"])  # abc: list still a draft
@@ -75,3 +75,32 @@ def test_api_rejects_future_or_zero_puzzle(game, number) -> None:
 
 def test_portal_links_the_word_game(game) -> None:
     assert 'href="/jogos/craque-do-dia"' in game.get("/").text
+
+
+def test_guesses_fill_a_grid_in_place_like_termo(game) -> None:
+    letters = len(today().answer)
+
+    page = game.get("/jogos/craque-do-dia").text
+    grid = page.split('id="cd-grid"')[1].split("</div>\n")[0]
+
+    assert grid.count('class="guessrow" role="group"') == 6
+    assert grid.count('class="sq"') == 6 * letters
+    assert 'id="cd-word"' not in page  # no text box: the row is where you type
+
+
+def test_on_screen_keyboard_has_every_letter_enter_and_erase(game) -> None:
+    page = game.get("/jogos/craque-do-dia").text
+    keys = page.split('id="cd-keys"')[1].split("</div>\n")[0]
+
+    for letter in "QWERTYUIOPASDFGHJKLZXCVBNM":
+        assert f'data-key="{letter}"' in keys
+    assert 'data-key="Enter"' in keys and 'data-key="Backspace"' in keys
+
+
+def test_grid_rows_have_their_columns_in_the_stylesheet(game) -> None:
+    import re
+
+    css = game.get("/static/geral/jogos.css").text
+
+    assert re.search(r"\.guessrow \{[^}]*grid-template-columns: repeat\(var\(--n\)", css)
+    assert ".guessrow.active .sq.cursor" in css
