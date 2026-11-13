@@ -428,7 +428,13 @@ def create_app(
         html = personalize(edition.html, None).replace(UNSUBSCRIBE_PLACEHOLDER, f"{public_url}/")
         # Shown in a frame on /t/<team>: its links open on the whole page.
         base = '<base target="_top">'
-        html = html.replace("<head>", f"<head>{base}", 1) if "<head>" in html else base + html
+        head = re.search(r"<head\b[^>]*>", html, re.IGNORECASE)
+        if head:
+            html = html[: head.end()] + base + html[head.end() :]
+        else:  # after the doctype, if any: before it the page would render in quirks mode
+            doctype = re.match(r"\s*<!doctype[^>]*>", html, re.IGNORECASE)
+            cut = doctype.end() if doctype else 0
+            html = html[:cut] + base + html[cut:]
         return HTMLResponse(html)
 
     @app.get("/subscribe")

@@ -64,7 +64,7 @@ def test_games_page_shows_every_game_with_todays_number_and_editions(site) -> No
     for path in GAMES:
         assert f'href="/jogos/{path}"' in page.text
         assert f'href="/jogos/{path}/vasco"' in page.text
-    assert page.text.count("#8") >= 3
+    assert page.text.count(">#8 · hoje<") == 3
 
 
 def test_game_pages_switch_between_games_keeping_the_edition(site) -> None:
@@ -138,3 +138,20 @@ def test_text_boxes_span_the_board_below_them(site) -> None:
 
     assert re.search(r"\.hero \.lead \{[^}]*max-width: none", home)
     assert re.search(r"\.jogo \.lead \{[^}]*max-width: none", css)
+
+
+@pytest.mark.parametrize("head", ["<head>", '<HEAD lang="pt-BR">'])
+def test_raw_edition_puts_the_base_inside_the_head(client, head) -> None:
+    from webkit import AUTH
+
+    from geral.send.resend_sender import UNSUBSCRIBE_PLACEHOLDER
+
+    body = f"<body>{UNSUBSCRIBE_PLACEHOLDER}</body></html>"
+    html = f"<!doctype html><html>{head}<title>t</title></head>{body}"
+    edition = {"subject": "S", "html": html, "text": "t"}
+    client.put("/api/teams/abc/latest-edition", json=edition, headers=AUTH)
+
+    raw = client.get("/t/abc/edicao").text
+
+    assert raw.startswith("<!doctype html>")
+    assert f'{head}<base target="_top">' in raw

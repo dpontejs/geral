@@ -120,11 +120,13 @@ select.chip { appearance: auto; }
 .hub-card:hover, .hub-card:focus-within { border-color: var(--ticket); }
 .hub-main { display: flex; flex-direction: column; gap: 14px; flex: 1; color: inherit; text-decoration: none; }
 .hub-main::after { content: ""; position: absolute; inset: 0; } /* the whole card is the link */
-.hub-main:focus-visible { outline: none; }
+.hub-main:focus-visible { outline: none; } /* the card shows it, below */
+.hub-card:has(.hub-main:focus-visible) { outline: 4px solid var(--lamp); outline-offset: 4px; }
 .hub-card .tag { font-size: 16px; opacity: .8; }
 .hub-card .title { font-size: 40px; line-height: 1.05; margin: 0; }
 .hub-card p { margin: 0; font-size: 16px; flex: 1; }
 .hub-card .go { font: 800 22px/1 var(--display); text-transform: uppercase; letter-spacing: .06em; color: var(--lamp); }
-.hub-editions { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 6px; }
+.hub-editions { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 6px; pointer-events: none; } /* gaps fall through to the card */
+.hub-editions a { pointer-events: auto; }
 .hub-editions a { font: 700 14px/1 var(--body); color: var(--paper); text-decoration: none; border: 2px solid #5E6B60; padding: 10px 12px; min-height: 40px; box-sizing: border-box; display: inline-flex; align-items: center; }
 .hub-editions a:hover { border-color: var(--lamp); color: var(--lamp); }
