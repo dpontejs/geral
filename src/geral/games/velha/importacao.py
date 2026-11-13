@@ -10,7 +10,7 @@ from collections import Counter
 
 import httpx
 
-from geral.games.mediawiki import enwiki_titles, page_qids, sparql, wikitexts
+from geral.games.mediawiki import enwiki_titles, labels, page_qids, sparql, wikitexts
 from geral.games.onde_jogou import COUNTRY_NAMES
 from geral.games.wikipedia import national_teams, parse_career, squad_players
 
@@ -39,10 +39,9 @@ POSITION_GROUPS = {
 }  # fmt: skip
 
 MEMBERS = """
-SELECT ?player ?playerLabel ?fama WHERE {
+SELECT ?player ?fama WHERE {
   ?player wdt:P54 wd:%s ; wikibase:sitelinks ?fama .
   FILTER(?fama >= %d)
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "pt-br,pt,en". }
 }
 """
 FACTS = """
@@ -58,12 +57,6 @@ SELECT ?player ?club ?start ?end WHERE {
   ?player p:P54 ?st . ?st ps:P54 ?club .
   OPTIONAL { ?st pq:P580 ?start }
   OPTIONAL { ?st pq:P582 ?end }
-}
-"""
-LABELS = """
-SELECT ?item ?itemLabel WHERE {
-  VALUES ?item { %s }
-  SERVICE wikibase:label { bd:serviceParam wikibase:language "pt-br,pt,en". }
 }
 """
 
@@ -96,13 +89,13 @@ def build_base(
 ) -> tuple[dict, list[str]]:
     """The `base.json` dict and the report lines."""
     report: list[str] = []
-    names, fama = {}, {}
+    fama: dict[str, int] = {}
     for club in [*sorted(clubs), SELECAO]:
         for b in sparql(client, MEMBERS % (club, min_fama)):
             if int(b["fama"]["value"]) >= min_fama:
-                names[_id(b, "player")] = b.get("playerLabel", {}).get("value", "")
                 fama[_id(b, "player")] = int(b["fama"]["value"])
-    ids = sorted(names)
+    ids = sorted(fama)
+    names = labels(client, ids)  # the SPARQL label service is too slow for thousands
     print(f"  wikidata: {len(ids)} players with fama >= {min_fama}", flush=True)
 
     facts: dict[str, dict[str, list[str]]] = {q: {} for q in ids}
@@ -172,11 +165,7 @@ def build_base(
         )
 
     countries = sorted({p for player in players for p in player["paises"]})
-    labels = {}
-    for values in _chunks(countries):
-        for b in sparql(client, LABELS % values):
-            label = b.get("itemLabel", {}).get("value", "")
-            labels[_id(b, "item")] = COUNTRY_NAMES.get(label, label)
+    country_names = {q: COUNTRY_NAMES.get(n, n) for q, n in labels(client, countries).items()}
 
     by_club = Counter(c for p in players for c in p["clubes"])
     report.append(f"{len(players)} players (fama >= {min_fama}); {dropped} left out (no category)")
@@ -191,7 +180,7 @@ def build_base(
     report.append("squads pages: " + ", ".join(f"{y}: {len(s)}" for y, s in squads.items()))
     report += [f"  {clubs[c]}: {by_club[c]}" for c in sorted(clubs, key=lambda c: by_club[c])]
     report += [f"position without group: {pos} ({n})" for pos, n in ungrouped.most_common()]
-    return {"paises": labels, "jogadores": players}, report
+    return {"paises": country_names, "jogadores": players}, report
 
 
 def dump(data: dict) -> str:

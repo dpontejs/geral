@@ -23,18 +23,19 @@ def _b(**values: str) -> dict:
 
 def _sparql(request: httpx.Request) -> httpx.Response:
     query = request.url.params["query"]
+    assert "wikibase:label" not in query  # the label service is slow: names come from the API
     if "wikibase:sitelinks" in query:  # members of one club or of the Seleção
         rows = []
         if "wd:Q5014111" in query:
             rows = [
-                _b(player="Q1", playerLabel="Edmundo", fama="50"),
-                _b(player="Q3", playerLabel="Barbosa", fama="30"),
-                _b(player="Q4", playerLabel="Desconhecido", fama="1"),
+                _b(player="Q1", fama="50"),
+                _b(player="Q3", fama="30"),
+                _b(player="Q4", fama="1"),
             ]
         elif "wd:Q221695" in query:
-            rows = [_b(player="Q2", playerLabel="Uruguaio", fama="20")]
+            rows = [_b(player="Q2", fama="20")]
         elif "wd:Q83459" in query:
-            rows = [_b(player="Q1", playerLabel="Edmundo", fama="50")]
+            rows = [_b(player="Q1", fama="50")]
         return httpx.Response(200, json={"results": {"bindings": rows}})
     if "P1344" in query:  # facts
         assert "wd:Q4" not in query  # below MIN_FAMA: never asked about
@@ -62,10 +63,6 @@ def _sparql(request: httpx.Request) -> httpx.Response:
             _b(player="Q1", club="Q80845"),  # ignored: Edmundo has an infobox
         ]
         return httpx.Response(200, json={"results": {"bindings": rows}})
-    if "rdfs:label" in query or "wikibase:label" in query:  # country names
-        return httpx.Response(
-            200, json={"results": {"bindings": [_b(item="Q77", itemLabel="Uruguai")]}}
-        )
     raise AssertionError(query)
 
 
@@ -110,8 +107,16 @@ def _enwiki(request: httpx.Request) -> httpx.Response:
     return httpx.Response(200, json={"query": {"pages": pages, "redirects": redirects}})
 
 
+LABELS = {"Q1": "Edmundo", "Q2": "Uruguaio", "Q3": "Barbosa", "Q77": "Uruguai"}
+
+
 def _wikidata(request: httpx.Request) -> httpx.Response:
-    ids = request.url.params["ids"].split("|")
+    params = request.url.params
+    ids = params["ids"].split("|")
+    if params["props"] == "labels":
+        assert params["languages"] == "pt-br|pt|en"
+        entities = {q: {"labels": {"pt-br": {"value": LABELS[q]}}} for q in ids}
+        return httpx.Response(200, json={"entities": entities})
     titles = {"Q1": "Edmundo", "Q2": "Uruguaio (footballer)"}
     entities = {
         q: {"sitelinks": {"enwiki": {"title": titles[q]}}} if q in titles else {} for q in ids

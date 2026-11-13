@@ -17,12 +17,14 @@ BATCH = 50  # titles or ids per MediaWiki call
 
 def sparql(client: httpx.Client, query: str) -> list[dict]:
     """The bindings of one SPARQL query, retrying when told to wait."""
-    for attempt in range(5):
+    for attempt in range(10):  # the query service limits query time per minute: be patient
         response = client.get(SPARQL, params={"query": query})
         if response.status_code != 429:
             break
-        time.sleep(int(response.headers.get("Retry-After", 30)) + attempt * 10)
-    time.sleep(2)  # one query at a time, slowly
+        wait = int(response.headers.get("Retry-After", 30)) + attempt * 15
+        print(f"  wikidata: asked to wait ({wait}s)", flush=True)
+        time.sleep(wait)
+    time.sleep(3)  # one query at a time, slowly
     return response.raise_for_status().json()["results"]["bindings"]
 
 
@@ -96,3 +98,17 @@ def page_qids(client: httpx.Client, titles: list[str]) -> dict[str, str]:
             if ids.get(final):
                 found[title] = ids[final]
     return found
+
+
+def labels(client: httpx.Client, qids: list[str]) -> dict[str, str]:
+    """Wikidata id -> its name in Brazilian Portuguese (else Portuguese, else English, else '')."""
+    names = {}
+    for i in range(0, len(qids), BATCH):
+        params = {"action": "wbgetentities", "ids": "|".join(qids[i : i + BATCH])}
+        params |= {"props": "labels", "languages": "pt-br|pt|en"}
+        for qid, entity in api(client, WIKIDATA, params)["entities"].items():
+            found = entity.get("labels", {})
+            names[qid] = next(
+                (found[lang]["value"] for lang in ("pt-br", "pt", "en") if lang in found), ""
+            )
+    return names

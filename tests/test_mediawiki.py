@@ -56,3 +56,24 @@ def test_wikitexts_follows_continue_when_a_batch_is_too_big(monkeypatch) -> None
     with httpx.Client() as client:
         assert mediawiki.wikitexts(client, ["A", "B"]) == {"A": "text a", "B": "text b"}
     assert route.calls[1].request.url.params["rvcontinue"] == "123|456"
+
+
+@respx.mock
+def test_labels_prefer_brazilian_portuguese(monkeypatch) -> None:
+    monkeypatch.setattr(mediawiki.time, "sleep", lambda s: None)
+    labels = {
+        "Q1": {"pt-br": {"value": "Seleção"}, "pt": {"value": "Selecção"}},
+        "Q2": {"en": {"value": "Only English"}},
+        "Q3": {},
+    }
+    respx.get(mediawiki.WIKIDATA).mock(
+        return_value=httpx.Response(
+            200, json={"entities": {q: {"labels": v} for q, v in labels.items()}}
+        )
+    )
+    with httpx.Client() as client:
+        assert mediawiki.labels(client, ["Q1", "Q2", "Q3"]) == {
+            "Q1": "Seleção",
+            "Q2": "Only English",
+            "Q3": "",
+        }
