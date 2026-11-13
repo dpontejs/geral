@@ -20,6 +20,10 @@ apelidos = ["Vasco da Gama", "Club de Regatas Vasco da Gama", "CR Vasco da Gama"
 nome = "Palmeiras"
 apelidos = ["Sociedade Esportiva Palmeiras", "SE Palmeiras"]
 
+[Q73971]
+nome = "Náutico"
+apelidos = ["Clube Náutico Capibaribe", "Timbu"]
+
 [Q38568]
 nome = "São Paulo"
 apelidos = ["São Paulo Futebol Clube", "São Paulo FC"]
@@ -344,3 +348,12 @@ ignorar = true  # a cidade de Uberlândia, linkada no lugar do clube (Wikipédia
 
 [Q68136]
 ignorar = true  # a cidade de Sion, linkada no lugar do FC Sion (Wikipédia em português)
+
+[Q15799]
+nome = "River Plate"
+apelidos = ["Club Atlético River Plate", "River"]
+pais = "Argentina"
+
+[Q8687]
+nome = "Athletic Bilbao"
+apelidos = ["Athletic Club", "Athletic Club de Bilbao", "Bilbao"]

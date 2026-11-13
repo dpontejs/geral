@@ -19,12 +19,13 @@ from geral.games.wikipedia import Stint, _club, _params, career_rows, years
 API = "https://pt.wikipedia.org/w/api.php"
 WIKIDATA = "https://www.wikidata.org/w/api.php"
 HEADERS = {
-    "User-Agent": "geral-games/0.1 (hobby project)",
+    "User-Agent": "geral-games/0.1 (https://github.com/dpontejs/geral)",  # Wikimedia UA policy
     "Accept-Encoding": "gzip",  # Wikimedia answers 403 to the httpx default
 }
 BATCH = 50  # titles or ids per MediaWiki call
 LINE = re.compile(r"<br\s*/?>", re.IGNORECASE)
 LINK = re.compile(r"\[\[([^\]|#]+)(?:\|([^\]]+))?\]\]")
+STAFF = re.compile(r"treinador|t[ée]cnico|auxiliar|preparador|dirigente", re.IGNORECASE)
 LOAN = re.compile(r"\(?\s*\[\[Empréstimo[^\]]*\]\]\s*\)?")  # "([[Empréstimo (esportes)|emp.]])"
 
 
@@ -77,14 +78,20 @@ def shown_names(clubes: str) -> dict[str, str]:
     return shown
 
 
-def position(raw: str) -> str:
+def plain(raw: str) -> str:
+    """The text an infobox field shows: no references, links as shown, no bold or italics."""
     text = re.sub(r"<ref[^>]*/>|<ref[^>]*>.*?</ref>", "", raw, flags=re.DOTALL)
     text = LINK.sub(lambda m: m.group(2) or m.group(1), text)
-    text = LINE.sub(" e ", text).replace("'", "")
+    return " ".join(text.replace("'", "").split())
+
+
+def position(raw: str) -> str:
+    text = LINE.sub(" e ", plain(raw))
     text = re.sub(r"\bex[- ]", "", text, flags=re.IGNORECASE)  # retired: the career is the point
     text = text.replace("(", " e ").replace(")", " ")  # "Treinador (ex meio-campista)"
-    parts = [" ".join(p.split()) for p in re.split(r"(?<!\S)e(?!\S)", text)]
-    text = " e ".join(p for p in parts if p and p.casefold() != "treinador")  # a coach's years
+    parts = [" ".join(p.split()) for p in re.split(r"(?<!\S)e(?!\S)|[,/;]", text)]
+    kept = [p for p in parts if p and not STAFF.search(p)]  # a coach's years
+    text = " e ".join([", ".join(kept[:-1]), kept[-1]]) if len(kept) > 1 else "".join(kept)
     return text[:1].upper() + text[1:]
 
 
@@ -106,7 +113,14 @@ def build(
     rows: list[dict] = []
     kept: list[dict] = []
     shown: dict[str, str] = {}
+    editions: dict[str, list[str]] = {}  # a page listed for several teams plays in all of them
+    unique = []
     for player in players:
+        if player["pagina"] not in editions:
+            unique.append(player)
+        listed = editions.setdefault(player["pagina"], [])
+        listed.extend([player["edicao"]] if player["edicao"] not in listed else [])
+    for player in unique:
         title = player["pagina"]
         page = pages.get(title)
         if page is None:
@@ -129,13 +143,17 @@ def build(
         )
         report.extend(f"{title}: clube sem Wikidata: {club}" for club in unknown)
         rows.extend(found)
-        kept.append({"wikidata": page["qid"], "nome": player["nome"], "edicao": player["edicao"]})
+        kept.append({"wikidata": page["qid"], "nome": player["nome"], "pagina": title})
 
     careers = convert(kept, rows, fixes)
-    _name_clashes_in_full(careers["clubes"], info, fixes, taken or {})
-    editions = {p["wikidata"]: p["edicao"] for p in kept}
+    players_at: dict[str, int] = {}
     for jogador in careers["jogadores"]:
-        jogador["edicoes"] = [editions[jogador["wikidata"]]]
+        for qid in {s["clube"] for s in jogador["clubes"]}:
+            players_at[qid] = players_at.get(qid, 0) + 1
+    _name_clashes_in_full(careers["clubes"], info, fixes, taken or {}, players_at)
+    pages_of = {p["wikidata"]: p["pagina"] for p in kept}
+    for jogador in careers["jogadores"]:
+        jogador["edicoes"] = editions[pages_of[jogador["wikidata"]]]
     return careers, report
 
 
@@ -159,6 +177,24 @@ def _final(query: dict, title: str) -> str:
     for step in ("normalized", "redirects"):
         title = {m["from"]: m["to"] for m in query.get(step, [])}.get(title, title)
     return title
+
+
+def category_members(client: httpx.Client, category: str, pause: float = 1) -> list[str]:
+    """The article titles of a category ("Futebolistas do ABC Futebol Clube"), every page."""
+    titles: list[str] = []
+    params = {
+        "action": "query",
+        "list": "categorymembers",
+        "cmtitle": f"Categoria:{category}",
+        "cmnamespace": 0,
+        "cmlimit": 500,
+    }
+    while True:
+        answer = _get(client, API, params, pause)
+        titles.extend(m["title"] for m in answer["query"]["categorymembers"])
+        if "continue" not in answer:
+            return titles
+        params = {**params, **answer["continue"]}
 
 
 def fetch_pages(client: httpx.Client, titles: list[str], pause: float = 1) -> dict[str, dict]:
@@ -305,20 +341,42 @@ def club_info(client: httpx.Client, qids: list[str], pause: float = 1) -> dict[s
 
 
 def _name_clashes_in_full(
-    clubes: dict[str, dict], info: dict[str, dict], fixes: dict[str, dict], taken: dict[str, str]
+    clubes: dict[str, dict],
+    info: dict[str, dict],
+    fixes: dict[str, dict],
+    taken: dict[str, str],
+    players_at: dict[str, int],
 ) -> None:
-    """Two clubs shown as "Nacional" can't both be typed: the new ones take the full label."""
-    owners: dict[str, set[str]] = {}
-    for qid, name in taken.items():
-        owners.setdefault(normalize(name), set()).add(qid)
+    """Two clubs shown as "Peñarol" can't both be typed. A club of the main file (or named in
+    clubes.toml) keeps its name; otherwise the club with the most players does (ties: lowest
+    id). The others take the full label, and the country too when the label is also shared."""
+
+    def fixed(qid: str) -> bool:
+        return qid in taken or "nome" in fixes.get(qid, {})
+
+    def keeper(group: set[str]) -> set[str]:
+        held = {q for q in group if fixed(q)}
+        if held:
+            return held
+        return {min(group, key=lambda q: (-players_at.get(q, 0), int(q[1:])))}
+
+    names = {**{q: c["nome"] for q, c in clubes.items() if q not in taken}, **taken}
+    for step in ("label", "country"):
+        groups: dict[str, set[str]] = {}
+        for qid, name in names.items():
+            groups.setdefault(normalize(name), set()).add(qid)
+        for group in (g for g in groups.values() if len(g) > 1):
+            for qid in (
+                group - keeper(group) if step == "label" else group - {*filter(fixed, group)}
+            ):
+                about = info.get(qid, {})
+                if qid not in clubes or fixed(qid):
+                    continue
+                if step == "label" and about.get("label"):
+                    names[qid] = about["label"]
+                elif step == "country" and about.get("country"):
+                    names[qid] = f"{names[qid]} ({about['country']})"
     for qid, club in clubes.items():
-        if qid not in taken:
-            owners.setdefault(normalize(club["nome"]), set()).add(qid)
-    for qid, club in clubes.items():
-        if qid in taken or "nome" in fixes.get(qid, {}):
-            continue  # named by the main file or by clubes.toml
-        full = info.get(qid, {}).get("label", "")
-        if not full or len(owners[normalize(club["nome"])]) == 1:
-            continue
-        aliases = (set(club["apelidos"]) | {club["nome"]}) - {full}
-        club.update(nome=full, apelidos=sorted(aliases))
+        if not fixed(qid) and names[qid] != club["nome"]:
+            aliases = (set(club["apelidos"]) | {club["nome"]}) - {names[qid]}
+            club.update(nome=names[qid], apelidos=sorted(aliases))

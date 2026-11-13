@@ -81,12 +81,16 @@ def test_shown_names_keep_the_text_the_article_shows() -> None:
         ("ex-lateral-direito", "Lateral-direito"),
         ("Goleiro<br /> treinador", "Goleiro"),  # the coach years are not a position
         ("Treinador<br />", ""),
+        ("[[Auxiliar técnico]] e [[atacante]]", "Atacante"),
+        ("Técnico (ex-zagueiro)", "Zagueiro"),
         ("[[Treinador]] (ex [[meio-campista]])", "Meio-campista"),
         (
             "ex-[[Treinador de futebol|Treinador]]<br />(ex-[[Volante (futebol)|Volante]])",
             "Volante",
         ),
-        ("Volante, lateral, meia", "Volante, lateral, meia"),
+        ("Volante, lateral, meia", "Volante, lateral e meia"),
+        ("zagueiro / treinador", "Zagueiro"),
+        ("treinador, ex-atacante e volante", "Atacante e volante"),
         ("[[Goleiro]] e [[treinador]]", "Goleiro"),
         ("", ""),
     ],
@@ -283,11 +287,11 @@ def test_build_names_a_club_in_full_when_its_short_name_is_taken() -> None:
     careers, _ = ptwiki.build(players, pages, clubs, info, fixes={}, taken={"Q100": "Vasco"})
     names = {qid: c["nome"] for qid, c in careers["clubes"].items()}
     assert names == {
-        "Q1": "Clube Desportivo Nacional",
+        "Q1": "Nacional",  # same number of players: the lowest id keeps the short name
         "Q2": "Club Nacional de Football",
-        "Q3": "Vasco Esporte Clube",
+        "Q3": "Vasco Esporte Clube",  # the main file's Vasco keeps "Vasco"
     }
-    assert "Nacional" in careers["clubes"]["Q1"]["apelidos"]
+    assert "Nacional" in careers["clubes"]["Q2"]["apelidos"]
 
 
 def test_build_leaves_clubs_of_the_main_file_to_it() -> None:
@@ -325,3 +329,85 @@ def test_parse_career_does_not_take_the_loan_mark_for_a_club() -> None:
         Stint(2011, 2011, "Potiguar de Mossoró"),
     ]
     assert ptwiki.shown_names(clubes) == {"ABC Futebol Clube": "ABC"}
+
+
+def test_build_puts_a_player_listed_twice_in_both_editions() -> None:
+    players = [
+        {"pagina": "Alberi", "nome": "Alberi", "edicao": "abc"},
+        {"pagina": "Alberi", "nome": "Alberi", "edicao": "nautico"},
+    ]
+    pages = {"Alberi": {"qid": "Q9", "text": ALBERI, "clubes": EXPANDED}}
+    clubs = {"ABC Futebol Clube": "Q1", "Santa Cruz Futebol Clube": "Q2"}
+    info = {"Q1": {"label": "ABC Futebol Clube"}, "Q2": {"label": "Santa Cruz Futebol Clube"}}
+    careers, _ = ptwiki.build(players, pages, clubs, info, fixes={})
+    [alberi] = careers["jogadores"]
+    assert alberi["edicoes"] == ["abc", "nautico"]
+
+
+@respx.mock
+def test_category_members_follow_continue() -> None:
+    respx.get(ptwiki.API).mock(
+        side_effect=[
+            httpx.Response(
+                200,
+                json={
+                    "continue": {"cmcontinue": "page|X", "continue": "-||"},
+                    "query": {"categorymembers": [{"title": "Kuki"}]},
+                },
+            ),
+            httpx.Response(200, json={"query": {"categorymembers": [{"title": "Lopeu"}]}}),
+        ]
+    )
+    with httpx.Client() as client:
+        assert ptwiki.category_members(client, "Futebolistas do Náutico", pause=0) == [
+            "Kuki",
+            "Lopeu",
+        ]
+
+
+def test_plain_keeps_the_shown_text_only() -> None:
+    assert ptwiki.plain("[[Kuki (futebolista)|Kuki]]<ref>x</ref> e ''Treinador''") == (
+        "Kuki e Treinador"
+    )
+
+
+def test_requests_say_who_we_are_as_wikimedia_asks() -> None:
+    # https://meta.wikimedia.org/wiki/User-Agent_policy: a name and a way to reach the operator
+    assert "https://github.com/dpontejs/geral" in ptwiki.HEADERS["User-Agent"]
+
+
+def test_build_adds_the_country_when_the_full_name_is_taken_too() -> None:
+    text = "{{Info/Futebolista\n|ano = 2001<br />2002<br />2003\n|clubes = x\n}}"
+    clubes = "[[A|Athletic]]<br />[[B|Athletic]]<br />[[C|Athletic]]"
+    players = [{"pagina": "P", "nome": "P", "edicao": "abc"}]
+    pages = {"P": {"qid": "Q9", "text": text, "clubes": clubes}}
+    clubs = {"A": "Q1", "B": "Q2", "C": "Q3"}
+    info = {
+        "Q1": {"label": "Athletic Club", "country": "Espanha"},
+        "Q2": {"label": "Athletic Club", "country": "Brasil"},
+        "Q3": {"label": "Athletic Club", "country": "Estados Unidos"},
+    }
+    careers, _ = ptwiki.build(players, pages, clubs, info, fixes={})
+    assert {q: c["nome"] for q, c in careers["clubes"].items()} == {
+        "Q1": "Athletic",
+        "Q2": "Athletic Club (Brasil)",
+        "Q3": "Athletic Club (Estados Unidos)",
+    }
+
+
+def test_build_lets_the_club_with_more_players_keep_a_shared_short_name() -> None:
+    text = "{{Info/Futebolista\n|ano = 2001\n|clubes = x\n}}"
+    players = [{"pagina": p, "nome": p, "edicao": "abc"} for p in ("A", "B", "C")]
+    pages = {
+        "A": {"qid": "Q91", "text": text, "clubes": "[[Peñarol U|Peñarol]]"},
+        "B": {"qid": "Q92", "text": text, "clubes": "[[Peñarol U|Peñarol]]"},
+        "C": {"qid": "Q93", "text": text, "clubes": "[[Penarol AM|Penarol]]"},
+    }
+    clubs = {"Peñarol U": "Q1", "Penarol AM": "Q2"}
+    info = {
+        "Q1": {"label": "Club Atlético Peñarol", "country": "Uruguai"},
+        "Q2": {"label": "Penarol Atlético Clube", "country": "Brasil"},
+    }
+    careers, _ = ptwiki.build(players, pages, clubs, info, fixes={})
+    assert careers["clubes"]["Q1"]["nome"] == "Peñarol"
+    assert careers["clubes"]["Q2"]["nome"] == "Penarol Atlético Clube"
