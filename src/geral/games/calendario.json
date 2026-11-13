@@ -3,66 +3,90 @@
   "geral": [
    "Q927507",
    "Q178649",
-   "Q20806743"
+   "Q20806743",
+   "Q297721"
   ],
   "vasco": [
    "Q274872",
    "Q3761170",
-   "Q2520149"
+   "Q2520149",
+   "Q3761170"
   ],
   "palmeiras": [
    "Q429039",
    "Q2579383",
-   "Q101230488"
+   "Q101230488",
+   "Q19708656"
   ],
   "flamengo": [
    "Q2015351",
    "Q170452",
-   "Q180642"
+   "Q180642",
+   "Q2520149"
+  ],
+  "abc": [
+   "Q1634336",
+   "Q67522021",
+   "Q19519836",
+   "Q491284"
   ]
  },
  "quem-e": {
   "geral": [
    "Q73480",
    "Q15146754",
-   "Q483577"
+   "Q483577",
+   "Q73480"
   ],
   "vasco": [
    "Q2579383",
    "Q550019",
-   "Q350756"
+   "Q350756",
+   "Q311872"
   ],
   "palmeiras": [
    "Q355742",
    "Q204555",
-   "Q178683"
+   "Q178683",
+   "Q445541"
   ],
   "flamengo": [
    "Q170452",
    "Q380405",
-   "Q445541"
+   "Q445541",
+   "Q180642"
+  ],
+  "abc": [
+   "Q7293035",
+   "Q2037738",
+   "Q1254334",
+   "Q65164101"
   ]
  },
  "craque-do-dia": {
   "geral": [
    "NUNES",
    "LEONIDAS",
-   "CANO"
+   "CANO",
+   "DONIZETE"
   ],
   "flamengo": [
    "GERSON",
    "BEBETO",
-   "ARRASCAETA"
+   "ARRASCAETA",
+   "CARPEGIANI"
   ],
   "palmeiras": [
    "RONY",
    "ENDRICK",
-   "MARCOS"
+   "MARCOS",
+   "SAMPAIO"
   ],
   "vasco": [
    "DEDE",
    "MANECA",
-   "RIASCOS"
+   "RIASCOS",
+   "PIKACHU"
   ]
  }
 }

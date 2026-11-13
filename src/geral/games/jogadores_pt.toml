@@ -1,0 +1,903 @@
+# Jogadores só da edição de um time, com a carreira da Wikipédia em português (carreiras_pt.json).
+# Sugeridos por scripts/import_carreiras_pt.py --categoria; a revisão é humana.
+
+[[jogador]]
+pagina = "Abelha (futebolista)"
+nome = "Abelha"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Ademar Júnior"
+nome = "Ademar"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Ademir Patrício"
+nome = "Ademir Patrício"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Adílson Heleno"
+nome = "Adílson Heleno"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Adryan"
+nome = "Adryan"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Alberi"
+nome = "Alberi"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Alberto Antônio de Paula"
+nome = "Beto"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Aldrovani"
+nome = "Aldrovani"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Alex Alves de Lima"
+nome = "Alex Alves"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Alex Oliveira"
+nome = "Alex Oliveira"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Alex da Silva"
+nome = "Alex Silva"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Alison Wágner Lira Ferreira"
+nome = "Alison"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Alvinho"
+nome = "Alvinho"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Anderson Costa"
+nome = "Anderson Costa"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Anderson Pedra"
+nome = "Anderson Pedra"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Andrey"
+nome = "Andrey"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Augusto Recife"
+nome = "Augusto Recife"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Bida (futebolista)"
+nome = "Bida"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Bileu"
+nome = "Bileu"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Borçato"
+nome = "Borçato"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Caio Mancha"
+nome = "Caio Mancha"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Carlos Alberto Dias"
+nome = "Carlos Alberto Dias"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Cascata (futebolista)"
+nome = "Cascata"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Daniel de Carvalho (futebolista)"
+nome = "Daniel"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Daniel Paulista"
+nome = "Daniel Paulista"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Dênis Marques"
+nome = "Dênis Marques"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Dentinho Guerreiro"
+nome = "Dentinho Guerreiro"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Derivaldo Beserra Cavalcante"
+nome = "Dedé (Derivaldo Beserra Cavalcante)"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Deyvid Sacconi"
+nome = "Deyvid Sacconi"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Diego Barboza"
+nome = "Diego Barboza"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Diego Clementino"
+nome = "Diego Clementino"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Diego Jardel"
+nome = "Diego Jardel"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Diego Padilha"
+nome = "Diego Padilha"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Eduardo Echeverría"
+nome = "Eduardo Echeverría"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Éderson Alves Ribeiro Silva"
+nome = "Éderson"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Ednei (futebolista)"
+nome = "Ednei"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Edno"
+nome = "Edno"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Edson Felipe da Cruz"
+nome = "Edson (Edson Felipe da Cruz)"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Edson Pereira Lisboa"
+nome = "Edson (Edson Pereira Lisboa)"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Eduardo Neto"
+nome = "Eduardo Neto"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Eliandro"
+nome = "Eliandro"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Eltinho"
+nome = "Eltinho"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Erandir"
+nome = "Erandir"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Erick Flores"
+nome = "Erick Flores"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Éverton Barbosa da Hora"
+nome = "Éverton"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Éverton Silva"
+nome = "Éverton Silva"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Fábio Paulista"
+nome = "Paulista"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Fábio Souza dos Santos"
+nome = "Fabinho"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Fabrício (futebolista)"
+nome = "Fabrício"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Felipe Garcia"
+nome = "Felipe Garcia"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Fessin"
+nome = "Fessin"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Fidélis (futebolista)"
+nome = "Fidélis"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Finazzi"
+nome = "Finazzi"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Flávio Boaventura"
+nome = "Flávio Boaventura"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Saulo Araújo Fontes"
+nome = "Saulo"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Gegê (futebolista)"
+nome = "Gegê"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Geílson"
+nome = "Geílson"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Geovani Silva"
+nome = "Geovani"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Gilberto Ribeiro Gonçalves"
+nome = "Gil"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Gilmar Silva Santos"
+nome = "Gilmar"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Gilvan (futebolista)"
+nome = "Gilvan"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Giovanni Augusto"
+nome = "Giovanni Augusto"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Gladstone (futebolista)"
+nome = "Gladstone"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Guilherme Finkler"
+nome = "Guilherme Finkler"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Guilherme Nunes"
+nome = "Guilherme Nunes"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Gutemberg Brauer Leão"
+nome = "Gutemberg"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Hamílton Hênio Ferreira Calheiros"
+nome = "Hamílton"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Henan (futebolista)"
+nome = "Henan"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Hugo Ferreira"
+nome = "Hugo"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Igor Julião"
+nome = "Igor Julião"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Irineu (futebolista)"
+nome = "Irineu"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Ivan Aparecido"
+nome = "Ivan"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Jackson Coelho Silva"
+nome = "Jackson"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Jair Gonçalves Prates"
+nome = "Jair"
+edicao = "abc"
+
+[[jogador]]
+pagina = "João Paulo da Silva Araújo"
+nome = "João Paulo"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Jonathan Bocão"
+nome = "Jonathan Bocão"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Jones Carioca"
+nome = "Jones Carioca"
+edicao = "abc"
+
+[[jogador]]
+pagina = "José Luiz Guimarães Sanabio Júnior"
+nome = "Júnior (José Luiz Guimarães Sanabio)"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Dequinha"
+nome = "Dequinha"
+edicao = "abc"
+
+[[jogador]]
+pagina = "José Róbson do Nascimento"
+nome = "Robgol"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Josenildo Caetano da Silva"
+nome = "Nildo"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Juliano César Koagura"
+nome = "Juliano"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Juninho Quixadá"
+nome = "Juninho Quixadá"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Júnior Amorim"
+nome = "Júnior Amorim"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Júnior Negrão"
+nome = "Júnior Negrão"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Júnior Todinho"
+nome = "Júnior Todinho"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Kayke Moreno"
+nome = "Kayke"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Leandrão (futebolista)"
+nome = "Leandrão"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Leandro Amaro"
+nome = "Leandro Amaro"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Leandro Makelele"
+nome = "Makelele"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Lelê (futebolista, 1990)"
+nome = "Lelê"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Léo Gamalho"
+nome = "Léo Gamalho"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Léo Fortunato"
+nome = "Léo Fortunato"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Lins (futebolista)"
+nome = "Lins"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Lucas Pedro de Lima"
+nome = "Lucas Lima"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Lucas Tocantins"
+nome = "Lucas Tocantins"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Lucio Flavio (futebolista)"
+nome = "Lucio Flavio"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Luís Carlos da Silva Matos"
+nome = "Silva"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Luis Fernando Batista"
+nome = "Nando"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Luís Fernando Flores"
+nome = "Luís Fernando Flores"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Luís Ribeiro Pinto Neto"
+nome = "Lula"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Luisinho Netto"
+nome = "Luizinho Netto"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Luiz Gustavo (futebolista, 1994)"
+nome = "Luiz Gustavo"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Luiz Nascimento"
+nome = "Luizão (Luiz Carlos Nascimento Júnior)"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Madson Ferreira dos Santos"
+nome = "Madson"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Marcelo Fernandes"
+nome = "Marcelo Fernandes"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Marcilei da Silva Elias"
+nome = "Max"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Márcio Azevedo"
+nome = "Márcio Azevedo"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Márcio Passos"
+nome = "Márcio Passos"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Márcio Marabá"
+nome = "Márcio Marabá"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Marco Aurélio Barbosa"
+nome = "Marco Aurélio"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Marcos Antônio Candido Ferreira Júnior"
+nome = "Marcos Júnior"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Marcos Tamandaré"
+nome = "Marcos Tamandaré"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Marcus Winícius"
+nome = "Marcus Winícius"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Marinho Chagas"
+nome = "Marinho Chagas"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Marlon Ventura Rodrigues"
+nome = "Marlon"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Matheus Barbosa"
+nome = "Matheus Barbosa"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Matheus Carvalho"
+nome = "Matheus Carvalho"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Matheus Matias"
+nome = "Matheus Matias"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Michael Vinícius Silva de Morais"
+nome = "Michael"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Michel Benhami"
+nome = "Michel Benhami"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Negueba (futebolista, 1999)"
+nome = "Negueba"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Nixon (futebolista)"
+nome = "Nixon"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Nonato"
+nome = "Nonato (Raimundo Nonato de Lima Ribeiro)"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Raimundo Nonato da Silva"
+nome = "Nonato (Raimundo Nonato da Silva)"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Octávio (futebolista)"
+nome = "Octávio"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Osmar Coelho Claudiano"
+nome = "Osmar"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Paulinho Moccelin"
+nome = "Paulinho Moccelin"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Paulo Rogério Reis Silva"
+nome = "Somália"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Pedro Silva (futebolista)"
+nome = "Pedro Silva"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Pio (futebolista, 1988)"
+nome = "Pio"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Rafael Souza"
+nome = "Rafael"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Rafael Diniz Alves e Silva"
+nome = "Rafinha (Rafael Diniz Alves e Silva)"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Rafael Martins (futebolista)"
+nome = "Rafael Martins"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Rafael Miranda"
+nome = "Rafael Miranda"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Rafael Oliveira"
+nome = "Rafael Oliveira"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Raniere"
+nome = "Raniere"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Raul Victor"
+nome = "Raul"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Reginaldo (futebolista, 1993)"
+nome = "Reginaldo"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Régis Pitbull"
+nome = "Régis Pitbull"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Reinaldo Francisco de Oliveira"
+nome = "Reinaldo"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Renan Bragança"
+nome = "Renan Bragança"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Renan Bressan"
+nome = "Renan Bressan"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Ricardo Silva (treinador)"
+nome = "Ricardo Silva"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Richardson (futebolista, 1992)"
+nome = "Richardson"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Rodrigo Eduardo Costa Marinho"
+nome = "Rodriguinho"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Rodrigo Silva (futebolista)"
+nome = "Rodrigo Silva"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Rogerinho (futebolista)"
+nome = "Rogerinho"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Romário Guilherme dos Santos"
+nome = "Romário (Romário Guilherme dos Santos)"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Rômulo Noronha"
+nome = "Rômulo"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Ronaldo Capixaba"
+nome = "Ronaldo Capixaba"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Ronaldo Giovanelli"
+nome = "Ronaldo Giovanelli"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Samuel Firmino de Jesus"
+nome = "Samuel"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Sandro (futebolista, 1981)"
+nome = "Sandro (Alexsandro Oliveira Duarte)"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Sandro da Silva Mendonça"
+nome = "Sandro"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Schwenck"
+nome = "Schwenck"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Sebastião Cândido da Silva"
+nome = "Zinho (Sebastião Cândido da Silva)"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Sérgio Alves (futebolista)"
+nome = "Sérgio Alves"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Sérgio China"
+nome = "Sérgio China"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Simão Bertelli"
+nome = "Simão Bertelli"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Simão (futebolista)"
+nome = "Simão"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Suéliton Florencio Nogueira"
+nome = "Suéliton"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Sueliton Pereira"
+nome = "Sueliton"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Tatá (futebolista)"
+nome = "Tatá"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Thiago Rocha da Cunha"
+nome = "Thiaguinho"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Thonny Anderson"
+nome = "Thonny Anderson"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Tucho (futebolista)"
+nome = "Tucho"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Túlio Renan"
+nome = "Túlio Renan"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Valdir Papel"
+nome = "Valdir Papel"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Vaná"
+nome = "Vaná Alves"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Vicente Farache"
+nome = "Vicente Farache"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Vinícius de Abreu"
+nome = "Vinícus Rato"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Vítor Júnior"
+nome = "Vítor Júnior"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Wallyson"
+nome = "Wallyson"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Walter Minhoca"
+nome = "Walter Minhoca"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Warley (futebolista)"
+nome = "Warley"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Washington Orelha"
+nome = "Washington"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Welligton Lima"
+nome = "Welligton"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Wilson Júnior"
+nome = "Wilson Júnior"
+edicao = "abc"
+
+[[jogador]]
+pagina = "Zé Love"
+nome = "Zé Love"
+edicao = "abc"
+

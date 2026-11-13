@@ -42,7 +42,7 @@ def test_team_edition_page(game) -> None:
     assert page.status_code == 200 and jogador.nome in page.text
 
 
-@pytest.mark.parametrize("edition", ["abc", "xyz"])
+@pytest.mark.parametrize("edition", ["nautico", "xyz"])
 def test_edition_without_players_is_404(game, edition) -> None:
     assert game.get(f"/jogos/onde-jogou/{edition}").status_code == 404
     assert game.post(f"{API}/{edition}/8", json={"palpites": ["Vasco"]}).status_code == 404

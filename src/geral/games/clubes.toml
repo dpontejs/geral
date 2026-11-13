@@ -338,3 +338,9 @@ apelidos = ["Botafogo de Ribeirão Preto"]
 [Q2911646]  # João Pessoa (PB): Nenê
 nome = "Botafogo-PB"
 apelidos = ["Belo"]
+
+[Q194328]
+ignorar = true  # a cidade de Uberlândia, linkada no lugar do clube (Wikipédia em português)
+
+[Q68136]
+ignorar = true  # a cidade de Sion, linkada no lugar do FC Sion (Wikipédia em português)

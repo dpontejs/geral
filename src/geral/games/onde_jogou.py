@@ -3,6 +3,8 @@
 Careers come from Wikidata (`scripts/import_carreiras.py` writes `carreiras.json` from the curated
 `jogadores.toml`); `clubes.toml` fixes club names. No club is written in the code: a team's edition
 is the players who played for the club whose name is the team's `name` in `teams.toml`.
+`carreiras_pt.json` adds careers from the Portuguese Wikipedia (`geral/games/ptwiki.py`); those
+players only play in their own team's edition.
 """
 
 import json
@@ -20,6 +22,7 @@ from geral.games.daily import number_on, pick, shuffled
 
 HERE = Path(__file__).parent
 CAREERS = HERE / "carreiras.json"
+CAREERS_PT = HERE / "carreiras_pt.json"  # team-only players, from the Portuguese Wikipedia
 CLUB_FIXES = HERE / "clubes.toml"
 PLAYERS = HERE / "jogadores.toml"
 LAUNCH = date(2026, 11, 11)  # puzzle #1: no later than the deploy, or two days share #1
@@ -145,6 +148,7 @@ class Jogador:
     nome: str
     posicao: str
     clubes: tuple[Passagem, ...]
+    edicoes: tuple[str, ...] = ()  # only these team editions; empty: everywhere
 
     @property
     def distintos(self) -> set[str]:
@@ -169,6 +173,7 @@ class Data:
                     j["nome"],
                     j["posicao"],
                     tuple(Passagem(s["clube"], s["inicio"], s["fim"]) for s in j["clubes"]),
+                    tuple(j.get("edicoes", ())),
                 )
                 for j in raw["jogadores"]
             ),
@@ -176,16 +181,42 @@ class Data:
 
     @cached_property
     def index(self) -> dict[str, str]:
-        """Every club name and alias, normalized -> club id (for what people type)."""
+        """Every club name and alias, normalized -> club id (for what people type).
+
+        A club's name wins over another's alias; an alias of several clubs leads nowhere (a
+        right guess must not be judged against the wrong club).
+        """
         found: dict[str, str] = {}
         for qid, club in sorted(self.clubes.items()):
-            for name in (club.nome, *club.apelidos):
-                found.setdefault(normalize(name), qid)
+            found.setdefault(normalize(club.nome), qid)
+        owners: dict[str, set[str]] = {}
+        for qid, club in self.clubes.items():
+            for alias in club.apelidos:
+                owners.setdefault(normalize(alias), set()).add(qid)
+        for alias, qids in owners.items():
+            if alias not in found and len(qids) == 1:
+                found[alias] = next(iter(qids))
         return found
 
 
-def load(path: Path = CAREERS) -> Data:
-    return Data.from_dict(json.loads(path.read_text(encoding="utf-8")))
+def _merge(main: dict, extra: dict) -> dict:
+    """The main careers plus the extra players it lacks; club aliases add up, names stay."""
+    clubes = {qid: dict(c) for qid, c in extra["clubes"].items()}
+    for qid, club in main["clubes"].items():
+        other = clubes.get(qid, {})
+        aliases = set(club["apelidos"]) | set(other.get("apelidos", []))
+        aliases |= {other["nome"]} if other.get("nome") else set()  # its short name: "Ceará"
+        clubes[qid] = {**club, "apelidos": sorted(aliases - {club["nome"]})}
+    known = {j["wikidata"] for j in main["jogadores"]}
+    extra_players = [j for j in extra["jogadores"] if j["wikidata"] not in known]
+    return {"clubes": clubes, "jogadores": main["jogadores"] + extra_players}
+
+
+def load(path: Path = CAREERS, extra: Path = CAREERS_PT) -> Data:
+    raw = json.loads(path.read_text(encoding="utf-8"))
+    if extra.exists():
+        raw = _merge(raw, json.loads(extra.read_text(encoding="utf-8")))
+    return Data.from_dict(raw)
 
 
 def load_fixes(path: Path = CLUB_FIXES) -> dict[str, dict]:
@@ -209,13 +240,17 @@ def pool(
     `game` seeds the order, so two games on the same players don't fall on the same day.
     """
     if edition == "geral":
-        chosen = [j for j in data.jogadores if len(j.distintos) >= MIN_CLUBS["geral"]]
+        chosen = [
+            j for j in data.jogadores if not j.edicoes and len(j.distintos) >= MIN_CLUBS["geral"]
+        ]
     else:
         clubs = team_clubs(data, teams.get(edition))
         chosen = [
             j
             for j in data.jogadores
-            if j.distintos & clubs and len(j.distintos) >= MIN_CLUBS["team"]
+            if j.distintos & clubs
+            and len(j.distintos) >= MIN_CLUBS["team"]
+            and (not j.edicoes or edition in j.edicoes)
         ]
     chosen.sort(key=lambda j: j.wikidata)
     return shuffled(chosen, f"{game}:{edition}") if chosen else []

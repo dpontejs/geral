@@ -39,7 +39,7 @@ def test_team_edition_page(game) -> None:
     assert game.get("/jogos/quem-e/flamengo").status_code == 200
 
 
-@pytest.mark.parametrize("edition", ["abc", "xyz"])
+@pytest.mark.parametrize("edition", ["nautico", "xyz"])
 def test_edition_without_players_is_404(game, edition) -> None:
     assert game.get(f"/jogos/quem-e/{edition}").status_code == 404
     assert game.post(f"{API}/{edition}/8", json={"palpites": ["Q1"]}).status_code == 404
@@ -118,3 +118,19 @@ def test_game_page_has_a_give_up_button(game) -> None:
     page = game.get("/jogos/quem-e").text
 
     assert 'id="qe-give-up"' in page and ">Desistir<" in page
+
+
+def selector(page: str) -> set[str]:
+    import json
+
+    raw = page.split('id="qe-player-data">')[1].split("</script>")[0]
+    return {p["id"] for p in json.loads(raw)}
+
+
+def test_team_only_players_are_picked_only_in_their_edition(game) -> None:
+    data = load()
+    abc_only = {j.wikidata for j in data.jogadores if j.edicoes == ("abc",)}
+    assert abc_only
+
+    assert not selector(game.get("/jogos/quem-e").text) & abc_only
+    assert abc_only <= selector(game.get("/jogos/quem-e/abc").text)

@@ -259,3 +259,122 @@ def test_convert_writes_positions_in_brazilian_portuguese(raw, shown) -> None:
     rows = [row("Q2", "Q100", "Vasco", "1990", "1992", position=raw)]
 
     assert player(Data.from_dict(convert(PLAYERS, rows, {})), "Edmundo").posicao == shown
+
+
+ABC_ONLY = {
+    "clubes": {
+        "Q100": {"nome": "Vasco", "apelidos": ["Vasco da Gama (pt)"], "pais": "Brasil"},
+        "Q200": {"nome": "ABC", "apelidos": ["ABC Futebol Clube"], "pais": "Brasil"},
+        "Q201": {"nome": "Alecrim", "apelidos": [], "pais": "Brasil"},
+        "Q202": {"nome": "América-RN", "apelidos": [], "pais": "Brasil"},
+    },
+    "jogadores": [
+        {
+            "wikidata": "Q50",
+            "nome": "Alberi",
+            "posicao": "Atacante",
+            "edicoes": ["abc"],
+            "clubes": [
+                {"clube": "Q200", "inicio": 1968, "fim": 1975},
+                {"clube": "Q100", "inicio": 1976, "fim": 1976},
+                {"clube": "Q201", "inicio": 1979, "fim": 1981},
+                {"clube": "Q202", "inicio": 1982, "fim": 1983},
+            ],
+        },
+        {  # already in the main file: the main career wins
+            "wikidata": "Q2",
+            "nome": "Edmundo (pt)",
+            "posicao": "Atacante",
+            "edicoes": ["abc"],
+            "clubes": [{"clube": "Q200", "inicio": 2009, "fim": 2009}],
+        },
+    ],
+}
+
+
+@pytest.fixture
+def merged(data, tmp_path) -> Data:
+    import json
+
+    from geral.games.onde_jogou import load
+
+    main, extra = tmp_path / "carreiras.json", tmp_path / "carreiras_pt.json"
+    main.write_text(json.dumps(convert(PLAYERS, ROWS, OVERRIDES)), encoding="utf-8")
+    extra.write_text(json.dumps(ABC_ONLY), encoding="utf-8")
+    return load(main, extra)
+
+
+def test_load_adds_the_extra_careers_and_keeps_the_main_ones(merged) -> None:
+    assert player(merged, "Alberi").edicoes == ("abc",)
+    assert player(merged, "Edmundo").edicoes == ()  # the main career, not the extra one
+    assert not [p for p in merged.jogadores if p.nome == "Edmundo (pt)"]
+    assert merged.clubes["Q100"].nome == "Vasco"
+    assert "Vasco da Gama (pt)" in merged.clubes["Q100"].apelidos  # aliases add up
+    assert resolve(merged, "alecrim") == "Q201"
+
+
+def test_load_works_without_the_extra_file(tmp_path) -> None:
+    import json
+
+    from geral.games.onde_jogou import load
+
+    main = tmp_path / "carreiras.json"
+    main.write_text(json.dumps(convert(PLAYERS, ROWS, OVERRIDES)), encoding="utf-8")
+
+    assert len(load(main, tmp_path / "nada.json").jogadores) == 3
+
+
+def test_extra_players_play_only_in_their_own_edition(merged) -> None:
+    assert "Alberi" in {p.nome for p in pool(merged, "abc", TEAMS)}
+    assert "Alberi" not in {p.nome for p in pool(merged, "geral", TEAMS)}
+    assert "Alberi" not in {p.nome for p in pool(merged, "vasco", TEAMS)}
+
+
+def test_real_abc_edition_has_a_month_of_players() -> None:
+    from geral.games.onde_jogou import load
+    from geral.teams import load_teams
+
+    names = {slug: team.name for slug, team in load_teams().items()}
+
+    assert len(pool(load(), "abc", names)) >= 30
+
+
+def test_real_player_names_are_unique() -> None:
+    from collections import Counter
+
+    from geral.games.onde_jogou import load
+
+    names = Counter(j.nome for j in load().jogadores)
+
+    assert [n for n, k in names.items() if k > 1] == []
+
+
+def test_load_keeps_the_extra_short_name_of_a_known_club(tmp_path) -> None:
+    import json
+
+    from geral.games.onde_jogou import load
+
+    main, extra = tmp_path / "carreiras.json", tmp_path / "carreiras_pt.json"
+    main.write_text(json.dumps(convert(PLAYERS, ROWS, OVERRIDES)), encoding="utf-8")
+    renamed = {"clubes": {"Q105": {"nome": "Verdão", "apelidos": [], "pais": "Brasil"}}}
+    extra.write_text(json.dumps({**renamed, "jogadores": []}), encoding="utf-8")
+
+    assert resolve(load(main, extra), "verdao") == "Q105"
+
+
+def test_resolve_prefers_a_club_name_and_drops_shared_aliases() -> None:
+    data = Data.from_dict(
+        {
+            "clubes": {
+                "Q1": {"nome": "Nacional", "apelidos": [], "pais": "Uruguai"},
+                "Q2": {"nome": "CD Nacional", "apelidos": ["Nacional"], "pais": "Portugal"},
+                "Q3": {"nome": "América-SP", "apelidos": ["América FC"], "pais": "Brasil"},
+                "Q4": {"nome": "América-TO", "apelidos": ["América FC"], "pais": "Brasil"},
+            },
+            "jogadores": [],
+        }
+    )
+
+    assert resolve(data, "nacional") == "Q1"
+    assert resolve(data, "america fc") is None  # which one? not a wrong guess either
+    assert resolve(data, "america-to") == "Q4"
