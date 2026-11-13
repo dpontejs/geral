@@ -15,7 +15,7 @@
 <meta property="og:image:height" content="630">
 <meta property="og:image:alt" content="Geral: o geraldino com o radinho de pilha e o nome do portal">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="theme-color" content="#0E3320">
+<meta name="theme-color" content="{{ club.turf if club else '#0E3320' }}">
 <link rel="icon" href="/static/geral/icon-512.png">
 <link rel="apple-touch-icon" href="/static/geral/icon-512.png">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -25,7 +25,8 @@
 /* A Geral do Maracanã antigo: o gramado colado na Geral, ingresso de papel e o placar
    eletrônico de lâmpadas amarelas. O placar aparece só no topo e nos joguinhos; o resto é
    gramado e papel. As cores dos clubes ficam fora do painel (o placar antigo era de uma cor
-   só). Tema único. */
+   só). Tema único. Nas páginas de um time (edição e joguinhos), as cores do clube tomam o lugar
+   do gramado (web/palette.py); papel, ingresso e lâmpadas continuam. */
 :root {
   --paper: #EFE4CC;
   --paper-2: #E6D8BA;
@@ -229,6 +230,7 @@ footer .wrap { padding-block: 22px 30px; display: flex; justify-content: space-b
 input.nick { width: min(100%, 320px); display: block; }
 .hidden-field { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
 </style>
+{% if club %}{{ club.style() }}{% endif %}
 {% block head %}{% endblock %}
 </head>
 <body>

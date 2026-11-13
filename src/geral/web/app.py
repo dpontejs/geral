@@ -31,6 +31,7 @@ from geral.send.resend_sender import UNSUBSCRIBE_PLACEHOLDER, personalize
 from geral.teams import Team, load_teams
 from geral.web.bolao import TZ, BolaoStore
 from geral.web.mailer import Mailer, MailError, mailer_from_settings
+from geral.web.palette import club_palette
 from geral.web.scoreboard import animation_svg
 from geral.web.store import RequestResult, SubscriberStore, normalize
 from geral.web.team_requests import PUBLIC_MIN_VOTES, TeamRequestStore, network, team_key
@@ -419,7 +420,13 @@ def create_app(
         newsletter = catalog[team].newsletter
         # "Geral — Edição geral — 09/11/2026: ..." or "Elefante News — Notícias — ...": no names
         headline = edition.subject.removeprefix("Geral — ").removeprefix(f"{newsletter} — ")
-        return page(request, "edicao.html.j2", team=catalog[team], headline=headline)
+        return page(
+            request,
+            "edicao.html.j2",
+            team=catalog[team],
+            club=club_palette(catalog[team]),
+            headline=headline,
+        )
 
     @app.get("/t/{team}/edicao", response_class=HTMLResponse)
     def team_edition(request: Request, team: str):
@@ -885,6 +892,7 @@ def create_app(
             edition=edition,
             tabs=game_tabs("craque-do-dia", edition),
             team=listed.get(edition),
+            club=club_palette(listed.get(edition)),
             number=number,
             **when,
             letters=len(daily_craque(edition, games, number).answer),
@@ -930,6 +938,7 @@ def create_app(
             edition=edition,
             tabs=game_tabs("onde-jogou", edition),
             team=listed.get(edition),
+            club=club_palette(listed.get(edition)),
             number=number,
             **when,
             jogador=jogador,
@@ -987,6 +996,7 @@ def create_app(
             edition=edition,
             tabs=game_tabs("quem-e", edition),
             team=listed.get(edition),
+            club=club_palette(listed.get(edition)),
             number=number,
             **when,
             jogador=jogador,
