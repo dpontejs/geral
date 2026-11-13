@@ -1,0 +1,7 @@
+{{Infobox football biography
+| name = Uruguaio
+| years1 = 2015–2018 | clubs1 = [[Club Nacional de Football|Nacional]]
+| years2 = 2019– | clubs2 = [[Grêmio FBPA|Grêmio]]
+| nationalyears1 = 2016– | nationalteam1 = [[Uruguay national football team|Uruguay]]
+}}
+'''Uruguaio''' is a Uruguayan footballer.

@@ -14,6 +14,13 @@ from pathlib import Path
 LINKS = Path(__file__).with_name("wikipedia_links.toml")
 YEARS = re.compile(r"(\d{4})\s*(?:([–—-])\s*(\d{4}|\d{2}(?!\d))?)?")
 DASH = re.compile(r"\{\{\s*(?:s?ndash|snd|spaced ndash)\s*\}\}", re.IGNORECASE)
+SELECAO_PAGE = "Brazil national football team"  # the senior team; U-20 and Olympic have own pages
+SQUAD_PLAYER = re.compile(
+    r"\{\{\s*(?:nat fs (?:g )?|national football squad )player\b"
+    r"[^\n]*?\|\s*name\s*=\s*\[\[([^\]|#]+)",
+    re.IGNORECASE,
+)
+ILL = re.compile(r"\{\{\s*(?:ill|interlanguage link)\s*\|\s*([^|{}]+)", re.IGNORECASE)
 WRAPPER = re.compile(r"\{\{[^{}|]*\|([^{}]*)\}\}")  # {{nowrap|...}} keeps what it wraps
 
 
@@ -94,6 +101,10 @@ def _club(text: str) -> str:
     link = re.search(r"\[\[([^\]|#]+)", text)
     if link:
         return link.group(1).strip()
+    interlanguage = ILL.search(text)  # {{ill|Antarctica Futebol Clube|pt|lt=Antarctica FC}}
+    if interlanguage:
+        return interlanguage.group(1).strip()
+    text = re.sub(r"<[^>]+>", "", text)  # <span title="…">Operário de Muriaé</span>
     plain = WRAPPER.sub(r"\1", text)  # {{nowrap|Deportivo Pereira}}
     plain = re.sub(r"\{\{[^}]*\}\}|'''?|\(loan\)|→", "", plain)
     return " ".join(plain.split())
@@ -110,6 +121,18 @@ def parse_career(wikitext: str) -> list[Stint]:
         if club:  # a year with no club happens in real infoboxes: nothing to keep
             stints.append(Stint(*(span or (None, None)), club))
     return stints
+
+
+def national_teams(wikitext: str) -> list[str]:
+    """The national teams of the infobox (youth and Olympic included), as linked page titles."""
+    params = _params(_infobox(wikitext))
+    keys = {int(m.group(1)): k for k in params if (m := re.fullmatch(r"national_?team(\d+)", k))}
+    return [team for _, k in sorted(keys.items()) if (team := _club(params[k]))]
+
+
+def squad_players(wikitext: str) -> list[str]:
+    """The linked players of a "FIFA World Cup squads" page (`{{nat fs g player|name=[[…]]}}`)."""
+    return SQUAD_PLAYER.findall(wikitext)
 
 
 def career_rows(

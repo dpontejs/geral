@@ -1,0 +1,95 @@
+# Clubes do tabuleiro do jogo da velha (só brasileiros): os 20 da Série A de 2026 e grandes
+# históricos fora dela. Nunca apague um clube: tabuleiros já jogados (calendario.json) usam o id.
+# Depois de editar: uv run python scripts/import_base.py
+
+[Q270995]
+nome = "Atlético-MG"
+
+[Q506832]
+nome = "Athletico-PR"
+
+[Q198032]
+nome = "Bahia"
+
+[Q80958]
+nome = "Botafogo"
+
+[Q541744]
+nome = "Bragantino"
+
+[Q2536715]
+nome = "Chapecoense"
+
+[Q35933]
+nome = "Corinthians"
+
+[Q478317]
+nome = "Coritiba"
+
+[Q188277]
+nome = "Cruzeiro"
+
+[Q17479]
+nome = "Flamengo"
+
+[Q80987]
+nome = "Fluminense"
+
+[Q221695]
+nome = "Grêmio"
+
+[Q80845]
+nome = "Internacional"
+
+[Q2622870]
+nome = "Mirassol"
+
+[Q80964]
+nome = "Palmeiras"
+
+[Q2552872]
+nome = "Remo"
+
+[Q80955]
+nome = "Santos"
+
+[Q38568]
+nome = "São Paulo"
+
+[Q5014111]
+nome = "Vasco"
+
+[Q274465]
+nome = "Vitória"
+
+# Históricos fora da Série A de 2026
+
+[Q338285]
+nome = "América-MG"
+
+[Q1052219]
+nome = "Ceará"
+
+[Q188841]
+nome = "Fortaleza"
+
+[Q816779]
+nome = "Goiás"
+
+[Q1133475]
+nome = "Guarani"
+
+[Q910453]
+nome = "Juventude"
+
+[Q73971]
+nome = "Náutico"
+
+[Q204675]
+nome = "Portuguesa"
+
+[Q508440]
+nome = "Santa Cruz"
+
+[Q219098]
+nome = "Sport"

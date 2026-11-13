@@ -1,0 +1,11 @@
+{{Infobox football biography
+| name = Edmundo
+| youthyears1 = 1980–1984 | youthclubs1 = [[Grêmio FBPA|Grêmio]]
+| years1 = 1985–1990 | clubs1 = [[CR Vasco da Gama|Vasco da Gama]]
+| years2 = 1991–2002 | clubs2 = → [[SE Palmeiras|Palmeiras]] (loan)
+| years3 = 1995 | clubs3 = [[Some Foreign Club]]
+| years4 = ? | clubs4 = [[Grêmio FBPA|Grêmio]]
+| nationalyears1 = 1983 | nationalteam1 = [[Brazil national under-20 football team|Brazil U20]]
+| nationalyears2 = 1992–2000 | nationalteam2 = [[Brazil national football team|Brazil]]
+}}
+'''Edmundo''' is a Brazilian former footballer.
