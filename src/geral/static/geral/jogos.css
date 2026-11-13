@@ -115,12 +115,16 @@ select.chip { appearance: auto; }
 
 /* página dos joguinhos */
 .hub-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 18px; }
-.hub-card { display: flex; flex-direction: column; gap: 14px; padding: 24px; border: 10px solid var(--turf); color: #D9D4C8; box-shadow: 6px 6px 0 rgba(0, 0, 0, .35); }
+.hub-card { position: relative; display: flex; flex-direction: column; gap: 16px; padding: 24px; border: 10px solid var(--turf); color: #D9D4C8; box-shadow: 6px 6px 0 rgba(0, 0, 0, .35); }
+/* like the Intervalo cards on the home page: the frame lights up */
+.hub-card:hover, .hub-card:focus-within { border-color: var(--ticket); }
+.hub-main { display: flex; flex-direction: column; gap: 14px; flex: 1; color: inherit; text-decoration: none; }
+.hub-main::after { content: ""; position: absolute; inset: 0; } /* the whole card is the link */
+.hub-main:focus-visible { outline: none; }
 .hub-card .tag { font-size: 16px; opacity: .8; }
 .hub-card .title { font-size: 40px; line-height: 1.05; margin: 0; }
 .hub-card p { margin: 0; font-size: 16px; flex: 1; }
-.hub-card .play { align-self: flex-start; background: var(--ticket); color: var(--ink); }
-.hub-card .play:hover { background: var(--lamp); color: var(--ink); }
-.hub-editions { display: flex; flex-wrap: wrap; gap: 6px; }
+.hub-card .go { font: 800 22px/1 var(--display); text-transform: uppercase; letter-spacing: .06em; color: var(--lamp); }
+.hub-editions { position: relative; z-index: 1; display: flex; flex-wrap: wrap; gap: 6px; }
 .hub-editions a { font: 700 14px/1 var(--body); color: var(--paper); text-decoration: none; border: 2px solid #5E6B60; padding: 10px 12px; min-height: 40px; box-sizing: border-box; display: inline-flex; align-items: center; }
 .hub-editions a:hover { border-color: var(--lamp); color: var(--lamp); }

@@ -9,10 +9,13 @@
     <div class="hub-grid">
       {% for g in games %}
       <article class="board hub-card">
-        <span class="lamp tag">#{{ g.number }} · hoje</span>
-        <h2 class="lamp title">{{ g.name }}</h2>
-        <p>{{ g.desc }}</p>
-        <a class="btn play" href="{{ g.url }}">Jogar o de hoje →</a>
+        {# The whole card plays today's game; the edition links sit above that link. #}
+        <a class="hub-main" href="{{ g.url }}">
+          <span class="lamp tag">#{{ g.number }} · hoje</span>
+          <h2 class="lamp title">{{ g.name }}</h2>
+          <p>{{ g.desc }}</p>
+          <span class="go">Jogar o de hoje →</span>
+        </a>
         <nav class="hub-editions" aria-label="Edições do {{ g.name }}">{% for label, url in g.edition_links %}<a href="{{ url }}">{{ label }}</a>{% endfor %}</nav>
       </article>
       {% endfor %}

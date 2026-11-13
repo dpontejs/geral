@@ -1,5 +1,6 @@
 """Finding the way around: the edition page in the site's frame, home links, the games page."""
 
+import re
 from datetime import UTC, datetime
 
 import pytest
@@ -89,3 +90,34 @@ def test_edition_page_headline_drops_the_names_already_on_the_page(client) -> No
     page = client.get("/t/geral").text
 
     assert "<b>09/11/2026: Flamengo lidera</b>" in page
+
+
+def section(page: str, marker: str) -> str:
+    return page.split(marker)[1].split("</section>")[0]
+
+
+def test_home_break_holds_only_the_games(site) -> None:
+    intervalo = section(site.get("/").text, 'id="intervalo"')
+
+    for path in GAMES:
+        assert f'href="/jogos/{path}"' in intervalo
+    assert "Edição geral" not in intervalo and 'href="/pedir"' not in intervalo
+
+
+def test_general_edition_sits_with_the_torcidas_and_the_request_has_its_own_strip(site) -> None:
+    torcidas = section(site.get("/").text, 'id="torcidas"')
+
+    assert "<h3>Edição geral</h3>" in torcidas
+    assert '<a class="pedir-strip" href="/pedir">' in torcidas
+
+
+def test_games_page_cards_are_one_link_each_that_lights_up(site) -> None:
+    page = site.get("/jogos").text
+
+    for path in GAMES:
+        assert f'<a class="hub-main" href="/jogos/{path}">' in page
+    assert ".hub-card:hover" in site.get("/static/geral/jogos.css").text
+
+
+def test_ticket_team_buttons_share_one_size(site) -> None:
+    assert re.search(r"\.picks \{[^}]*grid-template-columns: repeat\(auto-fill", site.get("/").text)

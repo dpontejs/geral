@@ -76,7 +76,24 @@
         <div class="foot"><span>{{ counts.get(team.slug, 0) }} na Geral</span>{% if ed %}<a href="/t/{{ team.slug }}">Ler a edição</a>{% endif %}</div>
       </article>
       {% endfor %}
+      {% if general %}{% set ed = editions.get(general.slug) %}
+      <article class="torcida" style="--c: {{ general.accent }}">
+        <img src="/static/{{ general.slug }}/icon-512.png" alt="O geraldino, mascote da Geral">
+        <div><h3>{{ general.newsletter }}</h3><div class="club">Série A à D · toda segunda</div></div>
+        {% if ed %}{% set rest = ed.subject.split(" — ", 2)[-1] %}{% set label, _, headline = rest.partition(": ") %}
+        <p class="last"><b>{{ label }}</b>{{ headline or label }}</p>
+        {% else %}
+        <p class="last"><b>Nova</b>O futebol brasileiro da semana numa edição só: resultados, tabela e o que importa.</p>
+        {% endif %}
+        <div class="foot"><span>Toda segunda</span>{% if ed %}<a href="/t/{{ general.slug }}">Ler a edição</a>{% else %}<a href="#signup">Assinar</a>{% endif %}</div>
+      </article>
+      {% endif %}
     </div>
+    <a class="pedir-strip" href="/pedir">
+      <b>Seu time não está aqui?</b>
+      <span>Peça a sua torcida. Quando juntar gente, a gente acende a newsletter e te avisa.{% if top_request %} Mais pedido: <b>{{ top_request.name }}</b> ({{ top_request.votes }}).{% endif %}</span>
+      <span class="go">Pedir →</span>
+    </a>
   </div>
 </section>
 
@@ -95,7 +112,7 @@
   <div class="wrap" style="padding-top:52px">
     <div class="head">
       <h2>Intervalo</h2>
-      <p>Enquanto a bola não rola: joguinhos, a edição da semana e o pedido do seu time. <a class="more" href="/jogos">Todos os joguinhos →</a></p>
+      <p>Enquanto a bola não rola: um jogo novo por dia, com edição da sua torcida. <a class="more" href="/jogos">Todos os joguinhos →</a></p>
     </div>
     <div class="grid">
       <a class="board mini play-card" href="/jogos/onde-jogou">
@@ -122,18 +139,6 @@
         <p>Palpite com um clique no e-mail do pré-jogo. Quem acerta mais leva a torcida no placar.</p>
         <span class="go soon">Em breve</span>
       </div>
-      <a class="board mini play-card" href="{% if editions.get('geral') %}/t/geral{% else %}#signup{% endif %}">
-        <span class="lamp tag">Nova · toda segunda</span>
-        <span class="lamp title">Edição geral</span>
-        <p>Toda segunda, o futebol brasileiro da semana numa edição só: resultados, tabela e o que importa, da Série A à D. Assine no ingresso.</p>
-        <span class="go">{% if editions.get('geral') %}Ler a última →{% else %}Assinar ↑{% endif %}</span>
-      </a>
-      <a class="board mini play-card" href="/pedir">
-        <span class="lamp tag">Peça a sua</span>
-        <span class="lamp title">Seu time?</span>
-        <p>Peça a sua torcida. Quando juntar gente, a gente acende a newsletter e te avisa.{% if top_request %} Mais pedido: <b>{{ top_request.name }}</b> ({{ top_request.votes }}).{% endif %}</p>
-        <span class="go">Pedir →</span>
-      </a>
     </div>
   </div>
 </section>

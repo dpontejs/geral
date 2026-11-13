@@ -10,7 +10,7 @@ def test_intervalo_cards_share_one_layout(client) -> None:
     intervalo = client.get("/").text.split('id="intervalo"', 1)[1].split("</section>", 1)[0]
 
     cards = intervalo.count('class="board mini')
-    assert cards == 6
+    assert cards == 4  # the three games and the bolão; edição geral and requests left it
     assert intervalo.count('class="lamp tag"') == cards
     assert intervalo.count('class="lamp title"') == cards
     assert intervalo.count('class="go') == cards  # a footer on every card, playable or not
