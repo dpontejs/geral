@@ -1,5 +1,6 @@
 """Wikidata and Wikipedia calls shared by the importers, slowly (Wikimedia robot policy)."""
 
+import re
 import time
 
 import httpx
@@ -8,11 +9,12 @@ SPARQL = "https://query.wikidata.org/sparql"
 ENWIKI = "https://en.wikipedia.org/w/api.php"
 WIKIDATA = "https://www.wikidata.org/w/api.php"
 HEADERS = {
-    "User-Agent": "geral-games/0.1 (hobby project)",
+    "User-Agent": "geral-games/0.1 (https://github.com/dpontejs/geral)",
     "Accept": "application/sparql-results+json",
     "Accept-Encoding": "gzip",
 }
 BATCH = 50  # titles or ids per MediaWiki call
+INVALID_TITLE = re.compile(r"[|\[\]{}<>#\n]")
 
 
 def sparql(client: httpx.Client, query: str) -> list[dict]:
@@ -83,6 +85,8 @@ def wikitexts(client: httpx.Client, titles: list[str]) -> dict[str, str]:
 
 def page_qids(client: httpx.Client, titles: list[str]) -> dict[str, str]:
     """Linked page title -> its Wikidata id, following redirects."""
+    # A '|' would split the batch; other leftovers of templates are no title either.
+    titles = [t for t in titles if t.strip() and not INVALID_TITLE.search(t)]
     found = {}
     for i in range(0, len(titles), BATCH):
         chunk = titles[i : i + BATCH]

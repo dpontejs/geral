@@ -57,3 +57,15 @@ def test_make_board_on_a_tiny_base_fails_instead_of_looping() -> None:
     tiny = base(player("Q1", clubes=("Q5014111",)), clubs={"Q5014111": "Vasco"})
     with pytest.raises(RuntimeError):
         make_board(tiny, random.Random(1))
+
+
+def test_real_base_boards() -> None:
+    from geral.games.velha.base import load
+
+    real = load()
+    assert 3000 <= len(real.players) <= 6000
+    for seed in range(50):
+        board = make_board(real, random.Random(f"velha:{seed}"))
+        assert parse_board(real, board.code) == board
+        for casa in range(9):
+            assert len(answers(real, *board.cell(casa))) >= 3, (seed, casa)

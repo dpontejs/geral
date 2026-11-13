@@ -156,3 +156,16 @@ def test_squad_players_reads_the_nat_fs_links() -> None:
 {{nat fs g player|no=3|pos=DF|name=Unlinked Person|club=[[Santos Laguna]]}}
 {{nat fs end}}"""
     assert squad_players(text) == ["Hernán Galíndez", "Félix Torres (footballer, born 1997)"]
+
+
+def test_parse_career_reads_interlanguage_links_and_html_names() -> None:
+    text = """{{Infobox football biography
+| years1 = 1950 | clubs1 = {{ill|Antarctica Futebol Clube|pt|lt=Antarctica FC}}
+| years2 = 1951 | clubs2 = → {{ill|Araguari Atlético Clube|lt=Araguari|pt}} (loan)
+| years3 = 1952 | clubs3 = <span title="Operário Futebol Clube (Muriaé)">Operário de Muriaé</span>
+}}"""
+    assert [s.target for s in parse_career(text)] == [
+        "Antarctica Futebol Clube",
+        "Araguari Atlético Clube",
+        "Operário de Muriaé",
+    ]

@@ -117,3 +117,19 @@ def test_entities_come_in_batches_of_fifty(monkeypatch) -> None:
         found = mediawiki.entities(client, qids, "sitelinks")
     assert sorted(found) == sorted(qids)
     assert route.call_count == 3
+
+
+@respx.mock
+def test_page_qids_skips_what_cannot_be_a_title(monkeypatch) -> None:
+    monkeypatch.setattr(mediawiki.time, "sleep", lambda s: None)
+
+    def answer(request: httpx.Request) -> httpx.Response:
+        titles = request.url.params["titles"].split("|")
+        assert titles == ["Grêmio FBPA"]
+        page = {"title": "Grêmio FBPA", "pageprops": {"wikibase_item": "Q221695"}}
+        return httpx.Response(200, json={"query": {"pages": [page]}})
+
+    respx.get(mediawiki.ENWIKI).mock(side_effect=answer)
+    with httpx.Client() as client:
+        found = mediawiki.page_qids(client, ["União|Sociedade Esportiva União", "Grêmio FBPA", " "])
+    assert found == {"Grêmio FBPA": "Q221695"}

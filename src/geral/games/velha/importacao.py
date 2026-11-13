@@ -15,7 +15,7 @@ from geral.games.mediawiki import entities, labels, page_qids, wikitexts, with_s
 from geral.games.onde_jogou import COUNTRY_NAMES
 from geral.games.wikipedia import national_teams, parse_career, squad_players
 
-MIN_FAMA = 3  # Wikipedias a player needs to enter (keeps the base at 3–6 thousand)
+MIN_FAMA = 4  # Wikipedias a player needs to enter: 5758 of 7835 candidates (2026-11-13)
 SELECAO = "Q83459"  # the senior Brazil team
 BRAZIL = "Q155"
 # P1344 is well filled for these editions (1930–2018); 2022 is thin and 2026 mixes qualifiers.
