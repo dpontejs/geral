@@ -378,3 +378,12 @@ def test_resolve_prefers_a_club_name_and_drops_shared_aliases() -> None:
     assert resolve(data, "nacional") == "Q1"
     assert resolve(data, "america fc") is None  # which one? not a wrong guess either
     assert resolve(data, "america-to") == "Q4"
+
+
+def test_real_nautico_edition_has_a_month_of_players() -> None:
+    from geral.games.onde_jogou import load
+    from geral.teams import load_teams
+
+    names = {slug: team.name for slug, team in load_teams().items()}
+
+    assert len(pool(load(), "nautico", names)) >= 30

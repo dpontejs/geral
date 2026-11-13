@@ -14,7 +14,6 @@ Usage:
 import json
 import re
 import sys
-import time
 import tomllib
 from pathlib import Path
 
@@ -42,25 +41,11 @@ def download(players: list[dict]) -> dict:
 
 def suggest(category: str, edition: str) -> None:
     with httpx.Client(headers=ptwiki.HEADERS, timeout=60) as client:
-        response = client.get(
-            ptwiki.API,
-            params={
-                "action": "query",
-                "list": "categorymembers",
-                "cmtitle": f"Categoria:{category}",
-                "cmlimit": 500,
-                "cmnamespace": 0,
-                "format": "json",
-            },
-        )
-        titles = [
-            m["title"] for m in response.raise_for_status().json()["query"]["categorymembers"]
-        ]
-        time.sleep(1)
+        titles = ptwiki.category_members(client, category)
         pages = ptwiki.fetch_pages(client, titles)
     for title in titles:
         page = pages.get(title)
-        nome = ptwiki.position(ptwiki.infobox(page["text"]).get("nome", "")) if page else ""
+        nome = ptwiki.plain(ptwiki.infobox(page["text"]).get("nome", "")) if page else ""
         nome = nome or re.sub(r"\s*\(.*\)$", "", title)
         print(f'[[jogador]]\npagina = "{title}"\nnome = "{nome}"\nedicao = "{edition}"\n')
 

@@ -81,6 +81,8 @@ def test_shown_names_keep_the_text_the_article_shows() -> None:
         ("ex-lateral-direito", "Lateral-direito"),
         ("Goleiro<br /> treinador", "Goleiro"),  # the coach years are not a position
         ("Treinador<br />", ""),
+        ("[[Auxiliar técnico]] e [[atacante]]", "Atacante"),
+        ("Técnico (ex-zagueiro)", "Zagueiro"),
         ("[[Treinador]] (ex [[meio-campista]])", "Meio-campista"),
         (
             "ex-[[Treinador de futebol|Treinador]]<br />(ex-[[Volante (futebol)|Volante]])",
@@ -325,3 +327,65 @@ def test_parse_career_does_not_take_the_loan_mark_for_a_club() -> None:
         Stint(2011, 2011, "Potiguar de Mossoró"),
     ]
     assert ptwiki.shown_names(clubes) == {"ABC Futebol Clube": "ABC"}
+
+
+def test_build_puts_a_player_listed_twice_in_both_editions() -> None:
+    players = [
+        {"pagina": "Alberi", "nome": "Alberi", "edicao": "abc"},
+        {"pagina": "Alberi", "nome": "Alberi", "edicao": "nautico"},
+    ]
+    pages = {"Alberi": {"qid": "Q9", "text": ALBERI, "clubes": EXPANDED}}
+    clubs = {"ABC Futebol Clube": "Q1", "Santa Cruz Futebol Clube": "Q2"}
+    info = {"Q1": {"label": "ABC Futebol Clube"}, "Q2": {"label": "Santa Cruz Futebol Clube"}}
+    careers, _ = ptwiki.build(players, pages, clubs, info, fixes={})
+    [alberi] = careers["jogadores"]
+    assert alberi["edicoes"] == ["abc", "nautico"]
+
+
+@respx.mock
+def test_category_members_follow_continue() -> None:
+    respx.get(ptwiki.API).mock(
+        side_effect=[
+            httpx.Response(
+                200,
+                json={
+                    "continue": {"cmcontinue": "page|X", "continue": "-||"},
+                    "query": {"categorymembers": [{"title": "Kuki"}]},
+                },
+            ),
+            httpx.Response(200, json={"query": {"categorymembers": [{"title": "Lopeu"}]}}),
+        ]
+    )
+    with httpx.Client() as client:
+        assert ptwiki.category_members(client, "Futebolistas do Náutico", pause=0) == [
+            "Kuki",
+            "Lopeu",
+        ]
+
+
+def test_plain_keeps_the_shown_text_only() -> None:
+    assert ptwiki.plain("[[Kuki (futebolista)|Kuki]]<ref>x</ref> e ''Treinador''") == (
+        "Kuki e Treinador"
+    )
+
+
+def test_requests_say_who_we_are_as_wikimedia_asks() -> None:
+    # https://meta.wikimedia.org/wiki/User-Agent_policy: a name and a way to reach the operator
+    assert "https://github.com/dpontejs/geral" in ptwiki.HEADERS["User-Agent"]
+
+
+def test_build_adds_the_country_when_the_full_name_is_taken_too() -> None:
+    text = "{{Info/Futebolista\n|ano = 2001<br />2002\n|clubes = x\n}}"
+    clubes = "[[River A|River Plate]]<br />[[River B|River Plate]]"
+    players = [{"pagina": "P", "nome": "P", "edicao": "abc"}]
+    pages = {"P": {"qid": "Q9", "text": text, "clubes": clubes}}
+    clubs = {"River A": "Q1", "River B": "Q2"}
+    info = {
+        "Q1": {"label": "Club Atlético River Plate", "country": "Argentina"},
+        "Q2": {"label": "Club Atlético River Plate", "country": "Uruguai"},
+    }
+    careers, _ = ptwiki.build(players, pages, clubs, info, fixes={})
+    assert {c["nome"] for c in careers["clubes"].values()} == {
+        "Club Atlético River Plate (Argentina)",
+        "Club Atlético River Plate (Uruguai)",
+    }

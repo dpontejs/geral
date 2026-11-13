@@ -39,8 +39,13 @@ def test_team_edition_page(game) -> None:
     assert game.get("/jogos/quem-e/flamengo").status_code == 200
 
 
-@pytest.mark.parametrize("edition", ["nautico", "xyz"])
-def test_edition_without_players_is_404(game, edition) -> None:
+@pytest.mark.parametrize("edition", ["sem-jogadores", "xyz"])
+def test_edition_without_players_is_404(store, mailer, clock, edition) -> None:
+    clock.now = DAY
+    catalog = load_teams()
+    nobody = catalog["vasco"].model_copy(update={"slug": "sem-jogadores", "name": "Ninguém FC"})
+    game = make_client(store, mailer, clock, teams=catalog | {"sem-jogadores": nobody})
+
     assert game.get(f"/jogos/quem-e/{edition}").status_code == 404
     assert game.post(f"{API}/{edition}/8", json={"palpites": ["Q1"]}).status_code == 404
 

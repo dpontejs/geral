@@ -373,7 +373,7 @@ edicao = "abc"
 
 [[jogador]]
 pagina = "João Paulo da Silva Araújo"
-nome = "João Paulo"
+nome = "João Paulo (João Paulo da Silva Araújo)"
 edicao = "abc"
 
 [[jogador]]
@@ -408,7 +408,7 @@ edicao = "abc"
 
 [[jogador]]
 pagina = "Juliano César Koagura"
-nome = "Juliano"
+nome = "Juliano (Juliano César Koagura)"
 edicao = "abc"
 
 [[jogador]]
@@ -503,7 +503,7 @@ edicao = "abc"
 
 [[jogador]]
 pagina = "Luís Ribeiro Pinto Neto"
-nome = "Lula"
+nome = "Lula (Luís Ribeiro Pinto Neto)"
 edicao = "abc"
 
 [[jogador]]
@@ -533,7 +533,7 @@ edicao = "abc"
 
 [[jogador]]
 pagina = "Marcilei da Silva Elias"
-nome = "Max"
+nome = "Max (Marcilei da Silva Elias)"
 edicao = "abc"
 
 [[jogador]]
@@ -643,7 +643,7 @@ edicao = "abc"
 
 [[jogador]]
 pagina = "Paulo Rogério Reis Silva"
-nome = "Somália"
+nome = "Somália (Paulo Rogério Reis Silva)"
 edicao = "abc"
 
 [[jogador]]
@@ -900,4 +900,1670 @@ edicao = "abc"
 pagina = "Zé Love"
 nome = "Zé Love"
 edicao = "abc"
+
+
+[[jogador]]
+pagina = "Abuda"
+nome = "Abuda"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Adaílton Ladeira"
+nome = "Adaílton Ladeira"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Ademar Júnior"
+nome = "Ademar"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Adesvaldo José de Lima"
+nome = "Lima"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Adilson Fernandes"
+nome = "Adilson Fernandes"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Adriano Chuva"
+nome = "Adriano Chuva"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Adriano Gerlin da Silva"
+nome = "Adriano"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Adriano Magrão"
+nome = "Adriano Magrão"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Afonso Vidal"
+nome = "Afonsinho"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Aguinaldo Secco"
+nome = "Aguinaldo Secco"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Aílton (futebolista)"
+nome = "Aílton"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Ailton Ferreira Silva"
+nome = "Ailton"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Aislan"
+nome = "Aislan"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Alan Santos"
+nome = "Alan Santos"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Albéris"
+nome = "Albéris"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Alberto (futebolista)"
+nome = "Alberto (Alberto Barros dos Santos)"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Alberto Luiz de Souza"
+nome = "Alberto (Alberto Luiz de Souza)"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Alberto Martín Acosta"
+nome = "Alberto Acosta"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Alceu (futebolista)"
+nome = "Alceu"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Alcides Araújo Alves"
+nome = "Alcides"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Aldrovani"
+nome = "Aldrovani"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Alessandro (futebolista, 1977)"
+nome = "Alessandro"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Alex Sandro Pinho"
+nome = "Alex Pinho"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Alex Fernandes"
+nome = "Alex Fernandes"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Alison Wágner Lira Ferreira"
+nome = "Alison"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Allan Cole"
+nome = "Allan Cole"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Allyson (futebolista, 1982)"
+nome = "Allyson"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "André Catimba"
+nome = "André Catimba"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "André Leonel"
+nome = "André Leonel"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "André Turatto"
+nome = "André Turatto"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Anselmo Tadeu"
+nome = "Anselmo"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Augusto Recife"
+nome = "Augusto Recife"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Ávine"
+nome = "Ávine"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Ayrton Moreira"
+nome = "Ayrton Moreira"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Badé"
+nome = "Badé"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Baiano (futebolista, 1978)"
+nome = "Baiano"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Leandro Barcia Montero"
+nome = "Leandro Barcia"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Batata (futebolista)"
+nome = "Batata"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Jorge Benítez"
+nome = "Jorge Benítez"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Bérgson"
+nome = "Bérgson"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Bita"
+nome = "Bita"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Bizu"
+nome = "Bizu"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Borçato"
+nome = "Borçato"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Breitner"
+nome = "Breitner"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Bruno Collaço"
+nome = "Bruno Collaço"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Bruno Mezenga"
+nome = "Bruno Mezenga"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Bruno Mineiro (futebolista)"
+nome = "Bruno Mineiro"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Cafezinho (futebolista)"
+nome = "Cafezinho"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Caio Dantas"
+nome = "Caio Dantas"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Campos (futebolista)"
+nome = "Cosme da Silva Campos"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Marcelo Cañete"
+nome = "Marcelo Cañete"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Carlinhos Bala"
+nome = "Carlinhos Bala"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Carlos Alberto Santos da Silva"
+nome = "Betinho"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Carlinhos (futebolista, 1983)"
+nome = "Carlinhos"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Carlos Ruiter"
+nome = "Ruiter"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Cascata (futebolista)"
+nome = "Cascata"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Cesinha (futebolista)"
+nome = "Cesinha"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "César Prates"
+nome = "César Prates"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Chico Fraga"
+nome = "Chico Fraga"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Christiano Luiz Rodrigues"
+nome = "Asprilla"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Chumbinho (futebolista)"
+nome = "Chumbinho"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Cléber Ribeiro Machado Filho"
+nome = "Cléber"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Cleisson"
+nome = "Cleisson"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Araújo (futebolista)"
+nome = "Araújo"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Cristian Mendigo"
+nome = "Cristian"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Cristiano Tiririca"
+nome = "Cristiano Tiririca"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Dado Cavalcanti"
+nome = "Dado Cavalcanti"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Daniel Paulista"
+nome = "Daniel Paulista"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Daniel Sobralense"
+nome = "Daniel Sobralense"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Dadá Maravilha"
+nome = "Dadá Maravilha"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Darley"
+nome = "Darley"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "David França Oliveira e Silva"
+nome = "David"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Derley"
+nome = "Derley"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Deyvid Sacconi"
+nome = "Deyvid Sacconi"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Diego Bispo"
+nome = "Diego Bispo"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Douglas Santos"
+nome = "Douglas Santos"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Edevaldo de Freitas"
+nome = "Edevaldo"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Ediglê"
+nome = "Ediglê"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Edil Highlander"
+nome = "Edil Highlander"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Edmur Ribeiro"
+nome = "Edmur"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Edson Cimento"
+nome = "Edson Cimento"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Edson Gaúcho"
+nome = "Edson Gaúcho"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Edu Manga"
+nome = "Edu Manga"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Eduardo Bauermann"
+nome = "Eduardo Bauermann"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Eduardo Gonçalves de Oliveira"
+nome = "Edu"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Eduardo Martins Nunes"
+nome = "Nunes (Eduardo Martins Nunes)"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Eduardo Ramos (futebolista)"
+nome = "Eduardo Ramos"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Edvaldo Lourival da Silva"
+nome = "Vadinho"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Edwald Yurk"
+nome = "Vavá"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Elias Mendes Trindade"
+nome = "Elias"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Elicarlos"
+nome = "Elicarlos"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Elierce Barbosa de Souza"
+nome = "Souza"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Eltinho"
+nome = "Eltinho"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Elton Rodrigues Brandão"
+nome = "Elton"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Ênio Andrade"
+nome = "Ênio Andrade"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Erick de Arruda Serafim"
+nome = "Erick"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Erick Flores"
+nome = "Erick Flores"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Alejandro Escalona"
+nome = "Alejandro Escalona"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Eugênio Chemp"
+nome = "Eugênio Chemp"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Eurico Nicolau de Lima Neto"
+nome = "Eurico"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Evando Camillato"
+nome = "Evando"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Éverton Barbosa da Hora"
+nome = "Éverton"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Ewerton Páscoa"
+nome = "Ewerton Páscoa"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Fabiano Eller"
+nome = "Fabiano Eller"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Fábio Santos (volante)"
+nome = "Fábio Santos"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Felipe Dias da Silva"
+nome = "Felipe Dias"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Fernando Narigudo"
+nome = "Fernando Narigudo"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Fillipe Soutto"
+nome = "Fillipe Soutto"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Francisco Assis Guimarães Treff"
+nome = "Chicão"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Mirandinha (futebolista, 1959)"
+nome = "Mirandinha"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Geílson"
+nome = "Geílson"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Gena"
+nome = "Gena"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Geraldo José"
+nome = "Geraldo José"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Geraldo Moreira da Silva Júnior"
+nome = "Geraldo"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Geuvânio"
+nome = "Geuvânio"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Giancarlo Moro"
+nome = "Giancarlo"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Gilberto Pereira"
+nome = "Gilberto Pereira"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Gilmak"
+nome = "Gilmak"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Gilmar Silva Santos"
+nome = "Gilmar"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Giovanni Augusto"
+nome = "Giovanni Augusto"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Giovanni Palmieri dos Santos"
+nome = "Giovanni"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Giovanny"
+nome = "Giovanny"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Gladstone (futebolista)"
+nome = "Gladstone"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Glaydson"
+nome = "Glaydson"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Guilherme Nunes"
+nome = "Guilherme Nunes"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Guto (futebolista)"
+nome = "Guto"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Hamílton Hênio Ferreira Calheiros"
+nome = "Hamílton"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Hayner"
+nome = "Hayner"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Héctor Cincunegui"
+nome = "Héctor Cincunegui"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Heitor Camarin Júnior"
+nome = "Heitor Camarin Júnior"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Helmiton Cardoso de Freitas"
+nome = "Helmiton"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Hugo Guimarães Silva Santos Almeida"
+nome = "Hugo Almeida"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Hugo (futebolista)"
+nome = "Hugo"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Humberto de Azevedo Viana"
+nome = "Tará"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Igor Rabello"
+nome = "Igor Rabello"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Índio Ferreira"
+nome = "Índio Ferreira"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Ivan Brondi"
+nome = "Ivan Brondi"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Ivson de Freitas"
+nome = "Ivson"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Jacaré (futebolista)"
+nome = "Jacaré"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Jael (futebolista)"
+nome = "Jael"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Jean Carlos"
+nome = "Jean Carlos"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Jéfferson Luís Guerreiro Rochembach"
+nome = "Jeferson"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Jefferson Nascimento"
+nome = "Jefferson"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "João Ananias"
+nome = "João Ananias"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "João Cardoso"
+nome = "João Cardoso"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "João Filipe"
+nome = "João Filipe Rabelo da Costa e Silva"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "João Fumaça"
+nome = "João Fumaça"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "João Paulo (futebolista)"
+nome = "João Paulo (João Paulo de Lima Filho)"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Jobson Souza Santos"
+nome = "Jobson"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Jonas Toró"
+nome = "Jonas Toró"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Jonathas Cristian de Jesus"
+nome = "Jonathas"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Jones Carioca"
+nome = "Jones Carioca"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Jorge Henrique"
+nome = "Jorge Henrique"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Jorge Mendonça"
+nome = "Jorge Mendonça"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Júnior Carioca"
+nome = "Júnior Carioca"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "José Maria Pena"
+nome = "Zé Maria"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "José Raimundo Pires Reis"
+nome = "Pires"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "José Róbson do Nascimento"
+nome = "Robgol"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "José Rogério de Oliveira Melo"
+nome = "Rogério"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Josenildo Caetano da Silva"
+nome = "Nildo"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Juca Show"
+nome = "Juca Show"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Juliano César Koagura"
+nome = "Juliano (Juliano César Koagura)"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Juliano Mineiro Fernandes"
+nome = "Juliano (Juliano Mineiro Fernandes)"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Júlio César Coelho Moraes Júnior"
+nome = "Julio César"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Júnior Amorim"
+nome = "Júnior Amorim"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Júnior César Moreira da Cunha"
+nome = "Juninho"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Júnior Todinho"
+nome = "Júnior Todinho"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Kelvin (futebolista)"
+nome = "Kelvin"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Kieza"
+nome = "Kieza"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Kim (futebolista)"
+nome = "Kim"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Kléber Pereira"
+nome = "Kléber Pereira"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Kuki (futebolista)"
+nome = "Kuki"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Leandro Amaro"
+nome = "Leandro Amaro"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Leandro Carvalho"
+nome = "Leandro Carvalho"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Leandro Euzébio"
+nome = "Leandro Euzébio"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Lelê (futebolista, 1990)"
+nome = "Lelê"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Lenon"
+nome = "Lenon"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Léo Jance"
+nome = "Léo Jance"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Léo Pereira"
+nome = "Léo Pereira"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Leomar Leiria"
+nome = "Leomar"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Leonardo Henrique Peixoto dos Santos"
+nome = "Henrique"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Lindomar"
+nome = "Lindomar"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Lucas Perri"
+nome = "Lucas Perri"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Lúcio Carlos Cajueiro Souza"
+nome = "Lúcio (Lúcio Carlos Cajueiro Souza)"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Luis Phelipe"
+nome = "Luis Phelipe"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Luiz Alberto (futebolista)"
+nome = "Luiz Alberto"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Luiz Guilherme Werneck"
+nome = "Werneck"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Lula Monstrinho"
+nome = "Lula Monstrinho"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Maikon Leite"
+nome = "Maikon Leite"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Manoel Messias Barbosa da Silva"
+nome = "Maranhão"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Marcel Silva Andrade"
+nome = "Marcel"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Sangaletti"
+nome = "Sangaletti"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Marcelo Fernandes"
+nome = "Marcelo Fernandes"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Marcelo Mabilia"
+nome = "Mabilia"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Marciel"
+nome = "Marciel"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Márcio Rozário"
+nome = "Márcio Rozário"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Márcio Rodrigues"
+nome = "Magrão"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Marco Antônio (futebolista, 1984)"
+nome = "Marco Antônio"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Marco Aurélio Barbosa"
+nome = "Marco Aurélio"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Marcos Antônio Candido Ferreira Júnior"
+nome = "Marcos Júnior"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Marcos Paulo (futebolista)"
+nome = "Marcos Paulo"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Marcos Vinícius (futebolista)"
+nome = "Marcos Vinícius"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Mariano Torres"
+nome = "Mariano Torres"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Marião"
+nome = "Marião"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Marinho Chagas"
+nome = "Marinho Chagas"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Mário Sérgio Santos Costa"
+nome = "Marinho"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Mário Tilico"
+nome = "Mário Tilico"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Marlon Ventura Rodrigues"
+nome = "Marlon"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Marquinhos Caruaru"
+nome = "Marquinhos Caruaru"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Marquinhos Silva"
+nome = "Marquinhos Silva"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Matheus Carvalho"
+nome = "Matheus Carvalho"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Matheus Ribeiro"
+nome = "Matheus Ribeiro"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Maurício dos Santos Nascimento"
+nome = "Maurício"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Maurinho Fonseca"
+nome = "Maurinho"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Max Brendon"
+nome = "Max Brendon"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Maylson"
+nome = "Maylson"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Mazarópi"
+nome = "Mazarópi"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Claudio Milar"
+nome = "Claudio Milar"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Milton Cruz (futebolista)"
+nome = "Milton Cruz"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Mitotônio"
+nome = "Mitotônio"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Nado (futebolista)"
+nome = "Nado"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Nenzinho"
+nome = "Nenzinho"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Netinho (futebolista)"
+nome = "Netinho"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Newmar"
+nome = "Newmar"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Nilson Corrêa"
+nome = "Nilson Corrêa"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Nino Paraíba"
+nome = "Nino Paraíba"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Nivaldo (futebolista, 1968)"
+nome = "Nivaldo"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Anaílson"
+nome = "Anaílson"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Nunes do Flamengo"
+nome = "Nunes"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Udochukwu Nwoko"
+nome = "Nwoko"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Odvan"
+nome = "Odvan"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Olavo Martins de Oliveira"
+nome = "Olavo"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Juan Manuel Olivera"
+nome = "Juan Manuel Olivera"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Orlando Pingo de Ouro"
+nome = "Orlando Pingo de Ouro"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "José Ortigoza"
+nome = "José María Ortigoza"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Osvaldo Rossi"
+nome = "Rossi"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Oziel"
+nome = "Oziel"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Parraga"
+nome = "Parraga"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Patric Cabral Lalau"
+nome = "Patric"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Paulinho Massariol"
+nome = "Paulinho"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Paulo Almeida"
+nome = "Paulo Almeida"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Paulo Choco"
+nome = "Paulo Choco"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Paulinho (futebolista, 1988)"
+nome = "Paulinho (Paulo Luiz Beraldo Santos)"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Paulo Mata"
+nome = "Paulo Mata"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Paulo Miranda (zagueiro)"
+nome = "Paulo Miranda"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Paulo Pisaneschi"
+nome = "Paulo Pisaneschi"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Paulo Morais de Araújo Júnior"
+nome = "Paulo Jr."
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Pedro Omar"
+nome = "Pedro Omar"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Louis Angelo Peña"
+nome = "Angelo Peña"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Perdigão (futebolista)"
+nome = "Perdigão"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Radamés Furlan"
+nome = "Radamés"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Rafael Berger"
+nome = "Alemão"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Rafael Coelho (futebolista)"
+nome = "Rafael Coelho"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Rafael Cruz Ojer"
+nome = "Rafael Cruz"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Rafael Forster"
+nome = "Rafael Forster"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Rafael Oliveira"
+nome = "Rafael Oliveira"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Rafael Vágner Dias Silva"
+nome = "Vágner"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Rafael Vaz"
+nome = "Rafael Vaz"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Raimundo José Cutrim"
+nome = "Raí"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Ramirez Cruz"
+nome = "Ramirez Cruz"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Ramón Osni Moreira Lage"
+nome = "Ramón"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Rafael Ratão"
+nome = "Rafael Ratão"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Rayan Poltronieri Pereira"
+nome = "Rayan"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Reginaldo (futebolista, 1993)"
+nome = "Reginaldo"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Reinaldo Francisco de Oliveira"
+nome = "Reinaldo"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Renaldo"
+nome = "Renaldo"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Renan Bragança"
+nome = "Renan Bragança"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Renan Oliveira"
+nome = "Renan Oliveira"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Renato Chaves"
+nome = "Renato Chaves"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Rhayner"
+nome = "Rhayner"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Lucas Ribamar"
+nome = "Lucas Ribamar"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Richardson (futebolista, 1992)"
+nome = "Richardson"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Rico (futebolista)"
+nome = "Rico"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Rinaldo Amorim"
+nome = "Rinaldo"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Roberson de Arruda Alves"
+nome = "Roberson"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Roberto César Itacaramby"
+nome = "Roberto César"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Roberto Heuchayer"
+nome = "Roberto"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Rodrigo Caetano"
+nome = "Rodrigo Caetano"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Rodrigo Possebon"
+nome = "Rodrigo Possebon"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Rodrigo Souto"
+nome = "Rodrigo Souto"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Rodrigo Tiuí"
+nome = "Rodrigo Tiuí"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Rogerinho (futebolista)"
+nome = "Rogerinho"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Romário Leiria de Moura"
+nome = "Romário (Romário Leiria de Moura)"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Andrés Romero"
+nome = "Andrés Romero"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Ronaldo Alves"
+nome = "Ronaldo Alves"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Ronaldo Conceição"
+nome = "Ronaldo Conceição"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Rony"
+nome = "Rony"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Rubens da Silva Gomes Filho"
+nome = "Rubens da Silva Gomes Filho"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Ruy Cabeção"
+nome = "Ruy Cabeção"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Ruy Franco de Almeida Junior"
+nome = "Ruy (Ruy Franco de Almeida Junior)"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Salomão Sales Couto"
+nome = "Salomão"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Sassá (futebolista)"
+nome = "Sassá"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Sérgio Manoel Júnior"
+nome = "Sérgio Manoel"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Sérgio Soares"
+nome = "Sérgio Soares"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Somália (atacante)"
+nome = "Somália (Wanderson de Paula Sabino)"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Suéliton Florencio Nogueira"
+nome = "Suéliton"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Sueliton Pereira"
+nome = "Sueliton"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Tadeu (futebolista)"
+nome = "Tadeu"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Thiago Gentil"
+nome = "Thiago Gentil"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Tiago Alves"
+nome = "Tiago Alves"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Tiago Costa (futebolista)"
+nome = "Tiago Costa"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Tiago Real"
+nome = "Tiago Real"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Titi (futebolista, 1988)"
+nome = "Titi"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Toninho Vanusa"
+nome = "Toninho Vanusa"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Tozo"
+nome = "Tozo"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Tuta (futebolista)"
+nome = "Tuta"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Valério Gomes dos Santos"
+nome = "Léo"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Válter Vasconcelos"
+nome = "Válter Vasconcelos"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Vasconcelos (futebolista)"
+nome = "Vasconcelos"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Victor Andrade"
+nome = "Victor Andrade"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Victor Ferraz"
+nome = "Victor Ferraz"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Vina (futebolista)"
+nome = "Vina"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Vinícius Conceição da Silva"
+nome = "Vinícius Conceição da Silva"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Vinícius Eutrópio"
+nome = "Vinícius Eutrópio"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Vinícius Pacheco"
+nome = "Vinícius Pacheco"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Vinícius Santos Silva"
+nome = "Vinícius"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Wagner Leonardo"
+nome = "Wagner Leonardo"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Lúcio Wagner"
+nome = "Lúcio Wagner"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Walker (futebolista)"
+nome = "Walker"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Wallace Pernambucano"
+nome = "Wallace Pernambucano"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Warley (futebolista)"
+nome = "Warley"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Wellington da Silva Pinto"
+nome = "Wellington (Wellington da Silva Pinto)"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Wellington Tanque"
+nome = "Wellington Tanque"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Wescley (futebolista, 1984)"
+nome = "Wescley"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "William Alves"
+nome = "William Alves"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "William Júnior Salles de Lima Souza"
+nome = "William"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Willian Magrão"
+nome = "Willian Magrão"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Yago Fernando da Silva"
+nome = "Yago"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Yan"
+nome = "Yan"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Ygor (futebolista)"
+nome = "Ygor"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Yuri Antônio Costa da Silva"
+nome = "Yuri"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "José Eduardo de Toledo Pereira"
+nome = "Zé Eduardo"
+edicao = "nautico"
+
+[[jogador]]
+pagina = "Zequinha (futebolista)"
+nome = "Zequinha"
+edicao = "nautico"
 

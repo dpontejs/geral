@@ -44,8 +44,12 @@ O arquivo de carreiras também vai servir ao "Quem é?" (próximo PR).
   `edicoes` por jogador. `onde_jogou.load` soma os dois arquivos (o principal vence em jogador e
   nome de clube; apelidos se somam). Um jogador com `edicoes` só entra nessas edições: nem na
   geral nem no seletor do "Quem é?" de outras edições. Um clube novo cujo nome curto já existe
-  recebe o nome completo; link para desambiguação não vale como clube. Arquivo separado para não
-  mexer no importador principal (o PR do jogo da velha o altera) e não ser apagado por ele.
+  recebe o nome completo (e o país, se o nome completo também repete); link para desambiguação
+  não vale como clube. Arquivo separado para não mexer no importador principal (o PR do jogo da
+  velha o altera) e não ser apagado por ele. Times com essa fonte: ABC e Náutico (13/11/2026);
+  uma página listada para dois times entra nas duas edições. As chamadas se identificam com a
+  URL do repositório no User-Agent (política da Wikimedia): sem isso, os 429 deixavam a
+  importação de mais de meia hora; com isso, cerca de 2 minutos.
 - Calendário congelado (`src/geral/games/calendario.json`, `geral/games/calendario.py`): as
   respostas já jogadas (e a de amanhã) de cada jogo e edição, por id do Wikidata. A importação
   congela antes de gravar dados novos (`scripts/congelar_calendario.py`), então uma atualização
