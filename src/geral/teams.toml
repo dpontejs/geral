@@ -87,6 +87,7 @@ ge_url = "https://ge.globo.com/futebol/times/flamengo/"
 news_query = "Flamengo futebol"
 keywords = ["flamengo", "fla", "mengão", "rubro-negro", "rubro-negra", "rubro-negros"]
 accent = "#A51C24"
+dark = "#141414"  # rubro-negro: the black frames the red
 leagues = ["bra.1", "conmebol.libertadores", "bra.copa_do_brazil", "bra.camp.carioca", "bra.supercopa_do_brazil", "fifa.cwc"]
 league = "bra.1"
 listed = true

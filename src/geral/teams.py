@@ -42,6 +42,9 @@ class Team(BaseModel):
     news_query: str  # Google News search
     keywords: tuple[str, ...]  # words that make a title or text about the team
     accent: str  # brand color in the e-mail
+    # The club's dark colour besides the accent (black, for a red-and-black club): the frame of
+    # its pages. Without it, a darker accent (web/palette.py).
+    dark: str | None = None
     leagues: tuple[str, ...] = Field(min_length=1)  # ESPN league codes, all tracked
     # League of the table, campaign and player rankings; None when ESPN has no table for it.
     league: str | None = None
@@ -60,11 +63,11 @@ class Team(BaseModel):
     cbf_id: int | None = Field(default=None, gt=0)
     cbf_tables: dict[str, str] = Field(default_factory=dict)
 
-    @field_validator("accent")
+    @field_validator("accent", "dark")
     @classmethod
-    def _hex(cls, v: str) -> str:
-        if not HEX_COLOR.match(v):
-            raise ValueError(f"accent must be #RRGGBB, got {v!r}")
+    def _hex(cls, v: str | None) -> str | None:
+        if v is not None and not HEX_COLOR.match(v):
+            raise ValueError(f"colours must be #RRGGBB, got {v!r}")
         return v
 
     @model_validator(mode="after")
