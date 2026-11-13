@@ -1,7 +1,7 @@
 {% extends "base.html.j2" %}
 {% set label = team.name if team else "Geral" %}
 {% block title %}Onde jogou? #{{ number }} · {{ label }} · Geral{% endblock %}
-{% block head %}<link rel="stylesheet" href="/static/geral/jogos.css">{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/geral/jogos.css?v={{ asset_version }}">{% endblock %}
 {% block content %}
 <section class="jogo wall">
   <div class="wrap" id="oj" data-edition="{{ edition }}" data-number="{{ number }}" data-archive="{{ '1' if archive else '0' }}" data-label="{{ label }}" data-player="{{ player_key }}" data-max="{{ max_wrong }}">
@@ -49,5 +49,5 @@
     <p class="credit">Carreiras: <a href="https://en.wikipedia.org/">Wikipédia</a> (<a href="https://creativecommons.org/licenses/by-sa/4.0/deed.pt-br">CC BY-SA</a>) e <a href="https://www.wikidata.org/">Wikidata</a>, revisadas pela Geral. Achou um erro? Responda qualquer newsletter.</p>
   </div>
 </section>
-<script src="/static/geral/onde-jogou.js" defer></script>
+<script src="/static/geral/onde-jogou.js?v={{ asset_version }}" defer></script>
 {% endblock %}

@@ -121,3 +121,20 @@ def test_games_page_cards_are_one_link_each_that_lights_up(site) -> None:
 
 def test_ticket_team_buttons_share_one_size(site) -> None:
     assert re.search(r"\.picks \{[^}]*grid-template-columns: repeat\(auto-fill", site.get("/").text)
+
+
+def test_scripts_and_styles_carry_a_version_so_browsers_drop_old_copies(site) -> None:
+    page = site.get("/jogos/quem-e").text
+
+    css = re.search(r'href="/static/geral/jogos\.css\?v=([0-9a-f]{8})"', page)
+    js = re.search(r'src="/static/geral/quem-e\.js\?v=([0-9a-f]{8})"', page)
+    assert css and js and css.group(1) == js.group(1)
+    assert site.get(f"/static/geral/jogos.css?v={css.group(1)}").status_code == 200
+
+
+def test_text_boxes_span_the_board_below_them(site) -> None:
+    home = site.get("/").text
+    css = site.get("/static/geral/jogos.css").text
+
+    assert re.search(r"\.hero \.lead \{[^}]*max-width: none", home)
+    assert re.search(r"\.jogo \.lead \{[^}]*max-width: none", css)

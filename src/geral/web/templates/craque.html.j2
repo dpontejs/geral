@@ -1,7 +1,7 @@
 {% extends "base.html.j2" %}
 {% set label = team.name if team else "Geral" %}
 {% block title %}Craque do dia #{{ number }} · {{ label }} · Geral{% endblock %}
-{% block head %}<link rel="stylesheet" href="/static/geral/jogos.css">{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/geral/jogos.css?v={{ asset_version }}">{% endblock %}
 {% block content %}
 <section class="jogo wall">
   <div class="wrap" id="cd" data-edition="{{ edition }}" data-number="{{ number }}" data-archive="{{ '1' if archive else '0' }}" data-label="{{ label }}" data-max="{{ max_guesses }}" data-letters="{{ letters }}">
@@ -42,5 +42,5 @@
     <p class="credit">Listas montadas à mão pela Geral. Achou um erro? Responda qualquer newsletter.</p>
   </div>
 </section>
-<script src="/static/geral/craque.js" defer></script>
+<script src="/static/geral/craque.js?v={{ asset_version }}" defer></script>
 {% endblock %}

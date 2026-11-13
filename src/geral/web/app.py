@@ -70,6 +70,18 @@ templates.env.autoescape = select_autoescape(["html.j2"])
 templates.env.globals["scoreboard_animation"] = animation_svg
 
 
+def _asset_version() -> str:
+    """A short hash of the site's own scripts and styles: their links change when they do, so a
+    browser never keeps an old copy (`/static/geral/jogos.css?v=...`)."""
+    digest = hashlib.sha256()
+    for path in sorted((STATIC / "geral").glob("*.[cj]s*")):
+        digest.update(path.read_bytes())
+    return digest.hexdigest()[:8]
+
+
+templates.env.globals["asset_version"] = _asset_version()
+
+
 class RateLimiter:
     """At most `limit` hits per key within `window` (in memory: one process, few users)."""
 
