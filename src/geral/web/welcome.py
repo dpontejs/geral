@@ -1,7 +1,8 @@
 """Welcome box on top of the edition a new subscriber gets right after confirming.
 
-Stored editions are already rendered (CSS inlined), so the box goes right below the header's
-stripe, the one row with `height="5"`; without it only the plain text gets the welcome.
+Stored editions are already rendered (CSS inlined), so the box goes at the `<!--welcome-->`
+mark (the edição geral, below its grass top) or else right below the header's stripe, the one row
+with `height="5"` (the club newsletters); without either only the plain text gets the welcome.
 """
 
 import re
@@ -10,6 +11,7 @@ from html import escape
 from geral.teams import Team
 
 FONT = '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+WELCOME_MARK = "<!--welcome-->"
 STRIPE_ROW = re.compile(r'height="5"[^>]*>.*?</tr>', re.DOTALL)
 
 
@@ -42,5 +44,8 @@ def add_welcome(html: str, text: str, team: Team) -> tuple[str, str]:
         "<p style='font-size:15px; line-height:1.5; color:#1C1C1C; margin:0'>"
         f"{escape(body)}</p></td></tr></table></td></tr>"
     )
-    welcomed = STRIPE_ROW.sub(lambda m: m.group(0) + "\n  " + box, html, count=1)
+    if WELCOME_MARK in html:
+        welcomed = html.replace(WELCOME_MARK, box, 1)
+    else:
+        welcomed = STRIPE_ROW.sub(lambda m: m.group(0) + "\n  " + box, html, count=1)
     return welcomed, f"{title}\n{body}\n\n{text}"

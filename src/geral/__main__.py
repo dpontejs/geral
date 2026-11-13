@@ -606,10 +606,10 @@ def edicao_geral(
         logger.error("Edição geral without the Gemini: %s", e)
         llm = None
     edition = build_general(start, end, weeks, llm)
-    logo = f"{settings.PUBLIC_URL.rstrip('/')}/static/geral/logo-email.png"
+    static = f"{settings.PUBLIC_URL.rstrip('/')}/static/geral"
     html, text = render_general(
         edition,
-        logo_url=logo if settings.PUBLIC_URL.startswith("https://") else None,
+        static_url=static if settings.PUBLIC_URL.startswith("https://") else None,
         unsubscribe_url=UNSUBSCRIBE_PLACEHOLDER,
     )
     mailto = mailto_unsubscribe(settings)

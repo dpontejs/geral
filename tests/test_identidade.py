@@ -55,9 +55,9 @@ def test_general_edition_wears_the_pitch() -> None:
 
     assert GENERAL_EDITION.accent == "#1F7A3D"
     assert "#8E8B84" not in COLORS.values()
-    # CSS is inlined: each series header and the stripe under the logo carry the colour.
+    # CSS is inlined: each series header and the grass on top carry the colour.
     assert re.search(r'bgcolor="#0E3320">S\u00e9rie A<', html)
-    assert "background-color: #1F7A3D;" in html
+    assert 'bgcolor="#1F7A3D"' in html
 
 
 def test_small_text_on_the_striped_grass_gets_a_shadow_to_stay_readable(client) -> None:
