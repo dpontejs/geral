@@ -424,7 +424,7 @@ def create_app(
             request,
             "edicao.html.j2",
             team=catalog[team],
-            club=club_palette(catalog[team]),
+            club=club_palette(clubs.get(team)),  # the edição geral keeps the pitch
             headline=headline,
         )
 

@@ -76,3 +76,11 @@ def test_dark_colour_must_be_hex() -> None:
 
     with pytest.raises(ValidationError):
         type(team).model_validate(team.model_dump() | {"dark": "black"})
+
+
+def test_general_edition_page_stays_green(site) -> None:
+    publish(site, "geral")
+
+    page = site.get("/t/geral").text
+
+    assert theme(page) == PORTAL_TURF and "club-colours" not in page
