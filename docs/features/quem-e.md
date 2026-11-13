@@ -17,6 +17,12 @@ Usa o mesmo `carreiras.json`; edições iguais às do "Onde jogou?", em outra or
 
 ## Contratos
 
+- Jogos anteriores (12/11/2026): `GET /jogos/quem-e/{edição}/{número}` abre um número já passado
+  (o de hoje redireciona para a página do dia; futuro ou zero dá 404), com a data e o aviso "não
+  conta na sequência"; a página do dia lista os anteriores da edição. No navegador, cada número
+  antigo tem o próprio registro (`quem-e:{edição}:{número}`) e não mexe nas estatísticas; um jogo
+  já jogado no próprio dia aparece como ficou. As respostas vêm do calendário congelado
+  (`src/geral/games/calendario.json`).
 - `onde_jogou.pool(data, edition, teams, game="onde-jogou")`: o prefixo da semente vira parâmetro
   (o "Onde jogou?" continua na mesma ordem).
 - `geral/games/quem_e.py`: `pool(data, edition, teams)` (semente `quem-e`), `judge(data, jogador,

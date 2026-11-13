@@ -18,6 +18,14 @@ formato Wordle, uma edição por torcida, incluindo o ABC, e uma geral com todas
 
 ## Contratos
 
+- As listas são editadas à mão: antes de mudar uma, rode `scripts/congelar_calendario.py`
+  para os números já jogados manterem o craque.
+- Jogos anteriores (12/11/2026): `GET /jogos/craque-do-dia/{edição}/{número}` abre um número já passado
+  (o de hoje redireciona para a página do dia; futuro ou zero dá 404), com a data e o aviso "não
+  conta na sequência"; a página do dia lista os anteriores da edição. No navegador, cada número
+  antigo tem o próprio registro (`craque-do-dia:{edição}:{número}`) e não mexe nas estatísticas; um jogo
+  já jogado no próprio dia aparece como ficou. As respostas vêm do calendário congelado
+  (`src/geral/games/calendario.json`).
 - Dados: `src/geral/games/craques/<slug>.toml`, uma lista por torcida (o slug do `teams.toml`);
   sem nome de clube no código. Cada entrada:
 

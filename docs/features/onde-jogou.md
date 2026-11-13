@@ -20,6 +20,12 @@ O arquivo de carreiras também vai servir ao "Quem é?" (próximo PR).
 
 ## Contratos
 
+- Jogos anteriores (12/11/2026): `GET /jogos/onde-jogou/{edição}/{número}` abre um número já passado
+  (o de hoje redireciona para a página do dia; futuro ou zero dá 404), com a data e o aviso "não
+  conta na sequência"; a página do dia lista os anteriores da edição. No navegador, cada número
+  antigo tem o próprio registro (`onde-jogou:{edição}:{número}`) e não mexe nas estatísticas; um jogo
+  já jogado no próprio dia aparece como ficou. As respostas vêm do calendário congelado
+  (`src/geral/games/calendario.json`).
 - `src/geral/games/jogadores.toml`: a lista curada (`nome` como a torcida chama, `wikidata`).
   `scripts/find_wikidata.py` ajuda a montar; a revisão é humana.
 - Fonte das carreiras (desde 12/11/2026): o quadro de carreira da Wikipédia em inglês

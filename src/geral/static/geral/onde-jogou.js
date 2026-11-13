@@ -6,11 +6,12 @@
   if (!root) return;
   const { edition, label, player } = root.dataset;
   const number = Number(root.dataset.number);
+  const archive = root.dataset.archive === "1"; // a past puzzle: its own save, no streak
   const max = Number(root.dataset.max);
   const $ = (id) => document.getElementById(id);
   const form = $("oj-form");
   const search = $("oj-search");
-  const KEY = `onde-jogou:${edition}`;
+  const KEY = archive ? `onde-jogou:${edition}:${number}` : `onde-jogou:${edition}`;
   const PAGE = 12;
   const ALL = "Todos";
 
@@ -58,7 +59,17 @@
   clubs.sort((a, b) => rank.get(a.pais) - rank.get(b.pais) || a.nome.localeCompare(b.nome, "pt"));
   const TOP = 8; // countries shown as chips; the rest go in a menu
 
+  // Today's game is also kept under its number, for when it shows up among the past ones.
+  const save = () => {
+    write(KEY, day);
+    if (!archive) write(`${KEY}:${number}`, day);
+  };
   let day = read(KEY, null);
+  if (!day && archive) {
+    // Played on its own day as "today's game": show it as it was left.
+    const daily = read(`onde-jogou:${edition}`, null);
+    if (daily && daily.number === number) day = daily;
+  }
   // A new day, or the list changed today's player: start over.
   if (!day || day.number !== number || day.player !== player) {
     day = { number, player, palpites: [], desistiu: false };
@@ -158,6 +169,7 @@
   };
 
   const finish = () => {
+    if (archive) return; // past puzzles don't count in the streak
     const stats = read(`${KEY}:stats`, { streak: 0, wins: 0, played: 0, last: 0, counted: 0 });
     if (stats.counted !== number) {
       stats.played += 1;
@@ -215,7 +227,7 @@
   const restart = () => {
     day = { number, player, palpites: [], desistiu: false };
     verdict = null;
-    write(KEY, day);
+    save();
     form.hidden = false;
     error("A lista de clubes mudou e o jogo de hoje recomeçou.");
   };
@@ -227,7 +239,7 @@
     drawResults();
     try {
       await judge();
-      write(KEY, day);
+      save();
       error("");
     } catch (problem) {
       if (problem.status === 422) restart();
