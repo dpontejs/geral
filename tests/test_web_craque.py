@@ -83,7 +83,7 @@ def test_guesses_fill_a_grid_in_place_like_termo(game) -> None:
     page = game.get("/jogos/craque-do-dia").text
     grid = page.split('id="cd-grid"')[1].split("</div>\n")[0]
 
-    assert grid.count('class="guessrow"') == 6
+    assert grid.count('class="guessrow" role="group"') == 6
     assert grid.count('class="sq"') == 6 * letters
     assert 'id="cd-word"' not in page  # no text box: the row is where you type
 
@@ -95,3 +95,12 @@ def test_on_screen_keyboard_has_every_letter_enter_and_erase(game) -> None:
     for letter in "QWERTYUIOPASDFGHJKLZXCVBNM":
         assert f'data-key="{letter}"' in keys
     assert 'data-key="Enter"' in keys and 'data-key="Backspace"' in keys
+
+
+def test_grid_rows_have_their_columns_in_the_stylesheet(game) -> None:
+    import re
+
+    css = game.get("/static/geral/jogos.css").text
+
+    assert re.search(r"\.guessrow \{[^}]*grid-template-columns: repeat\(var\(--n\)", css)
+    assert ".guessrow.active .sq.cursor" in css

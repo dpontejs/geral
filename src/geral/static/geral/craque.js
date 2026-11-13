@@ -78,8 +78,10 @@
   let cursor = 0;
   let busy = false; // one guess in flight at a time
   const RANK = { nao: 1, existe: 2, certo: 3 };
+  const SAID = { certo: "no lugar", existe: "em outro lugar", nao: "não está" };
 
-  const over = () => (verdict ? verdict.over : day.guesses.length >= max);
+  let loading = day.guesses.length > 0; // a saved game: wait for the verdict before playing on
+  const over = () => loading || (verdict ? verdict.over : day.guesses.length >= max);
   const paint = () => {
     const marks = verdict ? verdict.rows : [];
     const best = {};
@@ -149,15 +151,20 @@
     }
     error("");
     busy = true;
-    day.guesses.push(typed.join(""));
+    const guess = typed;
+    day.guesses.push(guess.join(""));
+    typed = Array(letters).fill("");
+    cursor = 0;
     try {
       await judge();
       save();
-      typed = Array(letters).fill("");
-      cursor = 0;
-      $("cd-status").textContent = `${day.guesses.length}º chute conferido.`;
+      const marks = verdict.rows[verdict.rows.length - 1];
+      $("cd-status").textContent = `${verdict.rows.length}º chute, ${guess.join("")}: ${guess
+        .map((letter, j) => `${letter} ${SAID[marks[j]]}`)
+        .join(", ")}.`;
     } catch {
       day.guesses.pop();
+      typed = guess;
       error("Não deu para conferir o chute agora. Tente de novo.");
     } finally {
       busy = false;
@@ -192,8 +199,8 @@
     if (event.ctrlKey || event.metaKey || event.altKey) return;
     if (event.target.closest("input, textarea, select")) return;
     const key = event.key.length === 1 ? plain(event.key) : event.key;
-    // A focused link or button (Compartilhar) keeps its Enter; the on-screen keys don't.
-    if (key === "Enter" && event.target.closest("button:not(.key), a")) return;
+    // A focused button or link keeps its Enter (an on-screen key then types itself).
+    if (key === "Enter" && event.target.closest("button, a")) return;
     if (/^[A-Z]$/.test(key) || ["Enter", "Backspace", "ArrowLeft", "ArrowRight"].includes(key)) {
       event.preventDefault();
       press(key);
@@ -223,7 +230,12 @@
   });
 
   paint();
-  if (day.guesses.length) {
-    judge().catch(() => paint());
+  if (loading) {
+    judge()
+      .catch(() => {})
+      .finally(() => {
+        loading = false;
+        paint();
+      });
   }
 })();

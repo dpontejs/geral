@@ -15,10 +15,10 @@
       {% endfor %}
     </nav>
 
-    <div class="board match">
+    <div class="board match cd-board">
       <span class="lamp meta">#{{ number }} · {{ label }} · {{ letters }} letras</span>
-      <div class="grid" id="cd-grid" style="--n: {{ letters }}" aria-label="Seus chutes: {{ max_guesses }} linhas de {{ letters }} letras">
-        {% for _ in range(max_guesses) %}<div class="guessrow">{% for _ in range(letters) %}<span class="sq"></span>{% endfor %}</div>{% endfor %}
+      <div class="grid" id="cd-grid" role="group" style="--n: {{ letters }}" aria-label="Seus chutes: {{ max_guesses }} linhas de {{ letters }} letras">
+        {% for _ in range(max_guesses) %}<div class="guessrow" role="group">{% for _ in range(letters) %}<span class="sq"></span>{% endfor %}</div>{% endfor %}
       </div>
     </div>
 

@@ -12,14 +12,6 @@
 .match .row { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 16px; align-items: center; }
 .match .team, .match .goals { font-size: clamp(15px, 5.4vw, 60px); white-space: nowrap; }
 .match .team { overflow: hidden; text-overflow: ellipsis; }
-.guess { display: flex; flex-wrap: wrap; gap: 12px; align-items: end; }
-.guess label { display: flex; flex-direction: column; gap: 6px; font-weight: 600; color: var(--paper); text-shadow: var(--on-grass); }
-.guess input { width: 96px; font: 900 40px/1 var(--display); text-align: center; padding: 8px; border: 3px solid var(--ink); background: var(--paper); color: var(--ink); }
-.guess .x { font: 900 40px/1 var(--display); color: var(--paper); padding-bottom: 12px; }
-.guess input::-webkit-outer-spin-button, .guess input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
-.guess input[type=number] { -moz-appearance: textfield; appearance: textfield; }
-.guess .btn { background: var(--ticket); color: var(--ink); }
-.guess .btn:hover { background: var(--lamp); color: var(--ink); }
 .tries { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
 .tries li { display: grid; grid-template-columns: 40px 1fr 1fr; gap: 8px; align-items: center; }
 .tries .n { font: 800 18px/1 var(--display); color: var(--paper); text-shadow: var(--on-grass); }
@@ -42,11 +34,12 @@
 
 /* Craque do dia: a Termo on the board. Every guess fills its own row in place. */
 .grid { container-type: inline-size; display: flex; flex-direction: column; gap: 6px; align-items: center; }
-.guessrow { display: grid; grid-template-columns: repeat(var(--n), min(56px, calc((100cqw - (var(--n) - 1) * 6px) / var(--n)))); gap: 6px; }
-.sq { aspect-ratio: 1; display: grid; place-items: center; border: 2px solid #3A3833; background: rgba(255, 255, 255, .03); font: 900 min(34px, calc(60cqw / var(--n)))/1 var(--dots); color: var(--lamp); text-transform: uppercase; user-select: none; }
+.guessrow { --gap: clamp(3px, 1.2cqw, 6px); display: grid; grid-template-columns: repeat(var(--n), min(56px, calc((100cqw - (var(--n) - 1) * var(--gap)) / var(--n)))); gap: var(--gap); }
 .guessrow.active .sq { border-color: rgba(255, 194, 26, .45); cursor: pointer; }
 .guessrow.active .sq.cursor { border-color: var(--lamp); box-shadow: inset 0 -5px 0 var(--lamp); }
 .guessrow.shake { animation: shake .3s; }
+@media (max-width: 480px) { .cd-board { padding: 14px 10px 16px; border-width: 6px; } }
+.sq { aspect-ratio: 1; display: grid; place-items: center; border: 2px solid #3A3833; background: rgba(255, 255, 255, .03); font: 900 min(34px, calc(60cqw / var(--n)))/1 var(--dots); color: var(--lamp); text-transform: uppercase; user-select: none; }
 @keyframes shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
 .sq.certo, .sq.existe, .sq.nao { border: 3px solid var(--ink); font-family: var(--display); color: var(--ink); }
 .sq.certo { background: #2F7D3A; color: #fff; }
@@ -61,7 +54,6 @@
 .key.certo { background: #2F7D3A; color: #fff; }
 .key.existe { background: var(--ticket); }
 .key.nao { background: #5B6B5E; color: var(--paper); opacity: .75; }
-.keys[hidden] { display: none; }
 .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 
 /* Onde jogou?: the player's career, one slot per stint. */
