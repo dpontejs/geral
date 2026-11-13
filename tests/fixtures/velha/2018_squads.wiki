@@ -1,0 +1,6 @@
+==Group A==
+===Uruguay===
+{{nat fs g start}}
+{{nat fs g player|no=1|pos=GK|name=[[Fernando Muslera]]|club=[[Galatasaray S.K.|Galatasaray]]}}
+{{nat fs g player|no=8|pos=MF|name=[[Luis Uruguayo|Uruguaio]]|club=[[Grêmio FBPA|Grêmio]]}}
+{{nat fs end}}
