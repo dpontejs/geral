@@ -33,3 +33,27 @@ def player(
 
 def base(*players: Player, clubs: dict[str, str] = CLUBS) -> Base:
     return Base(players={p.id: p for p in players}, clubs=clubs, countries=COUNTRIES)
+
+
+MANY_CLUBS = {f"Q{100 + i}": f"Clube {i}" for i in range(8)}
+POSITIONS = ("goleiro", "zagueiro", "lateral", "meio-campo", "atacante")
+
+
+def synthetic(size: int = 300, seed: int = 7) -> Base:
+    """A random but fixed base with 8 clubs, both countries and every position."""
+    import random
+
+    rng = random.Random(seed)
+    players = [
+        player(
+            f"Q{1000 + n}",
+            clubes=tuple(rng.sample(sorted(MANY_CLUBS), rng.randint(1, 4))),
+            selecao=rng.random() < 0.3,
+            copa=rng.random() < 0.3,
+            paises=(rng.choice(sorted(COUNTRIES)),) if rng.random() < 0.2 else (),
+            posicoes=(rng.choice(POSITIONS),),
+            fama=rng.randint(1, 100),
+        )
+        for n in range(size)
+    ]
+    return base(*players, clubs=MANY_CLUBS)
