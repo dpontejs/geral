@@ -1,7 +1,7 @@
 # Jogo da velha: o jogador do cruzamento
 
 - **Data:** 2026-11-13
-- **Status:** proposta (aguarda revisão do dev)
+- **Status:** aprovada
 - **ADRs:** —
 
 ## Objetivo
