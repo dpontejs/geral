@@ -1,5 +1,6 @@
 """Edição geral: the summary, the e-mail and the command (docs/features/edicao-geral.md)."""
 
+import re
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
@@ -120,7 +121,7 @@ def test_build_general_keeps_results_when_the_llm_fails() -> None:
 def test_render_general_has_each_series_results_table_and_picked_news() -> None:
     edition = build_general(START, END, WEEKS, FakeLLMClient(responder))
 
-    html, text = render_general(edition, logo_url="https://geral.test/static/geral/logo-email.png")
+    html, text = render_general(edition, static_url="https://geral.test/static/geral")
 
     pieces = (
         "Série A", "Série D", "Flamengo", "Palmeiras", "Juventude", "Final",
@@ -131,6 +132,32 @@ def test_render_general_has_each_series_results_table_and_picked_news() -> None:
     assert "logo-email.png" in html
     assert "https://ge.globo.com/futebol/noticia/2.ghtml" in html
     assert "Flamengo 2 x 1 Palmeiras" in text and "SÉRIE D" in text
+
+
+def test_render_general_is_a_marked_field() -> None:
+    """docs/features/identidade-geral.md: striped grass on top, plain lighter grass in the
+    middle with the halfway line between séries, results on the board in lamp yellow."""
+    edition = build_general(START, END, WEEKS, FakeLLMClient(responder))
+
+    html, _ = render_general(edition, static_url="https://geral.test/static/geral")
+
+    assert "https://geral.test/static/geral/campo-topo.png" in html
+    assert html.count("https://geral.test/static/geral/meio-campo.png") == len(WEEKS)
+    assert "#D3E2C6" in html  # the middle of the field
+    # each result on a board strip: names in full, the score lit in lamp yellow
+    assert re.search(r"Flamengo<.*?#FFC21A[^>]*>2 x 1<.*?Palmeiras<", html, re.S)
+    assert "#0B0B0A" in html
+    # no Impact on Android: its condensed Roboto keeps the poster headline narrow
+    assert re.search(r"<h1[^>]*font-family:Impact, \"?sans-serif-condensed", html)
+
+
+def test_render_general_without_a_public_page_has_no_images() -> None:
+    edition = build_general(START, END, WEEKS, FakeLLMClient(responder))
+
+    html, _ = render_general(edition)
+
+    assert "<img" not in html and "url(" not in html
+    assert "GERAL" in html
 
 
 def test_edicao_geral_preview_writes_html_without_sending(monkeypatch, tmp_path) -> None:

@@ -28,3 +28,20 @@ def test_without_the_stripe_only_the_text_gets_the_welcome() -> None:
 
     assert html == "<p>x</p>"
     assert text.startswith("Boas-vindas à Elefante News!") and text.endswith("x")
+
+
+def test_the_edicao_geral_gets_the_welcome_box_below_its_grass_top() -> None:
+    from fakes import FakeLLMClient
+    from test_general_edition import END, START, WEEKS, responder
+
+    from geral.general import GENERAL_EDITION
+    from geral.general.edition import build_general
+    from geral.general.render import render_general
+
+    edition = build_general(START, END, WEEKS, FakeLLMClient(responder))
+    html, text = render_general(edition, static_url="https://geral.test/static/geral")
+
+    welcomed_html, _ = add_welcome(html, text, GENERAL_EDITION)
+
+    box = welcomed_html.index("Boas-vindas à Edição geral!")
+    assert welcomed_html.index(edition.headline) < box < welcomed_html.index("Série A")
