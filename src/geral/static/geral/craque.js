@@ -9,9 +9,8 @@
   const max = Number(root.dataset.max);
   const letters = Number(root.dataset.letters);
   const $ = (id) => document.getElementById(id);
-  const form = $("cd-form");
-  const input = $("cd-word");
-  const button = form.querySelector("button");
+  const rows = [...$("cd-grid").children];
+  const keys = $("cd-keys");
   const KEY = archive ? `craque:${edition}:${number}` : `craque:${edition}`;
   const EMOJI = { certo: "🟩", existe: "🟨", nao: "⬜" };
 
@@ -74,18 +73,41 @@
     $("cd-played").textContent = stats.played;
   };
 
+  // The row being typed: one letter per square, the cursor where the next one goes (Termo-like).
+  let typed = Array(letters).fill("");
+  let cursor = 0;
+  let busy = false; // one guess in flight at a time
+  const RANK = { nao: 1, existe: 2, certo: 3 };
+
+  const over = () => (verdict ? verdict.over : day.guesses.length >= max);
+  const paint = () => {
+    const marks = verdict ? verdict.rows : [];
+    const best = {};
+    rows.forEach((row, i) => {
+      const squares = [...row.children];
+      const active = !over() && i === day.guesses.length;
+      row.classList.toggle("active", active);
+      squares.forEach((sq, j) => {
+        const mark = marks[i] && marks[i][j];
+        const letter = i < day.guesses.length ? plain(day.guesses[i])[j] : active ? typed[j] : "";
+        sq.textContent = letter || "";
+        sq.className = `sq${mark ? ` ${mark}` : ""}${active && j === cursor ? " cursor" : ""}`;
+        if (mark && (RANK[mark] > (RANK[best[letter]] || 0))) best[letter] = mark;
+      });
+      row.setAttribute(
+        "aria-label",
+        i < day.guesses.length ? `${i + 1}º chute: ${plain(day.guesses[i])}` : `linha ${i + 1}`,
+      );
+    });
+    keys.querySelectorAll("[data-key]").forEach((key) => {
+      key.className = `key${key.dataset.key.length > 1 ? " wide" : ""}${best[key.dataset.key] ? ` ${best[key.dataset.key]}` : ""}`;
+    });
+    keys.hidden = over();
+  };
+
   const render = () => {
-    $("cd-tries").replaceChildren(
-      ...verdict.rows.map((marks, i) => {
-        const word = plain(day.guesses[i]);
-        const li = el("li", "word");
-        li.setAttribute("aria-label", `${i + 1}º chute: ${word}`);
-        marks.forEach((mark, j) => li.append(el("span", `tile ${mark}`, word[j])));
-        return li;
-      }),
-    );
+    paint();
     $("cd-hints").replaceChildren(...verdict.hints.map((hint) => el("li", "", hint)));
-    form.hidden = verdict.over;
     const r = verdict.reveal;
     $("cd-result").hidden = !r;
     if (!r) return;
@@ -111,28 +133,78 @@
     $("cd-error").hidden = !text;
   };
 
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    const word = plain(input.value);
-    if (!/^[A-Z]+$/.test(word) || word.length !== letters) {
-      error(`O nome tem ${letters} letras, sem espaço nem número.`);
+  const shake = () => {
+    const row = rows[day.guesses.length];
+    row.classList.remove("shake");
+    void row.offsetWidth; // restart the animation
+    row.classList.add("shake");
+  };
+
+  const submit = async () => {
+    if (busy || over()) return;
+    if (typed.some((letter) => !letter)) {
+      error(`O nome tem ${letters} letras: preencha todas.`);
+      shake();
       return;
     }
-    if (button.disabled || day.guesses.length >= max) return;
     error("");
-    button.disabled = true; // one guess in flight at a time
-    day.guesses.push(word);
+    busy = true;
+    day.guesses.push(typed.join(""));
     try {
       await judge();
       save();
-      form.reset();
-      input.focus();
+      typed = Array(letters).fill("");
+      cursor = 0;
+      $("cd-status").textContent = `${day.guesses.length}º chute conferido.`;
     } catch {
       day.guesses.pop();
       error("Não deu para conferir o chute agora. Tente de novo.");
     } finally {
-      button.disabled = false;
+      busy = false;
+      paint();
     }
+  };
+
+  const press = (key) => {
+    if (busy || over()) return;
+    if (key === "Enter") return submit();
+    if (key === "Backspace") {
+      if (!typed[cursor] && cursor > 0) cursor -= 1;
+      typed[cursor] = "";
+    } else if (key === "ArrowLeft") cursor = Math.max(0, cursor - 1);
+    else if (key === "ArrowRight") cursor = Math.min(letters - 1, cursor + 1);
+    else if (/^[A-Z]$/.test(key)) {
+      typed[cursor] = key;
+      // On to the next empty square after this one (or simply the next one).
+      const next = typed.findIndex((letter, j) => j > cursor && !letter);
+      cursor = next === -1 ? Math.min(letters - 1, cursor + 1) : next;
+    } else return;
+    error("");
+    paint();
+  };
+
+  keys.addEventListener("mousedown", (event) => event.preventDefault()); // keys never keep focus
+  keys.addEventListener("click", (event) => {
+    const key = event.target.closest("[data-key]");
+    if (key) press(key.dataset.key);
+  });
+  document.addEventListener("keydown", (event) => {
+    if (event.ctrlKey || event.metaKey || event.altKey) return;
+    if (event.target.closest("input, textarea, select")) return;
+    const key = event.key.length === 1 ? plain(event.key) : event.key;
+    // A focused link or button (Compartilhar) keeps its Enter; the on-screen keys don't.
+    if (key === "Enter" && event.target.closest("button:not(.key), a")) return;
+    if (/^[A-Z]$/.test(key) || ["Enter", "Backspace", "ArrowLeft", "ArrowRight"].includes(key)) {
+      event.preventDefault();
+      press(key);
+    }
+  });
+  $("cd-grid").addEventListener("click", (event) => {
+    const sq = event.target.closest(".sq");
+    const row = sq && sq.parentElement;
+    if (!row || !row.classList.contains("active")) return;
+    cursor = [...row.children].indexOf(sq);
+    paint();
   });
 
   $("cd-share").addEventListener("click", async () => {
@@ -150,10 +222,8 @@
     }
   });
 
+  paint();
   if (day.guesses.length) {
-    form.hidden = true; // until we know whether today's game is over
-    judge().catch(() => {
-      form.hidden = day.guesses.length >= max;
-    });
+    judge().catch(() => paint());
   }
 })();

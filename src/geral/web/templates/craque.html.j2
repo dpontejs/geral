@@ -17,17 +17,18 @@
 
     <div class="board match">
       <span class="lamp meta">#{{ number }} · {{ label }} · {{ letters }} letras</span>
-      <div class="word" aria-label="{{ letters }} letras">{% for _ in range(letters) %}<span class="tile">?</span>{% endfor %}</div>
+      <div class="grid" id="cd-grid" style="--n: {{ letters }}" aria-label="Seus chutes: {{ max_guesses }} linhas de {{ letters }} letras">
+        {% for _ in range(max_guesses) %}<div class="guessrow">{% for _ in range(letters) %}<span class="sq"></span>{% endfor %}</div>{% endfor %}
+      </div>
     </div>
 
-    <form class="guess" id="cd-form">
-      <label>Nome do craque<input class="word-input" id="cd-word" name="word" type="text" maxlength="{{ letters }}" autocomplete="off" autocapitalize="characters" spellcheck="false" required></label>
-      <button class="btn" type="submit">Chutar</button>
-    </form>
     <p class="how" id="cd-error" role="alert" hidden></p>
 
-    <ol class="words" id="cd-tries" aria-live="polite"></ol>
+    <p class="sr-only" id="cd-status" aria-live="polite"></p>
     <ul class="hints" id="cd-hints"></ul>
+    <div class="keys" id="cd-keys" aria-label="Teclado">
+      {% for line in ["QWERTYUIOP", "ASDFGHJKL", "ZXCVBNM"] %}<div class="keyrow">{% if loop.last %}<button type="button" class="key wide" data-key="Backspace" aria-label="Apagar"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path d="M9 5h11v14H9l-6-7z M12 9l5 6 M17 9l-5 6" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round"/></svg></button>{% endif %}{% for k in line %}<button type="button" class="key" data-key="{{ k }}">{{ k }}</button>{% endfor %}{% if loop.last %}<button type="button" class="key wide" data-key="Enter">Chutar</button>{% endif %}</div>{% endfor %}
+    </div>
 
     <div class="result" id="cd-result" hidden>
       <h2 id="cd-title"></h2>

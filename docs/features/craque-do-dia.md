@@ -56,7 +56,9 @@ class WordGuessesIn(BaseModel):
     guesses: list[str]  # 1 a 6; cada um, normalizado, com o tamanho da resposta (senão 422)
 ```
 
-- Página: quadradinhos de lâmpada com o tamanho do nome; o CSS comum dos jogos sai do template do
+- Página: como no Termo, uma grade no placar (6 linhas × letras do nome); o chute se escreve
+  no lugar, na linha da vez, pelo teclado da tela ou o do computador (clicar num quadrado move o
+  cursor); o teclado da tela pinta cada letra com a melhor marca já vista. O CSS comum dos jogos sai do template do
   "Quanto foi?" para `static/geral/jogos.css`. Compartilhar: `Craque do dia #3 · Vasco 4/6` + uma
   linha de 🟩🟨⬜ por chute + link. Portal: cartão "Craque do dia" no Intervalo.
 
