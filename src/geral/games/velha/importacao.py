@@ -141,7 +141,8 @@ def build_base(
     others = [q for q in ids if FOOTBALLER not in _ids(about.get(q, {}), "P106")]
     for q in sorted(set(ids) - set(others)):
         if careers.get(q):
-            club_ids = {page_ids.get(s.target) for s in careers[q] if s.start is not None}
+            # A stint with unreadable years still counts as a club; only `anos` needs years.
+            club_ids = {page_ids.get(s.target) for s in careers[q]}
             known = [s for s in careers[q] if s.start is not None]
             anos = _span([s.start for s in known], [s.end for s in known])
             selecao = any(page_ids.get(t) == SELECAO for t in teams[q])

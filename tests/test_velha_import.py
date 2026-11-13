@@ -157,7 +157,8 @@ def test_import_base_builds_from_recorded_wikidata_and_wikipedia(network, tmp_pa
         "posicoes": ["atacante"],
         "paises": [],
         "fama": 50,
-        "clubes": ["Q5014111", "Q80964"],  # the loan counts, the youth club does not
+        # The loan counts, a stint with unreadable years too; the youth club does not.
+        "clubes": ["Q221695", "Q5014111", "Q80964"],
         "selecao": True,
         "copa": False,
     }
@@ -187,6 +188,6 @@ def test_import_base_builds_from_recorded_wikidata_and_wikipedia(network, tmp_pa
     clubs = tmp_path / "clubes.toml"
     clubs.write_text("".join(f'[{q}]\nnome = "{n}"\n' for q, n in CLUBS.items()))
     base = load(path, clubs)
-    assert base.players["Q1"].clubes == frozenset({"Q5014111", "Q80964"})
+    assert base.players["Q1"].clubes == frozenset({"Q221695", "Q5014111", "Q80964"})
     assert base.countries == {"Q77": "Uruguai"}
     assert base.players["Q3"].completo == "Moacir Barbosa Nascimento"
