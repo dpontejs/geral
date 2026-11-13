@@ -169,3 +169,19 @@ def test_parse_career_reads_interlanguage_links_and_html_names() -> None:
         "Araguari Atlético Clube",
         "Operário de Muriaé",
     ]
+
+
+def test_national_teams_reads_the_underscored_parameters_too() -> None:
+    text = """{{Infobox football biography
+| national_years1 = 1979–1990 | national_team1 = [[Brazil national football team|Brazil]]
+| national_team_update =
+}}"""
+    assert national_teams(text) == [SELECAO_PAGE]
+
+
+def test_squad_players_reads_the_long_template_name_too() -> None:
+    text = """{{National football squad start}}
+{{National football squad player|no=1|pos=GK|name=[[Jens Lehmann]]|caps=32}}
+{{national football squad player|no=2|pos=DF|name=[[Marcell Jansen]]|caps=7}}
+{{National football squad end}}"""
+    assert squad_players(text) == ["Jens Lehmann", "Marcell Jansen"]

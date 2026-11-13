@@ -10,7 +10,7 @@ from geral.games.velha import importacao
 from geral.games.velha.base import load
 
 FIXTURES = Path(__file__).parent / "fixtures" / "velha"
-CLUBS = {"Q5014111": "Vasco", "Q221695": "Grêmio", "Q80964": "Palmeiras"}
+CLUBS = {"Q5014111": "Vasco", "Q221695": "Grêmio", "Q80964": "Palmeiras", "Q17479": "Flamengo"}
 
 
 def _claim(qid: str, start: str = "", end: str = "", rank: str = "normal") -> dict:
@@ -23,18 +23,31 @@ def _claim(qid: str, start: str = "", end: str = "", rank: str = "normal") -> di
     return {"mainsnak": snak, "qualifiers": qualifiers, "rank": rank}
 
 
-MEMBERS = {"Q5014111": ["Q1", "Q3", "Q4"], "Q221695": ["Q2"], "Q83459": ["Q1"]}
-FAMA = {"Q1": 50, "Q2": 20, "Q3": 30, "Q4": 1}
+MEMBERS = {"Q5014111": ["Q1", "Q3", "Q4"], "Q221695": ["Q2"], "Q17479": ["Q5"], "Q83459": ["Q1"]}
+FAMA = {"Q1": 50, "Q2": 20, "Q3": 30, "Q4": 1, "Q5": 40}
 ENWIKI = {"Q1": "Edmundo", "Q2": "Uruguaio (footballer)"}
-NAMES = {"Q1": "Edmundo", "Q2": "Uruguaio", "Q3": "Barbosa", "Q77": "Uruguai"}
+NAMES = {"Q1": "Edmundo", "Q2": "Uruguaio", "Q3": "Barbosa", "Q5": "Oscar", "Q77": "Uruguai"}
+FOOTBALLER = [_claim("Q937857")]
 CLAIMS = {
+    "Q5": {  # a basketball player of Flamengo: not in the base
+        "P106": [_claim("Q3665646")],
+        "P413": [_claim("Q308879")],
+        "P54": [_claim("Q17479", "1980", "1990")],
+    },
     "Q1": {
+        "P106": FOOTBALLER,
         "P413": [_claim("Q280658")],
         "P27": [_claim("Q155")],
         "P54": [_claim("Q80845")],  # ignored: Edmundo has an infobox
     },
-    "Q2": {"P413": [_claim("Q193592")], "P1532": [_claim("Q77")], "P27": [_claim("Q77")]},
+    "Q2": {
+        "P106": FOOTBALLER,
+        "P413": [_claim("Q193592"), _claim("Q2827965")],  # winger: atacante too
+        "P1532": [_claim("Q77")],
+        "P27": [_claim("Q77")],
+    },
     "Q3": {
+        "P106": FOOTBALLER,
         "P413": [_claim("Q201330"), _claim("Q12345")],  # Q12345 has no group: reported
         "P1344": [_claim("Q132515"), _claim("Q20730966")],  # 1950; a qualifier is no Copa
         "P54": [
@@ -142,6 +155,7 @@ def test_import_base_builds_from_recorded_wikidata_and_wikipedia(network, tmp_pa
     assert players["Q2"]["anos"] == "2015–"  # the whole career, Nacional included
     assert players["Q2"]["clubes"] == ["Q221695"]
     assert players["Q2"]["paises"] == ["Q77"]
+    assert players["Q2"]["posicoes"] == ["meio-campo", "atacante"]
     assert players["Q2"]["selecao"] is False
     assert players["Q2"]["copa"] is True  # through a squads link that is a redirect
     assert players["Q3"]["anos"] == "1950–1960"  # clubs only, as in the infobox
@@ -151,6 +165,7 @@ def test_import_base_builds_from_recorded_wikidata_and_wikipedia(network, tmp_pa
     assert players["Q3"]["posicoes"] == ["goleiro"]
     assert data["paises"] == {"Q77": "Uruguai"}
     assert any("Q12345" in line for line in report)
+    assert any("1 not footballers" in line for line in report)
 
     path = tmp_path / "base.json"
     path.write_text(importacao.dump(data), encoding="utf-8")

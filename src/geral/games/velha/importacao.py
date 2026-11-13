@@ -17,6 +17,7 @@ from geral.games.wikipedia import national_teams, parse_career, squad_players
 
 MIN_FAMA = 4  # Wikipedias a player needs to enter: 5758 of 7835 candidates (2026-11-13)
 SELECAO = "Q83459"  # the senior Brazil team
+FOOTBALLER = "Q937857"  # occupation: clubs like Flamengo list their basketball players too
 BRAZIL = "Q155"
 # P1344 is well filled for these editions (1930–2018); 2022 is thin and 2026 mixes qualifiers.
 EDITIONS = {
@@ -34,8 +35,12 @@ POSITION_GROUPS = {
     "Q90173132": "lateral",
     "Q193592": "meio-campo", "Q904289": "meio-campo", "Q8025128": "meio-campo",
     "Q90326494": "meio-campo", "Q18691898": "meio-campo", "Q1201458": "meio-campo",
+    "Q6008848": "meio-campo", "Q16501245": "meio-campo",
+    "Q12366105": "zagueiro", "Q65658788": "lateral",
     "Q280658": "atacante", "Q9731197": "atacante", "Q3446915": "atacante",
-    "Q11681748": "atacante",
+    "Q11681748": "atacante", "Q2827965": "atacante", "Q18451027": "atacante",
+    "Q114358158": "atacante", "Q18450005": "atacante", "Q6037916": "atacante",
+    "Q1642283": "atacante",
 }  # fmt: skip
 
 
@@ -123,7 +128,8 @@ def build_base(
     in_squads = {page_ids[t] for ts in squads.values() for t in ts if t in page_ids}
 
     players, ungrouped, from_wikidata, dropped = [], Counter(), 0, 0
-    for q in ids:
+    others = [q for q in ids if FOOTBALLER not in _ids(about.get(q, {}), "P106")]
+    for q in sorted(set(ids) - set(others)):
         if careers.get(q):
             club_ids = {page_ids.get(s.target) for s in careers[q] if s.start is not None}
             known = [s for s in careers[q] if s.start is not None]
@@ -169,6 +175,7 @@ def build_base(
 
     by_club = Counter(c for p in players for c in p["clubes"])
     report.append(f"{len(players)} players (fama >= {min_fama}); {dropped} left out (no category)")
+    report.append(f"{len(others)} not footballers (other sports of the same clubs) left out")
     report.append(f"{from_wikidata} careers from Wikidata (no Wikipedia infobox)")
     report.append(f"Seleção: {sum(p['selecao'] for p in players)}")
     wikidata_copa = sum(bool(EDITIONS & set(facts[p["id"]].get("P1344", []))) for p in players)

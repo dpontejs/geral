@@ -15,7 +15,11 @@ LINKS = Path(__file__).with_name("wikipedia_links.toml")
 YEARS = re.compile(r"(\d{4})\s*(?:([–—-])\s*(\d{4}|\d{2}(?!\d))?)?")
 DASH = re.compile(r"\{\{\s*(?:s?ndash|snd|spaced ndash)\s*\}\}", re.IGNORECASE)
 SELECAO_PAGE = "Brazil national football team"  # the senior team; U-20 and Olympic have own pages
-SQUAD_PLAYER = re.compile(r"\{\{\s*nat fs (?:g )?player\b[^\n]*?\|\s*name\s*=\s*\[\[([^\]|#]+)")
+SQUAD_PLAYER = re.compile(
+    r"\{\{\s*(?:nat fs (?:g )?|national football squad )player\b"
+    r"[^\n]*?\|\s*name\s*=\s*\[\[([^\]|#]+)",
+    re.IGNORECASE,
+)
 ILL = re.compile(r"\{\{\s*(?:ill|interlanguage link)\s*\|\s*([^|{}]+)", re.IGNORECASE)
 WRAPPER = re.compile(r"\{\{[^{}|]*\|([^{}]*)\}\}")  # {{nowrap|...}} keeps what it wraps
 
@@ -122,8 +126,8 @@ def parse_career(wikitext: str) -> list[Stint]:
 def national_teams(wikitext: str) -> list[str]:
     """The national teams of the infobox (youth and Olympic included), as linked page titles."""
     params = _params(_infobox(wikitext))
-    numbers = sorted(int(k[12:]) for k in params if re.fullmatch(r"nationalteam\d+", k))
-    return [team for n in numbers if (team := _club(params[f"nationalteam{n}"]))]
+    keys = {int(m.group(1)): k for k in params if (m := re.fullmatch(r"national_?team(\d+)", k))}
+    return [team for _, k in sorted(keys.items()) if (team := _club(params[k]))]
 
 
 def squad_players(wikitext: str) -> list[str]:
