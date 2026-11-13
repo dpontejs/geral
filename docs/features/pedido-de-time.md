@@ -43,6 +43,8 @@ primeiro.
   assinado para `GET /pedidos?t=…` (HMAC com o segredo do site, propósito `team-requests`, vale
   30 dias). A página lista todos os pedidos, votos, data do último e quantos esperam aviso, sem
   os endereços; sem link válido é 404, com `noindex`, `no-store` e `no-referrer`.
+- `POST /api/team-requests/panel-link` (token da API) manda um link novo ao dono por e-mail;
+  o workflow "Pedidos de time" chama essa rota.
 - Portal: o cartão "Seu time?" vira link para `/pedir` e mostra o mais pedido com 3 votos ou mais.
 
 ## Critérios de aceite (como testes)

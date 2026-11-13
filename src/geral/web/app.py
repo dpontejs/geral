@@ -548,17 +548,21 @@ def create_app(
         except MailError as e:
             logger.error("New subscriber notification failed: %s", e)
 
-    def panel_token() -> str:
-        return make_token(secret, PANEL_PURPOSE, settings.NOTIFY_EMAIL, now())
+    def panel_link() -> str:
+        token = make_token(secret, PANEL_PURPOSE, settings.NOTIFY_EMAIL, now())
+        return f"{public_url}/pedidos?{urlencode({'t': token})}"
 
     def notify_request(name: str, votes: int, position: int, email: str) -> None:
         """Tell the owner about a new vote for a team, like a new subscriber."""
         if not settings.NOTIFY_EMAIL:
             return
         plural = "s" if votes != 1 else ""
-        top = team_requests.top(REQUESTS_IN_EMAIL, min_votes=1)
-        ranking = "".join(f"{n}. {t.name} · {t.votes}\n" for n, t in enumerate(top, 1))
-        panel = f"{public_url}/pedidos?{urlencode({'t': panel_token()})}"
+        try:  # the vote is already stored: a failure here only costs the owner the ranking
+            top = team_requests.top(REQUESTS_IN_EMAIL, min_votes=1)
+            ranking = "".join(f"{n}. {t.name} · {t.votes}\n" for n, t in enumerate(top, 1))
+        except Exception:
+            logger.exception("Team request ranking failed")
+            ranking = "(indisponível)\n"
         try:
             mailer.send_notification(
                 settings.NOTIFY_EMAIL,
@@ -566,7 +570,7 @@ def create_app(
                 f"{name}: {votes} pedido{plural}, {position}º entre os mais pedidos.\n"
                 f"E-mail para avisar: {email or 'não informado'}\n\n"
                 f"Mais pedidos:\n{ranking}\n"
-                f"Todos os pedidos (link vale {PANEL_MAX_AGE.days} dias): {panel}\n",
+                f"Todos os pedidos (link vale {PANEL_MAX_AGE.days} dias): {panel_link()}\n",
             )
         except MailError as e:
             logger.error("Team request notification failed: %s", e)
@@ -1091,6 +1095,20 @@ def create_app(
         response.headers["Cache-Control"] = "no-store"
         response.headers["Referrer-Policy"] = "no-referrer"  # the link carries the token
         return response
+
+    @app.post("/api/team-requests/panel-link")
+    def send_panel_link(request: Request):
+        """E-mail the owner a fresh link to /pedidos (the link itself never leaves by HTTP)."""
+        if not authorized(request):
+            return unauthorized()
+        if not settings.NOTIFY_EMAIL:
+            return JSONResponse({"detail": "NOTIFY_EMAIL is not set"}, status_code=409)
+        mailer.send_notification(
+            settings.NOTIFY_EMAIL,
+            "Pedidos de time",
+            f"Todos os pedidos (link vale {PANEL_MAX_AGE.days} dias): {panel_link()}\n",
+        )
+        return {"sent": True}
 
     @app.get("/api/team-requests")
     def list_team_requests(request: Request):

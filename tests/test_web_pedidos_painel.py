@@ -95,3 +95,41 @@ def test_panel_is_404_when_no_owner_is_set(client, clock) -> None:
     token = make_token(SECRET, "team-requests", "", clock.now)
 
     assert client.get(f"/pedidos?t={token}").status_code == 404
+
+
+def test_api_sends_the_owner_a_fresh_panel_link(owner, mailer) -> None:
+    from webkit import AUTH
+
+    assert owner.post("/api/team-requests/panel-link").status_code == 401
+    response = owner.post("/api/team-requests/panel-link", headers=AUTH)
+
+    assert response.status_code == 200 and response.json() == {"sent": True}
+    ((to, subject, _),) = mailer.notifications
+    assert to == "dono@example.com" and subject == "Pedidos de time"
+    assert owner.get(panel_link(mailer)).status_code == 200
+
+
+def test_api_panel_link_needs_an_owner(client) -> None:
+    from webkit import AUTH
+
+    assert client.post("/api/team-requests/panel-link", headers=AUTH).status_code == 409
+
+
+def test_panel_dates_are_brasilia_days(owner, mailer, clock) -> None:
+    clock.now = clock.now.replace(day=14, hour=1, minute=0)  # 22:00 of the 13th in Brasília
+    ask(owner, "Remo")
+
+    page = owner.get(panel_link(mailer)).text
+
+    assert "13/" in page.split("Remo")[1] and "14/" not in page.split("Remo")[1]
+
+
+def test_a_broken_ranking_keeps_the_vote_and_the_answer(owner, mailer, monkeypatch) -> None:
+    from geral.web.team_requests import TeamRequestStore
+
+    def broken(self, *args, **kwargs):
+        raise RuntimeError("disk")
+
+    monkeypatch.setattr(TeamRequestStore, "top", broken)
+
+    assert ask(owner, "Remo").status_code == 200

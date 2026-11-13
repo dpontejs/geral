@@ -1,0 +1,19 @@
+name: Pedidos de time
+
+# Sends the owner (NOTIFY_EMAIL on the site) a fresh 30-day link to the team requests page.
+on:
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  link:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ask the site to e-mail the link
+        env:
+          TOKEN: ${{ secrets.SUBSCRIBERS_API_TOKEN }}
+          PUBLIC_URL: ${{ vars.PUBLIC_URL || 'https://geral.diegoponte.dev' }}
+        run: |
+          curl --fail-with-body -sS -X POST -H "Authorization: Bearer $TOKEN" \
+            "$PUBLIC_URL/api/team-requests/panel-link"
