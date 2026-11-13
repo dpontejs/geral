@@ -28,7 +28,7 @@ POSITIONS = {
 @dataclass(frozen=True)
 class Player:
     id: str  # Wikidata id
-    nome: str
+    nome: str  # as fans say it (the Portuguese Wikipedia title)
     anos: str  # "1985–2002", "2019–" or "" when unknown
     posicoes: tuple[str, ...]  # keys of POSITIONS
     paises: tuple[str, ...]  # country ids, Brazil left out
@@ -36,6 +36,7 @@ class Player:
     clubes: frozenset[str]  # board club ids
     selecao: bool
     copa: bool
+    completo: str = ""  # the registered name when it differs, for the search
 
 
 @dataclass(frozen=True)
@@ -121,6 +122,7 @@ def load(path: Path = BASE, clubs: Path = CLUBS) -> Base:
             clubes=frozenset(p["clubes"]),
             selecao=p["selecao"],
             copa=p["copa"],
+            completo=p.get("completo", ""),
         )
         for p in raw["jogadores"]
     }

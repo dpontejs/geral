@@ -26,7 +26,14 @@ def _claim(qid: str, start: str = "", end: str = "", rank: str = "normal") -> di
 MEMBERS = {"Q5014111": ["Q1", "Q3", "Q4"], "Q221695": ["Q2"], "Q17479": ["Q5"], "Q83459": ["Q1"]}
 FAMA = {"Q1": 50, "Q2": 20, "Q3": 30, "Q4": 1, "Q5": 40}
 ENWIKI = {"Q1": "Edmundo", "Q2": "Uruguaio (footballer)"}
-NAMES = {"Q1": "Edmundo", "Q2": "Uruguaio", "Q3": "Barbosa", "Q5": "Oscar", "Q77": "Uruguai"}
+NAMES = {
+    "Q1": "Edmundo",
+    "Q2": "Uruguaio",
+    "Q3": "Moacir Barbosa Nascimento",
+    "Q5": "Oscar",
+    "Q77": "Uruguai",
+}
+PTWIKI = {"Q3": "Barbosa (futebolista)"}
 FOOTBALLER = [_claim("Q937857")]
 CLAIMS = {
     "Q5": {  # a basketball player of Flamengo: not in the base
@@ -71,6 +78,7 @@ def _wikidata(request: httpx.Request) -> httpx.Response:
             q: {
                 "sitelinks": {f"wiki{n}": {"title": "x"} for n in range(FAMA[q] - 1)}
                 | ({"enwiki": {"title": ENWIKI[q]}} if q in ENWIKI else {"xwiki": {"title": "x"}})
+                | ({"ptwiki": {"title": PTWIKI[q]}} if q in PTWIKI else {})
             }
             for q in ids
         }
@@ -144,6 +152,7 @@ def test_import_base_builds_from_recorded_wikidata_and_wikipedia(network, tmp_pa
     assert players["Q1"] == {
         "id": "Q1",
         "nome": "Edmundo",
+        "completo": "",
         "anos": "1985–2002",
         "posicoes": ["atacante"],
         "paises": [],
@@ -163,6 +172,11 @@ def test_import_base_builds_from_recorded_wikidata_and_wikipedia(network, tmp_pa
     assert players["Q3"]["selecao"] is True
     assert players["Q3"]["copa"] is True
     assert players["Q3"]["posicoes"] == ["goleiro"]
+    assert (players["Q3"]["nome"], players["Q3"]["completo"]) == (
+        "Barbosa",  # the Portuguese Wikipedia title, as fans say it
+        "Moacir Barbosa Nascimento",
+    )
+    assert (players["Q2"]["nome"], players["Q2"]["completo"]) == ("Uruguaio", "")
     assert data["paises"] == {"Q77": "Uruguai"}
     assert any("Q12345" in line for line in report)
     assert any("1 not footballers" in line for line in report)
@@ -175,3 +189,4 @@ def test_import_base_builds_from_recorded_wikidata_and_wikipedia(network, tmp_pa
     base = load(path, clubs)
     assert base.players["Q1"].clubes == frozenset({"Q5014111", "Q80964"})
     assert base.countries == {"Q77": "Uruguai"}
+    assert base.players["Q3"].completo == "Moacir Barbosa Nascimento"

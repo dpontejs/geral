@@ -7,6 +7,7 @@ there is one, as in "Onde jogou?". Copa = the
 """
 
 import json
+import re
 from collections import Counter
 
 import httpx
@@ -17,7 +18,7 @@ from geral.games.wikipedia import national_teams, parse_career, squad_players
 
 MIN_FAMA = 4  # Wikipedias a player needs to enter: 5758 of 7835 candidates (2026-11-13)
 SELECAO = "Q83459"  # the senior Brazil team
-FOOTBALLER = "Q937857"  # occupation: clubs like Flamengo list their basketball players too
+FOOTBALLER = "Q937857"  # occupation: multi-sport clubs list their basketball players too
 BRAZIL = "Q155"
 # P1344 is well filled for these editions (1930–2018); 2022 is thin and 2026 mixes qualifiers.
 EDITIONS = {
@@ -78,6 +79,14 @@ def _span(starts: list[int], ends: list[int | None]) -> str:
     return f"{min(starts)}–{max(e for e in ends if e is not None)}"
 
 
+def _common_name(sitelinks: dict) -> str:
+    """The name fans use: the Portuguese (else English) Wikipedia title, without '(futebolista)'."""
+    for site in ("ptwiki", "enwiki"):
+        if site in sitelinks:
+            return re.sub(r"\s*\([^)]*\)$", "", sitelinks[site]["title"]).strip()
+    return ""
+
+
 def _label(entity: dict) -> str:
     found = entity.get("labels", {})
     return next((found[lang]["value"] for lang in ("pt-br", "pt", "en") if lang in found), "")
@@ -101,7 +110,8 @@ def build_base(
         if "enwiki" in links[q]["sitelinks"]
     }
     about = entities(client, ids, "labels|claims", "pt-br|pt|en")
-    names = {q: _label(about.get(q, {})) for q in ids}
+    full = {q: _label(about.get(q, {})) for q in ids}
+    names = {q: _common_name(links[q]["sitelinks"]) or full[q] for q in ids}
     facts = {
         q: {p: _ids(about.get(q, {}), p) for p in ("P413", "P1532", "P27", "P1344")} for q in ids
     }
@@ -160,6 +170,7 @@ def build_base(
             {
                 "id": q,
                 "nome": names[q],
+                "completo": full[q] if full[q] != names[q] else "",
                 "anos": anos,
                 "posicoes": posicoes,
                 "paises": paises,
