@@ -58,14 +58,20 @@ def wikitexts(client: httpx.Client, titles: list[str]) -> dict[str, str]:
         chunk = titles[i : i + BATCH]
         params = {"action": "query", "titles": "|".join(chunk), "redirects": 1}
         params |= {"prop": "revisions", "rvprop": "content", "rvslots": "main"}
-        query = api(client, ENWIKI, params)["query"]
-        renamed = {n["from"]: n["to"] for n in query.get("normalized", [])}
-        moved = {r["from"]: r["to"] for r in query.get("redirects", [])}
-        pages = {
-            page["title"]: page["revisions"][0]["slots"]["main"]["content"]
-            for page in query["pages"]
-            if page.get("revisions")
-        }
+        renamed, moved, pages = {}, {}, {}
+        while True:  # a batch too big for one answer comes back in parts ("continue")
+            answer = api(client, ENWIKI, params)
+            query = answer["query"]
+            renamed |= {n["from"]: n["to"] for n in query.get("normalized", [])}
+            moved |= {r["from"]: r["to"] for r in query.get("redirects", [])}
+            pages |= {
+                page["title"]: page["revisions"][0]["slots"]["main"]["content"]
+                for page in query["pages"]
+                if page.get("revisions")
+            }
+            if "continue" not in answer:
+                break
+            params |= answer["continue"]
         for title in chunk:
             final = moved.get(renamed.get(title, title), renamed.get(title, title))
             texts[title] = pages.get(final, "")
