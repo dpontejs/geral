@@ -215,6 +215,10 @@ footer .wrap { padding-block: 22px 30px; display: flex; justify-content: space-b
 .msg h1 { font-size: clamp(40px, 6vw, 64px); }
 .msg p { font-size: 18px; color: var(--ink-soft); margin: 16px 0 24px; }
 .msg form { display: flex; gap: 10px; flex-wrap: wrap; }
+.panel { width: 100%; border-collapse: collapse; font-size: 16px; font-variant-numeric: tabular-nums; }
+.panel th { text-align: left; font: 900 14px/1 var(--display); text-transform: uppercase; letter-spacing: .06em; border-bottom: 3px solid var(--ink); padding: 8px 6px; }
+.panel td { border-bottom: 1px solid rgba(0, 0, 0, .15); padding: 10px 6px; vertical-align: top; }
+@media (max-width: 640px) { .panel th:first-child, .panel td:first-child { display: none; } .panel { font-size: 14px; } .msg .sheet { padding: 20px 14px; } }
 .btn.secondary { background: transparent; color: var(--ink); border: 3px solid var(--ink); }
 .btn.secondary:hover { background: var(--ink); color: var(--paper); }
 .error { background: var(--ink); color: var(--paper); padding: 10px 12px; margin: 0; font-weight: 600; }

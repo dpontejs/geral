@@ -39,6 +39,12 @@ primeiro.
     espaço, `-`, `.`, `'`, ou sem letra do alfabeto latino (mensagem própria); e-mail inválido.
     429: mais de 10 pedidos por rede por hora.
 - `GET /api/team-requests` (token da API): `[{key, name, votes, emails}]` por votos, para o dono.
+- E-mail ao dono a cada voto novo (`NOTIFY_EMAIL`): o time, a posição, o top 5 e um link
+  assinado para `GET /pedidos?t=…` (HMAC com o segredo do site, propósito `team-requests`, vale
+  30 dias). A página lista todos os pedidos, votos, data do último e quantos esperam aviso, sem
+  os endereços; sem link válido é 404, com `noindex`, `no-store` e `no-referrer`.
+- `POST /api/team-requests/panel-link` (token da API) manda um link novo ao dono por e-mail;
+  o workflow "Pedidos de time" chama essa rota.
 - Portal: o cartão "Seu time?" vira link para `/pedir` e mostra o mais pedido com 3 votos ou mais.
 
 ## Critérios de aceite (como testes)
