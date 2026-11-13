@@ -1,0 +1,31 @@
+{% extends "base.html.j2" %}
+{% block title %}Pedidos de time · Geral{% endblock %}
+{% block head %}<meta name="robots" content="noindex">{% endblock %}
+{% block content %}
+<section class="msg wall">
+  <div class="wrap">
+    <div class="sheet">
+      <h1>Pedidos de time</h1>
+      {% if teams %}
+      <p>{{ teams|length }} time{% if teams|length != 1 %}s{% endif %} pedido{% if teams|length != 1 %}s{% endif %}, do mais pedido ao menos. Na página pública só aparecem os que têm {{ min_votes }} pedidos ou mais.</p>
+      <table class="panel">
+        <thead><tr><th>#</th><th>Time</th><th>Pedidos</th><th>Último</th><th>Aviso</th></tr></thead>
+        <tbody>
+        {% for t in teams %}
+          <tr>
+            <td>{{ loop.index }}</td>
+            <td><b>{{ t.name }}</b></td>
+            <td>{{ t.votes }} pedido{% if t.votes != 1 %}s{% endif %}</td>
+            <td>{{ t.last.astimezone(timezone).strftime("%d/%m/%Y") }}</td>
+            <td>{% if t.emails %}{{ t.emails|length }} {% if t.emails|length == 1 %}espera{% else %}esperam{% endif %} aviso{% else %}—{% endif %}</td>
+          </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <p>Ninguém pediu time ainda.</p>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endblock %}

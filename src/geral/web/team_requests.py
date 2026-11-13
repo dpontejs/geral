@@ -52,6 +52,7 @@ class RequestedTeam:
     name: str  # the form most voters typed
     votes: int
     emails: list[str]
+    last: datetime  # the latest vote
 
 
 class TeamRequestStore:
@@ -118,4 +119,9 @@ class TeamRequestStore:
                 (key,),
             )
         ]
-        return RequestedTeam(key=key, name=name, votes=votes, emails=emails)
+        (last,) = db.execute(
+            "SELECT MAX(created_at) FROM team_requests WHERE team_key = ?", (key,)
+        ).fetchone()
+        return RequestedTeam(
+            key=key, name=name, votes=votes, emails=emails, last=datetime.fromisoformat(last)
+        )
