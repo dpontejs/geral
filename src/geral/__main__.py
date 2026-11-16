@@ -45,6 +45,7 @@ from geral.stats.table import standings_window
 from geral.summarizer.client import LLMError, get_llm_client
 from geral.teams import Team, UnknownTeam, get_team, load_teams
 from geral.web import announce as announcements
+from geral.web import especial
 from geral.web.legacy import import_single_team
 from geral.web.store import SubscriberStore
 
@@ -463,6 +464,48 @@ def announce(
                 (out / f"anuncio-{version.key}.html").write_text(version.html, encoding="utf-8")
                 (out / f"anuncio-{version.key}.txt").write_text(version.text, encoding="utf-8")
             typer.echo("Nada enviado; prévias em out/anuncio-*. --to testa, --send envia.")
+    except SendError as e:
+        typer.echo(f"Falha no envio (quem já recebeu ficou marcado): {e}", err=True)
+        raise typer.Exit(code=1) from e
+
+
+@app.command("especial-jogos")
+def especial_jogos(
+    send_it: Annotated[
+        bool, typer.Option("--send", help="Send to everyone who has not got it yet")
+    ] = False,
+    to: Annotated[
+        str | None, typer.Option("--to", help="Send it to this address only (a test)")
+    ] = None,
+) -> None:
+    """The special edition that presents the games: one e-mail per active person, never twice;
+    without --send or --to it only counts who is left and saves a preview to out/.
+
+    Runs next to the page (the Geral's SUBSCRIBERS_DB)."""
+    _setup_logging()
+    settings = get_settings()
+    if not settings.SUBSCRIBE_SECRET:
+        typer.echo("especial-jogos precisa de SUBSCRIBE_SECRET.", err=True)
+        raise typer.Exit(code=2)
+    store = SubscriberStore(settings.SUBSCRIBERS_DB)
+    now = _now()
+    left = especial.pending(store)
+    typer.echo(f"Faltam receber: {len(left)}.")
+    try:
+        if to:
+            especial.send(settings, store, [to], now, mark=False)
+            typer.echo(f"Enviado só para {to}.")
+        elif send_it:
+            typer.echo(
+                f"{especial.SUBJECT}: enviado para {especial.send(settings, store, left, now)}."
+            )
+        else:
+            out = Path("out")
+            out.mkdir(exist_ok=True)
+            html, text = especial.render(settings)
+            (out / "especial-jogos.html").write_text(html, encoding="utf-8")
+            (out / "especial-jogos.txt").write_text(text, encoding="utf-8")
+            typer.echo("Nada enviado; prévia em out/especial-jogos.*. --to testa, --send envia.")
     except SendError as e:
         typer.echo(f"Falha no envio (quem já recebeu ficou marcado): {e}", err=True)
         raise typer.Exit(code=1) from e

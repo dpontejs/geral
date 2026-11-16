@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{{ subject }}</title>
+<style>
+  body { margin: 0; padding: 0; background-color: #D3E2C6; color: #1E1E1E; }
+  .font { font-family: Arial, Helvetica, sans-serif; }
+  .display { font-family: Impact, "sans-serif-condensed", "Roboto Condensed", "Arial Narrow", sans-serif; font-weight: normal; text-transform: uppercase; }
+  .wrap { max-width: 600px; }
+  .hero { background-color: #1F7A3D; padding: 18px 16px 22px 16px; }
+  .seal { background-color: #EFE4CC; border: 3px solid #0E3320; padding: 4px 8px; }
+  .kicker { display: inline-block; background-color: #E3B23C; color: #1E1E1E; font-size: 11px; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; padding: 3px 8px; }
+  .headline { font-size: 34px; line-height: 1.05; color: #FFFFFF; margin: 10px 0 12px 0; text-shadow: 3px 3px 0 #0E3320; }
+  .intro { background-color: #EFE4CC; border: 3px solid #0E3320; padding: 10px 12px; font-size: 16px; line-height: 1.5; color: #1E1E1E; }
+  .halfway { padding: 6px 0; }
+  .card { background-color: #FFFFFF; border: 3px solid #0E3320; }
+  .card-name { background-color: #0E3320; color: #EFE4CC; font-size: 22px; letter-spacing: 1px; padding: 7px 12px; }
+  .card-tag { background-color: #0E3320; padding: 7px 12px; }
+  .tag { background-color: #E3B23C; color: #1E1E1E; font-size: 11px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; padding: 3px 7px; }
+  .card-body { padding: 14px; }
+  .lead { font-size: 13px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; color: #1F7A3D; margin: 0 0 6px 0; }
+  .text { font-size: 15px; line-height: 1.5; margin: 0 0 12px 0; }
+  .shot { display: block; border: 0; width: 100%; max-width: 542px; height: auto; }
+  .btn { background-color: #0E3320; }
+  .btn a { display: inline-block; padding: 11px 18px; color: #EFE4CC; font-size: 14px; font-weight: 800; letter-spacing: 1px; text-transform: uppercase; text-decoration: none; }
+  .foot { background-color: #0E3320; color: #CFD8CC; font-size: 12px; line-height: 1.5; padding: 18px 16px; }
+  .foot a { color: #EFE4CC; }
+</style>
+</head>
+<body>
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #D3E2C6;"><tr><td align="center" style="padding: 0;">
+<table role="presentation" class="wrap font" width="100%" cellpadding="0" cellspacing="0" border="0">
+  <tr><td class="hero" background="{{ static }}/campo-topo.png" style="background-image: url('{{ static }}/campo-topo.png'); background-position: top right; background-repeat: no-repeat;">
+    <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td class="seal">
+      <img src="{{ static }}/logo-email.png" alt="Geral" width="150" style="display: block; border: 0;">
+    </td></tr></table>
+    <p style="margin: 16px 0 0 0;"><span class="kicker">Edição especial</span></p>
+    <h1 class="headline display">Os joguinhos da Geral</h1>
+    <p class="intro" style="margin: 0;">Além das newsletters, a Geral tem quatro jogos de futebol no site. Cada um traz um desafio novo por dia, igual para todo mundo, e os dias anteriores ficam disponíveis para jogar depois. Nesta edição especial, apresentamos cada um deles.</p>
+  </td></tr>
+
+  <!-- Craque do dia -->
+  <tr><td class="halfway"><img src="{{ static }}/meio-campo.png" alt="" width="600" height="28" style="display: block; width: 100%; max-width: 600px; height: auto; border: 0;"></td></tr>
+  <tr><td style="padding: 0 12px;">
+    <table role="presentation" class="card" width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+        <td class="card-name display">Craque do dia</td>
+        <td class="card-tag" align="right"></td>
+      </tr></table></td></tr>
+      <tr><td class="card-body">
+        <p class="text">No Craque do dia, você tenta adivinhar o nome de um ídolo ou artilheiro em seis tentativas. A cada palpite, o jogo mostra quais letras estão no nome e quais já estão na posição certa.</p>
+        <a href="{{ public_url }}/jogos/craque-do-dia"><img class="shot" src="{{ static }}/jogos-craque-do-dia.png" alt="O placar do Craque do dia: seis linhas de cinco letras" width="542"></a>
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top: 12px;"><tr><td class="btn"><a href="{{ public_url }}/jogos/craque-do-dia">Jogar o Craque do dia</a></td></tr></table>
+      </td></tr>
+    </table>
+  </td></tr>
+
+  <!-- Onde jogou? -->
+  <tr><td class="halfway"><img src="{{ static }}/meio-campo.png" alt="" width="600" height="28" style="display: block; width: 100%; max-width: 600px; height: auto; border: 0;"></td></tr>
+  <tr><td style="padding: 0 12px;">
+    <table role="presentation" class="card" width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+        <td class="card-name display">Onde jogou?</td>
+        <td class="card-tag" align="right"></td>
+      </tr></table></td></tr>
+      <tr><td class="card-body">
+        <p class="text">No Onde jogou?, você vê o nome de um jogador e os anos de cada passagem da carreira dele, mas não os clubes. O objetivo é dizer por quais clubes ele passou. Cada acerto revela um clube, e o jogo termina no terceiro erro.</p>
+        <a href="{{ public_url }}/jogos/onde-jogou"><img class="shot" src="{{ static }}/jogos-onde-jogou.png" alt="O placar do Onde jogou?: o nome do jogador e os anos de cada passagem, com os clubes escondidos" width="542"></a>
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top: 12px;"><tr><td class="btn"><a href="{{ public_url }}/jogos/onde-jogou">Jogar o Onde jogou?</a></td></tr></table>
+      </td></tr>
+    </table>
+  </td></tr>
+
+  <!-- Quem é? -->
+  <tr><td class="halfway"><img src="{{ static }}/meio-campo.png" alt="" width="600" height="28" style="display: block; width: 100%; max-width: 600px; height: auto; border: 0;"></td></tr>
+  <tr><td style="padding: 0 12px;">
+    <table role="presentation" class="card" width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+        <td class="card-name display">Quem é?</td>
+        <td class="card-tag" align="right"></td>
+      </tr></table></td></tr>
+      <tr><td class="card-body">
+        <p class="text">O Quem é? funciona ao contrário: a carreira do jogador aparece completa, com os clubes e os anos, e você tenta descobrir quem é. São seis tentativas.</p>
+        <a href="{{ public_url }}/jogos/quem-e"><img class="shot" src="{{ static }}/jogos-quem-e.png" alt="O placar do Quem é?: a carreira de um jogador, clube por clube, com os anos" width="542"></a>
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top: 12px;"><tr><td class="btn"><a href="{{ public_url }}/jogos/quem-e">Jogar o Quem é?</a></td></tr></table>
+      </td></tr>
+    </table>
+  </td></tr>
+
+  <!-- Jogo da velha -->
+  <tr><td class="halfway"><img src="{{ static }}/meio-campo.png" alt="" width="600" height="28" style="display: block; width: 100%; max-width: 600px; height: auto; border: 0;"></td></tr>
+  <tr><td style="padding: 0 12px;">
+    <table role="presentation" class="card" width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td><table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+        <td class="card-name display">Jogo da velha</td>
+        <td class="card-tag" align="right"><span class="tag">Novo</span></td>
+      </tr></table></td></tr>
+      <tr><td class="card-body">
+        <p class="text">O Jogo da velha é o mais recente. O tabuleiro tem três categorias nas linhas e três nas colunas, como um clube, a Seleção, uma posição ou ter jogado uma Copa. Para preencher cada casa, você indica um jogador que se encaixe nas duas categorias. São 12 tentativas para as nove casas.</p>
+        <p class="text">Também dá para jogar contra outra pessoa. Um fica com o X e o outro com o O, cada um tem 30 segundos por vez, e vence quem completar uma linha de três. Vocês podem jogar no mesmo celular ou cada um no seu, por um link.</p>
+        <a href="{{ public_url }}/jogos/velha"><img class="shot" src="{{ static }}/jogos-velha.png" alt="Um duelo do Jogo da velha em andamento: X e O ocupando casas com nomes de jogadores" width="542"></a>
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" style="margin-top: 12px;"><tr><td class="btn"><a href="{{ public_url }}/jogos/velha">Jogar o Jogo da velha</a></td></tr></table>
+      </td></tr>
+    </table>
+  </td></tr>
+
+  <!-- Edição do seu time -->
+  <tr><td class="halfway"><img src="{{ static }}/meio-campo.png" alt="" width="600" height="28" style="display: block; width: 100%; max-width: 600px; height: auto; border: 0;"></td></tr>
+  <tr><td style="padding: 0 12px;">
+    <table role="presentation" class="card" width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td class="card-name display">Tem edição do seu time</td></tr>
+      <tr><td class="card-body">
+        <p class="text">O Craque do dia, o Onde jogou? e o Quem é? também têm edições de alguns times da Geral, só com jogadores que passaram pelo clube. Para escolher o seu time, use as abas no alto de cada jogo.</p>
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr><td class="btn"><a href="{{ public_url }}/jogos">Ver todos os jogos</a></td></tr></table>
+      </td></tr>
+    </table>
+  </td></tr>
+
+  <tr><td style="padding-top: 18px;">&nbsp;</td></tr>
+  <tr><td class="foot" align="center">
+    Geral · todas as torcidas numa Geral só.<br>Não quer mais receber nada da Geral? <a href="{{ unsubscribe_url }}">Sair de todas as listas</a>.
+  </td></tr>
+</table>
+</td></tr></table>
+</body>
+</html>
