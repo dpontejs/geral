@@ -2,9 +2,11 @@
 
 Only the moves are kept; the board state always comes from replaying them (`judge_duel`). The
 server owns the clock: `prazo` ends the current turn, and a deadline that passed becomes a timeout
-move on the next read or write, as many times as turns went by. X's clock starts when O joins.
+move on the next read or write, as many times as turns went by. The creator's side is drawn (X
+always starts); the clock starts when the second player joins. A rematch swaps the sides.
 """
 
+import hashlib
 import json
 import secrets
 import sqlite3
@@ -22,11 +24,13 @@ SCHEMA = """
 CREATE TABLE IF NOT EXISTS velha_partidas (
     id TEXT PRIMARY KEY,
     tabuleiro TEXT NOT NULL,
-    x_token TEXT NOT NULL,
+    x_token TEXT,
     o_token TEXT,
     jogadas TEXT NOT NULL DEFAULT '[]',
     prazo TEXT,
-    criada_em TEXT NOT NULL
+    criada_em TEXT NOT NULL,
+    revanche TEXT,
+    proposta TEXT
 );
 """
 
@@ -49,11 +53,21 @@ class DuelConflict(ValueError):
 class Row:
     id: str
     tabuleiro: str
-    x_token: str
+    x_token: str | None
     o_token: str | None
     jogadas: list[dict]
     prazo: datetime | None
     criada_em: datetime
+    revanche: str | None = None  # the rematch's id, once someone asked for it
+    proposta: dict | None = None  # {"tipo": "encerrar" | "sortear", "lado": who asked}
+
+    @property
+    def complete(self) -> bool:
+        """Both players are in (the board shows and the clock runs)."""
+        return self.x_token is not None and self.o_token is not None
+
+    def side_of(self, token: str | None) -> str | None:
+        return {self.x_token: "X", self.o_token: "O"}.get(token) if token else None
 
 
 class DuelStore:
@@ -69,35 +83,59 @@ class DuelStore:
         db.execute("BEGIN IMMEDIATE")
         return db
 
-    def create(self, board_code: str, now: datetime) -> tuple[str, str]:
-        """A new duel; the creator plays X. Duels older than a day are deleted here."""
-        duel_id, x_token = secrets.token_urlsafe(6), secrets.token_urlsafe(16)
+    def create(self, board_code: str, now: datetime, side: str) -> tuple[str, str, str]:
+        """A new duel: (id, the creator's token, the creator's side). Old duels are deleted here."""
+        duel_id, token = secrets.token_urlsafe(6), secrets.token_urlsafe(16)
         with closing(self._connect()) as db:
             db.execute(
                 "DELETE FROM velha_partidas WHERE criada_em < ?", ((now - LIFETIME).isoformat(),)
             )
-            db.execute(
-                "INSERT INTO velha_partidas (id, tabuleiro, x_token, criada_em)"
-                " VALUES (?, ?, ?, ?)",
-                (duel_id, board_code, x_token, now.isoformat()),
-            )
+            self._insert(db, duel_id, board_code, side, token, now)
             db.execute("COMMIT")
-        return duel_id, x_token
+        return duel_id, token, side
 
-    def join(self, duel_id: str, now: datetime) -> str | None:
-        """O's token, once; None when someone already joined. X's clock starts now."""
-        o_token = secrets.token_urlsafe(16)
+    def join(self, duel_id: str, now: datetime) -> tuple[str, str] | None:
+        """(token, side) of the second player, once; None when both are in. The clock starts."""
         with closing(self._connect()) as db:
             row = self._load(db, duel_id, now)
-            if row.o_token is not None:
+            if row.complete:
                 db.execute("ROLLBACK")
                 return None
-            db.execute(
-                "UPDATE velha_partidas SET o_token = ?, prazo = ? WHERE id = ?",
-                (o_token, (now + TURN).isoformat(), duel_id),
-            )
+            token, side = secrets.token_urlsafe(16), "O" if row.o_token is None else "X"
+            self._claim(db, duel_id, side, token, now)
             db.execute("COMMIT")
-        return o_token
+        return token, side
+
+    def rematch(
+        self, duel_id: str, token: str, now: datetime, judge: Judge, board_code: str
+    ) -> tuple[str, str, str]:
+        """(id, token, side) of this player in the rematch of a finished duel, sides swapped.
+
+        The first player to ask creates it (on `board_code`); the second one joins it, which
+        starts the clock. Asking again gives the same answer (the token is derived, not stored).
+        """
+        with closing(self._connect()) as db:
+            row = self._expire(db, self._load(db, duel_id, now), now, judge)
+            side = row.side_of(token)
+            if side is None:
+                db.execute("COMMIT")
+                raise NotYourTurn("not a player of this duel")
+            if not judge(row.tabuleiro, row.jogadas).over:
+                db.execute("COMMIT")
+                raise DuelConflict("the duel is not over")
+            new_side = "O" if side == "X" else "X"
+            if row.revanche is None:
+                new_id = secrets.token_urlsafe(6)
+                new_token = _rematch_token(token, new_id)
+                self._insert(db, new_id, board_code, new_side, new_token, now)
+                db.execute("UPDATE velha_partidas SET revanche = ? WHERE id = ?", (new_id, row.id))
+            else:
+                new_id, new_token = row.revanche, _rematch_token(token, row.revanche)
+                rematch = self._load(db, new_id, now)
+                if rematch.side_of(new_token) is None:
+                    self._claim(db, new_id, new_side, new_token, now)
+            db.execute("COMMIT")
+        return new_id, new_token, new_side
 
     def get(self, duel_id: str, now: datetime, judge: Judge) -> Row:
         with closing(self._connect()) as db:
@@ -118,13 +156,13 @@ class DuelStore:
                 db.execute("COMMIT")
                 return row
             state = judge(row.tabuleiro, row.jogadas)
-            side = {row.x_token: "X", row.o_token: "O"}.get(token) if token else None
+            side = row.side_of(token)
             if side is None:
                 db.execute("COMMIT")
                 raise NotYourTurn("not a player of this duel")
-            if state.over or row.o_token is None:
+            if state.over or not row.complete:
                 db.execute("COMMIT")
-                raise DuelConflict("the duel is over" if state.over else "waiting for O")
+                raise DuelConflict("the duel is over" if state.over else "waiting for a player")
             if side != state.vez:
                 db.execute("COMMIT")
                 raise NotYourTurn(f"it is {state.vez}'s turn")
@@ -138,6 +176,55 @@ class DuelStore:
                 db.execute("COMMIT")
                 raise
             row.jogadas, row.prazo = jogadas, None if after.over else now + TURN
+            row.proposta = None  # a move goes on with the game
+            self._save(db, row)
+            db.execute("COMMIT")
+        return row
+
+    def propose(self, duel_id: str, token: str, tipo: str, now: datetime, judge: Judge) -> Row:
+        """A player asks to end the duel or to draw a new board; the other one answers."""
+        with closing(self._connect()) as db:
+            row = self._expire(db, self._load(db, duel_id, now), now, judge)
+            side = row.side_of(token)
+            if side is None:
+                db.execute("COMMIT")
+                raise NotYourTurn("not a player of this duel")
+            if tipo not in ("encerrar", "sortear"):
+                db.execute("COMMIT")
+                raise ValueError(f"unknown proposal {tipo!r}")
+            if judge(row.tabuleiro, row.jogadas).over or not row.complete:
+                db.execute("COMMIT")
+                raise DuelConflict("no proposal outside a running duel")
+            row.proposta = {"tipo": tipo, "lado": side}
+            self._save(db, row)
+            db.execute("COMMIT")
+        return row
+
+    def answer(
+        self, duel_id: str, token: str, aceita: bool, now: datetime, judge: Judge, board_code: str
+    ) -> Row:
+        """The other player accepts or refuses the proposal; the one who asked may withdraw it.
+
+        Ending adds an agreed end (the most cells win); a new draw puts `board_code` in place,
+        clears the moves and gives X a fresh turn (the sides stay).
+        """
+        with closing(self._connect()) as db:
+            row = self._expire(db, self._load(db, duel_id, now), now, judge)
+            side = row.side_of(token)
+            if side is None:
+                db.execute("COMMIT")
+                raise NotYourTurn("not a player of this duel")
+            if row.proposta is None or judge(row.tabuleiro, row.jogadas).over:
+                db.execute("COMMIT")
+                raise DuelConflict("nothing to answer")
+            if aceita and side == row.proposta["lado"]:
+                db.execute("COMMIT")
+                raise DuelConflict("the other player answers a proposal")
+            if aceita and row.proposta["tipo"] == "encerrar":
+                row.jogadas, row.prazo = [*row.jogadas, {"encerrar": True}], None
+            elif aceita:
+                row.tabuleiro, row.jogadas, row.prazo = board_code, [], now + TURN
+            row.proposta = None
             self._save(db, row)
             db.execute("COMMIT")
         return row
@@ -151,7 +238,7 @@ class DuelStore:
 
     def _load(self, db: sqlite3.Connection, duel_id: str, now: datetime) -> Row:
         found = db.execute(
-            "SELECT id, tabuleiro, x_token, o_token, jogadas, prazo, criada_em"
+            "SELECT id, tabuleiro, x_token, o_token, jogadas, prazo, criada_em, revanche, proposta"
             " FROM velha_partidas WHERE id = ?",
             (duel_id,),
         ).fetchone()
@@ -166,6 +253,27 @@ class DuelStore:
             jogadas=json.loads(found[4]),
             prazo=datetime.fromisoformat(found[5]) if found[5] else None,
             criada_em=datetime.fromisoformat(found[6]),
+            revanche=found[7],
+            proposta=json.loads(found[8]) if found[8] else None,
+        )
+
+    def _insert(
+        self, db: sqlite3.Connection, duel_id: str, code: str, side: str, token: str, now: datetime
+    ) -> None:
+        column = "x_token" if side == "X" else "o_token"
+        db.execute(
+            f"INSERT INTO velha_partidas (id, tabuleiro, {column}, criada_em) VALUES (?, ?, ?, ?)",
+            (duel_id, code, token, now.isoformat()),
+        )
+
+    def _claim(
+        self, db: sqlite3.Connection, duel_id: str, side: str, token: str, now: datetime
+    ) -> None:
+        """The second player takes `side`: the duel is complete and X's clock starts."""
+        column = "x_token" if side == "X" else "o_token"
+        db.execute(
+            f"UPDATE velha_partidas SET {column} = ?, prazo = ? WHERE id = ?",
+            (token, (now + TURN).isoformat(), duel_id),
         )
 
     def _expire(self, db: sqlite3.Connection, row: Row, now: datetime, judge: Judge) -> Row:
@@ -182,9 +290,22 @@ class DuelStore:
 
     def _save(self, db: sqlite3.Connection, row: Row) -> None:
         db.execute(
-            "UPDATE velha_partidas SET jogadas = ?, prazo = ? WHERE id = ?",
-            (json.dumps(row.jogadas), row.prazo.isoformat() if row.prazo else None, row.id),
+            "UPDATE velha_partidas SET tabuleiro = ?, jogadas = ?, prazo = ?, proposta = ?"
+            " WHERE id = ?",
+            (
+                row.tabuleiro,
+                json.dumps(row.jogadas),
+                row.prazo.isoformat() if row.prazo else None,
+                json.dumps(row.proposta) if row.proposta else None,
+                row.id,
+            ),
         )
+
+
+def _rematch_token(token: str, rematch_id: str) -> str:
+    """The player's token in the rematch: derived from their secret token, so it is never stored
+    twice and asking again gives the same one."""
+    return hashlib.sha256(f"{token}:{rematch_id}".encode()).hexdigest()[:22]
 
 
 async def duel_events(
@@ -193,17 +314,25 @@ async def duel_events(
     every: float = 0.5,
     ticks: int = 600,
 ) -> AsyncIterator[str]:
-    """Server-sent events: the duel's state on connect and whenever it changes, until it ends.
+    """Server-sent events: the duel's state on connect and whenever it changes, until it ends
+    and a rematch is asked (or the stream times out).
 
     The stream closes after `ticks` checks (about 5 minutes); the browser reconnects by itself.
     """
     last = None
     for _ in range(ticks):
         view = await load()
-        key = (view["jogou"], view["o_entrou"], view["prazo"])
+        key = (
+            view["jogou"],
+            view["completo"],
+            view["prazo"],
+            view.get("revanche"),
+            json.dumps(view.get("proposta")),
+            view.get("codigo"),
+        )
         if key != last:
             last = key
             yield f"data: {json.dumps(view, ensure_ascii=False)}\n\n"
-        if view["over"]:
-            return
+        if view["over"] and view.get("revanche"):
+            return  # after the end it stays open until a rematch shows up
         await sleep(every)

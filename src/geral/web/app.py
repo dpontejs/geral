@@ -16,7 +16,7 @@ from collections import defaultdict, deque
 from collections.abc import Callable
 from datetime import UTC, datetime, timedelta, timezone
 from pathlib import Path
-from typing import Annotated
+from typing import Annotated, Literal
 from urllib.parse import urlencode
 
 from fastapi import FastAPI, Form, Query, Request, Response
@@ -178,11 +178,26 @@ class VelhaIn(BaseModel):
     chutes: list[velha_judge.Guess] = Field(max_length=velha_judge.MAX_GUESSES + 1)
 
 
+class DuelTokenIn(BaseModel):
+    token: str = Field(max_length=40)
+
+
 class DuelMoveIn(BaseModel):
     token: str = Field(max_length=40)
     vez_n: int = Field(ge=0)
     casa: int | None = None
     jogador: str | None = Field(default=None, max_length=20)
+    pular: bool = False  # pass the turn
+
+
+class DuelProposalIn(BaseModel):
+    token: str = Field(max_length=40)
+    tipo: Literal["encerrar", "sortear"]
+
+
+class DuelAnswerIn(BaseModel):
+    token: str = Field(max_length=40)
+    aceita: bool
 
 
 class DuelIn(BaseModel):
@@ -1048,15 +1063,18 @@ def create_app(
         base = velha()
         board = velha_tabuleiro.parse_board(base, row.tabuleiro)
         state = duel_judge(row.tabuleiro, row.jogadas)
+        hidden = not row.complete  # nobody sees the board before the clock runs
         return {
             "id": row.id,
-            "codigo": row.tabuleiro,
-            "linhas": [c.label for c in board.rows],
-            "colunas": [c.label for c in board.cols],
+            "codigo": None if hidden else row.tabuleiro,
+            "linhas": ["?"] * 3 if hidden else [c.label for c in board.rows],
+            "colunas": ["?"] * 3 if hidden else [c.label for c in board.cols],
             **state.model_dump(),
             "nomes": {q: base.players[q].nome for q in state.jogadores.values()},
             "jogou": len(row.jogadas),
-            "o_entrou": row.o_token is not None,
+            "completo": row.complete,
+            "revanche": row.revanche,
+            "proposta": row.proposta,
             "prazo": row.prazo.isoformat() if row.prazo else None,
             "agora": now().isoformat(),
         }
@@ -1070,25 +1088,51 @@ def create_app(
         if not duel_limiter.allow(network(request.client.host if request.client else ""), now()):
             return JSONResponse({"detail": "too many duels, try later"}, status_code=429)
         board = velha_tabuleiro.make_board(velha(), random.Random())
-        duel_id, token = duels.create(board.code, now())
-        return {"id": duel_id, "token": token}
+        side = random.choice("XO")  # who creates is not always X (X starts)
+        duel_id, token, side = duels.create(board.code, now(), side)
+        return {"id": duel_id, "token": token, "lado": side}
 
     @app.post("/api/jogos/velha/partidas/{duel_id}/entrar")
     def velha_duel_join(duel_id: str):
         try:
-            token = duels.join(duel_id, now())
+            joined = duels.join(duel_id, now())
         except DuelNotFound as error:
             return duel_error(error)
-        if token is None:
-            return JSONResponse({"detail": "O already joined"}, status_code=409)
-        return {"token": token}
+        if joined is None:
+            return JSONResponse({"detail": "both players are in"}, status_code=409)
+        return {"token": joined[0], "lado": joined[1]}
+
+    @app.post("/api/jogos/velha/partidas/{duel_id}/revanche")
+    def velha_duel_rematch(duel_id: str, body: DuelTokenIn):
+        board = velha_tabuleiro.make_board(velha(), random.Random())
+        try:
+            new_id, token, side = duels.rematch(duel_id, body.token, now(), duel_judge, board.code)
+        except (DuelNotFound, NotYourTurn, DuelConflict) as error:
+            return duel_error(error)
+        return {"id": new_id, "token": token, "lado": side}
 
     @app.post("/api/jogos/velha/partidas/{duel_id}/jogada")
     def velha_duel_move(duel_id: str, body: DuelMoveIn):
-        move = {"casa": body.casa, "jogador": body.jogador}
+        move = {"estouro": True} if body.pular else {"casa": body.casa, "jogador": body.jogador}
         try:
             row = duels.play(duel_id, body.token, body.vez_n, move, now(), duel_judge)
         except (DuelNotFound, NotYourTurn, DuelConflict, ValueError) as error:
+            return duel_error(error)
+        return duel_view(row)
+
+    @app.post("/api/jogos/velha/partidas/{duel_id}/propor")
+    def velha_duel_propose(duel_id: str, body: DuelProposalIn):
+        try:
+            return duel_view(duels.propose(duel_id, body.token, body.tipo, now(), duel_judge))
+        except (DuelNotFound, NotYourTurn, DuelConflict) as error:
+            return duel_error(error)
+
+    @app.post("/api/jogos/velha/partidas/{duel_id}/responder")
+    def velha_duel_answer(duel_id: str, body: DuelAnswerIn):
+        board = velha_tabuleiro.make_board(velha(), random.Random())  # used by a new draw
+        try:
+            row = duels.answer(duel_id, body.token, body.aceita, now(), duel_judge, board.code)
+        except (DuelNotFound, NotYourTurn, DuelConflict) as error:
             return duel_error(error)
         return duel_view(row)
 

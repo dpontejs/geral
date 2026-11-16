@@ -5,10 +5,28 @@
 <section class="jogo wall">
   <div class="wrap" id="jp" data-duel="{{ duel_id }}" data-seconds="{{ seconds }}">
     {% include "_game_tabs.html.j2" %}
-    <div class="game-title"><h1>Jogo da velha</h1></div>
+    <div class="game-title"><h1>Jogo da velha</h1><button type="button" class="rules-open" aria-label="Como jogar">?</button></div>
     {% set mode = "duelo" %}{% include "_velha_modos.html.j2" %}
-    <div class="stage">
+    <div class="stage" id="jogo">
+      <div class="duel-score" aria-live="polite">
+        <span class="plate duel-side" id="jp-X"><span class="duel-name">X <i id="jp-X-you" hidden>· você</i></span></span>
+        <span class="plate duel-clock" id="jd-clock"><span id="jp-turn">Esperando</span><b id="jd-seconds">{{ seconds }}</b></span>
+        <span class="plate duel-side" id="jp-O"><span class="duel-name">O <i id="jp-O-you" hidden>· você</i></span></span>
+      </div>
       <p class="duel-status" id="jd-status" role="status"></p>
+      <div class="duel-stage">
+      <div class="result duel-start" id="jp-box" hidden>
+        <h2 id="jp-box-title"></h2>
+        <p class="duel-series" id="jp-box-note"></p>
+        <div class="actions">
+          <button class="btn" type="button" id="jp-share" hidden>Mandar o link</button>
+          <button class="btn" type="button" id="jp-join" hidden>Entrar no duelo</button>
+          <button class="btn" type="button" id="jp-rematch" hidden>Revanche</button>
+          <a class="btn" href="#" id="jp-watch" hidden>Assistir à revanche</a>
+          <a class="btn secondary" href="/jogos/velha/duelo" id="jp-again" hidden>Novo duelo</a>
+          <span id="jp-copied" role="status"></span>
+        </div>
+      </div>
       <div class="velha-board" role="grid" aria-label="Tabuleiro do duelo">
         <span class="plate velha-corner">VS</span>
         {% for n in range(3) %}<span class="plate velha-head col" role="columnheader">?</span>{% endfor %}
@@ -17,7 +35,34 @@
         {% for col in range(3) %}<button type="button" class="vcell" data-casa="{{ row * 3 + col }}" disabled><span class="vcell-mark"></span><span class="vcell-name"></span><small class="vcell-note"></small></button>{% endfor %}
         {% endfor %}
       </div>
+      </div>
+      <div class="duel-proposal" id="jp-proposal" hidden>
+        <span id="jp-proposal-text"></span>
+        <button class="btn" type="button" id="jp-accept">Aceitar</button>
+        <button class="btn secondary" type="button" id="jp-refuse">Recusar</button>
+      </div>
+      <div class="duel-tools" id="jp-tools" hidden>
+        <button class="btn secondary" type="button" id="jp-pass">Passar a vez</button>
+        <button class="btn secondary" type="button" id="jp-redraw">Sortear de novo</button>
+        <button class="btn secondary" type="button" id="jp-end">Encerrar</button>
+      </div>
     </div>
+
+    <dialog class="game-dialog" id="jv-dialog" aria-labelledby="jv-cell-label">
+      <form class="picker" id="jv-form" role="search">
+        <div class="picker-top">
+          <h2 class="velha-dialog-title" id="jv-cell-label">Buscar jogador</h2>
+          <button class="velha-close" type="button" id="jv-close" aria-label="Fechar">✕</button>
+        </div>
+        <label class="picker-search"><span class="sr-only">Nome do jogador</span><input id="jv-search" type="search" autocomplete="off" spellcheck="false" placeholder="Digite o nome"></label>
+        <p class="velha-error" id="jv-error" role="alert" hidden></p>
+        <ul class="velha-results" id="jv-results" aria-live="polite"></ul>
+      </form>
+    </dialog>
+    <p class="credit">Jogadores: <a href="https://en.wikipedia.org/">Wikipédia</a> (<a href="https://creativecommons.org/licenses/by-sa/4.0/deed.pt-br">CC BY-SA</a>) e <a href="https://www.wikidata.org/">Wikidata</a>.</p>
+    {% set rules_key = "velha-link" %}{% set rules %}Quem cria e quem entra pelo link ficam com X ou O por sorteio; o X começa. Os outros só assistem.|O tabuleiro aparece e o relógio começa quando os dois estão dentro: {{ seconds }} segundos por vez, e ele corre mesmo se ninguém olhar.|Errou, estourou ou passou, a vez vai para o outro. Cada jogador vale uma vez só, para os dois.|Sortear de novo e encerrar precisam do aceite do outro; encerrando, vence quem tem mais casas.|Três em linha vence. Seis vezes seguidas sem casa, ou tabuleiro cheio: vence quem tem mais casas. Na revanche, os lados trocam.{% endset %}{% set rules = rules.split("|") %}{% include "_regras.html.j2" %}
   </div>
 </section>
+<script src="/static/geral/velha-busca.js?v={{ asset_version }}" defer></script>
+<script src="/static/geral/velha-partida.js?v={{ asset_version }}" defer></script>
 {% endblock %}

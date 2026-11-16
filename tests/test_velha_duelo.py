@@ -93,3 +93,20 @@ def test_duel_a_cell_taken_resets_the_dry_count() -> None:
 def test_duel_rejects_taken_cell_unknown_player_and_move_without_cell(moves) -> None:
     with pytest.raises(GuessError):
         judge_duel(B, BOARD, moves)
+
+
+def test_an_agreed_end_goes_to_the_most_cells_then_takes_no_more_moves() -> None:
+    state = judge_duel(B, BOARD, [hit(0), miss(8), hit(4), Move(encerrar=True)])
+    assert state.over and state.vencedor == "X" and state.linha is None and state.acordo
+    assert not judge_duel(B, BOARD, [hit(0)]).acordo
+
+    tie = judge_duel(B, BOARD, [hit(0), hit(1), Move(encerrar=True)])
+    assert tie.over and tie.vencedor == "empate"
+
+    with pytest.raises(GuessError):
+        judge_duel(B, BOARD, [Move(encerrar=True), hit(0)])
+
+
+def test_passing_the_turn_counts_like_a_timeout() -> None:
+    state = judge_duel(B, BOARD, [Move(estouro=True)])
+    assert state.vez == "O" and state.sem_casa == 1 and state.acertos == [False]

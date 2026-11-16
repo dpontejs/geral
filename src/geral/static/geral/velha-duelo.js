@@ -1,6 +1,6 @@
 // "Jogo da velha" duel: two players on one screen. The browser keeps the moves, the 30 s clock and
 // the games won by each player; the server judges the whole history after each move
-// (POST /api/jogos/velha/duelo). Player 1 is X (and starts) in odd games, player 2 in even ones.
+// (POST /api/jogos/velha/duelo). Who starts the first game is drawn; then they alternate.
 (() => {
   const root = document.getElementById("jd");
   if (!root) return;
@@ -25,7 +25,9 @@
   let deadline = 0;
   let ticker = null;
   let pending = null;
-  let round = 1;
+  let passing = false; // the "estouro" being sent is a pass, not a timeout
+  let round = Math.random() < 0.5 ? 1 : 2; // who is X (and starts) in the first game is drawn
+  let games = 1;
   const wins = { 1: 0, 2: 0 };
   const playerOf = (side) => ((side === "X") === (round % 2 === 1) ? 1 : 2);
 
@@ -49,11 +51,13 @@
     const count = (side) => Object.values(s.casas).filter((v) => v === side).length;
     const lit = state && (s.over ? (s.vencedor === "empate" ? 0 : playerOf(s.vencedor)) : playerOf(s.vez));
     for (const n of [1, 2]) {
-      $(`jd-p${n}-wins`).textContent = wins[n];
       $(`jd-p${n}-mark`).textContent = playerOf("X") === n ? "X" : "O";
       $(`jd-p${n}`).classList.toggle("turn", lit === n);
     }
-    $("jd-turn").textContent = !state ? `Partida ${round}` : s.over ? "Fim" : `Vez do ${s.vez}`;
+    // Pass, new draw and end: on one screen both players see it, so "both agree" is a confirm.
+    $("jd-tools").hidden = !state || s.over;
+    for (const name of ["jd-pass", "jd-redraw", "jd-end"]) $(name).disabled = busy;
+    $("jd-turn").textContent = !state ? `Partida ${games}` : s.over ? "Fim" : `Vez do ${s.vez}`;
     $("jd-result").hidden = !s.over;
     if (s.over) {
       const score = `${count("X")} × ${count("O")}`;
@@ -63,6 +67,8 @@
           : s.linha
             ? `Jogador ${playerOf(s.vencedor)} venceu com três em linha!`
             : `Jogador ${playerOf(s.vencedor)} venceu com mais casas (${score})!`;
+      $("jd-series").textContent =
+        games > 1 || wins[1] + wins[2] > 1 ? `Na série: Jogador 1 ${wins[1]} × ${wins[2]} Jogador 2` : "";
     }
   };
 
@@ -107,8 +113,12 @@
       const hit = state.acertos[state.acertos.length - 1];
       chosen = null;
       if (dialog.open) dialog.close();
-      $("jd-status").textContent = jogada.estouro
-        ? `O tempo do ${who} acabou.`
+      $("jd-status").textContent = jogada.encerrar
+        ? "Partida encerrada em comum acordo."
+        : jogada.estouro
+        ? passing
+          ? `O ${who} passou a vez.`
+          : `O tempo do ${who} acabou.`
         : hit
           ? ""
           : `Não vale: ${state.nomes[jogada.jogador] || "esse jogador"} não serve nessa casa ou já foi usado.`;
@@ -207,6 +217,7 @@
       board.linhas.forEach((label, i) => (heads.rows[i].textContent = label));
       board.colunas.forEach((label, i) => (heads.cols[i].textContent = label));
       state = await judge([]);
+      jogadas = []; // a new draw starts over (the sides stay)
       $("jd-start").hidden = true;
       $("jd-status").textContent = "";
       startClock();
@@ -221,8 +232,38 @@
   };
 
   $("jd-go").addEventListener("click", start);
+  $("jd-pass").addEventListener("click", () => {
+    passing = true;
+    move({ estouro: true }).finally(() => (passing = false));
+  });
+  $("jd-end").addEventListener("click", () => {
+    if (confirm("Os dois concordam em encerrar a partida? Vence quem tem mais casas.")) move({ encerrar: true });
+  });
+  $("jd-redraw").addEventListener("click", () => {
+    if (!confirm("Os dois concordam em sortear um tabuleiro novo? As casas são zeradas.")) return;
+    start(); // a fresh board and clock; the sides stay
+  });
+  // A duel by link: the creator plays X; the page of the duel keeps the token in localStorage.
+  $("jd-link").addEventListener("click", async () => {
+    $("jd-link").disabled = true;
+    try {
+      const response = await fetch("/api/jogos/velha/partidas", { method: "POST" });
+      if (!response.ok) throw new Error(`HTTP ${response.status}`);
+      const created = await response.json();
+      try {
+        localStorage.setItem(`velha:p:${created.id}`, JSON.stringify({ token: created.token, side: created.lado }));
+      } catch {
+        /* private mode: the page will only watch */
+      }
+      location.href = `/jogos/velha/p/${created.id}#jogo`; // straight to the board
+    } catch {
+      $("jd-status").textContent = "Não deu para criar o duelo agora. Tente de novo.";
+      $("jd-link").disabled = false;
+    }
+  });
   $("jd-again").addEventListener("click", () => {
     round += 1; // the other player starts
+    games += 1;
     waitStart();
   });
   waitStart();

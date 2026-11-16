@@ -260,3 +260,18 @@ select.chip { appearance: auto; }
 .rules .picker { gap: 14px; }
 .rules-list { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 8px; font-size: 17px; line-height: 1.4; }
 .rules .btn { align-self: flex-start; }
+.duel-series { margin: 0; font-weight: 600; }
+.duel-start .actions a.btn { text-decoration: none; }
+.duel-stage .duel-start.below { position: static; transform: none; width: 100%; margin-top: 14px; box-sizing: border-box; }
+.duel-stage { display: flex; flex-direction: column; }
+.duel-stage .duel-start.below { order: 1; } /* after the board */
+#jd-result { width: 100%; max-width: 640px; align-self: center; box-sizing: border-box; }
+
+/* Duel tools (pass, new draw, end) and a proposal waiting for the other player. */
+.duel-tools { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; width: 100%; max-width: 640px; align-self: center; }
+.duel-tools .btn { font-size: 16px; padding: 8px 14px; background: var(--paper); }
+.duel-tools .btn:disabled { opacity: .45; cursor: default; }
+.duel-proposal { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px; width: 100%; max-width: 640px; align-self: center; box-sizing: border-box; background: var(--ink); color: var(--lamp); border: 3px solid var(--ink); padding: 10px 14px; font-weight: 700; }
+.duel-proposal .btn { font-size: 16px; padding: 6px 12px; }
+.duel-proposal .btn.secondary { background: var(--paper); }
+.duel-proposal #jp-proposal-text { flex-basis: 100%; text-align: center; } /* the question above, both answers below */

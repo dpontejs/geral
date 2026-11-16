@@ -1,8 +1,9 @@
 """The duel: X against O on one board. The server replays every move (no state of its own).
 
-X starts. A right player takes the cell; a wrong one, a player already on the board (by anyone)
-or a timeout passes the turn. Three in a row wins at once; a full board or MAX_DRY_TURNS turns in
-a row without a cell taken end the game, and then the most cells win (same count: empate).
+X starts. A right player takes the cell; a wrong one, a player already on the board (by anyone),
+a timeout or a pass hands the turn over. Three in a row wins at once; a full board, MAX_DRY_TURNS
+turns in a row without a cell taken, or an end both players agreed to (`encerrar`) end the game,
+and then the most cells win (same count: empate).
 """
 
 from typing import Literal
@@ -23,7 +24,8 @@ type Side = Literal["X", "O"]
 class Move(BaseModel):
     casa: int | None = None
     jogador: str | None = Field(default=None, max_length=20)
-    estouro: bool = False  # the turn's time ran out
+    estouro: bool = False  # the turn's time ran out, or the player passed
+    encerrar: bool = False  # both players agreed to end here: the most cells win
 
 
 class DuelState(BaseModel):
@@ -35,6 +37,7 @@ class DuelState(BaseModel):
     over: bool
     vencedor: Literal["X", "O", "empate"] | None
     linha: list[int] | None  # the winning three in a row
+    acordo: bool = False  # ended because both players agreed
 
 
 def _line(casas: dict[int, Side], side: Side) -> list[int] | None:
@@ -46,10 +49,16 @@ def judge_duel(base: Base, board: Board, jogadas: list[Move]) -> DuelState:
     jogadores: dict[int, str] = {}
     acertos: list[bool] = []
     vez: Side = "X"
-    sem_casa, vencedor, linha = 0, None, None
+    sem_casa, vencedor, linha, acordo = 0, None, None, False
     for move in jogadas:
         if vencedor is not None:
             raise GuessError("the duel is over")
+        if move.encerrar:
+            acertos.append(False)
+            acordo = True
+            x, o = (sum(1 for s in casas.values() if s == side) for side in ("X", "O"))
+            vencedor = "X" if x > o else "O" if o > x else "empate"
+            continue
         hit = False
         if not move.estouro:
             if move.casa is None or move.jogador is None:
@@ -85,4 +94,5 @@ def judge_duel(base: Base, board: Board, jogadas: list[Move]) -> DuelState:
         over=vencedor is not None,
         vencedor=vencedor,
         linha=linha,
+        acordo=acordo,
     )

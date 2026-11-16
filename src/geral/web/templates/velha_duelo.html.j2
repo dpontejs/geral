@@ -10,9 +10,9 @@
 
     <div class="stage">
     <div class="duel-score" aria-live="polite">
-      <span class="plate duel-side" id="jd-p1"><span class="duel-name"><span class="long">Jogador </span><span class="short">J</span>1 <i id="jd-p1-mark">X</i></span><b id="jd-p1-wins">0</b></span>
+      <span class="plate duel-side" id="jd-p1"><span class="duel-name"><span class="long">Jogador </span><span class="short">J</span>1 · <i id="jd-p1-mark">X</i></span></span>
       <span class="plate duel-clock" id="jd-clock"><span id="jd-turn">Partida 1</span><b id="jd-seconds">{{ seconds }}</b></span>
-      <span class="plate duel-side" id="jd-p2"><span class="duel-name"><span class="long">Jogador </span><span class="short">J</span>2 <i id="jd-p2-mark">O</i></span><b id="jd-p2-wins">0</b></span>
+      <span class="plate duel-side" id="jd-p2"><span class="duel-name"><span class="long">Jogador </span><span class="short">J</span>2 · <i id="jd-p2-mark">O</i></span></span>
     </div>
 
     <p class="duel-status" id="jd-status" role="status"></p>
@@ -20,7 +20,7 @@
     <div class="duel-stage">
     <div class="result duel-start" id="jd-start">
       <h2 id="jd-start-title">Jogador 1 é X e começa</h2>
-      <div class="actions"><button class="btn" type="button" id="jd-go">Começar</button></div>
+      <div class="actions"><button class="btn" type="button" id="jd-go">Começar aqui</button><button class="btn secondary" type="button" id="jd-link">Desafiar por link</button></div>
     </div>
     <div class="velha-board" role="grid" aria-label="Tabuleiro do duelo">
       <span class="plate velha-corner" id="jd-corner">VS</span>
@@ -31,6 +31,12 @@
       {% endfor %}
     </div>
     </div>
+    </div>
+
+    <div class="duel-tools" id="jd-tools" hidden>
+        <button class="btn secondary" type="button" id="jd-pass">Passar a vez</button>
+        <button class="btn secondary" type="button" id="jd-redraw">Sortear de novo</button>
+        <button class="btn secondary" type="button" id="jd-end">Encerrar</button>
     </div>
 
     <dialog class="game-dialog" id="jv-dialog" aria-labelledby="jv-cell-label">
@@ -47,6 +53,7 @@
 
     <div class="result" id="jd-result" hidden>
       <h2 id="jd-title"></h2>
+      <p class="duel-series" id="jd-series"></p>
       <div class="actions"><button class="btn" type="button" id="jd-again">Revanche</button></div>
     </div>
 
