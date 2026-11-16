@@ -48,7 +48,7 @@ def test_the_creator_side_is_drawn(game) -> None:
 
 
 def test_duel_creator_is_x_and_the_first_to_join_is_o_then_others_only_watch(game) -> None:
-    # The creator's side is drawn now (X or O); the rest of the spec's rule stands.
+    # The spec's name: the creator's side is drawn now (X or O); the rest of the rule stands.
     duel_id, x, o, _ = new_duel(game)
 
     assert x != o
@@ -104,6 +104,7 @@ def test_rematch_swaps_the_sides_for_both_players(game) -> None:
     assert first["id"] == second["id"] and (first["lado"], second["lado"]) == ("O", "X")
     assert game.get(f"{API}/{first['id']}").json()["completo"]
     assert game.post(f"{API}/{duel_id}/revanche", json={"token": "who"}).status_code == 403
+    assert game.post(f"{API}/{first['id']}/entrar").status_code == 409  # nobody else sits in
 
 
 def test_duel_ends_after_six_turns_without_a_cell_and_most_cells_wins(game, clock) -> None:
@@ -204,7 +205,10 @@ def test_ending_and_a_new_draw_need_both_players(game) -> None:
     assert asked["proposta"] == {"tipo": "sortear", "lado": "X"}
     self_ok = {"token": x, "aceita": True}
     assert game.post(f"{API}/{duel_id}/responder", json=self_ok).status_code == 409
-    redrawn = game.post(f"{API}/{duel_id}/responder", json={"token": o, "aceita": True}).json()
+    wrong_kind = {"token": o, "aceita": True, "tipo": "encerrar"}
+    assert game.post(f"{API}/{duel_id}/responder", json=wrong_kind).status_code == 409
+    accept = {"token": o, "aceita": True, "tipo": "sortear"}
+    redrawn = game.post(f"{API}/{duel_id}/responder", json=accept).json()
     assert redrawn["jogou"] == 0 and redrawn["casas"] == {} and redrawn["proposta"] is None
 
     game.post(f"{API}/{duel_id}/propor", json={"token": o, "tipo": "encerrar"})

@@ -201,3 +201,37 @@ def test_the_player_on_turn_can_pass(duels) -> None:
     duel_id, x, _ = started(duels)
     row = duels.play(duel_id, x, 0, {"estouro": True}, T0, judge)
     assert judge(row.tabuleiro, row.jogadas).vez == "O"
+
+
+def test_nobody_else_takes_a_rematch_seat(duels) -> None:
+    duel_id, x, o = started(duels)
+    win_for_x(duels, duel_id, x, o)
+    new_id, _, _ = duels.rematch(duel_id, x, T0, judge, BOARD.code)
+
+    assert duels.join(new_id, T0) is None  # the seat is the old opponent's
+    assert duels.get(new_id, T0, judge).reservada
+    duels.rematch(duel_id, o, T0, judge, BOARD.code)
+    assert duels.get(new_id, T0, judge).complete
+
+
+def test_reading_a_duel_does_not_wait_for_other_writers(duels) -> None:
+    import sqlite3
+
+    duel_id, _, _ = started(duels)
+    writer = sqlite3.connect(duels.path, isolation_level=None, timeout=0)
+    writer.execute("BEGIN IMMEDIATE")  # a subscriber or bolão write in progress
+    try:
+        row = duels.get(duel_id, T0 + timedelta(seconds=5), judge)  # nothing expired: no lock
+    finally:
+        writer.execute("ROLLBACK")
+        writer.close()
+    assert row.jogadas == []
+
+
+def test_an_answer_names_what_it_accepts(duels) -> None:
+    duel_id, x, o = started(duels)
+    duels.propose(duel_id, x, "sortear", T0, judge)
+    with pytest.raises(DuelConflict):  # the proposal changed under the other player's eyes
+        duels.answer(duel_id, o, True, T0, judge, OTHER.code, tipo="encerrar")
+    row = duels.answer(duel_id, o, True, T0, judge, OTHER.code, tipo="sortear")
+    assert row.tabuleiro == OTHER.code

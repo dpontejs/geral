@@ -30,7 +30,8 @@ CREATE TABLE IF NOT EXISTS velha_partidas (
     prazo TEXT,
     criada_em TEXT NOT NULL,
     revanche TEXT,
-    proposta TEXT
+    proposta TEXT,
+    reservada INTEGER NOT NULL DEFAULT 0
 );
 """
 
@@ -60,6 +61,7 @@ class Row:
     criada_em: datetime
     revanche: str | None = None  # the rematch's id, once someone asked for it
     proposta: dict | None = None  # {"tipo": "encerrar" | "sortear", "lado": who asked}
+    reservada: bool = False  # a rematch: the free seat is the old opponent's, not the link's
 
     @property
     def complete(self) -> bool:
@@ -98,7 +100,7 @@ class DuelStore:
         """(token, side) of the second player, once; None when both are in. The clock starts."""
         with closing(self._connect()) as db:
             row = self._load(db, duel_id, now)
-            if row.complete:
+            if row.complete or row.reservada:
                 db.execute("ROLLBACK")
                 return None
             token, side = secrets.token_urlsafe(16), "O" if row.o_token is None else "X"
@@ -127,7 +129,7 @@ class DuelStore:
             if row.revanche is None:
                 new_id = secrets.token_urlsafe(6)
                 new_token = _rematch_token(token, new_id)
-                self._insert(db, new_id, board_code, new_side, new_token, now)
+                self._insert(db, new_id, board_code, new_side, new_token, now, reservada=True)
                 db.execute("UPDATE velha_partidas SET revanche = ? WHERE id = ?", (new_id, row.id))
             else:
                 new_id, new_token = row.revanche, _rematch_token(token, row.revanche)
@@ -138,6 +140,14 @@ class DuelStore:
         return new_id, new_token, new_side
 
     def get(self, duel_id: str, now: datetime, judge: Judge) -> Row:
+        """The duel, read without a lock; it writes (locked) only when a turn's time ran out.
+
+        The events stream reads twice a second per tab: the same SQLite holds the subscribers.
+        """
+        with closing(sqlite3.connect(self.path, isolation_level=None)) as db:
+            row = self._load(db, duel_id, now)
+        if row.prazo is None or now < row.prazo:
+            return row
         with closing(self._connect()) as db:
             row = self._expire(db, self._load(db, duel_id, now), now, judge)
             db.execute("COMMIT")
@@ -201,7 +211,14 @@ class DuelStore:
         return row
 
     def answer(
-        self, duel_id: str, token: str, aceita: bool, now: datetime, judge: Judge, board_code: str
+        self,
+        duel_id: str,
+        token: str,
+        aceita: bool,
+        now: datetime,
+        judge: Judge,
+        board_code: str,
+        tipo: str | None = None,
     ) -> Row:
         """The other player accepts or refuses the proposal; the one who asked may withdraw it.
 
@@ -217,6 +234,9 @@ class DuelStore:
             if row.proposta is None or judge(row.tabuleiro, row.jogadas).over:
                 db.execute("COMMIT")
                 raise DuelConflict("nothing to answer")
+            if tipo is not None and tipo != row.proposta["tipo"]:
+                db.execute("COMMIT")
+                raise DuelConflict("the proposal changed: look again")
             if aceita and side == row.proposta["lado"]:
                 db.execute("COMMIT")
                 raise DuelConflict("the other player answers a proposal")
@@ -238,12 +258,14 @@ class DuelStore:
 
     def _load(self, db: sqlite3.Connection, duel_id: str, now: datetime) -> Row:
         found = db.execute(
-            "SELECT id, tabuleiro, x_token, o_token, jogadas, prazo, criada_em, revanche, proposta"
+            "SELECT id, tabuleiro, x_token, o_token, jogadas, prazo, criada_em, revanche, proposta,"
+            " reservada"
             " FROM velha_partidas WHERE id = ?",
             (duel_id,),
         ).fetchone()
         if found is None or datetime.fromisoformat(found[6]) < now - LIFETIME:
-            db.execute("ROLLBACK")
+            if db.in_transaction:
+                db.execute("ROLLBACK")
             raise DuelNotFound(duel_id)
         return Row(
             id=found[0],
@@ -255,15 +277,24 @@ class DuelStore:
             criada_em=datetime.fromisoformat(found[6]),
             revanche=found[7],
             proposta=json.loads(found[8]) if found[8] else None,
+            reservada=bool(found[9]),
         )
 
     def _insert(
-        self, db: sqlite3.Connection, duel_id: str, code: str, side: str, token: str, now: datetime
+        self,
+        db: sqlite3.Connection,
+        duel_id: str,
+        code: str,
+        side: str,
+        token: str,
+        now: datetime,
+        reservada: bool = False,
     ) -> None:
         column = "x_token" if side == "X" else "o_token"
         db.execute(
-            f"INSERT INTO velha_partidas (id, tabuleiro, {column}, criada_em) VALUES (?, ?, ?, ?)",
-            (duel_id, code, token, now.isoformat()),
+            f"INSERT INTO velha_partidas (id, tabuleiro, {column}, criada_em, reservada)"
+            " VALUES (?, ?, ?, ?, ?)",
+            (duel_id, code, token, now.isoformat(), int(reservada)),
         )
 
     def _claim(

@@ -243,7 +243,7 @@
     if (!confirm("Os dois concordam em sortear um tabuleiro novo? As casas são zeradas.")) return;
     start(); // a fresh board and clock; the sides stay
   });
-  // A duel by link: the creator plays X; the page of the duel keeps the token in localStorage.
+  // A duel by link: the creator's side is drawn; the duel's page keeps the token in localStorage.
   $("jd-link").addEventListener("click", async () => {
     $("jd-link").disabled = true;
     try {

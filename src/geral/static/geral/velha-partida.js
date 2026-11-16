@@ -96,6 +96,9 @@
         $("jp-box-title").textContent = `Você é ${me.side}. Mande o link para quem vai jogar com você`;
         $("jp-box-note").textContent = "O tabuleiro aparece quando a outra pessoa entrar.";
         $("jp-share").hidden = false;
+      } else if (view.reservada) {
+        $("jp-box-title").textContent = "Revanche entre os dois jogadores";
+        $("jp-box-note").textContent = "Esperando o adversário voltar. Você pode assistir.";
       } else {
         $("jp-box-title").textContent = "Você foi desafiado para um jogo da velha";
         $("jp-box-note").textContent = "X ou O é por sorteio; o X começa.";
@@ -247,7 +250,8 @@
   $("jp-pass").addEventListener("click", () => send("jogada", { vez_n: view.jogou, pular: true }));
   $("jp-redraw").addEventListener("click", () => send("propor", { tipo: "sortear" }));
   $("jp-end").addEventListener("click", () => send("propor", { tipo: "encerrar" }));
-  $("jp-accept").addEventListener("click", () => send("responder", { aceita: true }));
+  // The answer names what it accepts: a proposal that changed meanwhile is refused (409).
+  $("jp-accept").addEventListener("click", () => send("responder", { aceita: true, tipo: view.proposta && view.proposta.tipo }));
   $("jp-refuse").addEventListener("click", () => send("responder", { aceita: false }));
 
   // Revanche: the first to ask creates it, the other accepts; both go there with their new side.

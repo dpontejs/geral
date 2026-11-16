@@ -198,6 +198,7 @@ class DuelProposalIn(BaseModel):
 class DuelAnswerIn(BaseModel):
     token: str = Field(max_length=40)
     aceita: bool
+    tipo: Literal["encerrar", "sortear"] | None = None  # what the player saw being proposed
 
 
 class DuelIn(BaseModel):
@@ -1075,6 +1076,7 @@ def create_app(
             "completo": row.complete,
             "revanche": row.revanche,
             "proposta": row.proposta,
+            "reservada": row.reservada,
             "prazo": row.prazo.isoformat() if row.prazo else None,
             "agora": now().isoformat(),
         }
@@ -1131,7 +1133,9 @@ def create_app(
     def velha_duel_answer(duel_id: str, body: DuelAnswerIn):
         board = velha_tabuleiro.make_board(velha(), random.Random())  # used by a new draw
         try:
-            row = duels.answer(duel_id, body.token, body.aceita, now(), duel_judge, board.code)
+            row = duels.answer(
+                duel_id, body.token, body.aceita, now(), duel_judge, board.code, body.tipo
+            )
         except (DuelNotFound, NotYourTurn, DuelConflict) as error:
             return duel_error(error)
         return duel_view(row)
