@@ -4,6 +4,7 @@ Run with `uvicorn geral.web.app:create_app --factory`. Behind Caddy, start uvico
 `--proxy-headers` so the rate limit sees the visitor's IP.
 """
 
+import asyncio
 import hashlib
 import hmac
 import logging
@@ -19,7 +20,13 @@ from typing import Annotated
 from urllib.parse import urlencode
 
 from fastapi import FastAPI, Form, Query, Request, Response
-from fastapi.responses import FileResponse, HTMLResponse, JSONResponse, RedirectResponse
+from fastapi.responses import (
+    FileResponse,
+    HTMLResponse,
+    JSONResponse,
+    RedirectResponse,
+    StreamingResponse,
+)
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from jinja2 import select_autoescape
@@ -43,6 +50,13 @@ from geral.web.scoreboard import animation_svg
 from geral.web.store import RequestResult, SubscriberStore, normalize
 from geral.web.team_requests import PUBLIC_MIN_VOTES, TeamRequestStore, network, team_key
 from geral.web.tokens import make_token, read_token
+from geral.web.velha_partidas import (
+    DuelConflict,
+    DuelNotFound,
+    DuelStore,
+    NotYourTurn,
+    duel_events,
+)
 from geral.web.welcome import add_welcome
 
 logger = logging.getLogger(__name__)
@@ -72,6 +86,7 @@ SCORE_RE = re.compile(r"^(\d)-(\d)$")
 NICKNAME_RE = re.compile(r"^[\w' -]+$")
 STATIC = Path(__file__).resolve().parents[1] / "static"
 # The scoreboard clock: Brasília time, no daylight saving since 2019 (no tzdata in the image).
+DUELS_PER_NETWORK = 20  # jogo da velha duels created per network per hour
 PAST_LISTED = 30  # past puzzles linked on a game page; older ones stay playable by address
 BRASILIA = timezone(timedelta(hours=-3))
 
@@ -163,6 +178,13 @@ class VelhaIn(BaseModel):
     chutes: list[velha_judge.Guess] = Field(max_length=velha_judge.MAX_GUESSES + 1)
 
 
+class DuelMoveIn(BaseModel):
+    token: str = Field(max_length=40)
+    vez_n: int = Field(ge=0)
+    casa: int | None = None
+    jogador: str | None = Field(default=None, max_length=20)
+
+
 class DuelIn(BaseModel):
     tabuleiro: str = Field(max_length=200)
     jogadas: list[velha_duelo.Move] = Field(max_length=60)
@@ -191,6 +213,8 @@ def create_app(
     mailer = mailer or mailer_from_settings(settings)
     bolao = bolao or BolaoStore(store.path)  # same SQLite: the ranking joins the subscriptions
     team_requests = team_requests or TeamRequestStore(store.path)
+    duels = DuelStore(store.path)  # jogo da velha by link: its own table in the same SQLite
+    duel_limiter = RateLimiter(DUELS_PER_NETWORK, timedelta(hours=1))
     catalog = teams if teams is not None else load_teams()
     # Teams people can see and join; unlisted ones (moving in) still work for links and the API.
     listed = {slug: team for slug, team in catalog.items() if team.listed}
@@ -1012,6 +1036,109 @@ def create_app(
             clubs.append(club)
         jogador = daily_player("onde-jogou", edition, players, number)
         return onde_jogou.judge(data, jogador, clubs, body.desistiu, given_clubs(edition))
+
+    def duel_judge(code: str, jogadas: list[dict]):
+        base = velha()
+        return velha_duelo.judge_duel(
+            base, velha_tabuleiro.parse_board(base, code), [velha_duelo.Move(**m) for m in jogadas]
+        )
+
+    def duel_view(row) -> dict:
+        """What both players and the watchers see (never the tokens)."""
+        base = velha()
+        board = velha_tabuleiro.parse_board(base, row.tabuleiro)
+        state = duel_judge(row.tabuleiro, row.jogadas)
+        return {
+            "id": row.id,
+            "codigo": row.tabuleiro,
+            "linhas": [c.label for c in board.rows],
+            "colunas": [c.label for c in board.cols],
+            **state.model_dump(),
+            "nomes": {q: base.players[q].nome for q in state.jogadores.values()},
+            "jogou": len(row.jogadas),
+            "o_entrou": row.o_token is not None,
+            "prazo": row.prazo.isoformat() if row.prazo else None,
+            "agora": now().isoformat(),
+        }
+
+    def duel_error(error: Exception) -> JSONResponse:
+        status = {DuelNotFound: 404, NotYourTurn: 403, DuelConflict: 409}.get(type(error), 422)
+        return JSONResponse({"detail": str(error)}, status_code=status)
+
+    @app.post("/api/jogos/velha/partidas")
+    def velha_duel_create(request: Request):
+        if not duel_limiter.allow(network(request.client.host if request.client else ""), now()):
+            return JSONResponse({"detail": "too many duels, try later"}, status_code=429)
+        board = velha_tabuleiro.make_board(velha(), random.Random())
+        duel_id, token = duels.create(board.code, now())
+        return {"id": duel_id, "token": token}
+
+    @app.post("/api/jogos/velha/partidas/{duel_id}/entrar")
+    def velha_duel_join(duel_id: str):
+        try:
+            token = duels.join(duel_id, now())
+        except DuelNotFound as error:
+            return duel_error(error)
+        if token is None:
+            return JSONResponse({"detail": "O already joined"}, status_code=409)
+        return {"token": token}
+
+    @app.post("/api/jogos/velha/partidas/{duel_id}/jogada")
+    def velha_duel_move(duel_id: str, body: DuelMoveIn):
+        move = {"casa": body.casa, "jogador": body.jogador}
+        try:
+            row = duels.play(duel_id, body.token, body.vez_n, move, now(), duel_judge)
+        except (DuelNotFound, NotYourTurn, DuelConflict, ValueError) as error:
+            return duel_error(error)
+        return duel_view(row)
+
+    @app.get("/api/jogos/velha/partidas/{duel_id}")
+    def velha_duel_state(duel_id: str):
+        try:
+            return duel_view(duels.get(duel_id, now(), duel_judge))
+        except DuelNotFound as error:
+            return duel_error(error)
+
+    @app.get("/api/jogos/velha/partidas/{duel_id}/eventos")
+    def velha_duel_events(duel_id: str):
+        try:
+            duels.get(duel_id, now(), duel_judge)
+        except DuelNotFound as error:
+            return duel_error(error)
+
+        async def load() -> dict:
+            row = await asyncio.to_thread(duels.get, duel_id, now(), duel_judge)
+            return duel_view(row)
+
+        return StreamingResponse(
+            duel_events(load, asyncio.sleep),
+            media_type="text/event-stream",
+            headers={"Cache-Control": "no-cache", "X-Accel-Buffering": "no"},
+        )
+
+    # Before `/jogos/velha/{edition}/{number}`, or "p" would be read as an edition.
+    @app.get("/jogos/velha/p/{duel_id}", response_class=HTMLResponse)
+    def velha_duel_link_page(request: Request, duel_id: str):
+        try:
+            duels.get(duel_id, now(), duel_judge)
+        except DuelNotFound:
+            return message(
+                request,
+                "Duelo não encontrado",
+                "Esse duelo não existe ou já passou de um dia. Desafie alguém de novo.",
+                status=404,
+                link_url="/jogos/velha/duelo",
+                link_label="Novo duelo",
+            )
+        return page(
+            request,
+            "velha_partida.html.j2",
+            edition="geral",
+            tabs=game_tabs("velha", "geral"),
+            archive=False,
+            duel_id=duel_id,
+            seconds=velha_duelo.SECONDS,
+        )
 
     # The duel before `/jogos/velha/{edition}`, or "duelo" would be read as an edition.
     @app.get("/jogos/velha/duelo", response_class=HTMLResponse)

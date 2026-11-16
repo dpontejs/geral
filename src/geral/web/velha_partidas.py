@@ -8,7 +8,7 @@ move on the next read or write, as many times as turns went by. X's clock starts
 import json
 import secrets
 import sqlite3
-from collections.abc import Callable
+from collections.abc import AsyncIterator, Awaitable, Callable
 from contextlib import closing
 from dataclasses import dataclass
 from datetime import datetime, timedelta
@@ -185,3 +185,25 @@ class DuelStore:
             "UPDATE velha_partidas SET jogadas = ?, prazo = ? WHERE id = ?",
             (json.dumps(row.jogadas), row.prazo.isoformat() if row.prazo else None, row.id),
         )
+
+
+async def duel_events(
+    load: Callable[[], Awaitable[dict]],
+    sleep: Callable[[float], Awaitable[None]],
+    every: float = 0.5,
+    ticks: int = 600,
+) -> AsyncIterator[str]:
+    """Server-sent events: the duel's state on connect and whenever it changes, until it ends.
+
+    The stream closes after `ticks` checks (about 5 minutes); the browser reconnects by itself.
+    """
+    last = None
+    for _ in range(ticks):
+        view = await load()
+        key = (view["jogou"], view["o_entrou"], view["prazo"])
+        if key != last:
+            last = key
+            yield f"data: {json.dumps(view, ensure_ascii=False)}\n\n"
+        if view["over"]:
+            return
+        await sleep(every)

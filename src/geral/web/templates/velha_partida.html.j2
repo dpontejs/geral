@@ -1,0 +1,23 @@
+{% extends "base.html.j2" %}
+{% block title %}Duelo por link · Jogo da velha · Geral{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/geral/jogos.css?v={{ asset_version }}">{% endblock %}
+{% block content %}
+<section class="jogo wall">
+  <div class="wrap" id="jp" data-duel="{{ duel_id }}" data-seconds="{{ seconds }}">
+    {% include "_game_tabs.html.j2" %}
+    <div class="game-title"><h1>Jogo da velha</h1></div>
+    {% set mode = "duelo" %}{% include "_velha_modos.html.j2" %}
+    <div class="stage">
+      <p class="duel-status" id="jd-status" role="status"></p>
+      <div class="velha-board" role="grid" aria-label="Tabuleiro do duelo">
+        <span class="plate velha-corner">VS</span>
+        {% for n in range(3) %}<span class="plate velha-head col" role="columnheader">?</span>{% endfor %}
+        {% for row in range(3) %}
+        <span class="plate velha-head row" role="rowheader">?</span>
+        {% for col in range(3) %}<button type="button" class="vcell" data-casa="{{ row * 3 + col }}" disabled><span class="vcell-mark"></span><span class="vcell-name"></span><small class="vcell-note"></small></button>{% endfor %}
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</section>
+{% endblock %}
