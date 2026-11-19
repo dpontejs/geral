@@ -1,7 +1,7 @@
 """Which special sections an edition gets: a draw seeded by the edition, so a rebuild agrees.
 
-The story goes in news editions only; "Neste dia" in every edition of the team. With a section,
-the news are capped at TOPICS_WITH_SECTION topics.
+The story goes in news editions only; "Nesta semana" (facts within 3 days of the send) in every
+edition of the team. With a section, the news are capped at TOPICS_WITH_SECTION topics.
 """
 
 import logging

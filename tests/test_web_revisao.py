@@ -287,7 +287,7 @@ def test_review_lists_the_story(owner, store) -> None:
 
     page = owner.get(f"/revisao?t={link()}").text
 
-    assert "A história" in page and "Neste dia" in page
+    assert "A história" in page and "Nesta semana" in page
 
 
 def test_removed_story_is_discarded_and_not_sent(owner, store) -> None:
