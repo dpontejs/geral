@@ -36,6 +36,12 @@ Ordem de execução. Cada fatia vira um PR; a página da fatia fica em `docs/fea
 - [x] Notícias do time pelo feed JSON da página do ge (no lugar da raspagem do HTML, que fica de reserva)
 - [x] Pernambucano: segundo leitor, para o formato `tabela-context` (fases e tabela da página, jogos pelo GraphQL do ge); o Náutico entra no 2º turno (Frevo)
 
+## Fatia 2c — Novas torcidas
+- [x] CSA (Azulão News): Série D e Alagoano pelo ge, gols pela CBF, seções especiais; notícias que citam a Mancha Azul ficam de fora (`exclude_terms`)
+- [x] CSA: notícias das categorias de base (sub-20, sub-17, sub-15) no "Saiba mais"
+- [ ] CSA: trocar o ícone provisório (SVG) por um do Nano Banana (`docs/features/identidade-visual-times.md`)
+- [ ] CSA: caixa `azulao@` do remetente (conta Google criada pelo dono)
+
 ## Fatia 3 — Pedido de time e ranking de torcidas
 - [x] Formulário "meu time não está aqui" (time + e-mail opcional para avisar quando nascer) e os mais pedidos (`docs/features/pedido-de-time.md`)
 - [ ] Comando que avisa por e-mail quem pediu, quando a torcida nascer
@@ -60,6 +66,7 @@ Ordem de execução. Cada fatia vira um PR; a página da fatia fica em `docs/fea
 - [ ] Histórias enviadas pela torcida (formulário + moderação)
 - [ ] Detectar a mesma fonte quando a seção da Wikipédia é renomeada (hoje vira chave nova)
 - [ ] Outros times com seções especiais (basta `specials` no catálogo, depois de checar o material na Wikipédia)
+  - [x] CSA: 29 trechos em 2026-11-19 (26 de história e jogos, como os 22 x 0 de 1945, o Jogo do Xaxado e as finais do Clássico das Multidões; 3 ídolos: Jacozinho, Dida e Freitas Nascimento)
 
 ## Fatia 5 — Cartola simples (o bolão por torcida já vem na 2a)
 

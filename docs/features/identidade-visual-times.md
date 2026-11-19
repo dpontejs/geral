@@ -37,6 +37,7 @@ O escudo continua só no placar, como dado da partida.
 | Porco News (Palmeiras) | porco bravo, presas à mostra, faixa na testa | verde `#006437` | branco `#FFFFFF` | apelido assumido pela torcida; alviverde |
 | Elefante News (ABC) | elefante investindo, tromba erguida, presas | preto `#141414` | branco `#FFFFFF` | mascote do ABC; alvinegro |
 | Timbu News (Náutico) | timbu (gambá-de-orelha-branca) de cara fechada | vermelho `#C60000` | branco `#FFFFFF` | mascote e apelido do Náutico; alvirrubro |
+| Azulão News (CSA) | azulão (o pássaro, bico grosso de papa-semente) de cara brava | azul `#1B4B9B` | branco `#FFFFFF` | mascote e apelido do CSA; azul e branco |
 
 ## Como gerar
 
@@ -53,7 +54,13 @@ python scripts/make_brand.py brand_src/vasco.jpg src/geral/static/vasco Almirant
 python scripts/make_brand.py brand_src/palmeiras.jpg src/geral/static/palmeiras Porco News "#006437" "#1C1C1C" Palmeiras --circle
 python scripts/make_brand.py brand_src/abc.jpg src/geral/static/abc Elefante News "#141414" "#6B6B6B" ABC
 python scripts/make_brand.py brand_src/nautico.jpg src/geral/static/nautico Timbu News "#C60000" "#1C1C1C" Náutico --circle
+python scripts/make_brand.py brand_src/csa.png src/geral/static/csa Azulão News "#1B4B9B" "#1C1C1C" CSA --circle
 ```
+
+O ícone do CSA é **provisório**: foi desenhado à mão em SVG (`scripts/brand/csa.svg`, com o
+quadriculado que o script espera em volta do círculo) e renderizado em PNG no Chromium, porque a
+sessão não tinha o Nano Banana. Para trocar, gerar o ícone com o prompt abaixo, salvar em
+`brand_src/csa.png` e rodar a linha acima.
 
 ## Prompts (Nano Banana)
 
@@ -84,6 +91,7 @@ Valores por time:
 | Porco News | a fierce wild boar-style pig with small tusks and a headband | #006437, #FFFFFF | "PORCO" em #006437 |
 | Elefante News | a charging elephant with raised trunk and tusks | #141414, #FFFFFF | "ELEFANTE" em #141414, "NEWS" em #6B6B6B |
 | Timbu News | a white-eared opossum (Brazilian "timbu") with a grumpy tough face | #C60000, #FFFFFF | "TIMBU" em #C60000 |
+| Azulão News | an ultramarine grosbeak (Brazilian "azulão" bird) with a thick seed-cracker beak and an angry brow | #1B4B9B, #FFFFFF | "AZULÃO" em #1B4B9B |
 
 ## Critérios de aceite (como testes)
 

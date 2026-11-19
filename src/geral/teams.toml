@@ -84,6 +84,36 @@ club_terms = ["Náutico", "Timbu"]  # "alvirrubro" is also the América-RN…
 [nautico.ge_tables]
 "Pernambucano" = "https://ge.globo.com/pe/futebol/campeonato-pernambucano/"
 
+[csa]
+sender = "azulao"
+name = "CSA"
+newsletter = "Azulão News"
+fans = "azulinos"
+espn_id = 7531
+ge_url = "https://ge.globo.com/al/futebol/times/csa/"
+news_query = '"CSA" futebol Alagoas'
+keywords = ["csa", "azulão", "azulino", "azulinos"]
+accent = "#1B4B9B"
+# Série D 2026 (lost the access playoff to the Nacional-AM) and 2027. ESPN covers neither nor the
+# Alagoano: those matches, the table and the form come from ge's table API, like the ABC's.
+leagues = ["bra.copa_do_nordeste", "bra.copa_do_brazil"]
+ge_id = 341
+cbf_id = 20045
+specials = true
+wikipedia = "Centro Sportivo Alagoano"
+classics = ["Clássico das Multidões (Maceió)"]
+club_terms = ["CSA"]  # "Azulão" is also the São Caetano
+# News naming the organized fan group is left out (mostly police news).
+exclude_terms = ["Mancha Azul"]
+[csa.ge_tables]
+"Série D" = "https://ge.globo.com/futebol/brasileirao-serie-d/"
+"Alagoano" = "https://ge.globo.com/al/futebol/campeonato-alagoano/"
+[csa.cbf_tables]  # goal scorers; the Alagoano is not on the CBF site
+"Série D" = "campeonato-brasileiro/serie-d"
+[csa.other_sports]  # the youth teams go in "Saiba mais", like the other clubs' other sports
+"Categorias de base" = '"CSA" (sub-20 OR sub-17 OR sub-15 OR "categorias de base")'
+
+
 # The Urubu News, moved in from its own app (docs/adr/0001, docs/features/urubu-na-geral.md):
 # its subscribers, bolão and old links live in the Geral since the switch.
 [flamengo]

@@ -159,7 +159,7 @@ def test_acervo_all_runs_every_specials_team(monkeypatch) -> None:
     result = CliRunner().invoke(cli.app, ["acervo", "--all"])
 
     assert result.exit_code == 0, result.output
-    assert sorted(seen) == ["abc", "nautico"]
+    assert sorted(seen) == ["abc", "csa", "nautico"]
     assert "nautico: 2 aceitas, 1 recusadas" in result.output
 
 
@@ -273,3 +273,21 @@ def test_job_saves_birthdays_on_sunday(monkeypatch) -> None:
 
     assert json.loads(saved.calls.last.request.content)[0]["name"] == "Bita"
     assert llm.prompts == []  # the stock is full: birthdays only
+
+
+def test_a_story_naming_an_excluded_term_is_refused() -> None:
+    from geral.specials.writer import StoryDraft
+
+    text = " ".join(["O CSA venceu o CRB em 1980 diante da Mancha Azul."] * 12)
+    p = Passage(kind="clube", key="k", title="Torcida", url="u", text=text)
+    story = StoryDraft(
+        title="A festa",
+        body=text,
+        summary="Festa.",
+        kind="clube",
+        source_key="k",
+        source_url="u",
+        source_title="Torcida",
+    )
+
+    assert job.refusal(story, p, get_team("csa")) == "cita termo excluído"

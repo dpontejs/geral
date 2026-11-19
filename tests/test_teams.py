@@ -17,7 +17,7 @@ HEX = re.compile(r"^#[0-9A-Fa-f]{6}$")
 def test_load_teams_validates_catalog():
     teams = load_teams()
 
-    assert {"vasco", "palmeiras", "abc", "nautico"} <= teams.keys()
+    assert {"vasco", "palmeiras", "abc", "nautico", "csa"} <= teams.keys()
     for slug, team in teams.items():
         assert team.slug == slug
         assert HEX.match(team.accent)
@@ -32,6 +32,7 @@ def test_catalog_brands():
     assert teams["palmeiras"].newsletter == "Porco News"
     assert teams["abc"].newsletter == "Elefante News"
     assert teams["nautico"].newsletter == "Timbu News"
+    assert teams["csa"].newsletter == "Azulão News"
 
 
 def test_get_team_unknown_lists_valid_slugs():
@@ -186,14 +187,40 @@ def test_abc_takes_series_c_and_d_goals_from_cbf():
     }
 
 
+def test_csa_follows_series_d_and_alagoano_on_ge_with_cbf_goals():
+    csa = load_teams()["csa"]
+
+    assert (csa.espn_id, csa.ge_id, csa.cbf_id) == (7531, 341, 20045)
+    assert set(csa.ge_tables) == {"Série D", "Alagoano"}
+    assert csa.cbf_tables == {"Série D": "campeonato-brasileiro/serie-d"}
+    assert csa.league is None  # ESPN has no table for the Série D
+    assert set(csa.other_sports) == {"Categorias de base"}  # the youth teams in "Saiba mais"
+
+
+def test_csa_club_terms_leave_out_the_sao_caetano():
+    # "Azulão" names the São Caetano too: idols and stories need "CSA" itself.
+    csa = load_teams()["csa"]
+
+    assert csa.club_terms == ("CSA",)
+    assert csa.mentions("Azulão vence o CRB no Rei Pelé")
+
+
 def test_specials_teams_have_a_wikipedia_article():
     specials = [t for t in load_teams().values() if t.specials]
 
-    assert {t.slug for t in specials} == {"abc", "nautico"}
+    assert {t.slug for t in specials} == {"abc", "nautico", "csa"}
     assert all(t.wikipedia and t.club_terms for t in specials)
     assert get_team("nautico").classics[0] == "Clássico dos Clássicos"
 
 
 def test_news_weekdays_follow_specials():
     assert get_team("abc").news_weekdays == (0, 3)
+    assert get_team("csa").news_weekdays == (0, 3)  # Thursday news with stories, off-season
     assert get_team("vasco").news_weekdays == (0,)
+
+
+def test_csa_leaves_out_the_mancha_azul():
+    csa = load_teams()["csa"]
+
+    assert csa.excludes("Briga da Mancha Azul") and not csa.excludes("CSA vence")
+    assert not get_team("abc").excludes("Mancha Azul")  # only the CSA

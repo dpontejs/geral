@@ -67,6 +67,9 @@ class Team(BaseModel):
     wikipedia: str | None = None
     classics: tuple[str, ...] = ()
     club_terms: tuple[str, ...] = ()
+    # News naming any of these is left out of the edition (e.g. an organized fan group whose
+    # coverage is police news).
+    exclude_terms: tuple[str, ...] = ()
 
     @property
     def news_weekdays(self) -> tuple[int, ...]:
@@ -118,6 +121,11 @@ class Team(BaseModel):
 
     def mentions(self, text: str) -> bool:
         return bool(self.pattern.search(text))
+
+    def excludes(self, text: str) -> bool:
+        """Whether `text` names something the newsletter leaves out (`exclude_terms`)."""
+        folded = text.casefold()
+        return any(term.casefold() in folded for term in self.exclude_terms)
 
     def __hash__(self) -> int:
         return hash(self.slug)

@@ -33,7 +33,8 @@ def test_portal_scoreboard_ranks_teams_by_subscribers(client, store) -> None:
 
     rows = re.findall(r'class="name">([^<]+)</span><span class="n">(\d+)<', board)
     assert rows[:2] == [("Timbu", "2"), ("Almirante", "1")]
-    assert {name for name, _ in rows} == {"Timbu", "Almirante", "Porco", "Elefante", "Urubu"}
+    names = {"Timbu", "Almirante", "Porco", "Elefante", "Urubu", "Azulão"}
+    assert {name for name, _ in rows} == names
 
 
 def test_portal_scoreboard_keeps_the_names_in_lamp_yellow(client) -> None:

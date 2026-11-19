@@ -545,6 +545,7 @@ nome = "CSA"
 liga = "bra-c"
 estado = "AL"
 prestigio = 28
+time = "csa"
 
 [[clube]]
 id = "volta-redonda"

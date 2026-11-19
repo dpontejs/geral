@@ -19,7 +19,7 @@ from geral.models import (
     StandingRow,
     TeamMoment,
 )
-from geral.processing.dedupe import dedupe, is_relevant
+from geral.processing.dedupe import dedupe, is_relevant, without_excluded
 from geral.processing.extract import DomainRateLimiter, extract_articles
 from geral.report import RunReport
 from geral.send.recipients import mailto_unsubscribe
@@ -172,6 +172,7 @@ def build_newsletter(
     learn_more, brazil = (
         (candidates or collect_candidates)(edition, team) if with_extras else ([], [])
     )
+    learn_more, brazil = without_excluded(learn_more, team), without_excluded(brazil, team)
     if report is not None:
         report.articles_by_source = dict(
             Counter(a.source.split(":", 1)[0] for a in articles).most_common()

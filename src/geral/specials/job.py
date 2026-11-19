@@ -84,6 +84,8 @@ def refusal(story: StoryDraft, passage: Passage, team: Team) -> str | None:
     missing = unsupported(text, f"{passage.title}\n{passage.text}", allowed)
     if missing:
         return "fora da fonte: " + ", ".join(missing)
+    if team.excludes(text):
+        return "cita termo excluído"
     terms = [team.name, *team.club_terms]
     if not any(re.search(rf"\b{re.escape(t)}\b", story.body, re.IGNORECASE) for t in terms):
         return "não fala do clube"

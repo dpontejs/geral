@@ -114,5 +114,11 @@ def dedupe(articles: list[Article]) -> list[Article]:
 
 
 def is_relevant(article: Article, team: Team) -> bool:
-    """Cheap keyword filter: title or content must mention the team."""
-    return team.mentions(f"{article.title}\n{article.content or ''}")
+    """Cheap keyword filter: title or content must mention the team, and nothing it leaves out."""
+    text = f"{article.title}\n{article.content or ''}"
+    return team.mentions(text) and not team.excludes(text)
+
+
+def without_excluded(articles: list[Article], team: Team) -> list[Article]:
+    """The short sections' candidates without what the team leaves out."""
+    return [a for a in articles if not team.excludes(f"{a.title}\n{a.content or ''}")]

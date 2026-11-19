@@ -126,3 +126,27 @@ def test_is_relevant_matches_keywords_in_title_or_content() -> None:
 
 def test_is_relevant_rejects_unrelated_article() -> None:
     assert not is_relevant(make_article("https://a/5", "Flávio marca e Palmeiras vence"), FLAMENGO)
+
+
+def test_an_excluded_term_drops_the_article() -> None:
+    from geral.teams import get_team
+
+    csa = get_team("csa")
+    police = make_article("https://a/1", "Membros da Mancha Azul são presos após briga")
+    in_text = make_article("https://a/2", "CSA vence o CRB").model_copy(
+        update={"content": "Integrantes da MANCHA AZUL estiveram no treino."}
+    )
+
+    assert not is_relevant(police, csa)
+    assert not is_relevant(in_text, csa)
+    assert is_relevant(make_article("https://a/3", "CSA vence o CRB no Rei Pelé"), csa)
+
+
+def test_excluded_terms_also_leave_the_short_sections() -> None:
+    from geral.processing.dedupe import without_excluded
+    from geral.teams import get_team
+
+    youth = make_article("https://a/1", "Sub-20 do CSA vence")
+    fans = make_article("https://a/2", "Mancha Azul faz festa no CT")
+
+    assert without_excluded([youth, fans], get_team("csa")) == [youth]
