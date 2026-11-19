@@ -42,7 +42,7 @@
         </p>
         {% endif %}
         {% if d.on_this_day %}
-        <p><b>Neste dia:</b> {{ d.on_this_day|join(" · ") }}
+        <p><b>Nesta semana:</b> {{ d.on_this_day|join(" · ") }}
           <form method="post" action="/revisao/{{ d.id }}/neste-dia/tirar" style="display:inline">
             <input type="hidden" name="t" value="{{ token }}">
             <button type="submit">Tirar</button>

@@ -57,7 +57,8 @@ revisão das edições (#50, #51) é a rede final. O dono não valida item a ite
   dos ídolos (mesmo critério acima; Wikidata P569). Texto por template, sem LLM:
   "Há 63 anos, nascia Bita, …" / "Em 19/08/1934, …".
 - **Na montagem** (notícias de time com `specials`): sorteio independente de cada seção com material
-  — história (chance alta, tipo também sorteado) e "Neste dia" (só se há fato na data); pode sair
+  — história (chance alta, tipo também sorteado) e "Nesta semana" (fatos até 3 dias antes ou depois
+  do envio; o título era "Neste dia", mas a janela trazia fatos de outro dia); pode sair
   uma, as duas ou nenhuma. Sem notícia e sem jogo, a história entra sempre. Com seção, as notícias
   vão a no máximo 6 tópicos (hoje 8). A história é **reservada** na montagem (`used_label` = rótulo
   da edição), para dois rascunhos não pegarem a mesma; se a edição não sair, ela não volta.

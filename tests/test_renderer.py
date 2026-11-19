@@ -759,9 +759,9 @@ def test_story_and_on_this_day_are_rendered() -> None:
     html, text = render(newsletter)
 
     assert "Como o Náutico virou Timbu" in html and "Timbu &amp; o apelido" in html
-    assert "História" in html and "Neste dia" in html
+    assert "História" in html and "Nesta semana" in html
     assert "https://pt.wikipedia.org/wiki/Clube_N%C3%A1utico_Capibaribe" in html
-    assert "== História ==" in text and "== Neste dia ==" in text
+    assert "== História ==" in text and "== Nesta semana ==" in text
     assert "Fonte: Clube Náutico Capibaribe — Mascote (Wikipédia)" in text
     assert html.index("Notícias") < html.index("Como o Náutico virou Timbu")
 
@@ -769,4 +769,4 @@ def test_story_and_on_this_day_are_rendered() -> None:
 def test_no_special_sections_without_them() -> None:
     html, text = render(full_newsletter())
 
-    assert "Neste dia" not in html and "== História ==" not in text
+    assert "Nesta semana" not in html and "== História ==" not in text
