@@ -1,6 +1,7 @@
 """Passages of the pt Wikipedia a story can be written from, each with a key of its own.
 
-- clube: sections of the club article about its symbols, mascot, stadium, fans, anthem, kit;
+- clube: sections of the club article (or subsections under one) about its symbols, mascot,
+  stadium, fans, anthem, kit, and its curiosities;
 - jogo: the subsections of the club's "História" and the historic-games sections of its classics;
 - idolo: articles linking to the club whose text calls the player an "ídolo" near the club's name
   (intro and "Carreira" only).
@@ -24,7 +25,9 @@ MAX_WORDS = 600
 IDOL_DISTANCE = 150  # characters between "ídolo" and a club term
 IDOL_CANDIDATES = 50
 HEADING = re.compile(r"^(={2,}) *(.+?) *\1 *$", re.MULTILINE)
-CLUB_SECTIONS = re.compile(r"símbolo|mascote|estádio|sede|torcida|hino|uniforme", re.IGNORECASE)
+CLUB_SECTIONS = re.compile(
+    r"símbolo|mascote|estádio|sede|torcida|hino|uniforme|curiosidade", re.IGNORECASE
+)
 GAME_SECTIONS = re.compile(
     r"jogos? históricos?|goleadas?|primeiro jogo|finais|final\b", re.IGNORECASE
 )
@@ -118,7 +121,8 @@ def _club(title: str, text: str) -> list[Passage]:
     for s in sections(text):
         if s.h2 == "História" and s.h3:
             found.append(_passage("jogo", title, s.h3, s.text, s.path))
-        elif s.h2 and CLUB_SECTIONS.search(s.name):
+        # The heading or the section above it ("Sedes e estádios" > "O Mutange").
+        elif s.h2 and CLUB_SECTIONS.search(s.path):
             found.append(_passage("clube", title, s.name, s.text, s.path))
     return [p for p in found if p]
 
