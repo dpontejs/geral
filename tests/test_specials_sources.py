@@ -143,3 +143,25 @@ def test_idol_passage_must_name_the_club_after_the_cut() -> None:
 
     assert sources._idol("Fulano", text, ("ABC",)) is not None  # the intro names the club
     assert sources._idol("Fulano", text.replace("e do ABC", ""), ("ABC",)) is None
+
+
+def test_a_subsection_under_a_club_section_is_a_clube_passage() -> None:
+    text = f"== Sedes e estádios ==\n\n=== O Mutange ===\n{FILLER}"
+
+    [p] = sources._club("Centro Sportivo Alagoano", text)
+
+    assert (p.kind, p.title) == ("clube", "Centro Sportivo Alagoano — O Mutange")
+
+
+def test_curiosities_are_clube_passages() -> None:
+    text = f"== Curiosidades ==\n\n=== Fernando Collor de Mello ===\n{FILLER}"
+
+    [p] = sources._club("Centro Sportivo Alagoano", text)
+
+    assert p.kind == "clube" and p.title.endswith("Fernando Collor de Mello")
+
+
+def test_other_sections_stay_out() -> None:
+    text = f"== Títulos ==\n{FILLER}\n\n== Elenco atual ==\n\n=== Goleiros ===\n{FILLER}"
+
+    assert sources._club("Centro Sportivo Alagoano", text) == []
