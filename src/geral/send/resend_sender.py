@@ -2,7 +2,8 @@ import html as html_lib
 import logging
 import re
 import uuid
-from email.utils import formataddr, parseaddr
+from email.headerregistry import Address
+from email.utils import parseaddr
 
 import httpx
 from tenacity import (
@@ -30,6 +31,12 @@ UNSUBSCRIBE_PLACEHOLDER = "https://unsubscribe.invalid/recipient"
 BET_TOKEN_PLACEHOLDER = "BET-TOKEN-PLACEHOLDER"
 BOLAO_CARD = re.compile(r"<!--bolao-->.*?<!--/bolao-->", re.DOTALL)
 BOLAO_MARKER = re.compile(r"<!--/?bolao-->\n?")
+
+
+def display_address(name: str, address: str) -> str:
+    """'Azulão News <azulao@…>' as is: Resend takes UTF-8 names, while `formataddr` would send
+    an RFC 2047 encoded word that some clients show literally."""
+    return str(Address(display_name=name, addr_spec=address))
 
 
 class SendError(Exception):
@@ -83,7 +90,7 @@ class ResendSender:
         _, address = parseaddr(settings.NEWSLETTER_FROM)
         return cls(
             api_key=settings.RESEND_API_KEY,
-            sender=formataddr((team.newsletter, team.sender_address(address))),
+            sender=display_address(team.newsletter, team.sender_address(address)),
             dry_run=settings.DRY_RUN,
         )
 

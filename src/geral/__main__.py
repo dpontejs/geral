@@ -823,6 +823,58 @@ def acervo(
                     typer.echo(f"  {story.body}\n  Fonte: {story.source_title}")
 
 
+@app.command("avisar-pedido")
+def notify_requesters(
+    team: TeamOption,
+    send_it: Annotated[
+        bool, typer.Option("--send", help="Send to everyone who asked and has not got it yet")
+    ] = False,
+    to: Annotated[
+        str | None, typer.Option("--to", help="Send it to this address only (a test)")
+    ] = None,
+) -> None:
+    """Tell who asked for the team (an e-mail on /pedir) that it was born, with its first edition
+    and the link to subscribe. Nobody is subscribed and nobody gets it twice; without --send or
+    --to it only counts who is waiting. Runs next to the page (SUBSCRIBERS_DB)."""
+    from geral.web.mailer import MailError, mailer_from_settings
+    from geral.web.store import normalize
+    from geral.web.team_requests import TeamRequestStore, team_key
+    from geral.web.welcome import add_born
+
+    _setup_logging()
+    club = _team(team)
+    settings = get_settings()
+    store = SubscriberStore(settings.SUBSCRIBERS_DB)
+    found = TeamRequestStore(settings.SUBSCRIBERS_DB).position(team_key(club.name))
+    asked = {normalize(e) for e in found[1].emails} if found else set()
+    mark = f"pedido:{club.slug}"
+    waiting = sorted(asked - set(store.active(club.slug)) - store.announced(mark))
+    typer.echo(f"{len(waiting)} esperam o aviso da {club.newsletter}.")
+    if not (send_it or to):
+        return
+    edition = store.latest_edition(club.slug)
+    if edition is None:
+        typer.echo(f"Publique antes a primeira edição da {club.newsletter} (run --publish-only).")
+        raise typer.Exit(code=1)
+    subscribe = f"{settings.PUBLIC_URL.rstrip('/')}/t/{club.slug}"
+    html, text = add_born(edition.html, edition.text, club, subscribe)
+    subject = f"Seu pedido foi atendido: {edition.subject}"
+    mailer = mailer_from_settings(settings)
+    sent = 0
+    for email in [to] if to else waiting:
+        try:
+            mailer.send_edition(
+                email, club, subject, html, text, unsubscribe_url=mailto_unsubscribe(settings)
+            )
+        except MailError as e:
+            typer.echo(f"Falhou para {email}: {e}")
+            continue
+        sent += 1
+        if not to:
+            store.mark_announced(mark, [email], _now())
+    typer.echo(f"Enviado para {sent}.")
+
+
 @app.command("edicao-geral")
 def edicao_geral(
     date: DateOption = None,

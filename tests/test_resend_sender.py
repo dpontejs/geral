@@ -227,3 +227,12 @@ def test_each_newsletter_has_its_own_sender_address() -> None:
         "nautico": "Timbu News <timbu@geral.test>",
         "flamengo": "Urubu News <news@geral.test>",  # the old readers keep its avatar
     }
+
+
+def test_an_accented_newsletter_name_goes_as_is() -> None:
+    # Resend takes the sender as plain text: an RFC 2047 "=?utf-8?q?...?=" would show as such.
+    settings = Settings(NEWSLETTER_FROM="news@geral.test")
+
+    assert ResendSender.from_settings(settings, get_team("csa")).sender == (
+        "Azulão News <azulao@geral.test>"
+    )

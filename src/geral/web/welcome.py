@@ -32,9 +32,28 @@ def welcome_text(team: Team) -> tuple[str, str]:
     return title, text
 
 
+def born_text(team: Team, subscribe_url: str) -> tuple[str, str]:
+    """For who asked for the team on the Geral: it was born, and this is its first edition."""
+    return f"A {team.newsletter} nasceu!", (
+        f"Você pediu o {team.name} na Geral com este e-mail, e o pedido foi atendido: a "
+        f"{team.newsletter} já existe. Abaixo vai o primeiro número. Para receber as próximas "
+        f"edições, assine em {subscribe_url}. Se não assinar, este é o único e-mail que você "
+        "recebe da gente."
+    )
+
+
 def add_welcome(html: str, text: str, team: Team) -> tuple[str, str]:
     """The edition with the welcome box (HTML) and paragraph (text) on top."""
-    title, body = welcome_text(team)
+    return add_box(html, text, team, *welcome_text(team))
+
+
+def add_born(html: str, text: str, team: Team, subscribe_url: str) -> tuple[str, str]:
+    """The team's first edition with the "it was born" box on top."""
+    return add_box(html, text, team, *born_text(team, subscribe_url))
+
+
+def add_box(html: str, text: str, team: Team, title: str, body: str) -> tuple[str, str]:
+    """The edition with a box (HTML) and paragraph (text) on top."""
     box = (
         f"<tr><td style='font-family:{FONT}; padding:24px 24px 0 24px'>"
         '<table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>'
