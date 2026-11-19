@@ -13,8 +13,9 @@ primeiro.
 
 ## Fora de escopo
 
-- O e-mail "sua torcida nasceu" (comando que avisa quem pediu): PR seguinte, quando houver o
-  primeiro time a nascer de um pedido. Aqui o e-mail só fica guardado. Como ele não é
+- O e-mail "sua torcida nasceu" (comando que avisa quem pediu): feito depois, com o CSA
+  (`geral avisar-pedido --team <slug> [--send | --to <e-mail>]`, na VPS, depois de publicar a
+  primeira edição). Aqui o e-mail só fica guardado. Como ele não é
   confirmado, o aviso será um e-mail único, dizendo que alguém pediu o time com aquele endereço e
   convidando a assinar; não inscreve ninguém.
 - Redesenho do portal (outro chat): o cartão "Seu time?" só vira link, e a página nova usa os

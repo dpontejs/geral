@@ -44,7 +44,7 @@ Ordem de execução. Cada fatia vira um PR; a página da fatia fica em `docs/fea
 
 ## Fatia 3 — Pedido de time e ranking de torcidas
 - [x] Formulário "meu time não está aqui" (time + e-mail opcional para avisar quando nascer) e os mais pedidos (`docs/features/pedido-de-time.md`)
-- [ ] Comando que avisa por e-mail quem pediu, quando a torcida nascer
+- [x] Comando que avisa por e-mail quem pediu, quando a torcida nascer (`geral avisar-pedido`, primeiro uso com o CSA)
 - [ ] Página pública de ranking: inscritos por time e por série
 
 ## Fatia 4 — Edição geral por série (`docs/features/edicao-geral.md`)
