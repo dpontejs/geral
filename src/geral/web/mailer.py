@@ -10,7 +10,7 @@ from jinja2 import Environment, FileSystemLoader, select_autoescape
 
 from geral.config import Settings
 from geral.send.recipients import Recipient
-from geral.send.resend_sender import ResendSender, SendError
+from geral.send.resend_sender import ResendSender, SendError, display_address
 from geral.teams import Team
 
 logger = logging.getLogger(__name__)
@@ -94,7 +94,7 @@ class ResendConfirmationMailer:
         """A team's latest edition to a new subscriber, same path as the newsletter run."""
         sender = ResendSender(
             self.api_key,
-            formataddr((team.newsletter, team.sender_address(self.address))),
+            display_address(team.newsletter, team.sender_address(self.address)),
             dry_run=False,
             client=self._client,
         )
