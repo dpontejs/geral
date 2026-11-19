@@ -54,13 +54,8 @@ python scripts/make_brand.py brand_src/vasco.jpg src/geral/static/vasco Almirant
 python scripts/make_brand.py brand_src/palmeiras.jpg src/geral/static/palmeiras Porco News "#006437" "#1C1C1C" Palmeiras --circle
 python scripts/make_brand.py brand_src/abc.jpg src/geral/static/abc Elefante News "#141414" "#6B6B6B" ABC
 python scripts/make_brand.py brand_src/nautico.jpg src/geral/static/nautico Timbu News "#C60000" "#1C1C1C" Náutico --circle
-python scripts/make_brand.py brand_src/csa.png src/geral/static/csa Azulão News "#1B4B9B" "#1C1C1C" CSA --circle
+python scripts/make_brand.py brand_src/csa.jpg src/geral/static/csa Azulão News "#1B4B9B" "#1C1C1C" CSA --circle
 ```
-
-O ícone do CSA é **provisório**: foi desenhado à mão em SVG (`scripts/brand/csa.svg`, com o
-quadriculado que o script espera em volta do círculo) e renderizado em PNG no Chromium, porque a
-sessão não tinha o Nano Banana. Para trocar, gerar o ícone com o prompt abaixo, salvar em
-`brand_src/csa.png` e rodar a linha acima.
 
 ## Prompts (Nano Banana)
 
