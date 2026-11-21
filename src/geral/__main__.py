@@ -12,6 +12,7 @@ from rich.console import Console
 from rich.table import Table
 
 from geral import __version__, pipeline
+from geral.central.build import build_snapshot
 from geral.config import get_settings
 from geral.edition import edition_from_slot, resolve_match_edition
 from geral.general import GENERAL_EDITION, GENERAL_SLUG
@@ -972,6 +973,23 @@ def edicao_geral(
             # Sent but not on the page: say it loudly, or a manual retry would send it again.
             typer.echo(f"{edition.label}: enviada, mas não publicada no portal: {e}", err=True)
             raise typer.Exit(code=1) from e
+
+
+@app.command()
+def central(
+    out: Annotated[
+        Path | None, typer.Option("--out", help="Where to write it (default: the site's file)")
+    ] = None,
+) -> None:
+    """Rebuild the Central snapshot (tables, rounds, summaries of the four séries) now. The site
+    does it by itself every CENTRAL_REFRESH seconds; this is for a first run or a check."""
+    from geral.central.refresh import Refresher, snapshot_path
+
+    _setup_logging()
+    path = out or snapshot_path(get_settings())
+    if not Refresher(path, 0, build=build_snapshot).run_once():
+        raise typer.Exit(code=1)
+    typer.echo(f"Central atualizada em {path}")
 
 
 def _setup_logging() -> None:

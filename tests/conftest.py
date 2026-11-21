@@ -15,6 +15,7 @@ def isolated_settings(monkeypatch: pytest.MonkeyPatch, tmp_path) -> None:
     monkeypatch.chdir(tmp_path)
     for name in Settings.model_fields:
         monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv("CENTRAL_REFRESH", "0")  # no thread calling ge from the web tests
     get_settings.cache_clear()
     yield
     get_settings.cache_clear()

@@ -17,6 +17,7 @@ import sqlite3
 import unicodedata
 from collections import defaultdict, deque
 from collections.abc import Callable
+from contextlib import asynccontextmanager
 from datetime import UTC, date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Annotated, Literal
@@ -35,6 +36,7 @@ from fastapi.templating import Jinja2Templates
 from jinja2 import select_autoescape
 from pydantic import AwareDatetime, BaseModel, Field, model_validator
 
+from geral.central.refresh import Refresher, snapshot_path
 from geral.config import Settings, get_settings
 from geral.games import calendario, craque, onde_jogou, quem_e
 from geral.games.carreira import codigo as carreira_codigo
@@ -531,7 +533,19 @@ def create_app(
     def craque_number() -> int:
         return max(1, craque.puzzle_number(now().astimezone(BRASILIA).date()))
 
-    app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+    central_file = snapshot_path(settings)
+
+    @asynccontextmanager
+    async def lifespan(_app: FastAPI):
+        refresher = None
+        if settings.CENTRAL_REFRESH > 0:  # the Central's snapshot, rebuilt in a thread
+            refresher = Refresher(central_file, settings.CENTRAL_REFRESH)
+            refresher.start()
+        yield
+        if refresher:
+            refresher.stop()
+
+    app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
     if legacy_team:
         # Old e-mails load the moved-in app's brand from the root of /static.
         for name in ("logo-email.png", "icon-512.png", "og-image.png"):
