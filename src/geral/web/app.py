@@ -36,6 +36,7 @@ from fastapi.templating import Jinja2Templates
 from jinja2 import select_autoescape
 from pydantic import AwareDatetime, BaseModel, Field, model_validator
 
+from geral.central.build import SLUGS as SERIE_SLUGS
 from geral.central.page import band_colors, short_day, short_time
 from geral.central.refresh import Refresher, snapshot_path
 from geral.central.store import load_snapshot
@@ -1305,6 +1306,48 @@ def create_app(
             or next(iter(series), None)
         )
         return page(request, "central.html.j2", snapshot=snapshot, series=series, serie=chosen)
+
+    NEWS_PER_PAGE = 12  # four rows of three on a computer
+
+    @app.get("/central/noticias", response_class=HTMLResponse)
+    def central_news(request: Request, serie: str | None = None, pagina: str | None = None):
+        """The four séries' ge stories, newest first, optionally one série."""
+        snapshot = load_snapshot(central_file)
+        news = snapshot.news if snapshot else []
+        serie = serie if serie in SERIE_SLUGS.values() else None
+        matching = [n for n in news if serie is None or n.serie_slug == serie]
+        total = max(1, -(-len(matching) // NEWS_PER_PAGE))
+        number = min(max(int(pagina) if (pagina or "").isdigit() else 1, 1), total)
+        shown = matching[(number - 1) * NEWS_PER_PAGE : number * NEWS_PER_PAGE]
+        base = f"/central/noticias?serie={serie}&" if serie else "/central/noticias?"
+        pages = [f"{base}pagina={n}" for n in range(1, total + 1)]
+        names = [(slug, name) for name, slug in SERIE_SLUGS.items()]
+        return page(
+            request,
+            "central_noticias.html.j2",
+            snapshot=snapshot,
+            news=shown,
+            serie=serie,
+            series_names=names,
+            pages=pages,
+            page_no=number,
+        )
+
+    @app.get("/central/noticias/{item_id}", response_class=HTMLResponse)
+    def central_story(request: Request, item_id: str):
+        """A story's opening inside the Geral, with the way to the whole text on ge."""
+        snapshot = load_snapshot(central_file)
+        news = snapshot.news if snapshot else []
+        item = next((n for n in news if n.id == item_id), None)
+        if item is None:
+            return message(
+                request,
+                "Notícia não encontrada",
+                "Ela já saiu do feed da Central, que guarda as notícias das últimas 48 horas.",
+                status=404,
+            )
+        more = [n for n in news if n.serie_slug == item.serie_slug and n.id != item.id][:4]
+        return page(request, "central_noticia.html.j2", item=item, more=more)
 
     @app.get("/jogos", response_class=HTMLResponse)
     def games_page(request: Request):

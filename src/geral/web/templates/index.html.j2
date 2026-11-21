@@ -120,6 +120,13 @@
       {% endfor %}
     </div>
     {% endif %}
+    {% if central and central.news %}
+    <div class="central-news">
+      <b>Últimas notícias</b>
+      <ul>{% for n in central.news[:3] %}<li><a href="/central/noticias/{{ n.id }}"><span>{{ n.serie_name }}</span>{{ n.title }}</a></li>{% endfor %}</ul>
+      <a class="more" href="/central/noticias">Todas as notícias →</a>
+    </div>
+    {% endif %}
   </div>
 </section>
 

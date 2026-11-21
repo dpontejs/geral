@@ -70,7 +70,7 @@ Ordem de execução. Cada fatia vira um PR; a página da fatia fica em `docs/fea
 
 ## Central (`docs/features/central.md`)
 - [x] Tabelas, rodadas, playoffs e resumo das Séries A–D em `/central`, com chamada na inicial
-- [ ] Aba de notícias: feed do ge com página de leitura e "Continue lendo no ge"
+- [x] Aba de notícias: feed do ge com página de leitura e "Continue lendo no ge", paginada
 
 ## Fatia 5 — Cartola simples (o bolão por torcida já vem na 2a)
 

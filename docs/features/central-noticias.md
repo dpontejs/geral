@@ -1,7 +1,7 @@
 # Central: aba de notícias (parte 2 de 2)
 
 - **Data:** 2026-11-21
-- **Status:** proposta
+- **Status:** implementada (aguardando PR)
 - **ADRs:** —
 
 ## Objetivo
@@ -33,18 +33,25 @@ uma página de leitura dentro da Geral, com o começo da matéria e o link para 
   uma palavra, com reticências. Falha na extração: a página mostra só a linha fina.
 - **Atualização:** de hora em hora, na mesma thread da Central (como os próximos jogos).
 - **Página inicial:** o bloco "Central" ganha as três manchetes mais novas.
+- **Paginação:** 12 por página (`?pagina=N`, com a série mantida; fora do intervalo vai para a
+  primeira ou a última).
+- **Sem voltar ao topo:** abas, séries, filtro e páginas (`a[data-swap]`) trocam só o
+  `[data-central]` por `fetch`, com `pushState` e a rolagem mantida (`static/geral/central.js`);
+  sem JavaScript, são links comuns.
 
 ## Critérios de aceite (como testes)
 
-- [ ] `test_collect_news_merges_series_newest_first`: dados os feeds da A e da B, quando coleta, então uma lista só, da mais nova para a mais velha, com a série de cada uma.
-- [ ] `test_collect_news_skips_videos_and_repeats`: URL sem `/noticia/` fica de fora; a mesma URL em duas séries entra uma vez.
-- [ ] `test_collect_news_reuses_lead_and_keeps_empty_serie`: notícia já conhecida não é baixada de novo; série com feed vazio mantém as anteriores.
-- [ ] `test_first_paragraph_cuts_on_a_word`.
-- [ ] `test_news_refresh_hourly`: o retrato só recoleta notícias depois de uma hora.
-- [ ] `test_news_page_lists_and_filters`: `/central/noticias?serie=b` só com a B; cartões com foto, título e linha fina.
-- [ ] `test_news_reading_page`: título, linha fina, primeiro parágrafo e "Continue lendo no ge" com a URL da matéria.
-- [ ] `test_news_reading_page_unknown_id_is_404`.
-- [ ] `test_home_shows_latest_headlines`.
+- [x] `test_collect_news_merges_series_newest_first`: dados os feeds da A e da B, quando coleta, então uma lista só, da mais nova para a mais velha, com a série de cada uma.
+- [x] `test_collect_news_skips_videos_and_repeats`: URL sem `/noticia/` fica de fora; a mesma URL em duas séries entra uma vez.
+- [x] `test_collect_news_reuses_lead_and_keeps_empty_serie`: notícia já conhecida não é baixada de novo; série com feed vazio mantém as anteriores.
+- [x] `test_first_paragraph_cuts_on_a_word`.
+- [x] `test_news_refresh_hourly`: o retrato só recoleta notícias depois de uma hora.
+- [x] `test_news_page_lists_and_filters`: `/central/noticias?serie=b` só com a B; cartões com foto, título e linha fina.
+- [x] `test_news_reading_page`: título, linha fina, primeiro parágrafo e "Continue lendo no ge" com a URL da matéria.
+- [x] `test_news_reading_page_unknown_id_is_404`.
+- [x] `test_home_shows_latest_headlines`.
+- [x] `test_news_are_paged_by_twelve` e `test_news_pages_keep_the_serie_and_clamp`.
+- [x] `test_central_links_swap_in_place`.
 
 ## Verificação ponta a ponta
 

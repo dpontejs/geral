@@ -43,10 +43,12 @@
 {% endmacro %}
 
 {% block content %}
+<div data-central>
 <section class="central-head wall">
   <div class="wrap">
     <h1>Central</h1>
     <p class="lead">Tabela, rodada e quem sobe e quem cai nas Séries A, B, C e D.{% if snapshot %} Atualizado às {{ snapshot.updated_at | short_time }} de {{ snapshot.updated_at | short_day }}.{% endif %}</p>
+    {% set central_tab = "tabelas" %}{% include "_central_tabs.html.j2" %}
     {% if snapshot and snapshot.next_matches %}
     <div class="next board">
       <h2 class="lamp">Próximos jogos da Geral</h2>
@@ -74,7 +76,7 @@
     {% else %}
     <nav class="series-tabs" aria-label="Séries">
       {% for s in series %}
-      <a {% if s.slug == serie.slug %}aria-current="page" {% endif %}href="/central?serie={{ s.slug }}"><b>{{ s.name }}</b><span>{{ status_label(s) }}</span></a>
+      <a {% if s.slug == serie.slug %}aria-current="page" {% endif %}data-swap href="/central?serie={{ s.slug }}"><b>{{ s.name }}</b><span>{{ status_label(s) }}</span></a>
       {% endfor %}
     </nav>
 
@@ -136,19 +138,6 @@
     {% endif %}
   </div>
 </section>
-<script>
-document.querySelectorAll("[data-rounds]").forEach(function (box) {
-  var rounds = Array.prototype.slice.call(box.querySelectorAll(".round"));
-  var label = box.querySelector(".round-label");
-  var prev = box.querySelector('[data-step="-1"]'), next = box.querySelector('[data-step="1"]');
-  var at = rounds.findIndex(function (r) { return !r.hidden; });
-  function show(i) {
-    rounds[at].hidden = true; at = i; rounds[at].hidden = false;
-    label.textContent = "Rodada " + rounds[at].dataset.round;
-    prev.disabled = at === 0; next.disabled = at === rounds.length - 1;
-  }
-  [prev, next].forEach(function (b) { b.addEventListener("click", function () { show(at + Number(b.dataset.step)); }); });
-  show(at);
-});
-</script>
+</div>
+<script src="/static/geral/central.js?v={{ asset_version }}" defer></script>
 {% endblock %}

@@ -1,0 +1,44 @@
+{% extends "base.html.j2" %}
+{% block title %}Notícias · Central · Geral{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/geral/central.css?v={{ asset_version }}">{% endblock %}
+{% block content %}
+<div data-central>
+<section class="central-head wall">
+  <div class="wrap">
+    <h1>Central</h1>
+    <p class="lead">As notícias das Séries A, B, C e D, do ge. Abra uma para ler o começo aqui e o resto no ge.{% if snapshot and snapshot.news_at %} Atualizado às {{ snapshot.news_at | short_time }} de {{ snapshot.news_at | short_day }}.{% endif %}</p>
+    {% set central_tab = "noticias" %}{% include "_central_tabs.html.j2" %}
+  </div>
+</section>
+<section class="central-body">
+  <div class="wrap">
+    <nav class="news-filter" aria-label="Filtrar por série">
+      <a data-swap href="/central/noticias"{% if not serie %} aria-current="page"{% endif %}>Todas</a>
+      {% for slug, name in series_names %}<a data-swap href="/central/noticias?serie={{ slug }}"{% if serie == slug %} aria-current="page"{% endif %}>{{ name }}</a>{% endfor %}
+    </nav>
+    {% if news %}
+    <div class="news-grid">
+      {% for n in news %}
+      <a class="news-card" href="/central/noticias/{{ n.id }}">
+        {% if n.image_url %}<img src="{{ n.image_url }}" alt="" loading="lazy">{% else %}<span class="noimg"></span>{% endif %}
+        <span class="tag">{{ n.serie_name }} · {{ n.published_at | short_day }} · {{ n.published_at | short_time }}</span>
+        <h2>{{ n.title }}</h2>
+        {% if n.summary %}<p>{{ n.summary }}</p>{% endif %}
+      </a>
+      {% endfor %}
+    </div>
+    {% if pages | length > 1 %}
+    <nav class="pager" aria-label="Páginas de notícias">
+      {% if page_no > 1 %}<a data-swap="list" href="{{ pages[page_no - 2] }}" rel="prev">‹ Anteriores</a>{% endif %}
+      {% for url in pages %}<a data-swap="list" href="{{ url }}"{% if loop.index == page_no %} aria-current="page"{% endif %}>{{ loop.index }}</a>{% endfor %}
+      {% if page_no < pages | length %}<a data-swap="list" href="{{ pages[page_no] }}" rel="next">Próximas ›</a>{% endif %}
+    </nav>
+    {% endif %}
+    {% else %}
+    <div class="sheet empty"><h2>Sem notícias por aqui</h2><p>{% if snapshot %}Nenhuma notícia dessa série nas últimas 48 horas.{% else %}As notícias estão sendo buscadas agora. Volte em alguns minutos.{% endif %}</p></div>
+    {% endif %}
+  </div>
+</section>
+</div>
+<script src="/static/geral/central.js?v={{ asset_version }}" defer></script>
+{% endblock %}
