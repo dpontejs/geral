@@ -1,0 +1,31 @@
+{% extends "base.html.j2" %}
+{% block title %}{{ item.title }} · Geral{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/geral/central.css?v={{ asset_version }}">{% endblock %}
+{% block content %}
+<section class="central-body story-page">
+  <div class="wrap">
+    <a class="back-link" href="/central/noticias?serie={{ item.serie_slug }}">← Notícias da {{ item.serie_name }}</a>
+    <article class="story sheet">
+      <span class="tag">{{ item.serie_name }} · {{ item.published_at | short_day }} · {{ item.published_at | short_time }}</span>
+      <h1>{{ item.title }}</h1>
+      {% if item.summary %}<p class="dek">{{ item.summary }}</p>{% endif %}
+      {% if item.image_url %}<figure><img src="{{ item.image_url }}" alt=""><figcaption>Imagem: ge</figcaption></figure>{% endif %}
+      {% if item.lead %}<p class="opening">{{ item.lead }}</p>{% endif %}
+      <a class="btn read-on" href="{{ item.url }}" target="_blank" rel="noopener">Continue lendo no ge →</a>
+      <p class="credit">Matéria do ge. A Geral mostra só o começo; o texto completo está no site deles.</p>
+    </article>
+    {% if more %}
+    <h2>Mais da {{ item.serie_name }}</h2>
+    <div class="news-grid">
+      {% for n in more %}
+      <a class="news-card" href="/central/noticias/{{ n.id }}">
+        {% if n.image_url %}<img src="{{ n.image_url }}" alt="" loading="lazy">{% else %}<span class="noimg"></span>{% endif %}
+        <span class="tag">{{ n.published_at | short_day }} · {{ n.published_at | short_time }}</span>
+        <h2>{{ n.title }}</h2>
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% endblock %}

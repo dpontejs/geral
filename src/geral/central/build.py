@@ -206,5 +206,11 @@ def build_snapshot(
         except Exception as e:
             logger.warning("Central: next matches not refreshed: %s", e)
     return CentralSnapshot(
-        updated_at=now, series=views, next_matches=matches, next_matches_at=fetched
+        updated_at=now,
+        series=views,
+        next_matches=matches,
+        next_matches_at=fetched,
+        # News are refreshed after the tables are saved (refresh.Refresher): kept as they were.
+        news=previous.news if previous else [],
+        news_at=previous.news_at if previous else None,
     )

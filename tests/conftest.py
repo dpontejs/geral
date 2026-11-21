@@ -63,3 +63,11 @@ def clock() -> Clock:
 @pytest.fixture
 def client(store, mailer, clock):
     return make_client(store, mailer, clock)
+
+
+@pytest.fixture(autouse=True)
+def no_central_news(monkeypatch: pytest.MonkeyPatch) -> None:
+    """The Central's refresher collects ge news by default: never from the tests (offline)."""
+    import geral.central.refresh as refresh
+
+    monkeypatch.setattr(refresh, "collect_news", lambda now, old, client=None: [])

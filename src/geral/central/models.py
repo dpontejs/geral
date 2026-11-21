@@ -101,8 +101,24 @@ class TeamNextMatch(BaseModel):
     is_home: bool = True
 
 
+class NewsItem(BaseModel):
+    """A ge story in the Central's feed: never the whole text, only its opening (copyright)."""
+
+    id: str  # first 12 hex of the URL's SHA-1: stable across refreshes
+    serie_slug: Literal["a", "b", "c", "d"]
+    serie_name: str
+    title: str
+    summary: str | None = None  # ge's linha fina
+    image_url: str | None = None
+    url: str
+    published_at: datetime
+    lead: str | None = None  # the first paragraph, cut short
+
+
 class CentralSnapshot(BaseModel):
     updated_at: datetime
     series: list[SerieView]
     next_matches: list[TeamNextMatch] = []
     next_matches_at: datetime | None = None  # fetched hourly, not on every refresh
+    news: list[NewsItem] = []
+    news_at: datetime | None = None  # hourly too
