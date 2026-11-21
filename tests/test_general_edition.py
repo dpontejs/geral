@@ -302,3 +302,28 @@ def test_edicao_geral_publish_only_needs_the_portal_token(monkeypatch, tmp_path)
 
     assert result.exit_code != 0
     assert "SUBSCRIBERS_API_TOKEN" in result.output
+
+
+def test_edicao_geral_send_carries_the_pending_note(monkeypatch, tmp_path) -> None:
+    sent = []
+    monkeypatch.setenv("NEWSLETTER_RECIPIENTS", "dono@example.com")
+    monkeypatch.setenv("DRY_RUN", "false")
+    monkeypatch.setenv("RESEND_API_KEY", "key")
+    monkeypatch.setattr(cli, "collect_week", lambda start, end: WEEKS)
+    monkeypatch.setattr(cli, "get_llm_client", lambda settings: FakeLLMClient(responder))
+    monkeypatch.setattr(cli, "fetch_note", lambda settings, team: "Conheça a Central.")
+    monkeypatch.setattr(
+        cli.ResendSender,
+        "send",
+        lambda self, subject, html, text, r: sent.append((subject, html, text)) or ["id"],
+    )
+
+    result = CliRunner().invoke(
+        cli.app,
+        ["edicao-geral", "--date", "2026-11-09", "--out", str(tmp_path / "g.html"), "--send"],
+    )
+
+    assert result.exit_code == 0, result.output
+    ((subject, html, text),) = sent
+    assert subject.startswith("Novidades! Geral — Edição geral")
+    assert "Conheça a Central." in html and "Conheça a Central." in text

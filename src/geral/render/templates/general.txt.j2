@@ -5,6 +5,11 @@ GERAL — {{ e.label | upper }}
 
 {{ e.intro }}
 {% endif %}
+{% if note %}
+
+== Novidades ==
+{{ note }}
+{% endif %}
 {% for s in e.series %}{% set w = s.week %}
 
 == {{ s.name | upper }} ==

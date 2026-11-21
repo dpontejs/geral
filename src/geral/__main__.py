@@ -39,6 +39,7 @@ from geral.schedule import due as due_slot
 from geral.send.recipients import (
     LatestEdition,
     fetch_draft,
+    fetch_note,
     latest_edition,
     mailto_unsubscribe,
     mark_draft_sent,
@@ -442,6 +443,8 @@ def _run_stage(
                     report=report,
                     published_topics=_published_topics(settings, club, resolved),
                 )
+                if not publish_only:  # the page and the welcome e-mails stay plain
+                    newsletter.note = fetch_note(settings, club.slug)
                 if stage == "send":
                     typer.echo(f"{resolved.label}: sem revisão (rascunho ausente), montada agora.")
             _fill_report(report, newsletter)
@@ -549,6 +552,7 @@ def _deliver(
             page_url=subscribe,
         )
 
+    note = note or newsletter.note  # --note, or the pending `geral novidade` kept in the draft
     html, text = render_edition(note)
     html_path = _save_copy(settings, club, newsletter, html, text)
 
@@ -932,11 +936,16 @@ def edicao_geral(
         llm = None
     edition = build_general(start, end, weeks, llm)
     static = f"{settings.PUBLIC_URL.rstrip('/')}/static/geral"
-    html, text = render_general(
-        edition,
-        static_url=static if settings.PUBLIC_URL.startswith("https://") else None,
-        unsubscribe_url=UNSUBSCRIBE_PLACEHOLDER,
-    )
+
+    def render_edition(note: str | None) -> tuple[str, str]:
+        return render_general(
+            edition,
+            static_url=static if settings.PUBLIC_URL.startswith("https://") else None,
+            unsubscribe_url=UNSUBSCRIBE_PLACEHOLDER,
+            note=note,
+        )
+
+    html, text = render_edition(None)  # the page and the welcome e-mails stay plain
     mailto = mailto_unsubscribe(settings)
     path = out or Path("out") / f"geral-{end:%Y-%m-%d}.html"
     path.parent.mkdir(parents=True, exist_ok=True)
@@ -957,8 +966,11 @@ def edicao_geral(
     sender = ResendSender(
         settings.RESEND_API_KEY, formataddr(("Geral", address)), dry_run=settings.DRY_RUN
     )
+    note = fetch_note(settings, GENERAL_SLUG)
+    mail_html, mail_text = render_edition(note) if note else (html, text)
+    subject = f"Novidades! {edition.subject}" if note else edition.subject
     try:
-        sender.send(edition.subject, html, text, recipients)
+        sender.send(subject, mail_html, mail_text, recipients)
     except SendError as e:
         typer.echo(f"Envio falhou: {e}", err=True)
         raise typer.Exit(code=1) from e
@@ -973,6 +985,30 @@ def edicao_geral(
             # Sent but not on the page: say it loudly, or a manual retry would send it again.
             typer.echo(f"{edition.label}: enviada, mas não publicada no portal: {e}", err=True)
             raise typer.Exit(code=1) from e
+
+
+@app.command()
+def novidade(
+    text: Annotated[str | None, typer.Argument(help="O aviso, em pt-BR")] = None,
+    cancelar: Annotated[
+        bool, typer.Option("--cancelar", help="Tira o aviso que ainda não saiu")
+    ] = False,
+) -> None:
+    """Announcement in the "Novidades" box on top of the next edition of every team and of the
+    edição geral, once each. Runs next to the page (SUBSCRIBERS_DB); a new one replaces the old."""
+    from geral.web.notes import NoteStore
+
+    notes = NoteStore(get_settings().SUBSCRIBERS_DB)
+    if cancelar:
+        notes.cancel()
+        typer.echo("Aviso cancelado: as próximas edições saem sem ele.")
+        return
+    if not text or not text.strip():
+        current = notes.latest()
+        typer.echo(f"Aviso atual: {current.text}" if current else "Nenhum aviso pendente.")
+        return
+    notes.create(text, _now())
+    typer.echo("Aviso gravado: vai no topo da próxima edição de cada time e da edição geral.")
 
 
 @app.command()

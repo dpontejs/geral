@@ -61,6 +61,7 @@ from geral.teams import Team, load_teams
 from geral.web.bolao import TZ, BolaoStore
 from geral.web.carreira_placar import PlacarStore
 from geral.web.mailer import Mailer, MailError, mailer_from_settings
+from geral.web.notes import NoteStore
 from geral.web.palette import club_palette
 from geral.web.scoreboard import animation_svg
 from geral.web.store import RequestResult, SubscriberStore, normalize
@@ -296,6 +297,7 @@ def create_app(
     team_requests = team_requests or TeamRequestStore(store.path)
     duels = DuelStore(store.path)  # jogo da velha by link: its own table in the same SQLite
     duel_limiter = RateLimiter(DUELS_PER_NETWORK, timedelta(hours=1))
+    notes = NoteStore(store.path)  # `geral novidade`: on top of each team's next edition
     placar = PlacarStore(store.path)  # Carreira's Fábrica de craques: its own table, same SQLite
     placar_limiter = RateLimiter(CARREIRAS_POR_REDE, timedelta(hours=1))
     catalog = teams if teams is not None else load_teams()
@@ -853,6 +855,16 @@ def create_app(
             for email in store.active(team)
         ]
 
+    @app.get("/api/teams/{team}/note")
+    def team_note(request: Request, team: str):
+        """The announcement for the team's next edition, if it has not published one since."""
+        if not authorized(request):
+            return unauthorized()
+        if team not in catalog:
+            return unknown_team()
+        latest = store.latest_edition(team)
+        return {"text": notes.pending(latest.published_at if latest else None)}
+
     @app.get("/api/teams/{team}/latest-edition")
     def latest_edition(request: Request, team: str):
         # Lets a second trigger of the same run see that the edition already went out.
@@ -1069,11 +1081,13 @@ def create_app(
         draft = store.draft_by_id(draft_id) if review_owner(t) else None
         if draft is None:
             return not_found(request)
+        kept = kept_newsletter(draft)
         html, _ = render(
-            kept_newsletter(draft),
+            kept,
             unsubscribe_url=UNSUBSCRIBE_PLACEHOLDER,
             subscribe_url=public_url,
             page_url=public_url,
+            note=kept.note,  # the owner sees the announcement before it goes
         )
         html = personalize(html, None).replace(UNSUBSCRIBE_PLACEHOLDER, f"{public_url}/")
         return private(HTMLResponse(html))

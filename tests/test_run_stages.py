@@ -320,3 +320,32 @@ def test_run_release_without_a_draft_sends_nothing(env) -> None:
 
     assert result.exit_code == 1
     assert not resend.called
+
+
+@respx.mock
+def test_build_keeps_the_note_in_the_draft_and_send_uses_it(env) -> None:
+    enable_subscriptions(env)
+    use(env, [ARTICLE], MATCH)
+    respx.get(DRAFT).mock(return_value=httpx.Response(404))
+    respx.get("https://news.test/api/teams/flamengo/note").mock(
+        return_value=httpx.Response(200, json={"text": "A Geral agora tem uma Central."})
+    )
+    save = respx.put(DRAFT).mock(return_value=httpx.Response(204))
+
+    assert run("build").exit_code == 0
+    body = json.loads(save.calls.last.request.content)
+    assert body["newsletter"]["note"] == "A Geral agora tem uma Central."
+
+    respx.get(DRAFT).mock(
+        return_value=httpx.Response(
+            200, json=body | {"held": False, "removed_topics": [], "sent_at": None}
+        )
+    )
+    respx.post(DRAFT + "/sent").mock(return_value=httpx.Response(204))
+    respx.put("https://news.test/api/teams/flamengo/latest-edition").mock(
+        return_value=httpx.Response(204)
+    )
+    route = respx.post(RESEND_URL).mock(return_value=sent(["e1"]))
+    assert run("send").exit_code == 0
+    mails = json.loads(route.calls.last.request.content)
+    assert all("A Geral agora tem uma Central." in m["html"] for m in mails)

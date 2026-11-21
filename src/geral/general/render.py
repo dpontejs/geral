@@ -18,11 +18,20 @@ COLORS = {
 
 
 def render_general(
-    edition: GeneralEdition, static_url: str | None = None, unsubscribe_url: str | None = None
+    edition: GeneralEdition,
+    static_url: str | None = None,
+    unsubscribe_url: str | None = None,
+    note: str | None = None,
 ) -> tuple[str, str]:
     """`static_url` is the public `/static/geral` with the logo and the field art
     (scripts/make_email_art.py); without it (a local preview) the e-mail has no images."""
     return render_pair(
         "general",
-        {"e": edition, "static": static_url, "unsubscribe_url": unsubscribe_url, **COLORS},
+        {
+            "e": edition,
+            "static": static_url,
+            "unsubscribe_url": unsubscribe_url,
+            "note": note,  # `geral novidade`: the "Novidades" box under the opening
+            **COLORS,
+        },
     )

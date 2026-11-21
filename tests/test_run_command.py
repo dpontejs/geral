@@ -860,3 +860,58 @@ def test_rerun_of_the_same_edition_does_not_hide_its_own_topics(env, monkeypatch
 
     assert result.exit_code == 0, result.output
     assert "Assunto desta edição" not in llm.prompts[0]
+
+
+@respx.mock
+def test_run_puts_the_pending_note_on_top_once(env, tmp_path) -> None:
+    env.setenv("SUBSCRIBERS_API_TOKEN", "api-token")
+    env.setenv("PUBLIC_URL", "https://news.test")
+    get_settings.cache_clear()
+    use(env, [ARTICLE], MATCH)
+    respx.get("https://news.test/api/teams/flamengo/latest-edition").mock(
+        return_value=httpx.Response(404)
+    )
+    respx.get("https://news.test/api/teams/flamengo/note").mock(
+        return_value=httpx.Response(200, json={"text": "A Geral agora tem uma Central."})
+    )
+    respx.get(API, params={"team": "flamengo"}).mock(return_value=httpx.Response(200, json=[]))
+    route = respx.post(RESEND_URL).mock(return_value=sent(["e1"]))
+    page = respx.put("https://news.test/api/teams/flamengo/latest-edition").mock(
+        return_value=httpx.Response(204)
+    )
+
+    result = CliRunner().invoke(
+        cli.app, ["run", "--team", "flamengo", "--edition", "news", "--date", "2026-10-12"]
+    )
+
+    assert result.exit_code == 0, result.output
+    (mail,) = json.loads(route.calls.last.request.content)
+    assert mail["subject"].startswith("Novidades! ")
+    assert "Novidades" in mail["html"] and "A Geral agora tem uma Central." in mail["html"]
+    published = json.loads(page.calls.last.request.content)
+    assert "A Geral agora tem uma Central." not in published["html"]  # the page keeps it plain
+
+
+@respx.mock
+def test_run_without_a_note_api_still_sends(env, tmp_path) -> None:
+    env.setenv("SUBSCRIBERS_API_TOKEN", "api-token")
+    env.setenv("PUBLIC_URL", "https://news.test")
+    get_settings.cache_clear()
+    use(env, [ARTICLE], MATCH)
+    respx.get("https://news.test/api/teams/flamengo/latest-edition").mock(
+        return_value=httpx.Response(404)
+    )
+    respx.get("https://news.test/api/teams/flamengo/note").mock(return_value=httpx.Response(500))
+    respx.get(API, params={"team": "flamengo"}).mock(return_value=httpx.Response(200, json=[]))
+    route = respx.post(RESEND_URL).mock(return_value=sent(["e1"]))
+    respx.put("https://news.test/api/teams/flamengo/latest-edition").mock(
+        return_value=httpx.Response(204)
+    )
+
+    result = CliRunner().invoke(
+        cli.app, ["run", "--team", "flamengo", "--edition", "news", "--date", "2026-10-12"]
+    )
+
+    assert result.exit_code == 0, result.output
+    (mail,) = json.loads(route.calls.last.request.content)
+    assert not mail["subject"].startswith("Novidades")
