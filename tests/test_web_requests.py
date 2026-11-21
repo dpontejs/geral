@@ -226,7 +226,7 @@ def test_request_link_is_in_the_header_on_every_page(client) -> None:
     for path in ("/", "/pedir", "/jogos/onde-jogou"):
         header = client.get(path).text.split("<header>", 1)[1].split("</header>", 1)[0]
 
-        assert '<a href="/pedir">Peça seu time</a>' in header, path
+        assert 'href="/pedir"' in header and ">Peça seu time</a>" in header, path
 
 
 def test_request_link_is_in_the_ticket_under_the_teams(client) -> None:

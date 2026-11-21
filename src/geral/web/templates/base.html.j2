@@ -77,6 +77,7 @@ header .wrap { display: flex; align-items: center; justify-content: space-betwee
 nav { display: flex; flex-wrap: wrap; gap: 4px; font: 800 17px/1 var(--display); text-transform: uppercase; letter-spacing: .06em; }
 nav a { text-decoration: none; padding: 13px 12px; }
 nav a:hover { color: var(--lamp); }
+nav a[aria-current] { color: var(--lamp); box-shadow: inset 0 -4px 0 var(--lamp); text-shadow: 0 0 8px rgba(255, 194, 26, .45); }
 nav a.cta { background: var(--ticket); color: var(--ink); }
 nav a.cta:hover { background: var(--lamp); color: var(--ink); }
 
@@ -247,13 +248,13 @@ input.nick { width: min(100%, 320px); display: block; }
 <header>
   <div class="wrap">
     <a class="brand" href="/" aria-label="Geral, início"><img src="/static/geral/icon-512.png" alt=""><b>GERAL</b></a>
+    {%- set here = request.url.path -%}
+    {%- set lit = "inicio" if here == "/" else "central" if here.startswith("/central") else "jogos" if here.startswith("/jogos") else "pedir" if here.startswith("/pedi") else "" -%}
     <nav aria-label="Seções">
-      {% if request.url.path != "/" %}<a href="/">Início</a>{% endif %}
-      <a href="/#torcidas">Torcidas</a>
-      <a href="/#placar">Placar</a>
-      <a href="/central">Central</a>
-      <a href="/jogos">Joguinhos</a>
-      <a href="/pedir">Peça seu time</a>
+      <a href="/"{% if lit == "inicio" %} aria-current="page"{% endif %}>Início</a>
+      <a href="/central"{% if lit == "central" %} aria-current="page"{% endif %}>Central</a>
+      <a href="/jogos"{% if lit == "jogos" %} aria-current="page"{% endif %}>Joguinhos</a>
+      <a href="/pedir"{% if lit == "pedir" %} aria-current="page"{% endif %}>Peça seu time</a>
       <a class="cta" href="/#signup">Entrar na Geral</a>
     </nav>
   </div>

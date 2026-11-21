@@ -48,11 +48,11 @@ def test_inner_pages_link_back_home_from_the_header(site, path) -> None:
     assert '<a href="/">Início</a>' in page.split("</header>")[0]
 
 
-def test_home_needs_no_link_to_itself_and_its_header_leads_to_the_games(site) -> None:
+def test_home_lights_itself_and_its_header_leads_to_the_games(site) -> None:
     page = site.get("/").text
     header = page.split("</header>")[0]
 
-    assert '<a href="/">Início</a>' not in header
+    assert '<a href="/" aria-current="page">Início</a>' in header
     assert '<a href="/jogos">Joguinhos</a>' in header
     assert 'href="/jogos">Todos os joguinhos →</a>' in page  # from the break section
 
