@@ -12,7 +12,8 @@ from zoneinfo import ZoneInfo
 import httpx
 
 from geral.central.build import build_snapshot
-from geral.central.models import CentralSnapshot
+from geral.central.models import CentralSnapshot, NewsItem
+from geral.central.news import collect_news, refresh_news
 from geral.central.store import load_snapshot, save_snapshot
 from geral.collectors.base import DEFAULT_TIMEOUT, USER_AGENT
 from geral.config import Settings
@@ -79,12 +80,14 @@ class Refresher:
         interval: int,
         build: Callable[[datetime, CentralSnapshot | None], CentralSnapshot] = build_snapshot,
         clock: Callable[[], datetime] = lambda: datetime.now(BRASILIA),
+        news: Callable[[datetime, list[NewsItem]], list[NewsItem]] | None = None,
     ) -> None:
         self.path = Path(path)
         self.interval = interval
         self._build = build
         self._clock = clock
         self._stop = threading.Event()
+        self._news = news or (lambda at, old: collect_news(at, old, client=self._client))
         # One client for the app's life: finished ge rounds are fetched once.
         transport = FinishedRoundsTransport(httpx.HTTPTransport(), clock)
         self._client = httpx.Client(
@@ -98,12 +101,19 @@ class Refresher:
     def run_once(self) -> bool:
         """One rebuild; on any error the old snapshot stays and it is logged."""
         try:
-            snapshot = self._build(self._clock(), load_snapshot(self.path), client=self._client)
-            save_snapshot(self.path, snapshot)
-            return True
+            now = self._clock()
+            snapshot = self._build(now, load_snapshot(self.path), client=self._client)
+            save_snapshot(self.path, snapshot)  # tables first: news can take minutes
         except Exception:
             logger.exception("Central refresh failed; keeping %s", self.path)
             return False
+        try:
+            with_news = refresh_news(snapshot, now, self._news)
+            if with_news is not snapshot:
+                save_snapshot(self.path, with_news)
+        except Exception:
+            logger.exception("Central news refresh failed; the tables were saved")
+        return True
 
     def start(self) -> None:
         if self._thread is not None:

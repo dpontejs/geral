@@ -62,4 +62,6 @@ uv run geral central && uv run uvicorn geral.web.app:create_app --factory  # abr
 
 ## Riscos e dúvidas abertas
 
-- Primeira coleta baixa até 60 matérias (1 por segundo, ~1 minuto); depois, só as novas.
+- Primeira coleta baixa o começo das 60 matérias mantidas (1 por segundo, ~1 minuto); depois,
+  só as novas e as que falharam antes. As tabelas são salvas antes, então a coleta não as atrasa.
+- Só entram links `https` de `globo.com` com `/noticia/`: o feed não leva a Geral a outro lugar.

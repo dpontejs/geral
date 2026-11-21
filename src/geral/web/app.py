@@ -1317,7 +1317,8 @@ def create_app(
         serie = serie if serie in SERIE_SLUGS.values() else None
         matching = [n for n in news if serie is None or n.serie_slug == serie]
         total = max(1, -(-len(matching) // NEWS_PER_PAGE))
-        number = min(max(int(pagina) if (pagina or "").isdigit() else 1, 1), total)
+        asked = int(pagina) if pagina and pagina.isascii() and pagina.isdecimal() else 1
+        number = min(max(asked, 1), total)
         shown = matching[(number - 1) * NEWS_PER_PAGE : number * NEWS_PER_PAGE]
         base = f"/central/noticias?serie={serie}&" if serie else "/central/noticias?"
         pages = [f"{base}pagina={n}" for n in range(1, total + 1)]

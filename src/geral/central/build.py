@@ -10,13 +10,11 @@ import httpx
 from geral.central.models import (
     CentralSnapshot,
     MatchView,
-    NewsItem,
     SerieSummary,
     SerieView,
     TeamNextMatch,
     TieView,
 )
-from geral.central.news import collect_news
 from geral.collectors.base import create_http_client
 from geral.general import SERIES
 from geral.stats.combined import stats_client_for
@@ -183,7 +181,6 @@ def build_snapshot(
     next_matches: Callable[[datetime], list[TeamNextMatch]] = team_next_matches,
     tz: ZoneInfo | None = None,
     series: dict[str, str] | None = None,
-    news: Callable[[datetime, list[NewsItem]], list[NewsItem]] | None = None,
 ) -> CentralSnapshot:
     """Every série from ge; one that fails keeps its previous version. None at all is an error."""
     client = client or create_http_client()
@@ -208,18 +205,12 @@ def build_snapshot(
             matches, fetched = next_matches(now), now
         except Exception as e:
             logger.warning("Central: next matches not refreshed: %s", e)
-    stories, stories_at = (previous.news, previous.news_at) if previous else ([], None)
-    if stories_at is None or now - stories_at >= NEXT_MATCHES_EVERY:
-        collect = news or (lambda at, old: collect_news(at, old, series=series, client=client))
-        try:
-            stories, stories_at = collect(now, stories), now
-        except Exception as e:
-            logger.warning("Central: news not refreshed: %s", e)
     return CentralSnapshot(
         updated_at=now,
         series=views,
         next_matches=matches,
         next_matches_at=fetched,
-        news=stories,
-        news_at=stories_at,
+        # News are refreshed after the tables are saved (refresh.Refresher): kept as they were.
+        news=previous.news if previous else [],
+        news_at=previous.news_at if previous else None,
     )

@@ -8,10 +8,11 @@ import hashlib
 import logging
 from collections.abc import Callable
 from datetime import datetime, timedelta
+from urllib.parse import urlsplit
 
 import httpx
 
-from geral.central.models import NewsItem
+from geral.central.models import CentralSnapshot, NewsItem
 from geral.collectors.base import create_http_client
 from geral.collectors.ge import GECollector
 from geral.general import SERIES
@@ -25,6 +26,7 @@ WINDOW = timedelta(hours=48)
 FEED_PAGES = 3
 MAX_NEWS = 60
 LEAD_CHARS = 320
+NEWS_EVERY = timedelta(hours=1)
 
 
 def news_id(url: str) -> str:
@@ -64,13 +66,13 @@ def collect_news(
     stories: dict[str, NewsItem] = {}
     for name, page in series.items():
         try:
-            found = [a for a in fetch_feed(name, page) if "/noticia/" in a.url]
+            found = [a for a in fetch_feed(name, page) if _is_ge_story(a.url)]
         except Exception as e:
             logger.warning("Central news: %s feed failed: %s", name, e)
             found = []
-        if not found:
+        if not found:  # out of season or the feed failed: its stories stay until 48 h old
             for item in previous:
-                if item.serie_name == name:
+                if item.serie_name == name and item.published_at >= now - WINDOW:
                     stories.setdefault(item.url, item)
             continue
         for article in found:
@@ -86,10 +88,50 @@ def collect_news(
                 image_url=article.image_url,
                 url=article.url,
                 published_at=article.published_at,
-                lead=old.lead if old else _lead(fetch_lead, article),
+                lead=old.lead if old else None,
             )
-    newest = sorted(stories.values(), key=lambda n: n.published_at, reverse=True)
-    return newest[:MAX_NEWS]
+    newest = sorted(stories.values(), key=lambda n: n.published_at, reverse=True)[:MAX_NEWS]
+    for item in newest:  # only the kept ones, and again when it failed before
+        if item.lead is None:
+            item.lead = _lead(fetch_lead, _article(item))
+    return newest
+
+
+def _is_ge_story(url: str) -> bool:
+    parts = urlsplit(url)
+    host = parts.hostname or ""
+    return (
+        parts.scheme == "https"
+        and (host == "globo.com" or host.endswith(".globo.com"))
+        and "/noticia/" in parts.path
+    )
+
+
+def _article(item: NewsItem) -> Article:
+    return Article(
+        url=item.url,
+        title=item.title,
+        source="ge",
+        published_at=item.published_at,
+        summary_hint=item.summary,
+        image_url=item.image_url,
+    )
+
+
+def refresh_news(
+    snapshot: CentralSnapshot,
+    now: datetime,
+    collect: Callable[[datetime, list[NewsItem]], list[NewsItem]],
+) -> CentralSnapshot:
+    """The snapshot with fresh news once an hour; on failure it keeps the old ones."""
+    if snapshot.news_at is not None and now - snapshot.news_at < NEWS_EVERY:
+        return snapshot
+    try:
+        stories = collect(now, snapshot.news)
+    except Exception as e:
+        logger.warning("Central: news not refreshed: %s", e)
+        return snapshot
+    return snapshot.model_copy(update={"news": stories, "news_at": now})
 
 
 def _lead(fetch_lead: Callable[[Article], str | None], article: Article) -> str | None:

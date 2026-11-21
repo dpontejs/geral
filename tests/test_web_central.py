@@ -188,6 +188,7 @@ def test_news_pages_keep_the_serie_and_clamp(many_news) -> None:
     assert many_news.get("/central/noticias?pagina=99").status_code == 200
     assert "Manchete número 29<" in many_news.get("/central/noticias?pagina=99").text
     assert "Manchete número 0<" in many_news.get("/central/noticias?pagina=abc").text
+    assert many_news.get("/central/noticias?pagina=²").status_code == 200
 
 
 def test_central_links_swap_in_place(with_news) -> None:

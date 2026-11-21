@@ -35,7 +35,7 @@
     </nav>
     {% endif %}
     {% else %}
-    <div class="sheet empty"><h2>Sem notícias por aqui</h2><p>{% if snapshot %}Nenhuma notícia dessa série nas últimas 48 horas.{% else %}As notícias estão sendo buscadas agora. Volte em alguns minutos.{% endif %}</p></div>
+    <div class="sheet empty"><h2>Sem notícias por aqui</h2><p>{% if snapshot and snapshot.news_at %}Nenhuma notícia dessa série nas últimas 48 horas.{% else %}As notícias estão sendo buscadas agora. Volte em alguns minutos.{% endif %}</p></div>
     {% endif %}
   </div>
 </section>
