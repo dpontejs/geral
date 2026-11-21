@@ -17,6 +17,7 @@ import sqlite3
 import unicodedata
 from collections import defaultdict, deque
 from collections.abc import Callable
+from contextlib import asynccontextmanager
 from datetime import UTC, date, datetime, timedelta, timezone
 from pathlib import Path
 from typing import Annotated, Literal
@@ -35,6 +36,9 @@ from fastapi.templating import Jinja2Templates
 from jinja2 import select_autoescape
 from pydantic import AwareDatetime, BaseModel, Field, model_validator
 
+from geral.central.page import band_colors, short_day, short_time
+from geral.central.refresh import Refresher, snapshot_path
+from geral.central.store import load_snapshot
 from geral.config import Settings, get_settings
 from geral.games import calendario, craque, onde_jogou, quem_e
 from geral.games.carreira import codigo as carreira_codigo
@@ -120,6 +124,9 @@ def _asset_version() -> str:
 
 
 templates.env.globals["asset_version"] = _asset_version()
+templates.env.globals["band_colors"] = band_colors
+templates.env.filters["short_day"] = short_day
+templates.env.filters["short_time"] = short_time
 
 
 class RateLimiter:
@@ -320,6 +327,8 @@ def create_app(
         token = make_token(secret, purpose, email, now())
         return f"{public_url}{path}?{urlencode({'token': token})}"
 
+    central_file = snapshot_path(settings)  # the Central's snapshot (docs/features/central.md)
+
     def page(request: Request, name: str, status: int = 200, **context) -> HTMLResponse:
         context.setdefault("public_url", public_url)
         return templates.TemplateResponse(request, name, context, status_code=status)
@@ -341,6 +350,7 @@ def create_app(
             ranking=sorted(listed.values(), key=lambda t: (-counts.get(t.slug, 0), t.newsletter)),
             clock=now().astimezone(BRASILIA),
             top_request=next(iter(team_requests.top(1)), None),  # only past the public minimum
+            central=load_snapshot(central_file),
             **context,
         )
 
@@ -531,7 +541,17 @@ def create_app(
     def craque_number() -> int:
         return max(1, craque.puzzle_number(now().astimezone(BRASILIA).date()))
 
-    app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None)
+    @asynccontextmanager
+    async def lifespan(_app: FastAPI):
+        refresher = None
+        if settings.CENTRAL_REFRESH > 0:  # the Central's snapshot, rebuilt in a thread
+            refresher = Refresher(central_file, settings.CENTRAL_REFRESH)
+            refresher.start()
+        yield
+        if refresher:
+            refresher.stop()
+
+    app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
     if legacy_team:
         # Old e-mails load the moved-in app's brand from the root of /static.
         for name in ("logo-email.png", "icon-512.png", "og-image.png"):
@@ -1273,6 +1293,18 @@ def create_app(
             return JSONResponse({"detail": "unknown match"}, status_code=404)
         score = (result.our_goals, result.their_goals)
         return bolao.summary(team, match_id, score, persist=True)
+
+    @app.get("/central", response_class=HTMLResponse)
+    def central_page(request: Request, serie: str | None = None):
+        """Tables, rounds and summaries of the four séries, from the snapshot on disk."""
+        snapshot = load_snapshot(central_file)
+        series = snapshot.series if snapshot else []
+        chosen = (
+            next((s for s in series if s.slug == serie), None)
+            or next((s for s in series if s.status != "over"), None)
+            or next(iter(series), None)
+        )
+        return page(request, "central.html.j2", snapshot=snapshot, series=series, serie=chosen)
 
     @app.get("/jogos", response_class=HTMLResponse)
     def games_page(request: Request):

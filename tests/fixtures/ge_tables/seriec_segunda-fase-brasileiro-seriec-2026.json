@@ -1,0 +1,423 @@
+{
+ "edicao": {
+  "data_inicio": "2026-04-04",
+  "data_fim": "2026-10-24",
+  "nome": "Campeonato Brasileiro Série C 2026",
+  "regulamento": "A Primeira fase é disputada no sistema de pontos corridos, com os 20 times se enfrentando em turno único. Os oito melhores colocados avançam à segunda fase, enquanto os dois últimos são rebaixados à Série D. Em caso de igualdade na pontuação, são critérios de desempate: 1) mais vitórias; 2) melhor saldo de gols; 3) mais gols pró; 4) menos cartões vermelhos; 5) menos cartões amarelos; 6) sorteio. Na Segunda fase, as equipes são divididas em duas chaves de quatro equipes, jogam dentro do grupo em dois turnos e os dois primeiros de cada chave garantem acesso à Série B, sendo que os primeiros colocados se classificam para a Final. Em caso de igualdade na pontuação, são critérios de desempate: 1) mais vitórias; 2) melhor saldo de gols; 3) mais gols pró; 4) confronto direto; 5) menos cartões vermelhos; 6) menos cartões amarelos; 7) sorteio. Na Final, disputada no sistema mata-mata em jogos de ida e volta, em caso de igualdade na pontuação e, posteriormente, no saldo de gols do duelo, o título é decidido na disputa de pênaltis. Mando de campo do segundo jogo da decisão é da equipe com melhor campanha na soma das fases anteriores; O campeão da Série C garante vaga direta na Terceira fase da Copa do Brasil.",
+  "localizacao": "Brasil"
+ },
+ "fase": {
+  "tipo": {
+   "tipo_id": "3",
+   "descricao": "Pontos Corridos Grupado"
+  },
+  "disclaimer": "",
+  "slug": "segunda-fase-brasileiro-seriec-2026"
+ },
+ "faixas_classificacao": [
+  {
+   "cor": "#0000ff",
+   "id": 4871,
+   "nome": "Finalistas e Série B"
+  },
+  {
+   "cor": "#00ffff",
+   "id": 4872,
+   "nome": "Série B"
+  }
+ ],
+ "lista_jogos_unica": false,
+ "lista_tipo_unica": false,
+ "grupos": [
+  {
+   "id": 5962,
+   "grupo_id": 5962,
+   "nome_grupo": "Grupo B",
+   "classificacao": [
+    {
+     "ordem": 1,
+     "variacao": 1,
+     "pontos": 11,
+     "nome_popular": "Maringá",
+     "sigla": "MAR",
+     "vitorias": 3,
+     "escudo": "https://s.sde.globo.com/media/organizations/2023/05/03/Maringá_MfSJ40V.svg",
+     "equipe_id": 3929,
+     "aproveitamento": 61.0,
+     "jogos": 6,
+     "derrotas": 1,
+     "faixa_classificacao_cor": "#0000ff",
+     "faixa_classificacao": {
+      "cor": "#0000ff"
+     },
+     "ultimos_jogos": [
+      "d",
+      "v",
+      "e",
+      "e",
+      "v"
+     ],
+     "saldo_gols": 4,
+     "gols_pro": 6,
+     "gols_contra": 2,
+     "empates": 2
+    },
+    {
+     "ordem": 2,
+     "variacao": -1,
+     "pontos": 11,
+     "nome_popular": "Santa Cruz",
+     "sigla": "STA",
+     "vitorias": 3,
+     "escudo": "https://s.sde.globo.com/media/organizations/2019/01/03/santa_cruz.svg",
+     "equipe_id": 344,
+     "aproveitamento": 61.0,
+     "jogos": 6,
+     "derrotas": 1,
+     "faixa_classificacao_cor": "#00ffff",
+     "faixa_classificacao": {
+      "cor": "#00ffff"
+     },
+     "ultimos_jogos": [
+      "v",
+      "v",
+      "e",
+      "e",
+      "d"
+     ],
+     "saldo_gols": 2,
+     "gols_pro": 5,
+     "gols_contra": 3,
+     "empates": 2
+    },
+    {
+     "ordem": 3,
+     "variacao": 0,
+     "pontos": 5,
+     "nome_popular": "Floresta",
+     "sigla": "FLO",
+     "vitorias": 1,
+     "escudo": "https://s.sde.globo.com/media/organizations/2023/05/01/Floresta_Esporte_Clube.svg",
+     "equipe_id": 4288,
+     "aproveitamento": 27.0,
+     "jogos": 6,
+     "derrotas": 3,
+     "faixa_classificacao_cor": null,
+     "faixa_classificacao": {
+      "cor": null
+     },
+     "ultimos_jogos": [
+      "v",
+      "d",
+      "e",
+      "e",
+      "d"
+     ],
+     "saldo_gols": -3,
+     "gols_pro": 3,
+     "gols_contra": 6,
+     "empates": 2
+    },
+    {
+     "ordem": 4,
+     "variacao": 0,
+     "pontos": 5,
+     "nome_popular": "Botafogo-PB",
+     "sigla": "BOT",
+     "vitorias": 1,
+     "escudo": "https://s.sde.globo.com/media/organizations/2020/02/12/botsvg.svg",
+     "equipe_id": 349,
+     "aproveitamento": 27.0,
+     "jogos": 6,
+     "derrotas": 3,
+     "faixa_classificacao_cor": null,
+     "faixa_classificacao": {
+      "cor": null
+     },
+     "ultimos_jogos": [
+      "d",
+      "d",
+      "e",
+      "e",
+      "v"
+     ],
+     "saldo_gols": -3,
+     "gols_pro": 2,
+     "gols_contra": 5,
+     "empates": 2
+    }
+   ],
+   "rodada": {
+    "atual": 6,
+    "ultima": 6
+   },
+   "lista_jogos": [
+    {
+     "id": 357015,
+     "data_realizacao": "2026-10-10T17:00",
+     "hora_realizacao": "17:00",
+     "placar_oficial_visitante": 0,
+     "placar_oficial_mandante": 1,
+     "placar_penaltis_visitante": null,
+     "placar_penaltis_mandante": null,
+     "equipes": {
+      "mandante": {
+       "id": 349,
+       "nome_popular": "Botafogo-PB",
+       "sigla": "BOT",
+       "escudo": "https://s.sde.globo.com/media/organizations/2020/02/12/botsvg.svg"
+      },
+      "visitante": {
+       "id": 344,
+       "nome_popular": "Santa Cruz",
+       "sigla": "STA",
+       "escudo": "https://s.sde.globo.com/media/organizations/2019/01/03/santa_cruz.svg"
+      }
+     },
+     "sede": {
+      "nome_popular": "Almeidão"
+     },
+     "transmissao": {
+      "label": "saiba como foi",
+      "url": "https://ge.globo.com/pb/futebol/brasileirao-serie-c/jogo/10-10-2026/botafogo-pb-santa-cruz.ghtml",
+      "broadcast": {
+       "id": "ENCERRADA",
+       "label": "saiba como foi"
+      }
+     },
+     "jogo_ja_comecou": true
+    },
+    {
+     "id": 357016,
+     "data_realizacao": "2026-10-10T17:00",
+     "hora_realizacao": "17:00",
+     "placar_oficial_visitante": 0,
+     "placar_oficial_mandante": 2,
+     "placar_penaltis_visitante": null,
+     "placar_penaltis_mandante": null,
+     "equipes": {
+      "mandante": {
+       "id": 3929,
+       "nome_popular": "Maringá",
+       "sigla": "MAR",
+       "escudo": "https://s.sde.globo.com/media/organizations/2023/05/03/Maringá_MfSJ40V.svg"
+      },
+      "visitante": {
+       "id": 4288,
+       "nome_popular": "Floresta",
+       "sigla": "FLO",
+       "escudo": "https://s.sde.globo.com/media/organizations/2023/05/01/Floresta_Esporte_Clube.svg"
+      }
+     },
+     "sede": {
+      "nome_popular": "Willie Davids"
+     },
+     "transmissao": {
+      "label": "saiba como foi",
+      "url": "https://ge.globo.com/pr/futebol/brasileirao-serie-c/jogo/10-10-2026/maringa-floresta.ghtml",
+      "broadcast": {
+       "id": "ENCERRADA",
+       "label": "saiba como foi"
+      }
+     },
+     "jogo_ja_comecou": true
+    }
+   ]
+  },
+  {
+   "id": 5961,
+   "grupo_id": 5961,
+   "nome_grupo": "Grupo C",
+   "classificacao": [
+    {
+     "ordem": 1,
+     "variacao": 0,
+     "pontos": 11,
+     "nome_popular": "Ferroviária",
+     "sigla": "AFE",
+     "vitorias": 3,
+     "escudo": "https://s.sde.globo.com/media/organizations/2019/01/08/Ferroviaria_Araraquara.svg",
+     "equipe_id": 298,
+     "aproveitamento": 61.0,
+     "jogos": 6,
+     "derrotas": 1,
+     "faixa_classificacao_cor": "#0000ff",
+     "faixa_classificacao": {
+      "cor": "#0000ff"
+     },
+     "ultimos_jogos": [
+      "v",
+      "v",
+      "e",
+      "d",
+      "v"
+     ],
+     "saldo_gols": 3,
+     "gols_pro": 10,
+     "gols_contra": 7,
+     "empates": 2
+    },
+    {
+     "ordem": 2,
+     "variacao": 0,
+     "pontos": 7,
+     "nome_popular": "Inter de Limeira",
+     "sigla": "INL",
+     "vitorias": 1,
+     "escudo": "https://s.sde.globo.com/media/organizations/2019/05/11/InterLimeiraSVG.svg",
+     "equipe_id": 300,
+     "aproveitamento": 38.0,
+     "jogos": 6,
+     "derrotas": 1,
+     "faixa_classificacao_cor": "#00ffff",
+     "faixa_classificacao": {
+      "cor": "#00ffff"
+     },
+     "ultimos_jogos": [
+      "e",
+      "e",
+      "v",
+      "e",
+      "d"
+     ],
+     "saldo_gols": 0,
+     "gols_pro": 11,
+     "gols_contra": 11,
+     "empates": 4
+    },
+    {
+     "ordem": 3,
+     "variacao": 0,
+     "pontos": 7,
+     "nome_popular": "Brusque",
+     "sigla": "BRU",
+     "vitorias": 1,
+     "escudo": "https://s.sde.globo.com/media/organizations/2020/09/06/brusque.svg",
+     "equipe_id": 1297,
+     "aproveitamento": 38.0,
+     "jogos": 6,
+     "derrotas": 1,
+     "faixa_classificacao_cor": null,
+     "faixa_classificacao": {
+      "cor": null
+     },
+     "ultimos_jogos": [
+      "e",
+      "d",
+      "e",
+      "e",
+      "e"
+     ],
+     "saldo_gols": 0,
+     "gols_pro": 10,
+     "gols_contra": 10,
+     "empates": 4
+    },
+    {
+     "ordem": 4,
+     "variacao": 0,
+     "pontos": 5,
+     "nome_popular": "Paysandu",
+     "sigla": "PAY",
+     "vitorias": 1,
+     "escudo": "https://s.sde.globo.com/media/organizations/2019/05/29/Paysandu.svg",
+     "equipe_id": 291,
+     "aproveitamento": 27.0,
+     "jogos": 6,
+     "derrotas": 3,
+     "faixa_classificacao_cor": null,
+     "faixa_classificacao": {
+      "cor": null
+     },
+     "ultimos_jogos": [
+      "d",
+      "e",
+      "d",
+      "v",
+      "e"
+     ],
+     "saldo_gols": -3,
+     "gols_pro": 5,
+     "gols_contra": 8,
+     "empates": 2
+    }
+   ],
+   "rodada": {
+    "atual": 6,
+    "ultima": 6
+   },
+   "lista_jogos": [
+    {
+     "id": 357017,
+     "data_realizacao": "2026-10-11T15:00",
+     "hora_realizacao": "15:00",
+     "placar_oficial_visitante": 1,
+     "placar_oficial_mandante": 1,
+     "placar_penaltis_visitante": null,
+     "placar_penaltis_mandante": null,
+     "equipes": {
+      "mandante": {
+       "id": 1297,
+       "nome_popular": "Brusque",
+       "sigla": "BRU",
+       "escudo": "https://s.sde.globo.com/media/organizations/2020/09/06/brusque.svg"
+      },
+      "visitante": {
+       "id": 291,
+       "nome_popular": "Paysandu",
+       "sigla": "PAY",
+       "escudo": "https://s.sde.globo.com/media/organizations/2019/05/29/Paysandu.svg"
+      }
+     },
+     "sede": {
+      "nome_popular": "Arena Simon"
+     },
+     "transmissao": {
+      "label": "saiba como foi",
+      "url": "https://ge.globo.com/sc/futebol/brasileirao-serie-c/jogo/11-10-2026/brusque-paysandu.ghtml",
+      "broadcast": {
+       "id": "ENCERRADA",
+       "label": "saiba como foi"
+      }
+     },
+     "jogo_ja_comecou": true
+    },
+    {
+     "id": 357018,
+     "data_realizacao": "2026-10-11T15:00",
+     "hora_realizacao": "15:00",
+     "placar_oficial_visitante": 0,
+     "placar_oficial_mandante": 2,
+     "placar_penaltis_visitante": null,
+     "placar_penaltis_mandante": null,
+     "equipes": {
+      "mandante": {
+       "id": 298,
+       "nome_popular": "Ferroviária",
+       "sigla": "AFE",
+       "escudo": "https://s.sde.globo.com/media/organizations/2019/01/08/Ferroviaria_Araraquara.svg"
+      },
+      "visitante": {
+       "id": 300,
+       "nome_popular": "Inter de Limeira",
+       "sigla": "INL",
+       "escudo": "https://s.sde.globo.com/media/organizations/2019/05/11/InterLimeiraSVG.svg"
+      }
+     },
+     "sede": {
+      "nome_popular": "Fonte Luminosa"
+     },
+     "transmissao": {
+      "label": "saiba como foi",
+      "url": "https://ge.globo.com/sp/ribeirao-preto-e-regiao/futebol/brasileirao-serie-c/jogo/11-10-2026/ferroviaria-inter-de-limeira.ghtml",
+      "broadcast": {
+       "id": "ENCERRADA",
+       "label": "saiba como foi"
+      }
+     },
+     "jogo_ja_comecou": true
+    }
+   ]
+  }
+ ]
+}

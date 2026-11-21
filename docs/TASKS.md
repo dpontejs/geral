@@ -68,6 +68,10 @@ Ordem de execução. Cada fatia vira um PR; a página da fatia fica em `docs/fea
 - [ ] Outros times com seções especiais (basta `specials` no catálogo, depois de checar o material na Wikipédia)
   - [x] CSA: 29 trechos em 2026-11-19 (26 de história e jogos, como os 22 x 0 de 1945, o Jogo do Xaxado e as finais do Clássico das Multidões; 3 ídolos: Jacozinho, Dida e Freitas Nascimento)
 
+## Central (`docs/features/central.md`)
+- [x] Tabelas, rodadas, playoffs e resumo das Séries A–D em `/central`, com chamada na inicial
+- [ ] Aba de notícias: feed do ge com página de leitura e "Continue lendo no ge"
+
 ## Fatia 5 — Cartola simples (o bolão por torcida já vem na 2a)
 
 ## Fatia 6 — Joguinhos "7 a 0"

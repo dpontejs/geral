@@ -1,0 +1,170 @@
+{
+ "lista_jogos_unica": true,
+ "edicao": {
+  "data_inicio": "2026-03-20",
+  "data_fim": "2026-11-28",
+  "nome": "Campeonato Brasileiro Série B 2026",
+  "regulamento": "As 20 equipes se enfrentam em turno e returno. Ao fim das 38 rodadas, os dois primeiros colocados garantem acesso à Série A. Os times que terminarem da 3ª à 6ª colocação disputam um playoff para definir os outros dois que sobem de divisão, com o seguinte chaveamento: 3º x 6º e 4º x 5º. Os quatro últimos são rebaixados para a Série C. Em caso de igualdade na pontuação, são critérios de desempate: 1) mais vitórias, 2) melhor saldo de gols, 3) mais gols pró, 4) confronto direto, 5) menos cartões vermelhos, 6) menos cartões amarelos, 7) sorteio.",
+  "localizacao": "Brasil"
+ },
+ "fase": {
+  "tipo": {
+   "tipo_id": "2",
+   "descricao": "Mata Mata"
+  },
+  "disclaimer": "",
+  "slug": "playoff-de-acesso-2026"
+ },
+ "max_jogos_chaves": 2,
+ "secao": [
+  {
+   "tem_chave_subsequente": false,
+   "chave": [
+    {
+     "id": 76074,
+     "nome": "Playoff de acesso 1",
+     "tem_chave_anterior": false,
+     "jogos": [
+      {
+       "id": 358831,
+       "equipes": {
+        "mandante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2020/07/02/atletico-go-2020.svg",
+         "id": 373,
+         "nome_popular": "Atlético-GO",
+         "sigla": "ACG"
+        },
+        "visitante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2021/04/07/vilanova.svg",
+         "id": 375,
+         "nome_popular": "Vila Nova",
+         "sigla": "VNO"
+        }
+       },
+       "data_realizacao": "2026-11-22",
+       "hora_realizacao": "18:30",
+       "exibir_jogo": true,
+       "sede": {
+        "nome_popular": "Antônio Accioly"
+       },
+       "placar_oficial_visitante": null,
+       "placar_oficial_mandante": null,
+       "placar_penaltis_visitante": null,
+       "placar_penaltis_mandante": null,
+       "transmissao": {
+        "label": "fique por dentro",
+        "url": "https://ge.globo.com/go/futebol/brasileirao-serie-b/jogo/22-11-2026/atletico-go-vila-nova.ghtml",
+        "broadcast": {
+         "id": "PRE_DIA",
+         "label": "fique por dentro"
+        }
+       },
+       "jogo_ja_comecou": false
+      },
+      {
+       "id": 358832,
+       "equipes": {
+        "mandante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2021/04/07/vilanova.svg",
+         "id": 375,
+         "nome_popular": "Vila Nova",
+         "sigla": "VNO"
+        },
+        "visitante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2020/07/02/atletico-go-2020.svg",
+         "id": 373,
+         "nome_popular": "Atlético-GO",
+         "sigla": "ACG"
+        }
+       },
+       "data_realizacao": "2026-11-27",
+       "hora_realizacao": "20:00",
+       "exibir_jogo": true,
+       "sede": {
+        "nome_popular": "OBA"
+       },
+       "placar_oficial_visitante": null,
+       "placar_oficial_mandante": null,
+       "placar_penaltis_visitante": null,
+       "placar_penaltis_mandante": null,
+       "transmissao": null,
+       "jogo_ja_comecou": false
+      }
+     ]
+    },
+    {
+     "id": 76075,
+     "nome": "Playoff de Acesso 2",
+     "tem_chave_anterior": false,
+     "jogos": [
+      {
+       "id": 358833,
+       "equipes": {
+        "mandante": {
+         "escudo": "https://s.sde.globo.com/media/teams/2026/01/16/criciuma-2026-svg-79692.svg",
+         "id": 288,
+         "nome_popular": "Criciúma",
+         "sigla": "CRI"
+        },
+        "visitante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2021/09/19/Fortaleza_2021_1.svg",
+         "id": 356,
+         "nome_popular": "Fortaleza",
+         "sigla": "FOR"
+        }
+       },
+       "data_realizacao": "2026-11-22",
+       "hora_realizacao": "16:00",
+       "exibir_jogo": true,
+       "sede": {
+        "nome_popular": "Heriberto Hülse"
+       },
+       "placar_oficial_visitante": null,
+       "placar_oficial_mandante": null,
+       "placar_penaltis_visitante": null,
+       "placar_penaltis_mandante": null,
+       "transmissao": {
+        "label": "fique por dentro",
+        "url": "https://ge.globo.com/sc/futebol/brasileirao-serie-b/jogo/22-11-2026/criciuma-fortaleza.ghtml",
+        "broadcast": {
+         "id": "PRE_DIA",
+         "label": "fique por dentro"
+        }
+       },
+       "jogo_ja_comecou": false
+      },
+      {
+       "id": 358834,
+       "equipes": {
+        "mandante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2021/09/19/Fortaleza_2021_1.svg",
+         "id": 356,
+         "nome_popular": "Fortaleza",
+         "sigla": "FOR"
+        },
+        "visitante": {
+         "escudo": "https://s.sde.globo.com/media/teams/2026/01/16/criciuma-2026-svg-79692.svg",
+         "id": 288,
+         "nome_popular": "Criciúma",
+         "sigla": "CRI"
+        }
+       },
+       "data_realizacao": "2026-11-28",
+       "hora_realizacao": "20:00",
+       "exibir_jogo": true,
+       "sede": {
+        "nome_popular": "Castelão (CE)"
+       },
+       "placar_oficial_visitante": null,
+       "placar_oficial_mandante": null,
+       "placar_penaltis_visitante": null,
+       "placar_penaltis_mandante": null,
+       "transmissao": null,
+       "jogo_ja_comecou": false
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

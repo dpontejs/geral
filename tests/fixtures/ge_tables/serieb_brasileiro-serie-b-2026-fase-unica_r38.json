@@ -1,0 +1,352 @@
+[
+ {
+  "id": 349095,
+  "data_realizacao": "2026-11-11T19:00",
+  "hora_realizacao": "19:00",
+  "placar_oficial_visitante": 1,
+  "placar_oficial_mandante": 2,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 319,
+    "nome_popular": "Londrina",
+    "sigla": "LEC",
+    "escudo": "https://s.sde.globo.com/media/organizations/2018/03/11/londrina.svg"
+   },
+   "visitante": {
+    "id": 343,
+    "nome_popular": "Náutico",
+    "sigla": "NAU",
+    "escudo": "https://s.sde.globo.com/media/organizations/2019/01/03/Nautico.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "VGD"
+  },
+  "transmissao": {
+   "label": "saiba como foi",
+   "url": "https://ge.globo.com/pr/futebol/brasileirao-serie-b/jogo/11-11-2026/londrina-nautico.ghtml",
+   "broadcast": {
+    "id": "ENCERRADA",
+    "label": "saiba como foi"
+   }
+  },
+  "jogo_ja_comecou": true
+ },
+ {
+  "id": 349092,
+  "data_realizacao": "2026-11-12T19:00",
+  "hora_realizacao": "19:00",
+  "placar_oficial_visitante": 2,
+  "placar_oficial_mandante": 0,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 303,
+    "nome_popular": "Ponte Preta",
+    "sigla": "PON",
+    "escudo": "https://s.sde.globo.com/media/organizations/2019/03/17/ponte-preta.svg"
+   },
+   "visitante": {
+    "id": 321,
+    "nome_popular": "Operário-PR",
+    "sigla": "OPE",
+    "escudo": "https://s.sde.globo.com/media/organizations/2018/12/27/Operário-PR.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Ítalo Limongi"
+  },
+  "transmissao": {
+   "label": "saiba como foi",
+   "url": "https://ge.globo.com/sp/campinas-e-regiao/futebol/brasileirao-serie-b/jogo/12-11-2026/ponte-preta-operario-pr.ghtml",
+   "broadcast": {
+    "id": "ENCERRADA",
+    "label": "saiba como foi"
+   }
+  },
+  "jogo_ja_comecou": true
+ },
+ {
+  "id": 349093,
+  "data_realizacao": "2026-11-12T20:00",
+  "hora_realizacao": "20:00",
+  "placar_oficial_visitante": 2,
+  "placar_oficial_mandante": 2,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 2880,
+    "nome_popular": "São Bernardo",
+    "sigla": "SBD",
+    "escudo": "https://s.sde.globo.com/media/organizations/2022/01/20/Sao_Bernardo.svg"
+   },
+   "visitante": {
+    "id": 4631,
+    "nome_popular": "Athletic Club",
+    "sigla": "ATH",
+    "escudo": "https://s.sde.globo.com/media/organizations/2025/01/22/Athletic_Club-mineiro.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Primeiro de Maio"
+  },
+  "transmissao": {
+   "label": "saiba como foi",
+   "url": "https://ge.globo.com/mg/zona-da-mata-centro-oeste/futebol/brasileirao-serie-b/jogo/12-11-2026/sao-bernardo-athletic-club.ghtml",
+   "broadcast": {
+    "id": "ENCERRADA",
+    "label": "saiba como foi"
+   }
+  },
+  "jogo_ja_comecou": true
+ },
+ {
+  "id": 349094,
+  "data_realizacao": "2026-11-14T16:30",
+  "hora_realizacao": "16:30",
+  "placar_oficial_visitante": 2,
+  "placar_oficial_mandante": 0,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 327,
+    "nome_popular": "América-MG",
+    "sigla": "AME",
+    "escudo": "https://s.sde.globo.com/media/organizations/2024/05/07/America-MG-branco.svg"
+   },
+   "visitante": {
+    "id": 314,
+    "nome_popular": "Avaí",
+    "sigla": "AVA",
+    "escudo": "https://s.sde.globo.com/media/organizations/2024/05/12/avaí.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Independência"
+  },
+  "transmissao": {
+   "label": "saiba como foi",
+   "url": "https://ge.globo.com/mg/zona-da-mata-centro-oeste/jogo/14-11-2026/america-mg-avai.ghtml",
+   "broadcast": {
+    "id": "ENCERRADA",
+    "label": "saiba como foi"
+   }
+  },
+  "jogo_ja_comecou": true
+ },
+ {
+  "id": 349096,
+  "data_realizacao": "2026-11-14T16:30",
+  "hora_realizacao": "16:30",
+  "placar_oficial_visitante": 0,
+  "placar_oficial_mandante": 1,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 356,
+    "nome_popular": "Fortaleza",
+    "sigla": "FOR",
+    "escudo": "https://s.sde.globo.com/media/organizations/2021/09/19/Fortaleza_2021_1.svg"
+   },
+   "visitante": {
+    "id": 375,
+    "nome_popular": "Vila Nova",
+    "sigla": "VNO",
+    "escudo": "https://s.sde.globo.com/media/organizations/2021/04/07/vilanova.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Castelão (CE)"
+  },
+  "transmissao": {
+   "label": "saiba como foi",
+   "url": "https://ge.globo.com/ce/futebol/brasileirao-serie-b/jogo/14-11-2026/fortaleza-vila-nova.ghtml",
+   "broadcast": {
+    "id": "ENCERRADA",
+    "label": "saiba como foi"
+   }
+  },
+  "jogo_ja_comecou": true
+ },
+ {
+  "id": 349097,
+  "data_realizacao": "2026-11-14T16:30",
+  "hora_realizacao": "16:30",
+  "placar_oficial_visitante": 0,
+  "placar_oficial_mandante": 1,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 373,
+    "nome_popular": "Atlético-GO",
+    "sigla": "ACG",
+    "escudo": "https://s.sde.globo.com/media/organizations/2020/07/02/atletico-go-2020.svg"
+   },
+   "visitante": {
+    "id": 1371,
+    "nome_popular": "Cuiabá",
+    "sigla": "CUI",
+    "escudo": "https://s.sde.globo.com/media/organizations/2018/12/26/Cuiaba_EC.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Antônio Accioly"
+  },
+  "transmissao": {
+   "label": "saiba como foi",
+   "url": "https://ge.globo.com/go/futebol/brasileirao-serie-b/jogo/14-11-2026/atletico-go-cuiaba.ghtml",
+   "broadcast": {
+    "id": "ENCERRADA",
+    "label": "saiba como foi"
+   }
+  },
+  "jogo_ja_comecou": true
+ },
+ {
+  "id": 349098,
+  "data_realizacao": "2026-11-14T16:30",
+  "hora_realizacao": "16:30",
+  "placar_oficial_visitante": 1,
+  "placar_oficial_mandante": 0,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 288,
+    "nome_popular": "Criciúma",
+    "sigla": "CRI",
+    "escudo": "https://s.sde.globo.com/media/teams/2026/01/16/criciuma-2026-svg-79692.svg"
+   },
+   "visitante": {
+    "id": 2191,
+    "nome_popular": "Novorizontino",
+    "sigla": "NOV",
+    "escudo": "https://s.sde.globo.com/media/organizations/2019/01/08/Novohorizontino.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Heriberto Hülse"
+  },
+  "transmissao": {
+   "label": "saiba como foi",
+   "url": "https://ge.globo.com/sc/futebol/brasileirao-serie-b/jogo/14-11-2026/criciuma-novorizontino.ghtml",
+   "broadcast": {
+    "id": "ENCERRADA",
+    "label": "saiba como foi"
+   }
+  },
+  "jogo_ja_comecou": true
+ },
+ {
+  "id": 349099,
+  "data_realizacao": "2026-11-14T16:30",
+  "hora_realizacao": "16:30",
+  "placar_oficial_visitante": 0,
+  "placar_oficial_mandante": 3,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 292,
+    "nome_popular": "Sport",
+    "sigla": "SPT",
+    "escudo": "https://s.sde.globo.com/media/organizations/2018/03/11/sport.svg"
+   },
+   "visitante": {
+    "id": 290,
+    "nome_popular": "Goiás",
+    "sigla": "GOI",
+    "escudo": "https://s.sde.globo.com/media/organizations/2021/03/01/GOIAS-2021.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Ilha do Retiro"
+  },
+  "transmissao": {
+   "label": "saiba como foi",
+   "url": "https://ge.globo.com/pe/futebol/brasileirao-serie-b/jogo/14-11-2026/sport-goias.ghtml",
+   "broadcast": {
+    "id": "ENCERRADA",
+    "label": "saiba como foi"
+   }
+  },
+  "jogo_ja_comecou": true
+ },
+ {
+  "id": 349100,
+  "data_realizacao": "2026-11-14T16:30",
+  "hora_realizacao": "16:30",
+  "placar_oficial_visitante": 1,
+  "placar_oficial_mandante": 1,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 340,
+    "nome_popular": "CRB",
+    "sigla": "CRB",
+    "escudo": "https://s.sde.globo.com/media/organizations/2018/03/11/crb.svg"
+   },
+   "visitante": {
+    "id": 354,
+    "nome_popular": "Ceará",
+    "sigla": "CEA",
+    "escudo": "https://s.sde.globo.com/media/organizations/2019/10/10/ceara.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Rei Pelé (AL)"
+  },
+  "transmissao": {
+   "label": "saiba como foi",
+   "url": "https://ge.globo.com/al/futebol/brasileirao-serie-b/jogo/14-11-2026/crb-ceara.ghtml",
+   "broadcast": {
+    "id": "ENCERRADA",
+    "label": "saiba como foi"
+   }
+  },
+  "jogo_ja_comecou": true
+ },
+ {
+  "id": 349101,
+  "data_realizacao": "2026-11-14T16:30",
+  "hora_realizacao": "16:30",
+  "placar_oficial_visitante": 0,
+  "placar_oficial_mandante": 2,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 286,
+    "nome_popular": "Juventude",
+    "sigla": "JUV",
+    "escudo": "https://s.sde.globo.com/media/organizations/2021/04/29/Juventude-2021-01.svg"
+   },
+   "visitante": {
+    "id": 296,
+    "nome_popular": "Botafogo-SP",
+    "sigla": "BSP",
+    "escudo": "https://s.sde.globo.com/media/organizations/2024/05/15/BFC.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Alfredo Jaconi"
+  },
+  "transmissao": {
+   "label": "saiba como foi",
+   "url": "https://ge.globo.com/rs/futebol/brasileirao-serie-b/jogo/14-11-2026/juventude-botafogo-sp.ghtml",
+   "broadcast": {
+    "id": "ENCERRADA",
+    "label": "saiba como foi"
+   }
+  },
+  "jogo_ja_comecou": true
+ }
+]

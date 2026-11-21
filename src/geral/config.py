@@ -26,6 +26,10 @@ class Settings(BaseSettings):
     SUBSCRIBE_SECRET: str | None = None  # signs confirmation and unsubscribe links
     SUBSCRIBERS_API_TOKEN: str | None = None  # protects /api/subscribers (and enables it in run)
     SUBSCRIBERS_DB: str = "data/subscribers.db"
+    # Central (docs/features/central.md): seconds between rebuilds in the web app (0: off) and
+    # the snapshot file (default: central.json next to SUBSCRIBERS_DB).
+    CENTRAL_REFRESH: int = 600
+    CENTRAL_SNAPSHOT: str | None = None
     NOTIFY_EMAIL: str | None = None  # gets an e-mail whenever someone confirms a subscription
     # A single-team app that moved in (docs/adr/0001): its sent e-mails keep working. Its tokens
     # (signed with its secret) act on LEGACY_TEAM; its old hosts send the home page to the Geral.

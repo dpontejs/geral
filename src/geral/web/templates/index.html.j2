@@ -97,6 +97,32 @@
   </div>
 </section>
 
+<section class="block" id="central">
+  <div class="wrap">
+    <div class="head">
+      <h2>Central</h2>
+      <p>Tabela, rodada e quem sobe e quem cai nas Séries A, B, C e D. <a class="more" href="/central">Abrir a Central →</a></p>
+    </div>
+    {% if central and central.series %}
+    <div class="central-cards">
+      {% for s in central.series %}
+      <a class="central-card" href="/central?serie={{ s.slug }}">
+        <span class="tag">{{ s.name }} · {% if s.status == "over" %}encerrada{% elif s.status == "points" and s.current_round %}rodada {{ s.current_round }}{% else %}{{ s.phase | lower }}{% endif %}</span>
+        {% if s.summary and s.summary.champion %}
+        <b>Campeão</b><span class="big">{{ s.summary.champion }}</span><small>Vice: {{ s.summary.runner_up }}</small>
+        {% elif s.ties %}
+        <b>{{ s.phase }}</b>{% for t in s.ties[:2] %}<small>{{ t.home }} × {{ t.away }}</small>{% endfor %}
+        {% elif s.table %}
+        <b>Líder</b><span class="big">{{ s.table[0].team }}</span><small>{{ s.table[0].points }} pontos</small>
+        {% endif %}
+        <span class="go">Ver a tabela →</span>
+      </a>
+      {% endfor %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+
 <section class="why" id="por-que-geral">
   <div class="wrap">
     <img src="/static/geral/icon-512.png" alt="O geraldino, de radinho de pilha no ouvido, comemorando um gol">

@@ -1,0 +1,324 @@
+[
+ {
+  "id": 346304,
+  "data_realizacao": "2026-11-21T16:30",
+  "hora_realizacao": "16:30",
+  "placar_oficial_visitante": null,
+  "placar_oficial_mandante": null,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 275,
+    "nome_popular": "Palmeiras",
+    "sigla": "PAL",
+    "escudo": "https://s.sde.globo.com/media/organizations/2019/07/06/Palmeiras.svg"
+   },
+   "visitante": {
+    "id": 262,
+    "nome_popular": "Flamengo",
+    "sigla": "FLA",
+    "escudo": "https://s.sde.globo.com/media/organizations/2018/04/10/Flamengo-2018.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Nubank Parque"
+  },
+  "transmissao": {
+   "label": "fique por dentro",
+   "url": "https://ge.globo.com/sp/futebol/brasileirao-serie-a/jogo/21-11-2026/palmeiras-flamengo.ghtml",
+   "broadcast": {
+    "id": "PRE_DIA",
+    "label": "fique por dentro"
+   }
+  },
+  "jogo_ja_comecou": false
+ },
+ {
+  "id": 346309,
+  "data_realizacao": "2026-11-21T17:30",
+  "hora_realizacao": "17:30",
+  "placar_oficial_visitante": null,
+  "placar_oficial_mandante": null,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 265,
+    "nome_popular": "Bahia",
+    "sigla": "BAH",
+    "escudo": "https://s.sde.globo.com/media/organizations/2018/03/11/bahia.svg"
+   },
+   "visitante": {
+    "id": 294,
+    "nome_popular": "Coritiba",
+    "sigla": "CFC",
+    "escudo": "https://s.sde.globo.com/media/organizations/2018/03/11/coritiba.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Arena Fonte Nova"
+  },
+  "transmissao": {
+   "label": "fique por dentro",
+   "url": "https://ge.globo.com/ba/futebol/brasileirao-serie-a/jogo/21-11-2026/bahia-coritiba.ghtml",
+   "broadcast": {
+    "id": "PRE_DIA",
+    "label": "fique por dentro"
+   }
+  },
+  "jogo_ja_comecou": false
+ },
+ {
+  "id": 346310,
+  "data_realizacao": "2026-11-21T21:00",
+  "hora_realizacao": "21:00",
+  "placar_oficial_visitante": null,
+  "placar_oficial_mandante": null,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 315,
+    "nome_popular": "Chapecoense",
+    "sigla": "CHA",
+    "escudo": "https://s.sde.globo.com/media/organizations/2021/06/21/CHAPECOENSE-2018.svg"
+   },
+   "visitante": {
+    "id": 283,
+    "nome_popular": "Cruzeiro",
+    "sigla": "CRU",
+    "escudo": "https://s.sde.globo.com/media/organizations/2021/02/13/cruzeiro_2021.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Arena Condá"
+  },
+  "transmissao": {
+   "label": "fique por dentro",
+   "url": "https://ge.globo.com/sc/futebol/brasileirao-serie-a/jogo/21-11-2026/chapecoense-cruzeiro.ghtml",
+   "broadcast": {
+    "id": "PRE_DIA",
+    "label": "fique por dentro"
+   }
+  },
+  "jogo_ja_comecou": false
+ },
+ {
+  "id": 346308,
+  "data_realizacao": "2026-11-22T16:00",
+  "hora_realizacao": "16:00",
+  "placar_oficial_visitante": null,
+  "placar_oficial_mandante": null,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 293,
+    "nome_popular": "Athletico-PR",
+    "sigla": "CAP",
+    "escudo": "https://s.sde.globo.com/media/organizations/2026/01/07/Athletico-PR.svg"
+   },
+   "visitante": {
+    "id": 364,
+    "nome_popular": "Remo",
+    "sigla": "REM",
+    "escudo": "https://s.sde.globo.com/media/organizations/2021/02/25/Remo-PA.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Arena da Baixada"
+  },
+  "transmissao": {
+   "label": "fique por dentro",
+   "url": "https://ge.globo.com/pr/futebol/brasileirao-serie-a/jogo/22-11-2026/athletico-pr-remo.ghtml",
+   "broadcast": {
+    "id": "PRE_DIA",
+    "label": "fique por dentro"
+   }
+  },
+  "jogo_ja_comecou": false
+ },
+ {
+  "id": 346301,
+  "data_realizacao": "2026-11-22T18:30",
+  "hora_realizacao": "18:30",
+  "placar_oficial_visitante": null,
+  "placar_oficial_mandante": null,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 266,
+    "nome_popular": "Fluminense",
+    "sigla": "FLU",
+    "escudo": "https://s.sde.globo.com/media/organizations/2018/03/11/fluminense.svg"
+   },
+   "visitante": {
+    "id": 2305,
+    "nome_popular": "Mirassol",
+    "sigla": "MIR",
+    "escudo": "https://s.sde.globo.com/media/organizations/2026/07/17/MIrassol.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Maracanã"
+  },
+  "transmissao": null,
+  "jogo_ja_comecou": false
+ },
+ {
+  "id": 346305,
+  "data_realizacao": "2026-11-22T19:30",
+  "hora_realizacao": "19:30",
+  "placar_oficial_visitante": null,
+  "placar_oficial_mandante": null,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 280,
+    "nome_popular": "Bragantino",
+    "sigla": "RBB",
+    "escudo": "https://s.sde.globo.com/media/organizations/2021/06/28/bragantino.svg"
+   },
+   "visitante": {
+    "id": 267,
+    "nome_popular": "Vasco",
+    "sigla": "VAS",
+    "escudo": "https://s.sde.globo.com/media/organizations/2021/09/04/vasco_SVG.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Cícero de Souza Marques"
+  },
+  "transmissao": {
+   "label": "fique por dentro",
+   "url": "https://ge.globo.com/sp/vale-do-paraiba-regiao/futebol/brasileirao-serie-a/jogo/22-11-2026/bragantino-vasco.ghtml",
+   "broadcast": {
+    "id": "PRE_DIA",
+    "label": "fique por dentro"
+   }
+  },
+  "jogo_ja_comecou": false
+ },
+ {
+  "id": 346307,
+  "data_realizacao": "2026-11-23T19:30",
+  "hora_realizacao": "19:30",
+  "placar_oficial_visitante": null,
+  "placar_oficial_mandante": null,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 285,
+    "nome_popular": "Internacional",
+    "sigla": "INT",
+    "escudo": "https://s.sde.globo.com/media/organizations/2018/03/11/internacional.svg"
+   },
+   "visitante": {
+    "id": 287,
+    "nome_popular": "Vitória",
+    "sigla": "VIT",
+    "escudo": "https://s.sde.globo.com/media/organizations/2025/12/18/Vitoria_2025.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Beira-Rio"
+  },
+  "transmissao": {
+   "label": "fique por dentro",
+   "url": "https://ge.globo.com/rs/futebol/brasileirao-serie-a/jogo/23-11-2026/internacional-vitoria.ghtml",
+   "broadcast": {
+    "id": "PRE_DIA",
+    "label": "fique por dentro"
+   }
+  },
+  "jogo_ja_comecou": false
+ },
+ {
+  "id": 346302,
+  "data_realizacao": "2026-11-23T20:00",
+  "hora_realizacao": "20:00",
+  "placar_oficial_visitante": null,
+  "placar_oficial_mandante": null,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 263,
+    "nome_popular": "Botafogo",
+    "sigla": "BOT",
+    "escudo": "https://s.sde.globo.com/media/organizations/2019/02/04/botafogo-svg.svg"
+   },
+   "visitante": {
+    "id": 276,
+    "nome_popular": "São Paulo",
+    "sigla": "SAO",
+    "escudo": "https://s.sde.globo.com/media/organizations/2018/03/11/sao-paulo.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Nilton Santos (Engenhão)"
+  },
+  "transmissao": null,
+  "jogo_ja_comecou": false
+ },
+ {
+  "id": 346303,
+  "data_realizacao": "2026-11-23T21:00",
+  "hora_realizacao": "21:00",
+  "placar_oficial_visitante": null,
+  "placar_oficial_mandante": null,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 277,
+    "nome_popular": "Santos",
+    "sigla": "SAN",
+    "escudo": "https://s.sde.globo.com/media/organizations/2018/03/12/santos.svg"
+   },
+   "visitante": {
+    "id": 284,
+    "nome_popular": "Grêmio",
+    "sigla": "GRE",
+    "escudo": "https://s.sde.globo.com/media/organizations/2018/03/12/gremio.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Morumbis"
+  },
+  "transmissao": null,
+  "jogo_ja_comecou": false
+ },
+ {
+  "id": 346306,
+  "data_realizacao": "2026-11-25T20:00",
+  "hora_realizacao": "20:00",
+  "placar_oficial_visitante": null,
+  "placar_oficial_mandante": null,
+  "placar_penaltis_visitante": null,
+  "placar_penaltis_mandante": null,
+  "equipes": {
+   "mandante": {
+    "id": 282,
+    "nome_popular": "Atlético-MG",
+    "sigla": "CAM",
+    "escudo": "https://s.sde.globo.com/media/organizations/2018/03/10/atletico-mg.svg"
+   },
+   "visitante": {
+    "id": 264,
+    "nome_popular": "Corinthians",
+    "sigla": "COR",
+    "escudo": "https://s.sde.globo.com/media/organizations/2024/10/09/Corinthians_2024_Q4ahot4.svg"
+   }
+  },
+  "sede": {
+   "nome_popular": "Arena MRV"
+  },
+  "transmissao": null,
+  "jogo_ja_comecou": false
+ }
+]
