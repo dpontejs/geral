@@ -83,5 +83,6 @@
   .standings { font-size: 14px; }
   .sheet { padding: 14px 10px; }
   .tie-grid { grid-template-columns: minmax(0, 1fr); }
+  .next ul { grid-template-columns: minmax(0, 1fr); }
   .match .score { min-width: 64px; }
 }

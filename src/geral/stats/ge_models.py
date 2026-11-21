@@ -45,6 +45,7 @@ class Phase:
     kind: Literal["points", "groups", "knockout"] | None
     bands: list[str] = field(default_factory=list)  # ge's band names, in its order
     groups: list[list[StandingRow]] | None = None  # None in a knockout phase
+    tie_legs: dict[str, int] = field(default_factory=dict)  # knockout: legs ge lists per tie
 
 
 @dataclass(frozen=True)

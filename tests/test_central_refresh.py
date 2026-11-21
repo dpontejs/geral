@@ -12,7 +12,7 @@ from geral.config import Settings
 NOW = datetime(2026, 11, 21, 12, 0, tzinfo=ZoneInfo("America/Sao_Paulo"))
 
 
-def fake_build(now, previous):
+def fake_build(now, previous, client=None):
     return CentralSnapshot(updated_at=now, series=[])
 
 
@@ -27,7 +27,7 @@ def test_refresher_survives_build_error(tmp_path) -> None:
     old = CentralSnapshot(updated_at=datetime(2026, 11, 20, tzinfo=NOW.tzinfo), series=[])
     save_snapshot(path, old)
 
-    def broken(now, previous):
+    def broken(now, previous, client=None):
         assert previous == old  # the last snapshot is handed over
         raise RuntimeError("ge down")
 

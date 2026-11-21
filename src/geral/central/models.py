@@ -55,6 +55,7 @@ class TieView(BaseModel):
     home_agg: int | None = None  # None until a leg has a score
     away_agg: int | None = None
     winner: str | None = None
+    expected_legs: int = 0  # legs ge lists for the tie, dated or not (0: unknown)
 
     @classmethod
     def of(cls, name: str, legs: list[MatchView]) -> "TieView":
@@ -104,3 +105,4 @@ class CentralSnapshot(BaseModel):
     updated_at: datetime
     series: list[SerieView]
     next_matches: list[TeamNextMatch] = []
+    next_matches_at: datetime | None = None  # fetched hourly, not on every refresh

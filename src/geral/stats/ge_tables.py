@@ -318,13 +318,21 @@ class CompetitionLoader:
                 continue
             kind = PHASE_KINDS.get(data["fase"]["tipo"]["tipo_id"])
             bands = {
-                b["cor"]: b["nome"] for b in data.get("faixas_classificacao") or [] if b.get("cor")
+                b["cor"]: b["nome"]
+                for b in data.get("faixas_classificacao") or []
+                if b.get("cor") and b.get("nome")
+            }
+            tie_legs = {
+                c["nome"]: len(c.get("jogos") or [])
+                for sec in data.get("secao") or []
+                for c in sec.get("chave") or []
+                if c.get("nome")
             }
             phase_groups = self._groups(data, name, bands) if kind != "knockout" else None
             phase_name = phase.get("nome") or phase["slug"]
             if index == current:
                 phase_kind, groups, current_index = kind, phase_groups, len(phases)
-            phases.append(Phase(phase_name, kind, list(bands.values()), phase_groups))
+            phases.append(Phase(phase_name, kind, list(bands.values()), phase_groups, tie_legs))
             for item, round_, tie in raw:
                 try:
                     game = self._game(item, name)

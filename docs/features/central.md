@@ -27,7 +27,7 @@ link no menu levam até ela.
 - **Retrato:** `geral.central.build_snapshot(now) -> CentralSnapshot` (Pydantic), gravado em JSON
   no caminho `CENTRAL_SNAPSHOT` (padrão `data/central.json`, ao lado do SQLite):
   - `CentralSnapshot(updated_at, series: list[SerieView], next_matches: list[TeamNextMatch])`
-  - `SerieView(name, status: "points" | "knockout" | "over", phase, table, bands, rounds,
+  - `SerieView(name, status: "points" | "groups" | "knockout" | "over", phase, table, bands, rounds,
     current_round, ties, summary)`; `rounds` agrupa os jogos da fase de pontos por rodada;
     `ties` são os confrontos da fase de mata-mata atual com o agregado; `summary` só quando
     `status == "over"`.
@@ -37,6 +37,9 @@ link no menu levam até ela.
     "Acesso"/"Série <X>" mais os vencedores das fases com "acesso" no nome.
   - Série acabada = a última fase é a atual e todos os jogos dela estão encerrados.
   - `next_matches`: o próximo jogo de cada time listado do catálogo, por `stats_client_for`.
+- **Carga no ge:** rodadas encerradas há 3 dias ficam guardadas na thread (só as abertas são
+  relidas); os próximos jogos dos times são buscados de hora em hora; série sem fases (formato
+  `tabela-context`) conta como falha e mantém a versão anterior.
 - **Atualização:** uma thread no app web refaz o retrato a cada 10 minutos (`CENTRAL_REFRESH=0`
   desliga, padrão nos testes); comando `geral central [--out arquivo.json]` faz o mesmo à mão.
   Série que falha mantém a versão anterior dela no retrato; a página mostra "atualizado às HH:MM".
@@ -62,7 +65,7 @@ link no menu levam até ela.
 
 ```bash
 uv run ruff check . && uv run ruff format --check . && uv run pytest
-uv run geral central --out data/central.json && uv run uvicorn geral.web.app:app  # abrir /central
+uv run geral central --out data/central.json && uv run uvicorn geral.web.app:create_app --factory  # abrir /central
 ```
 
 Conferir com o ge do dia: líder e Z4 da A, os playoffs da B, campeão e acesso da C e da D.
