@@ -145,13 +145,14 @@ def team_next_matches(now: datetime, tz: str = "America/Sao_Paulo") -> list[Team
                 )
             )
     # Two of our teams playing each other: once, from the home side.
-    shown, seen = [], set()
+    shown: dict[tuple, TeamNextMatch] = {}
     for match in sorted(found, key=lambda m: (m.kickoff, not m.is_home)):
         key = (match.kickoff, frozenset((match.team_name, match.opponent)))
-        if key not in seen:
-            seen.add(key)
-            shown.append(match)
-    return shown
+        if key in shown:
+            shown[key].other_slug = match.team_slug
+        else:
+            shown[key] = match
+    return list(shown.values())
 
 
 def build_snapshot(

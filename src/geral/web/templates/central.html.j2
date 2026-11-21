@@ -53,7 +53,7 @@
       <ul>
       {% for n in snapshot.next_matches %}
         <li>
-          <img src="/static/{{ n.team_slug }}/icon-512.png" alt="" width="40" height="40">
+          <span class="icons"><img src="/static/{{ n.team_slug }}/icon-512.png" alt="" width="40" height="40">{% if n.other_slug %}<img src="/static/{{ n.other_slug }}/icon-512.png" alt="" width="40" height="40">{% endif %}</span>
           <span class="who">{% if n.is_home %}{{ n.team_name }} × {{ n.opponent }}{% else %}{{ n.opponent }} × {{ n.team_name }}{% endif %}</span>
           <span class="when">{{ n.kickoff | short_day }} · {{ n.kickoff | short_time }} · {{ n.competition }}</span>
         </li>

@@ -94,6 +94,7 @@ class TeamNextMatch(BaseModel):
     team_slug: str
     team_name: str
     opponent: str
+    other_slug: str | None = None  # the opponent is one of ours too (a derby, shown once)
     kickoff: datetime
     competition: str
     is_home: bool = True

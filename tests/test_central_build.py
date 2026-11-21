@@ -242,3 +242,4 @@ def test_next_matches_show_a_derby_between_our_teams_once(monkeypatch) -> None:
         "Flamengo",
         True,
     )
+    assert matches[0].other_slug == "flamengo"  # both crests on the card

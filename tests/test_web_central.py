@@ -26,7 +26,15 @@ def snapshot():
                 opponent="Palmeiras",
                 kickoff=datetime(2026, 11, 22, 16, tzinfo=TZ),
                 competition="Série A",
-            )
+            ),
+            TeamNextMatch(
+                team_slug="palmeiras",
+                team_name="Palmeiras",
+                opponent="Flamengo",
+                other_slug="flamengo",
+                kickoff=datetime(2026, 11, 21, 16, 30, tzinfo=TZ),
+                competition="Série A",
+            ),
         ]
         return build_snapshot(NOW, None, client=httpx.Client(), next_matches=lambda now: nxt)
 
@@ -43,6 +51,7 @@ def test_central_page_renders_each_status(central) -> None:
     assert "Libertadores" in serie_a and "Flamengo" in serie_a
     assert 'data-round="36"' in serie_a
     assert "Palmeiras" in serie_a  # Vasco's next match
+    assert 'src="/static/flamengo/icon-512.png"' in serie_a  # a derby shows both of ours
     serie_b = central.get("/central?serie=b").text
     assert "Playoff de acesso 1" in serie_b and "Novorizontino" in serie_b
     serie_c = central.get("/central?serie=c").text
