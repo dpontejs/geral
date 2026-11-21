@@ -1,7 +1,7 @@
 # Central: tabelas e jogos das quatro séries (parte 1 de 2)
 
 - **Data:** 2026-11-21
-- **Status:** proposta
+- **Status:** implementada (aguardando PR)
 - **ADRs:** —
 
 ## Objetivo
@@ -48,15 +48,15 @@ link no menu levam até ela.
 
 ## Critérios de aceite (como testes)
 
-- [ ] `test_ge_standing_keeps_band_name`: dada a classificação da Série A (fixture), quando lê, então o 1º tem `band="Libertadores"` e o 20º `"Rebaixados"`.
-- [ ] `test_points_serie_groups_games_by_round`: dada a Série A na rodada 36, quando monta, então `current_round == 36` e cada rodada tem os seus 10 jogos.
-- [ ] `test_knockout_serie_has_ties_with_aggregate`: dados os playoffs da B, quando monta, então dois confrontos, ida e volta, com agregado quando houver placar.
-- [ ] `test_finished_serie_summary`: dada a Série C com a final decidida, quando monta, então campeão, vice, os 4 que subiram e os rebaixados.
-- [ ] `test_tie_decided_on_penalties`: dado agregado empatado, quando decide, então vence quem fez mais pênaltis.
-- [ ] `test_serie_failure_keeps_previous_version`: dado o ge fora para uma série, quando refaz, então a série segue com o retrato anterior.
-- [ ] `test_central_page_renders_each_status`: dado um retrato, quando abre `/central?serie=a|b|c`, então tabela com legenda, confrontos ou resumo.
-- [ ] `test_central_page_without_snapshot`: sem retrato ainda, quando abre, então 200 com aviso "em atualização".
-- [ ] `test_home_links_to_central`: quando abre `/`, então há o bloco e o item de menu da Central.
+- [x] `test_ge_standing_keeps_band_name`: dada a classificação da Série A (fixture), quando lê, então o 1º tem `band="Libertadores"` e o 20º `"Rebaixados"`.
+- [x] `test_points_serie_groups_games_by_round`: dada a Série A na rodada 36, quando monta, então `current_round == 36` e cada rodada tem os seus 10 jogos.
+- [x] `test_knockout_serie_has_ties_with_aggregate`: dados os playoffs da B, quando monta, então dois confrontos, ida e volta, com agregado quando houver placar.
+- [x] `test_finished_serie_summary`: dada a Série C com a final decidida, quando monta, então campeão, vice, os 4 que subiram e os rebaixados.
+- [x] `test_tie_decided_on_penalties`: dado agregado empatado, quando decide, então vence quem fez mais pênaltis.
+- [x] `test_serie_failure_keeps_previous_version`: dado o ge fora para uma série, quando refaz, então a série segue com o retrato anterior.
+- [x] `test_central_page_renders_each_status`: dado um retrato, quando abre `/central?serie=a|b|c`, então tabela com legenda, confrontos ou resumo.
+- [x] `test_central_page_without_snapshot`: sem retrato ainda, quando abre, então 200 com aviso "em atualização".
+- [x] `test_home_links_to_central`: quando abre `/`, então há o bloco e o item de menu da Central.
 
 ## Verificação ponta a ponta
 
@@ -69,7 +69,7 @@ Conferir com o ge do dia: líder e Z4 da A, os playoffs da B, campeão e acesso 
 
 ## Riscos e dúvidas abertas
 
-- Acesso da Série D: o ge não marca faixa nas fases de mata-mata; a regra "vencedores das fases
-  com acesso no nome" precisa ser conferida contra as notícias antes do merge (pode faltar quem
-  subiu pelas quartas).
+- Acesso nas fases de mata-mata: o ge não marca faixa; `PROMOTION_PHASES` (B: playoffs; D:
+  quartas e playoffs) foi conferido contra as notícias de 2026 e precisa ser revisto a cada
+  temporada. Confronto empatado sem pênaltis vai para o mandante da volta (melhor campanha).
 - API do ge não documentada: se mudar, a página mostra o último retrato com a hora dele.

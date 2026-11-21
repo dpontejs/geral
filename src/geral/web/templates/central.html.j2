@@ -1,0 +1,154 @@
+{% extends "base.html.j2" %}
+{% block title %}Central · Geral{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/geral/central.css?v={{ asset_version }}">{% endblock %}
+
+{% macro status_label(s) -%}
+{%- if s.status == "over" %}Encerrada{% elif s.status == "points" and s.current_round %}Rodada {{ s.current_round }}{% else %}{{ s.phase }}{% endif -%}
+{%- endmacro %}
+
+{% macro crest(url) %}{% if url %}<img src="{{ url }}" alt="" width="22" height="22" loading="lazy">{% else %}<span class="nocrest"></span>{% endif %}{% endmacro %}
+
+{% macro match(m) %}
+<li class="match {{ m.status }}">
+  <span class="side home"><span class="name">{{ m.home }}</span>{{ crest(m.home_crest) }}</span>
+  <span class="score">
+    {%- if m.status == "pre" -%}
+      <span class="when">{{ m.kickoff | short_time if m.time_valid else "--" }}</span>
+    {%- else -%}
+      <span class="lamp">{{ m.home_goals if m.home_goals is not none else 0 }}</span><i>×</i><span class="lamp">{{ m.away_goals if m.away_goals is not none else 0 }}</span>
+    {%- endif -%}
+  </span>
+  <span class="side away">{{ crest(m.away_crest) }}<span class="name">{{ m.away }}</span></span>
+  <span class="meta">{{ m.kickoff | short_day }}{% if not m.time_valid and m.status == "pre" %} · horário a definir{% endif %}{% if m.venue %} · {{ m.venue }}{% endif %}{% if m.home_penalties is not none %} · pênaltis {{ m.home_penalties }} × {{ m.away_penalties }}{% endif %}{% if m.status == "live" %} · <b class="live blink">ao vivo</b>{% endif %}</span>
+</li>
+{% endmacro %}
+
+{% macro standings(rows, bands) %}
+{% set colors = band_colors(bands) %}
+<table class="standings">
+  <thead><tr><th class="pos" scope="col">#</th><th class="team" scope="col">Time</th><th scope="col" title="Pontos">P</th><th scope="col" title="Jogos">J</th><th class="wide" scope="col" title="Vitórias">V</th><th class="wide" scope="col" title="Empates">E</th><th class="wide" scope="col" title="Derrotas">D</th><th scope="col" title="Saldo de gols">SG</th></tr></thead>
+  <tbody>
+  {% for r in rows %}
+    <tr{% if r.band %} title="{{ r.band }}"{% endif %}>
+      <td class="pos" style="--band: {{ colors.get(r.band, 'transparent') }}">{{ r.position }}</td>
+      <td class="team"><span class="cell">{{ crest(r.crest) }}<span class="name">{{ r.team }}</span></span></td>
+      <td class="pts">{{ r.points }}</td><td>{{ r.played }}</td><td class="wide">{{ r.won }}</td><td class="wide">{{ r.drawn }}</td><td class="wide">{{ r.lost }}</td><td>{{ "%+d" % r.goals_diff if r.goals_diff else 0 }}</td>
+    </tr>
+  {% endfor %}
+  </tbody>
+</table>
+{% if bands %}
+<ul class="legend">{% for band in bands %}<li><i style="background: {{ colors[band] }}"></i>{{ band }}</li>{% endfor %}</ul>
+{% endif %}
+{% endmacro %}
+
+{% block content %}
+<section class="central-head wall">
+  <div class="wrap">
+    <h1>Central</h1>
+    <p class="lead">Tabela, rodada e quem sobe e quem cai nas Séries A, B, C e D.{% if snapshot %} Atualizado às {{ snapshot.updated_at | short_time }} de {{ snapshot.updated_at | short_day }}.{% endif %}</p>
+    {% if snapshot and snapshot.next_matches %}
+    <div class="next board">
+      <h2 class="lamp">Próximos jogos da Geral</h2>
+      <ul>
+      {% for n in snapshot.next_matches %}
+        <li>
+          <img src="/static/{{ n.team_slug }}/icon-512.png" alt="" width="40" height="40">
+          <span class="who">{% if n.is_home %}{{ n.team_name }} × {{ n.opponent }}{% else %}{{ n.opponent }} × {{ n.team_name }}{% endif %}</span>
+          <span class="when">{{ n.kickoff | short_day }} · {{ n.kickoff | short_time }} · {{ n.competition }}</span>
+        </li>
+      {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<section class="central-body">
+  <div class="wrap">
+    {% if not serie %}
+    <div class="sheet empty">
+      <h2>Central em atualização</h2>
+      <p>As tabelas estão sendo buscadas agora. Volte em alguns minutos.</p>
+    </div>
+    {% else %}
+    <nav class="series-tabs" aria-label="Séries">
+      {% for s in series %}
+      <a {% if s.slug == serie.slug %}aria-current="page" {% endif %}href="/central?serie={{ s.slug }}"><b>{{ s.name }}</b><span>{{ status_label(s) }}</span></a>
+      {% endfor %}
+    </nav>
+
+    {% if serie.summary %}
+    {% set sm = serie.summary %}
+    <div class="summary">
+      {% if sm.champion %}
+      <div class="champion board"><span class="lamp tag">Campeão</span><strong class="lamp">{{ sm.champion }}</strong>{% if sm.runner_up %}<span class="vice">Vice: {{ sm.runner_up }}</span>{% endif %}</div>
+      {% endif %}
+      {% if sm.promoted %}<div class="sheet"><h3>Subiram</h3><ul>{% for t in sm.promoted %}<li>{{ t }}</li>{% endfor %}</ul></div>{% endif %}
+      {% if sm.relegated %}<div class="sheet"><h3>Caíram</h3><ul>{% for t in sm.relegated %}<li>{{ t }}</li>{% endfor %}</ul></div>{% endif %}
+    </div>
+    {% endif %}
+
+    {% if serie.ties %}
+    <div class="ties">
+      <h2>{{ serie.phase }}</h2>
+      <div class="tie-grid">
+      {% for t in serie.ties %}
+        <article class="sheet tie">
+          <h3>{{ t.name }}</h3>
+          <p class="agg"><span{% if t.winner == t.home %} class="won"{% endif %}>{{ t.home }}</span>{% if t.home_agg is not none %}<b>{{ t.home_agg }} × {{ t.away_agg }}</b>{% else %}<b>×</b>{% endif %}<span{% if t.winner == t.away %} class="won"{% endif %}>{{ t.away }}</span></p>
+          <ul class="matches">{% for m in t.legs %}{{ match(m) }}{% endfor %}</ul>
+        </article>
+      {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {% if serie.groups %}
+    <div class="groups">
+      <h2>{{ serie.phase }}</h2>
+      <div class="tie-grid">{% for g in serie.groups %}<div class="sheet">{{ standings(g, serie.group_bands) }}</div>{% endfor %}</div>
+    </div>
+    {% endif %}
+
+    <div class="split{% if not serie.rounds %} solo{% endif %}">
+      {% if serie.table %}
+      <div class="sheet">
+        <h2>{% if serie.status == "points" %}Classificação{% else %}Tabela da fase de pontos{% endif %}</h2>
+        {{ standings(serie.table, serie.bands) }}
+      </div>
+      {% endif %}
+      {% if serie.rounds %}
+      <div class="sheet rounds" data-rounds>
+        <div class="round-nav">
+          <button type="button" data-step="-1" aria-label="Rodada anterior">‹</button>
+          <h2 class="round-label">Rodada {{ serie.current_round }}</h2>
+          <button type="button" data-step="1" aria-label="Próxima rodada">›</button>
+        </div>
+        {% for n, games in serie.rounds.items() %}
+        <ul class="matches round" data-round="{{ n }}"{% if n != serie.current_round %} hidden{% endif %}>
+          {% for m in games %}{{ match(m) }}{% endfor %}
+        </ul>
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+</section>
+<script>
+document.querySelectorAll("[data-rounds]").forEach(function (box) {
+  var rounds = Array.prototype.slice.call(box.querySelectorAll(".round"));
+  var label = box.querySelector(".round-label");
+  var prev = box.querySelector('[data-step="-1"]'), next = box.querySelector('[data-step="1"]');
+  var at = rounds.findIndex(function (r) { return !r.hidden; });
+  function show(i) {
+    rounds[at].hidden = true; at = i; rounds[at].hidden = false;
+    label.textContent = "Rodada " + rounds[at].dataset.round;
+    prev.disabled = at === 0; next.disabled = at === rounds.length - 1;
+  }
+  [prev, next].forEach(function (b) { b.addEventListener("click", function () { show(at + Number(b.dataset.step)); }); });
+  show(at);
+});
+</script>
+{% endblock %}

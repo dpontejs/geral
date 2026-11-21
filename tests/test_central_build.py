@@ -211,3 +211,34 @@ def test_next_matches_skip_a_failing_team(monkeypatch) -> None:
     matches = build.team_next_matches(NOW)
     slugs = {m.team_slug for m in matches}
     assert "vasco" not in slugs and "flamengo" in slugs
+
+
+def test_next_matches_show_a_derby_between_our_teams_once(monkeypatch) -> None:
+    from geral.central import build
+    from geral.models import NextMatch
+
+    names = {"palmeiras": "Palmeiras", "flamengo": "Flamengo"}
+
+    class Client:
+        def __init__(self, team) -> None:
+            self.team = team
+
+        def get_next_match(self, now):
+            if self.team.slug not in names:
+                return None
+            other = names["flamengo" if self.team.slug == "palmeiras" else "palmeiras"]
+            return NextMatch(
+                opponent=other,
+                competition="Série A",
+                date=NOW,
+                is_home=self.team.slug == "palmeiras",
+            )
+
+    monkeypatch.setattr(build, "stats_client_for", lambda team, tz: Client(team))
+    matches = build.team_next_matches(NOW)
+    assert len(matches) == 1
+    assert (matches[0].team_name, matches[0].opponent, matches[0].is_home) == (
+        "Palmeiras",
+        "Flamengo",
+        True,
+    )

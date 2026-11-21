@@ -155,6 +155,16 @@ section.block .wrap { padding-block: 8px 52px; }
 .pedir-strip .go { flex: 0 0 auto; font: 800 20px/1 var(--display); text-transform: uppercase; letter-spacing: .06em; color: var(--turf); }
 .pedir-strip:hover { border-style: solid; border-color: var(--ticket); }
 
+/* chamada da Central */
+.central-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); grid-auto-rows: 1fr; gap: 14px; }
+.central-card { background: var(--paper); border: 3px solid var(--ink); padding: 16px 18px; display: flex; flex-direction: column; gap: 6px; text-decoration: none; min-width: 0; }
+.central-card:hover { border-color: var(--ticket); }
+.central-card .tag { font: 800 15px/1 var(--display); text-transform: uppercase; letter-spacing: .06em; color: var(--ink-soft); }
+.central-card b { font: 800 14px/1 var(--display); text-transform: uppercase; letter-spacing: .08em; margin-top: 6px; }
+.central-card .big { font: 900 30px/1 var(--display); text-transform: uppercase; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.central-card small { font-size: 14px; color: var(--ink-soft); }
+.central-card .go { margin-top: auto; padding-top: 8px; font: 800 18px/1 var(--display); text-transform: uppercase; letter-spacing: .06em; color: var(--turf); }
+
 /* por que Geral */
 .why { background: var(--turf); color: var(--on-pitch); border-block: 5px solid var(--chalk); }
 .why .wrap { display: flex; flex-wrap: wrap; gap: 36px; align-items: center; padding-block: 52px; }
@@ -241,6 +251,7 @@ input.nick { width: min(100%, 320px); display: block; }
       {% if request.url.path != "/" %}<a href="/">Início</a>{% endif %}
       <a href="/#torcidas">Torcidas</a>
       <a href="/#placar">Placar</a>
+      <a href="/central">Central</a>
       <a href="/jogos">Joguinhos</a>
       <a href="/pedir">Peça seu time</a>
       <a class="cta" href="/#signup">Entrar na Geral</a>
