@@ -1242,7 +1242,12 @@ def create_app(
             elif not NICKNAME_RE.match(nickname):
                 problem = "Use só letras, números, espaços, hífen e apóstrofo no apelido."
             elif not bolao.set_nickname(email, nickname):
-                problem = "Esse apelido já é de outra pessoa. Escolha outro."
+                # One nickname per e-mail: the owner of two addresses is two players.
+                problem = (
+                    "Esse apelido já está em uso por outro e-mail. Se você recebe a Geral em "
+                    "mais de um endereço, cada um palpita separado: escolha outro apelido, como "
+                    f"“{nickname} 2”, ou palpite pelo e-mail em que você começou."
+                )
             if problem:
                 return bet_page(
                     request, 409, mode="confirm", nickname=None, problem=problem, **context

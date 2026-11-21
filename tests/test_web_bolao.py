@@ -252,3 +252,31 @@ def test_match_kickoff_without_timezone_is_refused(client) -> None:
     naive = {"opponent": "Bahia", "home": True, "kickoff": "2026-11-15T21:30:00"}
 
     assert client.put(f"{API}/m3", json=naive, headers=AUTH).status_code == 422
+
+
+def test_second_bet_reuses_the_nickname_in_another_match_and_team(client, store, bolao) -> None:
+    bolao.upsert_match("vasco", "m2", "Santos", home=True, kickoff=KICKOFF)
+    bolao.upsert_match("flamengo", "f1", "Palmeiras", home=False, kickoff=KICKOFF)
+    token = member(store, bolao, "diego@x.com", teams=("vasco", "flamengo"))
+
+    first = bet(client, token, nickname="Diego")
+    form = ask(client, token, match="m2")
+    again = bet(client, token, match="m2", nickname="Diego")
+    other_team = bet(client, token, team="flamengo", match="f1", nickname="Diego")
+
+    assert first.status_code == 200
+    assert 'name="nickname"' not in form.text
+    assert again.status_code == 200, again.text[-600:]
+    assert other_team.status_code == 200, other_team.text[-600:]
+
+
+def test_taken_nickname_explains_several_addresses(client, store, bolao) -> None:
+    member(store, bolao, "diego@ufrn.br", "Diego")
+    other_address = member(store, bolao, "diego@gmail.com")
+
+    taken = bet(client, other_address, nickname="Diego")
+
+    assert taken.status_code == 409
+    assert "já está em uso por outro e-mail" in taken.text
+    assert "mais de um endereço" in taken.text and "Diego 2" in taken.text
+    assert "ufrn" not in taken.text  # never tells whose it is
