@@ -224,3 +224,4 @@ class Newsletter(BaseModel):
     bolao: BolaoSummary | None = None  # post-game: the bolão result
     story: Story | None = None  # special section: a story of the club
     on_this_day: list[str] = Field(default_factory=list)  # special section: "Neste dia"
+    note: str | None = None  # `geral novidade`: the "Novidades" box, kept in the draft

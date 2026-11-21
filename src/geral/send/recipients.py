@@ -239,6 +239,25 @@ def _bolao_url(settings: Settings, team: str, match_id: str, suffix: str = "") -
     return f"{base}/api/teams/{team}/bolao/matches/{match_id}{suffix}"
 
 
+def fetch_note(settings: Settings, team: str, client: httpx.Client | None = None) -> str | None:
+    """The announcement for the team's next edition (`geral novidade`), if any.
+
+    Never stops an edition: without the API or on any failure there is simply no note.
+    """
+    if not settings.SUBSCRIBERS_API_TOKEN:
+        return None
+    try:
+        response = (client or httpx.Client(timeout=TIMEOUT)).get(
+            settings.PUBLIC_URL.rstrip("/") + f"/api/teams/{team}/note", headers=_auth(settings)
+        )
+        response.raise_for_status()
+        text = response.json().get("text")
+    except Exception as e:  # noqa: BLE001 - an announcement is never worth a lost edition
+        logger.warning("No note for %s: %s", team, e)
+        return None
+    return text.strip() if isinstance(text, str) and text.strip() else None
+
+
 def _auth(settings: Settings) -> dict[str, str]:
     return {"Authorization": f"Bearer {settings.SUBSCRIBERS_API_TOKEN}"}
 
