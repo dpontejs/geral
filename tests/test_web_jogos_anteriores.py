@@ -26,7 +26,8 @@ def test_a_past_puzzle_has_its_own_page_marked_as_past(game, path) -> None:
     assert "13/11" in page.text and "não conta na sequência" in page.text
     note = page.text.split('class="archive-note"')[1].split("</p>")[0]
     assert f'href="/jogos/{path}"' in note  # back to today's game
-    assert page.text.count('aria-current="page"') == 1  # the past number, not the edition too
+    body = page.text.split("</header>", 1)[1]  # the menu lights Joguinhos on its own
+    assert body.count('aria-current="page"') == 1  # the past number, not the edition too
     assert 'class="stats"' not in page.text
 
 
