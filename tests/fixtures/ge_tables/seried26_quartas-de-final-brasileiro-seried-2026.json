@@ -1,0 +1,347 @@
+{
+ "lista_jogos_unica": true,
+ "edicao": {
+  "data_inicio": "2026-04-04",
+  "data_fim": "2026-09-13",
+  "nome": "Campeonato Brasileiro Série D 2026",
+  "regulamento": "A Primeira fase tem 96 clubes divididos em 16 grupos com seis times cada, onde as equipes se enfrentam em dois turnos. Os quatro melhores de cada grupo se classificam para a Segunda fase. Em caso de igualdade na pontuação, são critérios de desempate: 1) mais vitórias; 2) melhor saldo de gols; 3) mais gols pró; 4) confronto direto (entre dois times); 5) menos cartões vermelhos; 6) menos cartões amarelos; 7) sorteio. Segunda fase, Terceira fase, Oitavas de final, Quartas de final, Semifinal, Playoff de acesso e Final são disputadas no sistema de mata-mata em jogos de ida e volta. Em caso de igualdade na pontuação em qualquer fase de mata-mata, são critérios de desempate: 1) saldo de gols no confronto; 2) disputa de pênaltis. No total, seis clubes irão garantir acesso para a Série C 2027: as quatro equipes classificadas para a Semifinal e os dois times que vencerem o Playoff de acesso. O campeão da Série D terá acesso direto à Terceira fase da Copa do Brasil 2027.",
+  "localizacao": "Brasil"
+ },
+ "fase": {
+  "tipo": {
+   "tipo_id": "2",
+   "descricao": "Mata Mata"
+  },
+  "disclaimer": "",
+  "slug": "quartas-de-final-brasileiro-seried-2026"
+ },
+ "max_jogos_chaves": 2,
+ "secao": [
+  {
+   "tem_chave_subsequente": true,
+   "chave": [
+    {
+     "id": 76371,
+     "nome": "Quartas 2",
+     "tem_chave_anterior": true,
+     "jogos": [
+      {
+       "id": 354172,
+       "equipes": {
+        "mandante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2026/02/04/goiatuba-svg-79953.svg",
+         "id": 1314,
+         "nome_popular": "Goiatuba",
+         "sigla": "GTB"
+        },
+        "visitante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2023/05/01/ASA.svg",
+         "id": 342,
+         "nome_popular": "ASA",
+         "sigla": "ASA"
+        }
+       },
+       "data_realizacao": "2026-08-08",
+       "hora_realizacao": "18:30",
+       "exibir_jogo": true,
+       "sede": {
+        "nome_popular": "Divinão"
+       },
+       "placar_oficial_visitante": 0,
+       "placar_oficial_mandante": 0,
+       "placar_penaltis_visitante": null,
+       "placar_penaltis_mandante": null,
+       "transmissao": {
+        "label": "saiba como foi",
+        "url": "https://ge.globo.com/go/futebol/brasileirao-serie-d/jogo/08-08-2026/goiatuba-asa-arapiraca.ghtml",
+        "broadcast": {
+         "id": "ENCERRADA",
+         "label": "saiba como foi"
+        }
+       },
+       "jogo_ja_comecou": true
+      },
+      {
+       "id": 354173,
+       "equipes": {
+        "mandante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2023/05/01/ASA.svg",
+         "id": 342,
+         "nome_popular": "ASA",
+         "sigla": "ASA"
+        },
+        "visitante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2026/02/04/goiatuba-svg-79953.svg",
+         "id": 1314,
+         "nome_popular": "Goiatuba",
+         "sigla": "GTB"
+        }
+       },
+       "data_realizacao": "2026-08-16",
+       "hora_realizacao": "17:00",
+       "exibir_jogo": true,
+       "sede": {
+        "nome_popular": "Municipal Arapiraca"
+       },
+       "placar_oficial_visitante": 1,
+       "placar_oficial_mandante": 1,
+       "placar_penaltis_visitante": 4,
+       "placar_penaltis_mandante": 5,
+       "transmissao": {
+        "label": "saiba como foi",
+        "url": "https://ge.globo.com/al/futebol/brasileirao-serie-d/jogo/16-08-2026/asa-arapiraca-goiatuba.ghtml",
+        "broadcast": {
+         "id": "ENCERRADA",
+         "label": "saiba como foi"
+        }
+       },
+       "jogo_ja_comecou": true
+      }
+     ]
+    },
+    {
+     "id": 76370,
+     "nome": "Quartas 1",
+     "tem_chave_anterior": true,
+     "jogos": [
+      {
+       "id": 354170,
+       "equipes": {
+        "mandante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2019/01/03/São_José-RS-01.svg",
+         "id": 2574,
+         "nome_popular": "São José-RS",
+         "sigla": "SJO"
+        },
+        "visitante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2024/01/04/gama-escudo-svg-66231.svg",
+         "id": 378,
+         "nome_popular": "Gama",
+         "sigla": "GAM"
+        }
+       },
+       "data_realizacao": "2026-08-08",
+       "hora_realizacao": "17:00",
+       "exibir_jogo": true,
+       "sede": {
+        "nome_popular": "Francisco Novelletto"
+       },
+       "placar_oficial_visitante": 1,
+       "placar_oficial_mandante": 1,
+       "placar_penaltis_visitante": null,
+       "placar_penaltis_mandante": null,
+       "transmissao": {
+        "label": "saiba como foi",
+        "url": "https://ge.globo.com/pi/futebol/brasileirao-serie-d/jogo/08-08-2026/sao-jose-rs-gama.ghtml",
+        "broadcast": {
+         "id": "ENCERRADA",
+         "label": "saiba como foi"
+        }
+       },
+       "jogo_ja_comecou": true
+      },
+      {
+       "id": 354171,
+       "equipes": {
+        "mandante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2024/01/04/gama-escudo-svg-66231.svg",
+         "id": 378,
+         "nome_popular": "Gama",
+         "sigla": "GAM"
+        },
+        "visitante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2019/01/03/São_José-RS-01.svg",
+         "id": 2574,
+         "nome_popular": "São José-RS",
+         "sigla": "SJO"
+        }
+       },
+       "data_realizacao": "2026-08-16",
+       "hora_realizacao": "16:00",
+       "exibir_jogo": true,
+       "sede": {
+        "nome_popular": "Bezerrão (DF)"
+       },
+       "placar_oficial_visitante": 0,
+       "placar_oficial_mandante": 4,
+       "placar_penaltis_visitante": null,
+       "placar_penaltis_mandante": null,
+       "transmissao": {
+        "label": "saiba como foi",
+        "url": "https://ge.globo.com/go/futebol/brasileirao-serie-d/jogo/16-08-2026/gama-sao-jose-rs.ghtml",
+        "broadcast": {
+         "id": "ENCERRADA",
+         "label": "saiba como foi"
+        }
+       },
+       "jogo_ja_comecou": true
+      }
+     ]
+    }
+   ]
+  },
+  {
+   "tem_chave_subsequente": true,
+   "chave": [
+    {
+     "id": 76373,
+     "nome": "Quartas 4",
+     "tem_chave_anterior": true,
+     "jogos": [
+      {
+       "id": 354176,
+       "equipes": {
+        "mandante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2026/11/06/uberlandia-2026-svg-82729.svg",
+         "id": 330,
+         "nome_popular": "Uberlândia",
+         "sigla": "UBE"
+        },
+        "visitante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2018/03/11/csa.svg",
+         "id": 341,
+         "nome_popular": "CSA",
+         "sigla": "CSA"
+        }
+       },
+       "data_realizacao": "2026-08-08",
+       "hora_realizacao": "17:00",
+       "exibir_jogo": true,
+       "sede": {
+        "nome_popular": "Parque do Sabiá"
+       },
+       "placar_oficial_visitante": 0,
+       "placar_oficial_mandante": 1,
+       "placar_penaltis_visitante": null,
+       "placar_penaltis_mandante": null,
+       "transmissao": {
+        "label": "saiba como foi",
+        "url": "https://ge.globo.com/mg/triangulo-mineiro/futebol/brasileirao-serie-d/jogo/08-08-2026/uberlandia-csa-al.ghtml",
+        "broadcast": {
+         "id": "ENCERRADA",
+         "label": "saiba como foi"
+        }
+       },
+       "jogo_ja_comecou": true
+      },
+      {
+       "id": 354177,
+       "equipes": {
+        "mandante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2018/03/11/csa.svg",
+         "id": 341,
+         "nome_popular": "CSA",
+         "sigla": "CSA"
+        },
+        "visitante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2026/11/06/uberlandia-2026-svg-82729.svg",
+         "id": 330,
+         "nome_popular": "Uberlândia",
+         "sigla": "UBE"
+        }
+       },
+       "data_realizacao": "2026-08-15",
+       "hora_realizacao": "17:00",
+       "exibir_jogo": true,
+       "sede": {
+        "nome_popular": "Rei Pelé (AL)"
+       },
+       "placar_oficial_visitante": 2,
+       "placar_oficial_mandante": 0,
+       "placar_penaltis_visitante": null,
+       "placar_penaltis_mandante": null,
+       "transmissao": {
+        "label": "saiba como foi",
+        "url": "https://ge.globo.com/al/futebol/brasileirao-serie-d/jogo/15-08-2026/csa-al-uberlandia.ghtml",
+        "broadcast": {
+         "id": "ENCERRADA",
+         "label": "saiba como foi"
+        }
+       },
+       "jogo_ja_comecou": true
+      }
+     ]
+    },
+    {
+     "id": 76372,
+     "nome": "Quartas 3",
+     "tem_chave_anterior": true,
+     "jogos": [
+      {
+       "id": 354174,
+       "equipes": {
+        "mandante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2026/03/21/Nacional-AM_1.svg",
+         "id": 366,
+         "nome_popular": "Nacional-AM",
+         "sigla": "NAM"
+        },
+        "visitante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2022/11/14/ABC-RN.svg",
+         "id": 350,
+         "nome_popular": "ABC",
+         "sigla": "ABC"
+        }
+       },
+       "data_realizacao": "2026-08-08",
+       "hora_realizacao": "16:00",
+       "exibir_jogo": true,
+       "sede": {
+        "nome_popular": "Arena da Amazônia"
+       },
+       "placar_oficial_visitante": 2,
+       "placar_oficial_mandante": 1,
+       "placar_penaltis_visitante": null,
+       "placar_penaltis_mandante": null,
+       "transmissao": {
+        "label": "saiba como foi",
+        "url": "https://ge.globo.com/am/futebol/brasileirao-serie-d/jogo/08-08-2026/nacional-abc.ghtml",
+        "broadcast": {
+         "id": "ENCERRADA",
+         "label": "saiba como foi"
+        }
+       },
+       "jogo_ja_comecou": true
+      },
+      {
+       "id": 354175,
+       "equipes": {
+        "mandante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2022/11/14/ABC-RN.svg",
+         "id": 350,
+         "nome_popular": "ABC",
+         "sigla": "ABC"
+        },
+        "visitante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2026/03/21/Nacional-AM_1.svg",
+         "id": 366,
+         "nome_popular": "Nacional-AM",
+         "sigla": "NAM"
+        }
+       },
+       "data_realizacao": "2026-08-16",
+       "hora_realizacao": "17:00",
+       "exibir_jogo": true,
+       "sede": {
+        "nome_popular": "Arena das Dunas"
+       },
+       "placar_oficial_visitante": 0,
+       "placar_oficial_mandante": 1,
+       "placar_penaltis_visitante": null,
+       "placar_penaltis_mandante": null,
+       "transmissao": {
+        "label": "saiba como foi",
+        "url": "https://ge.globo.com/rn/futebol/brasileirao-serie-d/jogo/16-08-2026/abc-nacional.ghtml",
+        "broadcast": {
+         "id": "ENCERRADA",
+         "label": "saiba como foi"
+        }
+       },
+       "jogo_ja_comecou": true
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

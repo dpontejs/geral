@@ -112,6 +112,8 @@ class StandingRow(BaseModel):
     goals_for: int = 0
     goals_against: int = 0
     is_ours: bool = False
+    band: str | None = None  # ge's classification band, e.g. "Libertadores" (Central)
+    crest: str | None = None
 
 
 class FormResult(BaseModel):

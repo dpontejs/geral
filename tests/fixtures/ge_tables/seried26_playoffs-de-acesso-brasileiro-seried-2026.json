@@ -1,0 +1,184 @@
+{
+ "lista_jogos_unica": true,
+ "edicao": {
+  "data_inicio": "2026-04-04",
+  "data_fim": "2026-09-13",
+  "nome": "Campeonato Brasileiro Série D 2026",
+  "regulamento": "A Primeira fase tem 96 clubes divididos em 16 grupos com seis times cada, onde as equipes se enfrentam em dois turnos. Os quatro melhores de cada grupo se classificam para a Segunda fase. Em caso de igualdade na pontuação, são critérios de desempate: 1) mais vitórias; 2) melhor saldo de gols; 3) mais gols pró; 4) confronto direto (entre dois times); 5) menos cartões vermelhos; 6) menos cartões amarelos; 7) sorteio. Segunda fase, Terceira fase, Oitavas de final, Quartas de final, Semifinal, Playoff de acesso e Final são disputadas no sistema de mata-mata em jogos de ida e volta. Em caso de igualdade na pontuação em qualquer fase de mata-mata, são critérios de desempate: 1) saldo de gols no confronto; 2) disputa de pênaltis. No total, seis clubes irão garantir acesso para a Série C 2027: as quatro equipes classificadas para a Semifinal e os dois times que vencerem o Playoff de acesso. O campeão da Série D terá acesso direto à Terceira fase da Copa do Brasil 2027.",
+  "localizacao": "Brasil"
+ },
+ "fase": {
+  "tipo": {
+   "tipo_id": "2",
+   "descricao": "Mata Mata"
+  },
+  "disclaimer": "",
+  "slug": "playoffs-de-acesso-brasileiro-seried-2026"
+ },
+ "max_jogos_chaves": 2,
+ "secao": [
+  {
+   "tem_chave_subsequente": false,
+   "chave": [
+    {
+     "id": 76377,
+     "nome": "Playoff 1",
+     "tem_chave_anterior": false,
+     "jogos": [
+      {
+       "id": 356302,
+       "equipes": {
+        "mandante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2026/03/21/Nacional-AM_1.svg",
+         "id": 366,
+         "nome_popular": "Nacional-AM",
+         "sigla": "NAM"
+        },
+        "visitante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2018/03/11/csa.svg",
+         "id": 341,
+         "nome_popular": "CSA",
+         "sigla": "CSA"
+        }
+       },
+       "data_realizacao": "2026-08-27",
+       "hora_realizacao": "21:00",
+       "exibir_jogo": true,
+       "sede": {
+        "nome_popular": "Arena da Amazônia"
+       },
+       "placar_oficial_visitante": 1,
+       "placar_oficial_mandante": 3,
+       "placar_penaltis_visitante": null,
+       "placar_penaltis_mandante": null,
+       "transmissao": {
+        "label": "saiba como foi",
+        "url": "https://ge.globo.com/am/futebol/brasileirao-serie-d/jogo/27-08-2026/nacional-csa-al.ghtml",
+        "broadcast": {
+         "id": "ENCERRADA",
+         "label": "saiba como foi"
+        }
+       },
+       "jogo_ja_comecou": true
+      },
+      {
+       "id": 356303,
+       "equipes": {
+        "mandante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2018/03/11/csa.svg",
+         "id": 341,
+         "nome_popular": "CSA",
+         "sigla": "CSA"
+        },
+        "visitante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2026/03/21/Nacional-AM_1.svg",
+         "id": 366,
+         "nome_popular": "Nacional-AM",
+         "sigla": "NAM"
+        }
+       },
+       "data_realizacao": "2026-09-03",
+       "hora_realizacao": "20:00",
+       "exibir_jogo": true,
+       "sede": {
+        "nome_popular": "Rei Pelé (AL)"
+       },
+       "placar_oficial_visitante": 0,
+       "placar_oficial_mandante": 0,
+       "placar_penaltis_visitante": null,
+       "placar_penaltis_mandante": null,
+       "transmissao": {
+        "label": "saiba como foi",
+        "url": "https://ge.globo.com/al/futebol/brasileirao-serie-d/jogo/03-09-2026/csa-al-nacional.ghtml",
+        "broadcast": {
+         "id": "ENCERRADA",
+         "label": "saiba como foi"
+        }
+       },
+       "jogo_ja_comecou": true
+      }
+     ]
+    },
+    {
+     "id": 76378,
+     "nome": "Playoff 2",
+     "tem_chave_anterior": false,
+     "jogos": [
+      {
+       "id": 356304,
+       "equipes": {
+        "mandante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2019/01/03/São_José-RS-01.svg",
+         "id": 2574,
+         "nome_popular": "São José-RS",
+         "sigla": "SJO"
+        },
+        "visitante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2026/02/04/goiatuba-svg-79953.svg",
+         "id": 1314,
+         "nome_popular": "Goiatuba",
+         "sigla": "GTB"
+        }
+       },
+       "data_realizacao": "2026-08-26",
+       "hora_realizacao": "19:00",
+       "exibir_jogo": true,
+       "sede": {
+        "nome_popular": "Francisco Novelletto"
+       },
+       "placar_oficial_visitante": 0,
+       "placar_oficial_mandante": 0,
+       "placar_penaltis_visitante": null,
+       "placar_penaltis_mandante": null,
+       "transmissao": {
+        "label": "saiba como foi",
+        "url": "https://ge.globo.com/go/futebol/brasileirao-serie-d/jogo/26-08-2026/sao-jose-rs-goiatuba.ghtml",
+        "broadcast": {
+         "id": "ENCERRADA",
+         "label": "saiba como foi"
+        }
+       },
+       "jogo_ja_comecou": true
+      },
+      {
+       "id": 356305,
+       "equipes": {
+        "mandante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2026/02/04/goiatuba-svg-79953.svg",
+         "id": 1314,
+         "nome_popular": "Goiatuba",
+         "sigla": "GTB"
+        },
+        "visitante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2019/01/03/São_José-RS-01.svg",
+         "id": 2574,
+         "nome_popular": "São José-RS",
+         "sigla": "SJO"
+        }
+       },
+       "data_realizacao": "2026-09-02",
+       "hora_realizacao": "19:00",
+       "exibir_jogo": true,
+       "sede": {
+        "nome_popular": "Divinão"
+       },
+       "placar_oficial_visitante": 1,
+       "placar_oficial_mandante": 1,
+       "placar_penaltis_visitante": null,
+       "placar_penaltis_mandante": null,
+       "transmissao": {
+        "label": "saiba como foi",
+        "url": "https://ge.globo.com/go/futebol/brasileirao-serie-d/jogo/02-09-2026/goiatuba-sao-jose-rs.ghtml",
+        "broadcast": {
+         "id": "ENCERRADA",
+         "label": "saiba como foi"
+        }
+       },
+       "jogo_ja_comecou": true
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

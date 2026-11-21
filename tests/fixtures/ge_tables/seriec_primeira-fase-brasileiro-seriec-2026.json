@@ -1,0 +1,949 @@
+{
+ "edicao": {
+  "data_inicio": "2026-04-04",
+  "data_fim": "2026-10-24",
+  "nome": "Campeonato Brasileiro Série C 2026",
+  "regulamento": "A Primeira fase é disputada no sistema de pontos corridos, com os 20 times se enfrentando em turno único. Os oito melhores colocados avançam à segunda fase, enquanto os dois últimos são rebaixados à Série D. Em caso de igualdade na pontuação, são critérios de desempate: 1) mais vitórias; 2) melhor saldo de gols; 3) mais gols pró; 4) menos cartões vermelhos; 5) menos cartões amarelos; 6) sorteio. Na Segunda fase, as equipes são divididas em duas chaves de quatro equipes, jogam dentro do grupo em dois turnos e os dois primeiros de cada chave garantem acesso à Série B, sendo que os primeiros colocados se classificam para a Final. Em caso de igualdade na pontuação, são critérios de desempate: 1) mais vitórias; 2) melhor saldo de gols; 3) mais gols pró; 4) confronto direto; 5) menos cartões vermelhos; 6) menos cartões amarelos; 7) sorteio. Na Final, disputada no sistema mata-mata em jogos de ida e volta, em caso de igualdade na pontuação e, posteriormente, no saldo de gols do duelo, o título é decidido na disputa de pênaltis. Mando de campo do segundo jogo da decisão é da equipe com melhor campanha na soma das fases anteriores; O campeão da Série C garante vaga direta na Terceira fase da Copa do Brasil.",
+  "localizacao": "Brasil"
+ },
+ "fase": {
+  "tipo": {
+   "tipo_id": "1",
+   "descricao": "Pontos Corridos"
+  },
+  "disclaimer": "",
+  "slug": "primeira-fase-brasileiro-seriec-2026"
+ },
+ "faixas_classificacao": [
+  {
+   "cor": "#0000ff",
+   "id": 4869,
+   "nome": "Classificados"
+  },
+  {
+   "cor": "#ff0000",
+   "id": 4870,
+   "nome": "Rebaixados"
+  }
+ ],
+ "classificacao": [
+  {
+   "ordem": 1,
+   "variacao": 1,
+   "pontos": 33,
+   "nome_popular": "Botafogo-PB",
+   "sigla": "BOT",
+   "vitorias": 10,
+   "escudo": "https://s.sde.globo.com/media/organizations/2020/02/12/botsvg.svg",
+   "equipe_id": 349,
+   "aproveitamento": 57.0,
+   "jogos": 19,
+   "derrotas": 6,
+   "faixa_classificacao_cor": "#0000ff",
+   "faixa_classificacao": {
+    "cor": "#0000ff"
+   },
+   "ultimos_jogos": [
+    "v",
+    "e",
+    "e",
+    "v",
+    "v"
+   ],
+   "saldo_gols": 9,
+   "gols_pro": 28,
+   "gols_contra": 19,
+   "empates": 3
+  },
+  {
+   "ordem": 2,
+   "variacao": -1,
+   "pontos": 32,
+   "nome_popular": "Brusque",
+   "sigla": "BRU",
+   "vitorias": 9,
+   "escudo": "https://s.sde.globo.com/media/organizations/2020/09/06/brusque.svg",
+   "equipe_id": 1297,
+   "aproveitamento": 56.0,
+   "jogos": 19,
+   "derrotas": 5,
+   "faixa_classificacao_cor": "#0000ff",
+   "faixa_classificacao": {
+    "cor": "#0000ff"
+   },
+   "ultimos_jogos": [
+    "v",
+    "d",
+    "v",
+    "e",
+    "e"
+   ],
+   "saldo_gols": 6,
+   "gols_pro": 28,
+   "gols_contra": 22,
+   "empates": 5
+  },
+  {
+   "ordem": 3,
+   "variacao": 5,
+   "pontos": 30,
+   "nome_popular": "Ferroviária",
+   "sigla": "AFE",
+   "vitorias": 8,
+   "escudo": "https://s.sde.globo.com/media/organizations/2019/01/08/Ferroviaria_Araraquara.svg",
+   "equipe_id": 298,
+   "aproveitamento": 52.0,
+   "jogos": 19,
+   "derrotas": 5,
+   "faixa_classificacao_cor": "#0000ff",
+   "faixa_classificacao": {
+    "cor": "#0000ff"
+   },
+   "ultimos_jogos": [
+    "e",
+    "e",
+    "v",
+    "d",
+    "v"
+   ],
+   "saldo_gols": 7,
+   "gols_pro": 22,
+   "gols_contra": 15,
+   "empates": 6
+  },
+  {
+   "ordem": 4,
+   "variacao": 6,
+   "pontos": 30,
+   "nome_popular": "Maringá",
+   "sigla": "MAR",
+   "vitorias": 8,
+   "escudo": "https://s.sde.globo.com/media/organizations/2023/05/03/Maringá_MfSJ40V.svg",
+   "equipe_id": 3929,
+   "aproveitamento": 52.0,
+   "jogos": 19,
+   "derrotas": 5,
+   "faixa_classificacao_cor": "#0000ff",
+   "faixa_classificacao": {
+    "cor": "#0000ff"
+   },
+   "ultimos_jogos": [
+    "e",
+    "d",
+    "e",
+    "v",
+    "v"
+   ],
+   "saldo_gols": 2,
+   "gols_pro": 32,
+   "gols_contra": 30,
+   "empates": 6
+  },
+  {
+   "ordem": 5,
+   "variacao": 6,
+   "pontos": 30,
+   "nome_popular": "Floresta",
+   "sigla": "FLO",
+   "vitorias": 8,
+   "escudo": "https://s.sde.globo.com/media/organizations/2023/05/01/Floresta_Esporte_Clube.svg",
+   "equipe_id": 4288,
+   "aproveitamento": 52.0,
+   "jogos": 19,
+   "derrotas": 5,
+   "faixa_classificacao_cor": "#0000ff",
+   "faixa_classificacao": {
+    "cor": "#0000ff"
+   },
+   "ultimos_jogos": [
+    "e",
+    "d",
+    "v",
+    "v",
+    "v"
+   ],
+   "saldo_gols": 2,
+   "gols_pro": 22,
+   "gols_contra": 20,
+   "empates": 6
+  },
+  {
+   "ordem": 5,
+   "variacao": -1,
+   "pontos": 30,
+   "nome_popular": "Inter de Limeira",
+   "sigla": "INL",
+   "vitorias": 8,
+   "escudo": "https://s.sde.globo.com/media/organizations/2019/05/11/InterLimeiraSVG.svg",
+   "equipe_id": 300,
+   "aproveitamento": 52.0,
+   "jogos": 19,
+   "derrotas": 5,
+   "faixa_classificacao_cor": "#0000ff",
+   "faixa_classificacao": {
+    "cor": "#0000ff"
+   },
+   "ultimos_jogos": [
+    "d",
+    "v",
+    "d",
+    "e",
+    "e"
+   ],
+   "saldo_gols": 2,
+   "gols_pro": 22,
+   "gols_contra": 20,
+   "empates": 6
+  },
+  {
+   "ordem": 7,
+   "variacao": -4,
+   "pontos": 29,
+   "nome_popular": "Paysandu",
+   "sigla": "PAY",
+   "vitorias": 9,
+   "escudo": "https://s.sde.globo.com/media/organizations/2019/05/29/Paysandu.svg",
+   "equipe_id": 291,
+   "aproveitamento": 50.0,
+   "jogos": 19,
+   "derrotas": 8,
+   "faixa_classificacao_cor": "#0000ff",
+   "faixa_classificacao": {
+    "cor": "#0000ff"
+   },
+   "ultimos_jogos": [
+    "d",
+    "v",
+    "d",
+    "v",
+    "d"
+   ],
+   "saldo_gols": -1,
+   "gols_pro": 26,
+   "gols_contra": 27,
+   "empates": 2
+  },
+  {
+   "ordem": 8,
+   "variacao": -3,
+   "pontos": 29,
+   "nome_popular": "Santa Cruz",
+   "sigla": "STA",
+   "vitorias": 8,
+   "escudo": "https://s.sde.globo.com/media/organizations/2019/01/03/santa_cruz.svg",
+   "equipe_id": 344,
+   "aproveitamento": 50.0,
+   "jogos": 19,
+   "derrotas": 6,
+   "faixa_classificacao_cor": "#0000ff",
+   "faixa_classificacao": {
+    "cor": "#0000ff"
+   },
+   "ultimos_jogos": [
+    "d",
+    "e",
+    "d",
+    "v",
+    "e"
+   ],
+   "saldo_gols": 5,
+   "gols_pro": 20,
+   "gols_contra": 15,
+   "empates": 5
+  },
+  {
+   "ordem": 9,
+   "variacao": -3,
+   "pontos": 29,
+   "nome_popular": "Ypiranga-RS",
+   "sigla": "YPI",
+   "vitorias": 8,
+   "escudo": "https://s.sde.globo.com/media/organizations/2026/01/18/Ypiranga-RS.svg",
+   "equipe_id": 2566,
+   "aproveitamento": 50.0,
+   "jogos": 19,
+   "derrotas": 6,
+   "faixa_classificacao_cor": null,
+   "faixa_classificacao": {
+    "cor": null
+   },
+   "ultimos_jogos": [
+    "v",
+    "v",
+    "e",
+    "v",
+    "e"
+   ],
+   "saldo_gols": 3,
+   "gols_pro": 27,
+   "gols_contra": 24,
+   "empates": 5
+  },
+  {
+   "ordem": 10,
+   "variacao": -3,
+   "pontos": 28,
+   "nome_popular": "Guarani",
+   "sigla": "GUA",
+   "vitorias": 7,
+   "escudo": "https://s.sde.globo.com/media/organizations/2018/03/11/guarani.svg",
+   "equipe_id": 279,
+   "aproveitamento": 49.0,
+   "jogos": 19,
+   "derrotas": 5,
+   "faixa_classificacao_cor": null,
+   "faixa_classificacao": {
+    "cor": null
+   },
+   "ultimos_jogos": [
+    "v",
+    "d",
+    "e",
+    "d",
+    "e"
+   ],
+   "saldo_gols": 10,
+   "gols_pro": 34,
+   "gols_contra": 24,
+   "empates": 7
+  },
+  {
+   "ordem": 11,
+   "variacao": 2,
+   "pontos": 28,
+   "nome_popular": "Figueirense",
+   "sigla": "FIG",
+   "vitorias": 7,
+   "escudo": "https://s.sde.globo.com/media/organizations/2018/03/11/figueirense.svg",
+   "equipe_id": 316,
+   "aproveitamento": 49.0,
+   "jogos": 19,
+   "derrotas": 5,
+   "faixa_classificacao_cor": null,
+   "faixa_classificacao": {
+    "cor": null
+   },
+   "ultimos_jogos": [
+    "v",
+    "e",
+    "v",
+    "e",
+    "v"
+   ],
+   "saldo_gols": -3,
+   "gols_pro": 19,
+   "gols_contra": 22,
+   "empates": 7
+  },
+  {
+   "ordem": 12,
+   "variacao": -3,
+   "pontos": 27,
+   "nome_popular": "Maranhão",
+   "sigla": "MAC",
+   "vitorias": 7,
+   "escudo": "https://s.sde.globo.com/media/organizations/2023/05/01/Maranhão_Atlético_Clube.svg",
+   "equipe_id": 361,
+   "aproveitamento": 47.0,
+   "jogos": 19,
+   "derrotas": 6,
+   "faixa_classificacao_cor": null,
+   "faixa_classificacao": {
+    "cor": null
+   },
+   "ultimos_jogos": [
+    "e",
+    "v",
+    "v",
+    "v",
+    "d"
+   ],
+   "saldo_gols": 1,
+   "gols_pro": 19,
+   "gols_contra": 18,
+   "empates": 6
+  },
+  {
+   "ordem": 13,
+   "variacao": -1,
+   "pontos": 26,
+   "nome_popular": "Amazonas",
+   "sigla": "AMA",
+   "vitorias": 7,
+   "escudo": "https://s.sde.globo.com/media/organizations/2024/08/20/Amazonas_2024.svg",
+   "equipe_id": 4910,
+   "aproveitamento": 45.0,
+   "jogos": 19,
+   "derrotas": 7,
+   "faixa_classificacao_cor": null,
+   "faixa_classificacao": {
+    "cor": null
+   },
+   "ultimos_jogos": [
+    "v",
+    "v",
+    "e",
+    "e",
+    "e"
+   ],
+   "saldo_gols": -2,
+   "gols_pro": 21,
+   "gols_contra": 23,
+   "empates": 5
+  },
+  {
+   "ordem": 14,
+   "variacao": 0,
+   "pontos": 25,
+   "nome_popular": "Caxias",
+   "sigla": "CAX",
+   "vitorias": 6,
+   "escudo": "https://s.sde.globo.com/media/organizations/2019/01/05/svg-caxias.svg",
+   "equipe_id": 310,
+   "aproveitamento": 43.0,
+   "jogos": 19,
+   "derrotas": 6,
+   "faixa_classificacao_cor": null,
+   "faixa_classificacao": {
+    "cor": null
+   },
+   "ultimos_jogos": [
+    "d",
+    "v",
+    "d",
+    "d",
+    "e"
+   ],
+   "saldo_gols": 1,
+   "gols_pro": 17,
+   "gols_contra": 16,
+   "empates": 7
+  },
+  {
+   "ordem": 15,
+   "variacao": 0,
+   "pontos": 22,
+   "nome_popular": "Ituano",
+   "sigla": "ITU",
+   "vitorias": 6,
+   "escudo": "https://s.sde.globo.com/media/organizations/2019/01/08/Ituano_Futebol_Clube.svg",
+   "equipe_id": 1325,
+   "aproveitamento": 38.0,
+   "jogos": 19,
+   "derrotas": 9,
+   "faixa_classificacao_cor": null,
+   "faixa_classificacao": {
+    "cor": null
+   },
+   "ultimos_jogos": [
+    "d",
+    "v",
+    "d",
+    "d",
+    "d"
+   ],
+   "saldo_gols": -3,
+   "gols_pro": 18,
+   "gols_contra": 21,
+   "empates": 4
+  },
+  {
+   "ordem": 16,
+   "variacao": 0,
+   "pontos": 21,
+   "nome_popular": "Volta Redonda",
+   "sigla": "VRE",
+   "vitorias": 6,
+   "escudo": "https://s.sde.globo.com/media/organizations/2021/04/27/Volta-Redonda-2020.svg",
+   "equipe_id": 272,
+   "aproveitamento": 36.0,
+   "jogos": 19,
+   "derrotas": 10,
+   "faixa_classificacao_cor": null,
+   "faixa_classificacao": {
+    "cor": null
+   },
+   "ultimos_jogos": [
+    "d",
+    "d",
+    "v",
+    "d",
+    "d"
+   ],
+   "saldo_gols": -12,
+   "gols_pro": 13,
+   "gols_contra": 25,
+   "empates": 3
+  },
+  {
+   "ordem": 17,
+   "variacao": 1,
+   "pontos": 21,
+   "nome_popular": "Barra-SC",
+   "sigla": "BFC",
+   "vitorias": 5,
+   "escudo": "https://s.sde.globo.com/media/organizations/2024/01/19/svg.svg",
+   "equipe_id": 4354,
+   "aproveitamento": 36.0,
+   "jogos": 19,
+   "derrotas": 8,
+   "faixa_classificacao_cor": null,
+   "faixa_classificacao": {
+    "cor": null
+   },
+   "ultimos_jogos": [
+    "d",
+    "d",
+    "v",
+    "d",
+    "v"
+   ],
+   "saldo_gols": 0,
+   "gols_pro": 21,
+   "gols_contra": 21,
+   "empates": 6
+  },
+  {
+   "ordem": 18,
+   "variacao": -1,
+   "pontos": 19,
+   "nome_popular": "Anápolis",
+   "sigla": "AFC",
+   "vitorias": 5,
+   "escudo": "https://s.sde.globo.com/media/organizations/2024/02/20/Anápolis_Cib1JGm.svg",
+   "equipe_id": 3030,
+   "aproveitamento": 33.0,
+   "jogos": 19,
+   "derrotas": 10,
+   "faixa_classificacao_cor": null,
+   "faixa_classificacao": {
+    "cor": null
+   },
+   "ultimos_jogos": [
+    "v",
+    "v",
+    "d",
+    "v",
+    "e"
+   ],
+   "saldo_gols": -5,
+   "gols_pro": 17,
+   "gols_contra": 22,
+   "empates": 4
+  },
+  {
+   "ordem": 19,
+   "variacao": 0,
+   "pontos": 17,
+   "nome_popular": "Itabaiana",
+   "sigla": "ITA",
+   "vitorias": 4,
+   "escudo": "https://s.sde.globo.com/media/organizations/2023/08/28/itabaiana.svg",
+   "equipe_id": 338,
+   "aproveitamento": 29.0,
+   "jogos": 19,
+   "derrotas": 10,
+   "faixa_classificacao_cor": "#ff0000",
+   "faixa_classificacao": {
+    "cor": "#ff0000"
+   },
+   "ultimos_jogos": [
+    "e",
+    "d",
+    "d",
+    "d",
+    "d"
+   ],
+   "saldo_gols": -13,
+   "gols_pro": 14,
+   "gols_contra": 27,
+   "empates": 5
+  },
+  {
+   "ordem": 20,
+   "variacao": 0,
+   "pontos": 13,
+   "nome_popular": "Confiança",
+   "sigla": "CON",
+   "vitorias": 3,
+   "escudo": "https://s.sde.globo.com/media/organizations/2019/09/10/Confianca.svg",
+   "equipe_id": 337,
+   "aproveitamento": 22.0,
+   "jogos": 19,
+   "derrotas": 12,
+   "faixa_classificacao_cor": "#ff0000",
+   "faixa_classificacao": {
+    "cor": "#ff0000"
+   },
+   "ultimos_jogos": [
+    "e",
+    "d",
+    "e",
+    "d",
+    "d"
+   ],
+   "saldo_gols": -9,
+   "gols_pro": 11,
+   "gols_contra": 20,
+   "empates": 4
+  }
+ ],
+ "lista_jogos": [
+  {
+   "id": 350321,
+   "data_realizacao": "2026-08-29T17:00",
+   "hora_realizacao": "17:00",
+   "placar_oficial_visitante": 0,
+   "placar_oficial_mandante": 1,
+   "placar_penaltis_visitante": null,
+   "placar_penaltis_mandante": null,
+   "equipes": {
+    "mandante": {
+     "id": 298,
+     "nome_popular": "Ferroviária",
+     "sigla": "AFE",
+     "escudo": "https://s.sde.globo.com/media/organizations/2019/01/08/Ferroviaria_Araraquara.svg"
+    },
+    "visitante": {
+     "id": 337,
+     "nome_popular": "Confiança",
+     "sigla": "CON",
+     "escudo": "https://s.sde.globo.com/media/organizations/2019/09/10/Confianca.svg"
+    }
+   },
+   "sede": {
+    "nome_popular": "Fonte Luminosa"
+   },
+   "transmissao": {
+    "label": "saiba como foi",
+    "url": "https://ge.globo.com/sp/ribeirao-preto-e-regiao/futebol/brasileirao-serie-c/jogo/29-08-2026/ferroviaria-confianca.ghtml",
+    "broadcast": {
+     "id": "ENCERRADA",
+     "label": "saiba como foi"
+    }
+   },
+   "jogo_ja_comecou": true
+  },
+  {
+   "id": 350322,
+   "data_realizacao": "2026-08-29T17:00",
+   "hora_realizacao": "17:00",
+   "placar_oficial_visitante": 2,
+   "placar_oficial_mandante": 2,
+   "placar_penaltis_visitante": null,
+   "placar_penaltis_mandante": null,
+   "equipes": {
+    "mandante": {
+     "id": 279,
+     "nome_popular": "Guarani",
+     "sigla": "GUA",
+     "escudo": "https://s.sde.globo.com/media/organizations/2018/03/11/guarani.svg"
+    },
+    "visitante": {
+     "id": 1297,
+     "nome_popular": "Brusque",
+     "sigla": "BRU",
+     "escudo": "https://s.sde.globo.com/media/organizations/2020/09/06/brusque.svg"
+    }
+   },
+   "sede": {
+    "nome_popular": "Brinco de Ouro"
+   },
+   "transmissao": {
+    "label": "saiba como foi",
+    "url": "https://ge.globo.com/sp/campinas-e-regiao/futebol/brasileirao-serie-c/jogo/29-08-2026/guarani-brusque.ghtml",
+    "broadcast": {
+     "id": "ENCERRADA",
+     "label": "saiba como foi"
+    }
+   },
+   "jogo_ja_comecou": true
+  },
+  {
+   "id": 350323,
+   "data_realizacao": "2026-08-29T17:00",
+   "hora_realizacao": "17:00",
+   "placar_oficial_visitante": 1,
+   "placar_oficial_mandante": 2,
+   "placar_penaltis_visitante": null,
+   "placar_penaltis_mandante": null,
+   "equipes": {
+    "mandante": {
+     "id": 316,
+     "nome_popular": "Figueirense",
+     "sigla": "FIG",
+     "escudo": "https://s.sde.globo.com/media/organizations/2018/03/11/figueirense.svg"
+    },
+    "visitante": {
+     "id": 361,
+     "nome_popular": "Maranhão",
+     "sigla": "MAC",
+     "escudo": "https://s.sde.globo.com/media/organizations/2023/05/01/Maranhão_Atlético_Clube.svg"
+    }
+   },
+   "sede": {
+    "nome_popular": "Orlando Scarpelli"
+   },
+   "transmissao": {
+    "label": "saiba como foi",
+    "url": "https://ge.globo.com/sc/futebol/brasileirao-serie-c/jogo/29-08-2026/figueirense-maranhao.ghtml",
+    "broadcast": {
+     "id": "ENCERRADA",
+     "label": "saiba como foi"
+    }
+   },
+   "jogo_ja_comecou": true
+  },
+  {
+   "id": 350324,
+   "data_realizacao": "2026-08-29T17:00",
+   "hora_realizacao": "17:00",
+   "placar_oficial_visitante": 2,
+   "placar_oficial_mandante": 2,
+   "placar_penaltis_visitante": null,
+   "placar_penaltis_mandante": null,
+   "equipes": {
+    "mandante": {
+     "id": 4910,
+     "nome_popular": "Amazonas",
+     "sigla": "AMA",
+     "escudo": "https://s.sde.globo.com/media/organizations/2024/08/20/Amazonas_2024.svg"
+    },
+    "visitante": {
+     "id": 2566,
+     "nome_popular": "Ypiranga-RS",
+     "sigla": "YPI",
+     "escudo": "https://s.sde.globo.com/media/organizations/2026/01/18/Ypiranga-RS.svg"
+    }
+   },
+   "sede": {
+    "nome_popular": "Arena da Amazônia"
+   },
+   "transmissao": {
+    "label": "saiba como foi",
+    "url": "https://ge.globo.com/am/futebol/brasileirao-serie-c/jogo/29-08-2026/amazonas-fc-ypiranga-rs.ghtml",
+    "broadcast": {
+     "id": "ENCERRADA",
+     "label": "saiba como foi"
+    }
+   },
+   "jogo_ja_comecou": true
+  },
+  {
+   "id": 350325,
+   "data_realizacao": "2026-08-29T17:00",
+   "hora_realizacao": "17:00",
+   "placar_oficial_visitante": 2,
+   "placar_oficial_mandante": 0,
+   "placar_penaltis_visitante": null,
+   "placar_penaltis_mandante": null,
+   "equipes": {
+    "mandante": {
+     "id": 338,
+     "nome_popular": "Itabaiana",
+     "sigla": "ITA",
+     "escudo": "https://s.sde.globo.com/media/organizations/2023/08/28/itabaiana.svg"
+    },
+    "visitante": {
+     "id": 349,
+     "nome_popular": "Botafogo-PB",
+     "sigla": "BOT",
+     "escudo": "https://s.sde.globo.com/media/organizations/2020/02/12/botsvg.svg"
+    }
+   },
+   "sede": {
+    "nome_popular": "Etelvino Mendonça"
+   },
+   "transmissao": {
+    "label": "saiba como foi",
+    "url": "https://ge.globo.com/pb/futebol/brasileirao-serie-c/jogo/29-08-2026/itabaiana-botafogo-pb.ghtml",
+    "broadcast": {
+     "id": "ENCERRADA",
+     "label": "saiba como foi"
+    }
+   },
+   "jogo_ja_comecou": true
+  },
+  {
+   "id": 350326,
+   "data_realizacao": "2026-08-29T17:00",
+   "hora_realizacao": "17:00",
+   "placar_oficial_visitante": 0,
+   "placar_oficial_mandante": 2,
+   "placar_penaltis_visitante": null,
+   "placar_penaltis_mandante": null,
+   "equipes": {
+    "mandante": {
+     "id": 4288,
+     "nome_popular": "Floresta",
+     "sigla": "FLO",
+     "escudo": "https://s.sde.globo.com/media/organizations/2023/05/01/Floresta_Esporte_Clube.svg"
+    },
+    "visitante": {
+     "id": 1325,
+     "nome_popular": "Ituano",
+     "sigla": "ITU",
+     "escudo": "https://s.sde.globo.com/media/organizations/2019/01/08/Ituano_Futebol_Clube.svg"
+    }
+   },
+   "sede": {
+    "nome_popular": "Presidente Vargas (CE)"
+   },
+   "transmissao": {
+    "label": "saiba como foi",
+    "url": "https://ge.globo.com/ce/futebol/brasileirao-serie-c/jogo/29-08-2026/floresta-ituano.ghtml",
+    "broadcast": {
+     "id": "ENCERRADA",
+     "label": "saiba como foi"
+    }
+   },
+   "jogo_ja_comecou": true
+  },
+  {
+   "id": 350327,
+   "data_realizacao": "2026-08-29T17:00",
+   "hora_realizacao": "17:00",
+   "placar_oficial_visitante": 1,
+   "placar_oficial_mandante": 1,
+   "placar_penaltis_visitante": null,
+   "placar_penaltis_mandante": null,
+   "equipes": {
+    "mandante": {
+     "id": 3030,
+     "nome_popular": "Anápolis",
+     "sigla": "AFC",
+     "escudo": "https://s.sde.globo.com/media/organizations/2024/02/20/Anápolis_Cib1JGm.svg"
+    },
+    "visitante": {
+     "id": 344,
+     "nome_popular": "Santa Cruz",
+     "sigla": "STA",
+     "escudo": "https://s.sde.globo.com/media/organizations/2019/01/03/santa_cruz.svg"
+    }
+   },
+   "sede": {
+    "nome_popular": "Jonas Duarte"
+   },
+   "transmissao": {
+    "label": "saiba como foi",
+    "url": "https://ge.globo.com/go/futebol/brasileirao-serie-c/jogo/29-08-2026/anapolis-santa-cruz.ghtml",
+    "broadcast": {
+     "id": "ENCERRADA",
+     "label": "saiba como foi"
+    }
+   },
+   "jogo_ja_comecou": true
+  },
+  {
+   "id": 350328,
+   "data_realizacao": "2026-08-29T17:00",
+   "hora_realizacao": "17:00",
+   "placar_oficial_visitante": 0,
+   "placar_oficial_mandante": 0,
+   "placar_penaltis_visitante": null,
+   "placar_penaltis_mandante": null,
+   "equipes": {
+    "mandante": {
+     "id": 310,
+     "nome_popular": "Caxias",
+     "sigla": "CAX",
+     "escudo": "https://s.sde.globo.com/media/organizations/2019/01/05/svg-caxias.svg"
+    },
+    "visitante": {
+     "id": 300,
+     "nome_popular": "Inter de Limeira",
+     "sigla": "INL",
+     "escudo": "https://s.sde.globo.com/media/organizations/2019/05/11/InterLimeiraSVG.svg"
+    }
+   },
+   "sede": {
+    "nome_popular": "Centenário"
+   },
+   "transmissao": {
+    "label": "saiba como foi",
+    "url": "https://ge.globo.com/sp/campinas-e-regiao/futebol/brasileirao-serie-c/jogo/29-08-2026/caxias-inter-de-limeira.ghtml",
+    "broadcast": {
+     "id": "ENCERRADA",
+     "label": "saiba como foi"
+    }
+   },
+   "jogo_ja_comecou": true
+  },
+  {
+   "id": 350329,
+   "data_realizacao": "2026-08-29T17:00",
+   "hora_realizacao": "17:00",
+   "placar_oficial_visitante": 0,
+   "placar_oficial_mandante": 2,
+   "placar_penaltis_visitante": null,
+   "placar_penaltis_mandante": null,
+   "equipes": {
+    "mandante": {
+     "id": 4354,
+     "nome_popular": "Barra-SC",
+     "sigla": "BFC",
+     "escudo": "https://s.sde.globo.com/media/organizations/2024/01/19/svg.svg"
+    },
+    "visitante": {
+     "id": 272,
+     "nome_popular": "Volta Redonda",
+     "sigla": "VRE",
+     "escudo": "https://s.sde.globo.com/media/organizations/2021/04/27/Volta-Redonda-2020.svg"
+    }
+   },
+   "sede": {
+    "nome_popular": "Arena Barra FC"
+   },
+   "transmissao": {
+    "label": "saiba como foi",
+    "url": "https://ge.globo.com/sc/futebol/brasileirao-serie-c/jogo/29-08-2026/barra-sc-volta-redonda.ghtml",
+    "broadcast": {
+     "id": "ENCERRADA",
+     "label": "saiba como foi"
+    }
+   },
+   "jogo_ja_comecou": true
+  },
+  {
+   "id": 350330,
+   "data_realizacao": "2026-08-29T17:00",
+   "hora_realizacao": "17:00",
+   "placar_oficial_visitante": 1,
+   "placar_oficial_mandante": 0,
+   "placar_penaltis_visitante": null,
+   "placar_penaltis_mandante": null,
+   "equipes": {
+    "mandante": {
+     "id": 291,
+     "nome_popular": "Paysandu",
+     "sigla": "PAY",
+     "escudo": "https://s.sde.globo.com/media/organizations/2019/05/29/Paysandu.svg"
+    },
+    "visitante": {
+     "id": 3929,
+     "nome_popular": "Maringá",
+     "sigla": "MAR",
+     "escudo": "https://s.sde.globo.com/media/organizations/2023/05/03/Maringá_MfSJ40V.svg"
+    }
+   },
+   "sede": {
+    "nome_popular": "Mangueirão"
+   },
+   "transmissao": {
+    "label": "saiba como foi",
+    "url": "https://ge.globo.com/pa/futebol/brasileirao-serie-c/jogo/29-08-2026/paysandu-maringa.ghtml",
+    "broadcast": {
+     "id": "ENCERRADA",
+     "label": "saiba como foi"
+    }
+   },
+   "jogo_ja_comecou": true
+  }
+ ],
+ "lista_jogos_unica": true,
+ "lista_tipo_unica": true,
+ "rodada": {
+  "atual": 19,
+  "ultima": 19
+ }
+}

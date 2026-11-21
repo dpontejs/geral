@@ -1,0 +1,105 @@
+{
+ "lista_jogos_unica": true,
+ "edicao": {
+  "data_inicio": "2026-04-04",
+  "data_fim": "2026-10-24",
+  "nome": "Campeonato Brasileiro Série C 2026",
+  "regulamento": "A Primeira fase é disputada no sistema de pontos corridos, com os 20 times se enfrentando em turno único. Os oito melhores colocados avançam à segunda fase, enquanto os dois últimos são rebaixados à Série D. Em caso de igualdade na pontuação, são critérios de desempate: 1) mais vitórias; 2) melhor saldo de gols; 3) mais gols pró; 4) menos cartões vermelhos; 5) menos cartões amarelos; 6) sorteio. Na Segunda fase, as equipes são divididas em duas chaves de quatro equipes, jogam dentro do grupo em dois turnos e os dois primeiros de cada chave garantem acesso à Série B, sendo que os primeiros colocados se classificam para a Final. Em caso de igualdade na pontuação, são critérios de desempate: 1) mais vitórias; 2) melhor saldo de gols; 3) mais gols pró; 4) confronto direto; 5) menos cartões vermelhos; 6) menos cartões amarelos; 7) sorteio. Na Final, disputada no sistema mata-mata em jogos de ida e volta, em caso de igualdade na pontuação e, posteriormente, no saldo de gols do duelo, o título é decidido na disputa de pênaltis. Mando de campo do segundo jogo da decisão é da equipe com melhor campanha na soma das fases anteriores; O campeão da Série C garante vaga direta na Terceira fase da Copa do Brasil.",
+  "localizacao": "Brasil"
+ },
+ "fase": {
+  "tipo": {
+   "tipo_id": "2",
+   "descricao": "Mata Mata"
+  },
+  "disclaimer": "",
+  "slug": "final-brasileiro-seriec-2026"
+ },
+ "max_jogos_chaves": 2,
+ "secao": [
+  {
+   "tem_chave_subsequente": false,
+   "chave": [
+    {
+     "id": 76138,
+     "nome": "Final",
+     "tem_chave_anterior": false,
+     "jogos": [
+      {
+       "id": 357978,
+       "equipes": {
+        "mandante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2023/05/03/Maringá_MfSJ40V.svg",
+         "id": 3929,
+         "nome_popular": "Maringá",
+         "sigla": "MAR"
+        },
+        "visitante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2019/01/08/Ferroviaria_Araraquara.svg",
+         "id": 298,
+         "nome_popular": "Ferroviária",
+         "sigla": "AFE"
+        }
+       },
+       "data_realizacao": "2026-10-17",
+       "hora_realizacao": "17:00",
+       "exibir_jogo": true,
+       "sede": {
+        "nome_popular": "Willie Davids"
+       },
+       "placar_oficial_visitante": 1,
+       "placar_oficial_mandante": 1,
+       "placar_penaltis_visitante": null,
+       "placar_penaltis_mandante": null,
+       "transmissao": {
+        "label": "saiba como foi",
+        "url": "https://ge.globo.com/pr/futebol/brasileirao-serie-c/jogo/17-10-2026/maringa-ferroviaria.ghtml",
+        "broadcast": {
+         "id": "ENCERRADA",
+         "label": "saiba como foi"
+        }
+       },
+       "jogo_ja_comecou": true
+      },
+      {
+       "id": 357979,
+       "equipes": {
+        "mandante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2019/01/08/Ferroviaria_Araraquara.svg",
+         "id": 298,
+         "nome_popular": "Ferroviária",
+         "sigla": "AFE"
+        },
+        "visitante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2023/05/03/Maringá_MfSJ40V.svg",
+         "id": 3929,
+         "nome_popular": "Maringá",
+         "sigla": "MAR"
+        }
+       },
+       "data_realizacao": "2026-10-24",
+       "hora_realizacao": "17:00",
+       "exibir_jogo": true,
+       "sede": {
+        "nome_popular": "Fonte Luminosa"
+       },
+       "placar_oficial_visitante": 2,
+       "placar_oficial_mandante": 1,
+       "placar_penaltis_visitante": null,
+       "placar_penaltis_mandante": null,
+       "transmissao": {
+        "label": "saiba como foi",
+        "url": "https://ge.globo.com/sp/ribeirao-preto-e-regiao/futebol/brasileirao-serie-c/jogo/24-10-2026/ferroviaria-maringa.ghtml",
+        "broadcast": {
+         "id": "ENCERRADA",
+         "label": "saiba como foi"
+        }
+       },
+       "jogo_ja_comecou": true
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

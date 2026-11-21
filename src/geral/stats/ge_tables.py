@@ -10,6 +10,7 @@ import json
 import logging
 import re
 from collections.abc import Callable
+from dataclasses import replace
 from datetime import date, datetime, time, timedelta
 from zoneinfo import ZoneInfo
 
@@ -21,7 +22,7 @@ from geral.schedule import Fixture
 from geral.stats import ge_context
 from geral.stats.cbf import CBFGoals
 from geral.stats.espn import FIXTURES_LOOKBACK, FORM_SIZE, StatsUnavailable, standings_gap
-from geral.stats.ge_models import Competition, Game
+from geral.stats.ge_models import Competition, Game, Phase
 from geral.teams import Team
 
 logger = logging.getLogger(__name__)
@@ -303,6 +304,8 @@ class CompetitionLoader:
         games: dict[int, Game] = {}
         groups = None
         phase_kind = None
+        phases: list[Phase] = []
+        current_index = None
         # Later phases too: their first matches must be planned before ge makes them current.
         for index, phase in enumerate(navigation):
             base = f"{GE_TABLES_API}/{tuuid.group(1)}/fase/{phase['slug']}"
@@ -313,54 +316,65 @@ class CompetitionLoader:
                     raise
                 logger.info("Skipping ge phase %s, not published yet: %s", phase["slug"], e)
                 continue
+            kind = PHASE_KINDS.get(data["fase"]["tipo"]["tipo_id"])
+            bands = {
+                b["cor"]: b["nome"] for b in data.get("faixas_classificacao") or [] if b.get("cor")
+            }
+            phase_groups = self._groups(data, name, bands) if kind != "knockout" else None
+            phase_name = phase.get("nome") or phase["slug"]
             if index == current:
-                phase_kind = PHASE_KINDS.get(data["fase"]["tipo"]["tipo_id"])
-                if phase_kind != "knockout":
-                    groups = self._groups(data, name)
-            for item in raw:
+                phase_kind, groups, current_index = kind, phase_groups, len(phases)
+            phases.append(Phase(phase_name, kind, list(bands.values()), phase_groups))
+            for item, round_, tie in raw:
                 try:
                     game = self._game(item, name)
                 except (KeyError, TypeError, ValueError) as e:  # e.g. a knockout tie still TBD
                     logger.info("Skipping ge game %s: %s", item.get("id"), e)
                     continue
                 if game is not None:
-                    games[game.id] = game
+                    games[game.id] = replace(game, phase=phase_name, round=round_, tie=tie)
         return Competition(
             name=name,
             games=list(games.values()),
             groups=groups,
             phase=navigation[current].get("nome") if navigation else None,
             phase_kind=phase_kind,
+            phases=phases,
+            current=current_index,
         )
 
-    def _groups(self, data: dict, name: str) -> list[list[StandingRow]] | None:
+    def _groups(
+        self, data: dict, name: str, bands: dict[str, str]
+    ) -> list[list[StandingRow]] | None:
         groups = data.get("grupos") or [{"classificacao": data.get("classificacao", [])}]
         try:
-            return [[self._standing(entry) for entry in g["classificacao"]] for g in groups]
+            return [[self._standing(entry, bands) for entry in g["classificacao"]] for g in groups]
         except (KeyError, TypeError, ValueError) as e:
             logger.warning("Failed to parse ge table for %s: %s", name, e)
             return None
 
-    def _phase(self, base: str) -> tuple[dict, list[dict]]:
-        """The phase's classification and its games, from the knockout ties or the rounds."""
+    def _phase(self, base: str) -> tuple[dict, list[tuple[dict, int | None, str | None]]]:
+        """The phase's classification and its games (with round or tie), from ties or rounds."""
         data = self._json(f"{base}/classificacao/")
         kind = data["fase"]["tipo"]["tipo_id"]
         if kind == KNOCKOUT:
-            return data, [g for s in data.get("secao", []) for c in s["chave"] for g in c["jogos"]]
+            ties = [c for s in data.get("secao", []) for c in s["chave"]]
+            return data, [(g, None, c.get("nome")) for c in ties for g in c["jogos"]]
         last = (data.get("rodada") or {}).get("ultima") if kind == POINTS else None
-        return data, self._rounds(base, last or 0)
+        rounds = self._rounds(base, last or 0)
+        return data, [(g, n if kind == POINTS else None, None) for n, g in rounds]
 
-    def _rounds(self, base: str, last: int) -> list[dict]:
+    def _rounds(self, base: str, last: int) -> list[tuple[int, dict]]:
         """Rounds 1..`last` and on, until the first empty one after it.
 
         `rodada.ultima` may be the last round published, not the last of the phase.
         """
-        games: list[dict] = []
+        games: list[tuple[int, dict]] = []
         for n in range(1, MAX_ROUNDS + 1):
             round_games = self._json(f"{base}/rodada/{n}/jogos/")
             if not round_games and n > last:
                 break
-            games += round_games
+            games += [(n, g) for g in round_games]
         return games
 
     def _json(self, url: str):
@@ -397,9 +411,12 @@ class CompetitionLoader:
             # Both sides or none: a half shoot-out would print "3 x None".
             home_penalties=pens[0] if None not in pens else None,
             away_penalties=pens[1] if None not in pens else None,
+            home_crest=home.get("escudo"),
+            away_crest=away.get("escudo"),
         )
 
-    def _standing(self, entry: dict) -> StandingRow:
+    def _standing(self, entry: dict, bands: dict[str, str] | None = None) -> StandingRow:
+        color = (entry.get("faixa_classificacao") or {}).get("cor")
         return StandingRow(
             position=int(entry["ordem"]),
             team=entry["nome_popular"],
@@ -412,4 +429,6 @@ class CompetitionLoader:
             goals_for=int(entry.get("gols_pro") or 0),
             goals_against=int(entry.get("gols_contra") or 0),
             is_ours=int(entry["equipe_id"]) == self.team_id,
+            band=(bands or {}).get(color) if color else None,
+            crest=entry.get("escudo"),
         )

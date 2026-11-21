@@ -1,0 +1,105 @@
+{
+ "lista_jogos_unica": true,
+ "edicao": {
+  "data_inicio": "2026-04-04",
+  "data_fim": "2026-09-13",
+  "nome": "Campeonato Brasileiro Série D 2026",
+  "regulamento": "A Primeira fase tem 96 clubes divididos em 16 grupos com seis times cada, onde as equipes se enfrentam em dois turnos. Os quatro melhores de cada grupo se classificam para a Segunda fase. Em caso de igualdade na pontuação, são critérios de desempate: 1) mais vitórias; 2) melhor saldo de gols; 3) mais gols pró; 4) confronto direto (entre dois times); 5) menos cartões vermelhos; 6) menos cartões amarelos; 7) sorteio. Segunda fase, Terceira fase, Oitavas de final, Quartas de final, Semifinal, Playoff de acesso e Final são disputadas no sistema de mata-mata em jogos de ida e volta. Em caso de igualdade na pontuação em qualquer fase de mata-mata, são critérios de desempate: 1) saldo de gols no confronto; 2) disputa de pênaltis. No total, seis clubes irão garantir acesso para a Série C 2027: as quatro equipes classificadas para a Semifinal e os dois times que vencerem o Playoff de acesso. O campeão da Série D terá acesso direto à Terceira fase da Copa do Brasil 2027.",
+  "localizacao": "Brasil"
+ },
+ "fase": {
+  "tipo": {
+   "tipo_id": "2",
+   "descricao": "Mata Mata"
+  },
+  "disclaimer": "",
+  "slug": "final-brasileiro-seried-2026"
+ },
+ "max_jogos_chaves": 2,
+ "secao": [
+  {
+   "tem_chave_subsequente": false,
+   "chave": [
+    {
+     "id": 76376,
+     "nome": "Final",
+     "tem_chave_anterior": false,
+     "jogos": [
+      {
+       "id": 357019,
+       "equipes": {
+        "mandante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2023/05/01/ASA.svg",
+         "id": 342,
+         "nome_popular": "ASA",
+         "sigla": "ASA"
+        },
+        "visitante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2026/11/06/uberlandia-2026-svg-82729.svg",
+         "id": 330,
+         "nome_popular": "Uberlândia",
+         "sigla": "UBE"
+        }
+       },
+       "data_realizacao": "2026-09-06",
+       "hora_realizacao": "17:00",
+       "exibir_jogo": true,
+       "sede": {
+        "nome_popular": "Municipal Arapiraca"
+       },
+       "placar_oficial_visitante": 2,
+       "placar_oficial_mandante": 0,
+       "placar_penaltis_visitante": null,
+       "placar_penaltis_mandante": null,
+       "transmissao": {
+        "label": "saiba como foi",
+        "url": "https://ge.globo.com/al/futebol/brasileirao-serie-d/jogo/06-09-2026/asa-arapiraca-uberlandia.ghtml",
+        "broadcast": {
+         "id": "ENCERRADA",
+         "label": "saiba como foi"
+        }
+       },
+       "jogo_ja_comecou": true
+      },
+      {
+       "id": 357020,
+       "equipes": {
+        "mandante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2026/11/06/uberlandia-2026-svg-82729.svg",
+         "id": 330,
+         "nome_popular": "Uberlândia",
+         "sigla": "UBE"
+        },
+        "visitante": {
+         "escudo": "https://s.sde.globo.com/media/organizations/2023/05/01/ASA.svg",
+         "id": 342,
+         "nome_popular": "ASA",
+         "sigla": "ASA"
+        }
+       },
+       "data_realizacao": "2026-09-13",
+       "hora_realizacao": "17:00",
+       "exibir_jogo": true,
+       "sede": {
+        "nome_popular": "Parque do Sabiá"
+       },
+       "placar_oficial_visitante": 1,
+       "placar_oficial_mandante": 1,
+       "placar_penaltis_visitante": null,
+       "placar_penaltis_mandante": null,
+       "transmissao": {
+        "label": "saiba como foi",
+        "url": "https://ge.globo.com/mg/triangulo-mineiro/futebol/brasileirao-serie-d/jogo/13-09-2026/uberlandia-asa-arapiraca.ghtml",
+        "broadcast": {
+         "id": "ENCERRADA",
+         "label": "saiba como foi"
+        }
+       },
+       "jogo_ja_comecou": true
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}
