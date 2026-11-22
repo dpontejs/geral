@@ -349,3 +349,27 @@ def test_build_keeps_the_note_in_the_draft_and_send_uses_it(env) -> None:
     assert run("send").exit_code == 0
     mails = json.loads(route.calls.last.request.content)
     assert all("A Geral agora tem uma Central." in m["html"] for m in mails)
+
+
+BANNER = "https://news.test/api/teams/flamengo/banner"
+
+
+@respx.mock
+def test_send_adds_a_banner_set_after_the_draft_was_built(env) -> None:
+    enable_subscriptions(env)
+    env.setattr(pipeline, "build_newsletter", no_build)
+    respx.get(DRAFT).mock(return_value=httpx.Response(200, json=drafted()))
+    respx.get(BANNER).mock(
+        return_value=httpx.Response(
+            200, json={"kicker": "Campeão brasileiro 2026", "title": "É campeão!"}
+        )
+    )
+    respx.post(DRAFT + "/sent").mock(return_value=httpx.Response(204))
+    respx.put("https://news.test/api/teams/flamengo/latest-edition").mock(
+        return_value=httpx.Response(204)
+    )
+    route = respx.post(RESEND_URL).mock(return_value=sent(["e1"]))
+
+    assert run("send").exit_code == 0
+    mails = json.loads(route.calls.last.request.content)
+    assert all("Campeão brasileiro 2026" in m["html"] for m in mails)

@@ -81,6 +81,36 @@
     </tr></table>
   </td></tr>
   <tr><td class="stripe">&nbsp;</td></tr>
+  {% if n.banner %}{% set b = n.banner %}
+  <tr><td style="background-color: #141414; padding: 0;">
+    <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0">
+      <tr><td style="background-color: {{ accent }}; height: 8px; line-height: 8px; font-size: 8px;">&nbsp;</td></tr>
+      <tr><td align="center" style="padding: 26px 20px 8px 20px;">
+        <p style="margin: 0; font-size: 46px; line-height: 52px;">🏆</p>
+        <p style="margin: 10px 0 0 0; font-size: 12px; font-weight: 800; letter-spacing: 3px; text-transform: uppercase; color: #E3B23C;">★ {{ b.kicker }} ★</p>
+        <p style="margin: 8px 0 0 0; font-size: 40px; line-height: 44px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: #FFFFFF;">{{ b.title }}</p>
+        {% if b.subtitle %}<p style="margin: 10px 0 0 0; font-size: 15px; line-height: 1.4; color: #D8D8D8;">{{ b.subtitle }}</p>{% endif %}
+      </td></tr>
+      {% if b.stats %}
+      <tr><td align="center" style="padding: 14px 16px 24px 16px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+          {% for value, label in b.stats %}
+          <td align="center" style="padding: 0 12px;{% if not loop.last %} border-right: 1px solid #3A3A3A;{% endif %}">
+            <p style="margin: 0; font-size: 24px; font-weight: 900; color: #E3B23C;">{{ value }}</p>
+            <p style="margin: 2px 0 0 0; font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: #BBBBBB;">{{ label }}</p>
+          </td>
+          {% endfor %}
+        </tr></table>
+      </td></tr>
+      {% endif %}
+      <tr><td>
+        <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
+          {% for i in range(12) %}<td style="background-color: {{ accent if loop.index is odd else '#141414' }}; height: 10px; line-height: 10px; font-size: 10px;">&nbsp;</td>{% endfor %}
+        </tr></table>
+      </td></tr>
+    </table>
+  </td></tr>
+  {% endif %}
 
   <tr><td class="lead font">
     {% if note %}

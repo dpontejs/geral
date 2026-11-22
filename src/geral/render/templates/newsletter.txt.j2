@@ -1,5 +1,12 @@
 {{ team.newsletter | upper }}
 {{ n.edition.label }}
+{% if n.banner %}
+
+*** {{ n.banner.kicker | upper }} ***
+{{ n.banner.title }}
+{% if n.banner.subtitle %}{{ n.banner.subtitle }}
+{% endif %}{% for value, label in n.banner.stats %}{{ value }} {{ label }}{% if not loop.last %} · {% endif %}{% endfor %}
+{% endif %}
 {% if note %}
 
 == Novidades ==
