@@ -58,6 +58,7 @@ from geral.models import Newsletter
 from geral.render.renderer import render
 from geral.send.resend_sender import UNSUBSCRIBE_PLACEHOLDER, personalize
 from geral.teams import Team, load_teams
+from geral.web.banners import BannerStore
 from geral.web.bolao import TZ, BolaoStore
 from geral.web.carreira_placar import PlacarStore
 from geral.web.mailer import Mailer, MailError, mailer_from_settings
@@ -297,6 +298,7 @@ def create_app(
     team_requests = team_requests or TeamRequestStore(store.path)
     duels = DuelStore(store.path)  # jogo da velha by link: its own table in the same SQLite
     duel_limiter = RateLimiter(DUELS_PER_NETWORK, timedelta(hours=1))
+    banners = BannerStore(store.path)  # `geral especial`: a title on top of one team's edition
     notes = NoteStore(store.path)  # `geral novidade`: on top of each team's next edition
     placar = PlacarStore(store.path)  # Carreira's Fábrica de craques: its own table, same SQLite
     placar_limiter = RateLimiter(CARREIRAS_POR_REDE, timedelta(hours=1))
@@ -854,6 +856,18 @@ def create_app(
             }
             for email in store.active(team)
         ]
+
+    @app.get("/api/teams/{team}/banner")
+    def team_banner(request: Request, team: str):
+        """The special banner for the team's next edition, if it has not published one since."""
+        if not authorized(request):
+            return unauthorized()
+        if team not in catalog:
+            return unknown_team()
+        latest = store.latest_edition(team)
+        found = banners.pending(team, latest.published_at if latest else None)
+        kicker, title = found or (None, None)
+        return {"kicker": kicker, "title": title}
 
     @app.get("/api/teams/{team}/note")
     def team_note(request: Request, team: str):

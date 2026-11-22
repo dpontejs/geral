@@ -15,7 +15,7 @@ from tenacity import Retrying, retry_if_exception, stop_after_attempt, wait_expo
 from tenacity.wait import wait_base
 
 from geral.config import Settings
-from geral.models import BolaoSummary, Edition, Newsletter
+from geral.models import Banner, BolaoSummary, Edition, Newsletter
 from geral.schedule import TZ
 
 logger = logging.getLogger(__name__)
@@ -256,6 +256,43 @@ def fetch_note(settings: Settings, team: str, client: httpx.Client | None = None
         logger.warning("No note for %s: %s", team, e)
         return None
     return text.strip() if isinstance(text, str) and text.strip() else None
+
+
+def fetch_banner(
+    settings: Settings, team: str, client: httpx.Client | None = None
+) -> tuple[str, str] | None:
+    """(kicker, title) of the team's special banner (`geral especial`); None on any failure."""
+    if not settings.SUBSCRIBERS_API_TOKEN:
+        return None
+    try:
+        response = (client or httpx.Client(timeout=TIMEOUT)).get(
+            settings.PUBLIC_URL.rstrip("/") + f"/api/teams/{team}/banner", headers=_auth(settings)
+        )
+        response.raise_for_status()
+        data = response.json()
+    except Exception as e:  # noqa: BLE001 - a banner is never worth a lost edition
+        logger.warning("No banner for %s: %s", team, e)
+        return None
+    kicker, title = data.get("kicker"), data.get("title")
+    return (kicker, title) if kicker and title else None
+
+
+def make_banner(newsletter: Newsletter, kicker: str, title: str) -> Banner:
+    """The banner with the season's numbers (our table row) and the score that sealed it."""
+    ours = next((r for r in newsletter.standings if r.is_ours), None)
+    stats = []
+    if ours:
+        stats = [
+            (str(ours.points), "pontos"),
+            (str(ours.won), "vitórias"),
+            (f"{ours.goals_diff:+d}" if ours.goals_diff else "0", "saldo"),
+        ]
+    subtitle = ""
+    if m := newsletter.last_match:
+        subtitle = f"{m.home} {m.home_goals} × {m.away_goals} {m.away}"
+        if m.venue:
+            subtitle += f" · {m.venue}"
+    return Banner(kicker=kicker, title=title, subtitle=subtitle, stats=stats)
 
 
 def _auth(settings: Settings) -> dict[str, str]:

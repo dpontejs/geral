@@ -199,6 +199,15 @@ class Story(BaseModel):
     source_url: str
 
 
+class Banner(BaseModel):
+    """A special edition's banner on top (a title, a cup): `geral especial`."""
+
+    kicker: str  # "Campeão brasileiro 2026"
+    title: str  # "É campeão!"
+    subtitle: str = ""  # the result that won it
+    stats: list[tuple[str, str]] = Field(default_factory=list)  # (value, label) of the season
+
+
 class Newsletter(BaseModel):
     """Full newsletter content ready for rendering and dispatch."""
 
@@ -225,3 +234,4 @@ class Newsletter(BaseModel):
     story: Story | None = None  # special section: a story of the club
     on_this_day: list[str] = Field(default_factory=list)  # special section: "Neste dia"
     note: str | None = None  # `geral novidade`: the "Novidades" box, kept in the draft
+    banner: Banner | None = None  # special edition (a title): the banner on top

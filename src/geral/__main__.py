@@ -38,10 +38,12 @@ from geral.schedule import (
 from geral.schedule import due as due_slot
 from geral.send.recipients import (
     LatestEdition,
+    fetch_banner,
     fetch_draft,
     fetch_note,
     latest_edition,
     mailto_unsubscribe,
+    make_banner,
     mark_draft_sent,
     preview_summary,
     publish_latest_edition,
@@ -447,6 +449,10 @@ def _run_stage(
                     newsletter.note = fetch_note(settings, club.slug)
                 if stage == "send":
                     typer.echo(f"{resolved.label}: sem revisão (rascunho ausente), montada agora.")
+            if newsletter.banner is None and not publish_only:
+                # `geral especial`: also at send time, for a banner set after the draft was built
+                if found := fetch_banner(settings, club.slug):
+                    newsletter.banner = make_banner(newsletter, *found)
             _fill_report(report, newsletter)
             if resolved.kind == "post" and newsletter.last_match is None:
                 report.outcome = "não enviada: partida não encerrada"
@@ -985,6 +991,33 @@ def edicao_geral(
             # Sent but not on the page: say it loudly, or a manual retry would send it again.
             typer.echo(f"{edition.label}: enviada, mas não publicada no portal: {e}", err=True)
             raise typer.Exit(code=1) from e
+
+
+@app.command("especial")
+def special_banner(
+    team: TeamOption,
+    kicker: Annotated[str | None, typer.Argument(help='Ex.: "Campeão brasileiro 2026"')] = None,
+    titulo: Annotated[str, typer.Option("--titulo", help="O título grande")] = "É campeão!",
+    cancelar: Annotated[
+        bool, typer.Option("--cancelar", help="Tira o banner que ainda não saiu")
+    ] = False,
+) -> None:
+    """Special banner (a title won: cup, season numbers and the deciding score) on top of the
+    team's next edition, once. Runs next to the page (SUBSCRIBERS_DB)."""
+    from geral.web.banners import BannerStore
+
+    club = _team(team)
+    banners = BannerStore(get_settings().SUBSCRIBERS_DB)
+    if cancelar:
+        banners.cancel(club.slug)
+        typer.echo(f"Banner da {club.newsletter} cancelado.")
+        return
+    if not kicker or not kicker.strip():
+        current = banners.pending(club.slug, None)
+        typer.echo(f"Banner atual: {current[0]} — {current[1]}" if current else "Nenhum banner.")
+        return
+    banners.create(club.slug, kicker, titulo, _now())
+    typer.echo(f"Banner gravado: vai no topo da próxima edição da {club.newsletter}.")
 
 
 @app.command()
