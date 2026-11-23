@@ -1520,8 +1520,8 @@ def create_app(
                 link_url="/jogos/carreira",
                 link_label="Jogar a Carreira",
             )
-        carreira = None
-        if aberto.versao == dados.versao:
+        carreira = guardada(codigo)
+        if carreira is None and aberto.versao == dados.versao:
             try:
                 carreira = carreira_motor.simular(dados, aberto.edicao, aberto.entrada)
             except carreira_draft.JogadaInvalida:
@@ -1581,6 +1581,8 @@ def create_app(
             resumo = carreira_codigo.resumir(entrada, carreira)
             codigo = carreira_codigo.codificar(dados.versao, edition, entrada, resumo, dados)
             contou = contar_carreira(request, dados, entrada, codigo, carreira.final.nota)
+            if contou and contou["novo"]:  # kept once, with the count (same cap per network)
+                guardar(codigo, carreira)
         return {
             "semente": entrada.semente,
             "versao": dados.versao,
@@ -1612,6 +1614,22 @@ def create_app(
             "posicao": posicao,
             "novo": novo,
         }
+
+    def guardar(codigo: str, carreira) -> None:
+        """Keep the finished career for its link; never lets the storage break the game."""
+        try:
+            placar.guardar(codigo, carreira.model_dump_json(), now())
+        except sqlite3.Error:
+            logger.exception("carreira guardada: could not keep a career")
+
+    def guardada(codigo: str):
+        """The career kept for this link (it opens even after the game's data changed)."""
+        try:
+            texto = placar.guardada(codigo)
+            return carreira_motor.Carreira.model_validate_json(texto) if texto else None
+        except (sqlite3.Error, ValueError):
+            logger.exception("carreira guardada: could not read a kept career")
+            return None
 
     @app.get("/api/jogos/carreira/placar")
     def carreira_placar():

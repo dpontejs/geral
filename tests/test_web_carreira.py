@@ -415,3 +415,45 @@ def test_formulario_tem_a_chave_de_minijogos(game) -> None:
     assert "Com minijogos" in page and "Sem minijogos" in page
     assert "/static/geral/penalti.js" in page
     assert "cr-modes" not in page  # the old mode switch stays gone
+
+
+def _dados_do_link(page_text: str) -> dict:
+    import json
+    import re
+
+    bruto = re.search(
+        r'<script type="application/json" id="cr-data">(.*?)</script>', page_text, re.S
+    )
+    return json.loads(bruto.group(1))["compartilhada"]
+
+
+def test_link_abre_a_carreira_guardada_mesmo_com_dados_novos(game, monkeypatch) -> None:
+    from dataclasses import replace
+
+    from geral.games.carreira import dados as carreira_dados
+
+    codigo, final = _codigo(game)
+    hoje = carreira_dados.carregar()
+    monkeypatch.setattr(carreira_dados, "carregar", lambda *a, **k: replace(hoje, versao="novos"))
+
+    page = game.get(f"/jogos/carreira/c/{codigo}")
+
+    assert page.status_code == 200
+    compartilhada = _dados_do_link(page.text)
+    assert compartilhada["carreira"] is not None
+    assert compartilhada["carreira"]["final"]["rotulo"] == final["rotulo"]
+    assert compartilhada["carreira"]["final"]["clubes"] == final["clubes"]
+
+
+def test_link_sem_carreira_guardada_e_dados_velhos_mostra_o_resumo(game) -> None:
+    from geral.games.carreira.codigo import codificar
+
+    codigo, final = _codigo(game)
+    velho = decodificar(codigo)
+    codigo_velho = codificar("00000000", velho.edicao, velho.entrada, velho.resumo)
+
+    compartilhada = _dados_do_link(game.get(f"/jogos/carreira/c/{codigo_velho}").text)
+
+    assert (
+        compartilhada["carreira"] is None and compartilhada["resumo"]["rotulo"] == final["rotulo"]
+    )

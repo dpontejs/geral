@@ -80,3 +80,18 @@ def test_emprestimo_para_o_rival_nao_e_traicao() -> None:
     )
 
     assert all(v.veredito != "Traidor" for v in vereditos(carregar(), temporadas))
+
+
+def test_carreira_guardada_uma_vez_e_lida_pelo_codigo(tmp_path) -> None:
+    from datetime import UTC, datetime
+
+    from geral.web.carreira_placar import PlacarStore
+
+    placar, agora = PlacarStore(tmp_path / "s.db"), datetime(2026, 11, 23, tzinfo=UTC)
+
+    assert placar.guardada("codigo-1") is None
+    placar.guardar("codigo-1", '{"final": {"rotulo": "Lenda"}}', agora)
+    placar.guardar("codigo-1", '{"final": {"rotulo": "outra"}}', agora)  # the same career again
+
+    assert placar.guardada("codigo-1") == '{"final": {"rotulo": "Lenda"}}'
+    assert placar.guardada("codigo-2") is None

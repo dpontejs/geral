@@ -2,10 +2,15 @@
 
 One row per career in its own table of the site's SQLite (like the jogo da velha duels). The key
 is a hash of the share code, so the same career sent again (a retry, a reopened page) counts once.
+
+The finished career itself is kept too (`carreira_guardada`, compressed JSON, a few KB): the share
+link replays a career only while the game's data stays the same, and the data changes with every
+improvement; the kept copy lets an old link show the whole career, not just the card.
 """
 
 import hashlib
 import sqlite3
+import zlib
 from contextlib import closing
 from dataclasses import dataclass
 from datetime import datetime
@@ -18,6 +23,11 @@ CREATE TABLE IF NOT EXISTS carreira_placar (
     clube TEXT NOT NULL,
     nota INTEGER NOT NULL,
     lenda INTEGER NOT NULL,
+    criada_em TEXT NOT NULL
+);
+CREATE TABLE IF NOT EXISTS carreira_guardada (
+    codigo_hash TEXT PRIMARY KEY,
+    carreira BLOB NOT NULL,
     criada_em TEXT NOT NULL
 );
 """
@@ -60,6 +70,24 @@ class PlacarStore:
                 (chave, clube, nota, int(nota >= LENDA), agora.isoformat()),
             )
             return cursor.rowcount == 1
+
+    def guardar(self, codigo: str, carreira_json: str, agora: datetime) -> None:
+        """Keep a finished career for its share link; the first copy stays."""
+        chave = hashlib.sha256(codigo.encode()).hexdigest()
+        with closing(sqlite3.connect(self.path)) as db, db:
+            db.execute(
+                "INSERT OR IGNORE INTO carreira_guardada VALUES (?, ?, ?)",
+                (chave, zlib.compress(carreira_json.encode(), 9), agora.isoformat()),
+            )
+
+    def guardada(self, codigo: str) -> str | None:
+        """The career kept for this share code, as JSON; None when it was not kept."""
+        chave = hashlib.sha256(codigo.encode()).hexdigest()
+        with closing(sqlite3.connect(self.path)) as db:
+            linha = db.execute(
+                "SELECT carreira FROM carreira_guardada WHERE codigo_hash = ?", (chave,)
+            ).fetchone()
+        return zlib.decompress(linha[0]).decode() if linha else None
 
     def _todas(self) -> list[Linha]:
         with closing(sqlite3.connect(self.path)) as db:
