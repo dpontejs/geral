@@ -328,6 +328,31 @@ def test_arriscar_tudo_nao_quebra_o_realismo() -> None:
     assert nao_decolou >= 0.15, nao_decolou
 
 
+def test_variedade_de_decisoes() -> None:
+    """In 500 Completa careers, 60%+ of the decisions asked (escolhas.toml, not the market's
+    offers nor the day-to-day) offer no club: contract, coach, dressing room, press, life."""
+    from test_carreira_realismo import roubos_humanos
+
+    dados, fora, todas = carregar(), 0, 0
+    for i in range(500):
+        posicao = regras.POSICOES[i % 5]
+        clube = ["flamengo", "abc", "sport", "palmeiras", "bahia", "goias"][i % 6]
+        e = motor.Entrada(
+            semente_draft=f"d{i}",
+            semente=f"c{i}",
+            craque=motor.Craque(nome="Zé", camisa=10, posicao=posicao, pe="direito", clube=clube),
+            roubos=roubos_humanos(dados, f"d{i}", posicao, clube),
+            modo="completa",
+        )
+        rng = random.Random(i)
+        _, _, perguntas = jogar(dados, e, lambda p, rng=rng: rng.randrange(len(p.opcoes)))
+        decisoes = [p for p in perguntas if p.tipo == "decisao"]
+        todas += len(decisoes)
+        fora += sum(not any(p.clubes) for p in decisoes)
+
+    assert fora / todas >= 0.6, (fora, todas)
+
+
 def test_replay_estavel() -> None:
     dados = carregar()
     for i in range(30):
@@ -383,3 +408,28 @@ def test_segundo_arco_espera_o_primeiro() -> None:
     assert sim._passo_do_arco(ctx)[0].id == "d2"
     sim.perguntadas.append("d2")
     assert sim._passo_do_arco(ctx)[0].id == "d3"
+
+
+def _mudancas_depois_da_marca(saida: float) -> int:
+    """Club changes after answering a decision that gives a mark with this `saida`."""
+    fiel = MARCAS | {"f": Marca("f", "Fiel", "{nome} jura amor", Efeito(saida=saida))}
+    jurar = _decisao("d1", Opcao(texto="Jurar", marca="f"), Opcao(texto="Não"))
+    dados = _dados(jurar, marcas=fiel)
+    total = 0
+    for i in range(40):
+        antes, e = _ate_a_decisao(dados, entrada(f"j{i}", dados=dados), "d1")
+        if antes.final:
+            continue
+        carreira, _ = _ate_a_decisao(
+            dados, e.model_copy(update={"escolhas": [*e.escolhas, 0]}), "-"
+        )
+        clubes = [t.clube_id for t in carreira.temporadas[len(antes.temporadas) - 1 :]]
+        total += sum(a != b for a, b in zip(clubes, clubes[1:], strict=False))
+    return total
+
+
+def test_marca_com_saida_vale_enquanto_ficar_no_clube(sempre) -> None:
+    """A mark's push (`saida`) counts in every winter's market while he stays at the club where he
+    won it: a vow to the club lasts, not just one winter."""
+    assert _mudancas_depois_da_marca(0.0) > 0
+    assert _mudancas_depois_da_marca(-5.0) == 0

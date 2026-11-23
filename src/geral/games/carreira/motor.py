@@ -283,6 +283,7 @@ class _Simulacao:
     # open arcs, oldest first: (the mark, tries left, the club it happens at)
     arcos: list[tuple[str, int, str]] = field(default_factory=list)
     marcas_ganhas: list[str] = field(default_factory=list)  # mark ids, in order
+    onde_marcou: dict[str, str] = field(default_factory=dict)  # mark id -> club it was won at
     manchetes_usadas: set[str] = field(default_factory=set)  # headline templates told
     respondidas: int = 0
     emprestado_de: Clube | None = None
@@ -526,7 +527,7 @@ class _Simulacao:
             rotina=self.resultado,
             marcas=self.marcas_novas,
         )
-        saida = sum(e.efeito.saida for e in eventos) + self.efeito.saida
+        saida = sum(e.efeito.saida for e in eventos) + self.efeito.saida + self._saida_das_marcas()
         self.chegada, self.efeito, self.resultado = None, Efeito(), None
         self.marcas_novas, self.saida_extra = [], 0.0
         return temporada, saida
@@ -725,8 +726,10 @@ class _Simulacao:
             return
         self.historico.add(marca_id)
         self.marcas_ganhas.append(marca_id)
+        self.onde_marcou[marca_id] = self.clube.id
         marca = self.dados.marcas[marca_id]
         self._efeito_agora(marca.efeito)
+        self.saida_extra += marca.efeito.saida  # this winter too; `_saida_das_marcas` from then on
         self.marcas_novas.append(marca.texto.format_map({"nome": self.entrada.craque.nome}))
         if any(
             d.continua and marca_id in d.condicao.requer and d.id not in self.perguntadas
@@ -734,6 +737,15 @@ class _Simulacao:
         ):
             # its next step comes next winter, at this club, after any arc already open
             self.arcos.append((marca_id, ARCO_TENTATIVAS, self.clube.id))
+
+    def _saida_das_marcas(self) -> float:
+        """A mark's push to leave (a vow to the club, a fan base fed up) counts every winter while
+        he is at the club where he won it."""
+        return sum(
+            self.dados.marcas[m].efeito.saida
+            for m, clube in self.onde_marcou.items()
+            if clube == self.clube.id
+        )
 
     def _pergunta(self, temporada: Temporada) -> tuple[Escolha | None, bool]:
         """Maybe a question this season: (pending question, the fan settled this winter)."""
