@@ -624,12 +624,23 @@
     g.font = `italic 500 34px ${body}`;
     y += (quebrar(final.descricao, W - 2 * M, `italic 500 34px ${body}`, M, y, 44, 2) - 1) * 44;
     if (final.marcas && final.marcas.length) {
-      // the marks of the career, one line: "CAPITÃO · VIROU MEIA"
-      y += 52;
+      // the marks of the career on one line, "CAPITÃO · VIROU MEIA", "…" when more don't fit:
+      // the card has no room to spare above the path
       g.fillStyle = "#B23A2A";
-      const marcas = final.marcas.join("  ·  ").toUpperCase();
-      caber(marcas, W - 2 * M, (t) => `800 ${t}px ${display}`, 30);
-      g.fillText(marcas, M, y);
+      g.font = `800 26px ${display}`;
+      const max = W - 2 * M - g.measureText("  …").width;
+      let linha = "";
+      for (const marca of final.marcas.map((m) => m.toUpperCase())) {
+        const teste = linha ? `${linha}  ·  ${marca}` : marca;
+        if (linha && g.measureText(teste).width > max) {
+          linha += "  …";
+          break;
+        }
+        linha = teste;
+      }
+      y += 38;
+      g.fillText(linha, M, y);
+      y -= 8; // a tighter gap to the rule below
       g.fillStyle = ink;
     }
     y += 36;

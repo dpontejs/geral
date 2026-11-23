@@ -368,3 +368,18 @@ def test_decisao_respondida_libera_quem_a_requer(sempre) -> None:
     carreira, _ = _ate_a_decisao(dados, e, "d3")
 
     assert carreira.pendente and carreira.pendente.id == "d3"
+
+
+def test_segundo_arco_espera_o_primeiro() -> None:
+    passo_b = _decisao(
+        "d3", Opcao(texto="a"), Opcao(texto="b"), condicao=Condicao(requer=("b",)), continua=True
+    )
+    sim = _simulacao(_dados(*_arco(), passo_b))
+    ctx = sim._contexto()
+
+    sim._marcar("a")
+    sim._marcar("b")  # a second arc while the first is open: it waits, it does not replace
+
+    assert sim._passo_do_arco(ctx)[0].id == "d2"
+    sim.perguntadas.append("d2")
+    assert sim._passo_do_arco(ctx)[0].id == "d3"

@@ -98,7 +98,8 @@ def _escolha(opcao: str, condicao: str = "", extra: str = "") -> str:
 
 def test_carrega_marcas_e_opcao_com_risco(tmp_path) -> None:
     opcao = 'chance = 20\nbonus = "lideranca"\nmarca = "x"\nsucesso = { teto = 3 }\n'
-    dados = carregar(_pasta_caminhos(tmp_path, _escolha(opcao, extra="continua = true\n"), MARCA))
+    passo = _escolha(opcao, 'condicao = { requer = ["x"] }\n', extra="continua = true\n")
+    dados = carregar(_pasta_caminhos(tmp_path, passo, MARCA))
 
     marca = dados.marcas["x"]
     assert (marca.nome, marca.texto, marca.efeito.nota) == ("Xis", "{nome} vira xis", 1)
@@ -123,3 +124,12 @@ def test_dados_rejeitam_posicao_invalida(tmp_path) -> None:
 
     with pytest.raises(ValueError, match="goleiro"):
         carregar(_pasta_caminhos(tmp_path, _escolha(""), marca))
+
+
+def test_dados_rejeitam_passo_de_arco_sem_marca(tmp_path) -> None:
+    escolhas = _escolha(
+        "", condicao='condicao = { requer = ["capitao"] }\n', extra="continua = true\n"
+    )
+
+    with pytest.raises(ValueError, match="continua"):
+        carregar(_pasta_caminhos(tmp_path, escolhas, MARCA))

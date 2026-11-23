@@ -280,7 +280,8 @@ class _Simulacao:
     historico: set[str] = field(default_factory=set)
     perguntadas: list[str] = field(default_factory=list)
     passos: int = 0  # how many of `perguntadas` were arc steps (outside the cap)
-    arco: tuple[str, int, str] | None = None  # the arc's mark, tries left, the club it is at
+    # open arcs, oldest first: (the mark, tries left, the club it happens at)
+    arcos: list[tuple[str, int, str]] = field(default_factory=list)
     marcas_ganhas: list[str] = field(default_factory=list)  # mark ids, in order
     manchetes_usadas: set[str] = field(default_factory=set)  # headline templates told
     respondidas: int = 0
@@ -731,7 +732,8 @@ class _Simulacao:
             d.continua and marca_id in d.condicao.requer and d.id not in self.perguntadas
             for d in self.dados.decisoes
         ):
-            self.arco = (marca_id, ARCO_TENTATIVAS, self.clube.id)  # next winter, same club
+            # its next step comes next winter, at this club, after any arc already open
+            self.arcos.append((marca_id, ARCO_TENTATIVAS, self.clube.id))
 
     def _pergunta(self, temporada: Temporada) -> tuple[Escolha | None, bool]:
         """Maybe a question this season: (pending question, the fan settled this winter)."""
@@ -784,25 +786,29 @@ class _Simulacao:
         }
 
     def _passo_do_arco(self, ctx: _Contexto) -> tuple[Decisao | None, dict[str, Clube | None]]:
-        """The open arc's next step, when its condition fits this winter; else one try less."""
-        if self.arco is None:
-            return None, {}
-        marca, restantes, clube = self.arco
-        if clube != self.clube.id:  # a new club: the story of the old one is over
-            self.arco = None
-            return None, {}
-        for decisao in self.dados.decisoes:
-            if (
-                decisao.continua
-                and decisao.id not in self.perguntadas
-                and marca in decisao.condicao.requer
-                and ctx.casa(decisao.condicao)
-            ):
-                destinos = self._destinos(decisao)
-                if all(destinos.values()):
-                    self.arco = None
-                    return decisao, destinos
-        self.arco = (marca, restantes - 1, clube) if restantes > 1 else None
+        """The oldest open arc's next step, when its condition fits this winter; else that arc
+        has one try less. Arcs opened meanwhile wait their turn."""
+        while self.arcos:
+            marca, restantes, clube = self.arcos[0]
+            if clube != self.clube.id:  # a new club: the story of the old one is over
+                self.arcos.pop(0)
+                continue
+            for decisao in self.dados.decisoes:
+                if (
+                    decisao.continua
+                    and decisao.id not in self.perguntadas
+                    and marca in decisao.condicao.requer
+                    and ctx.casa(decisao.condicao)
+                ):
+                    destinos = self._destinos(decisao)
+                    if all(destinos.values()):
+                        self.arcos.pop(0)
+                        return decisao, destinos
+            if restantes > 1:
+                self.arcos[0] = (marca, restantes - 1, clube)
+            else:
+                self.arcos.pop(0)
+            break
         return None, {}
 
     def _escolha(self, decisao: Decisao, destinos: dict[str, Clube | None]) -> Escolha:

@@ -362,7 +362,8 @@ def _validar_ids(
     marcas: dict[str, Marca],
     finais: tuple[dict, ...] = (),
 ) -> None:
-    """Every `requer`/`exclui`/`marca` names an event, a decision or a mark that exists."""
+    """Every `requer`/`exclui`/`marca` names an event, a decision or a mark that exists (an
+    answered decision enters the history too); an arc's step requires a mark."""
     conhecidos = {e.id for e in eventos} | {d.id for d in decisoes} | set(marcas)
     for item in (*eventos, *decisoes, *rotinas):
         citados = [*item.condicao.requer, *item.condicao.exclui]
@@ -371,6 +372,8 @@ def _validar_ids(
         desconhecidos = sorted({c for c in citados if c} - conhecidos)
         if desconhecidos:
             raise ValueError(f"{item.id!r}: unknown ids {desconhecidos}")
+        if getattr(item, "continua", False) and not set(item.condicao.requer) & set(marcas):
+            raise ValueError(f"{item.id!r}: continua needs a mark in requer, or it is never asked")
     for final in finais:
         desconhecidos = sorted(set(final.get("requer", ())) - set(marcas))
         if desconhecidos:
