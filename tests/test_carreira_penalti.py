@@ -172,3 +172,16 @@ def test_taxa_de_copas_sem_minijogos_parecida_com_a_de_hoje() -> None:
         lances += sum(1 for t in c.temporadas if t.lance)
     assert abs(total / 1000 - COPAS_ANTES) <= 0.2 * COPAS_ANTES
     assert lances > 300  # the penalty does show up
+
+
+def test_gol_do_lance_nao_conta_a_historia_duas_vezes() -> None:
+    """The penalty's own headline tells the goal: the 'sangue frio' title event waits for another
+    season."""
+    vistos = 0
+    for e in _com_lance(40):
+        carreira, _, _ = jogar(e)
+        for t in carreira.temporadas:
+            if t.lance and t.lance.resultado == "gol":
+                vistos += 1
+                assert "penalti-sem-tremer" not in t.eventos, (e.semente, t.ano)
+    assert vistos >= 10

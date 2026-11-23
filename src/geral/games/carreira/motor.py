@@ -531,6 +531,13 @@ class _Simulacao:
         ruim = next((e for e in self.dados.eventos if e.id == TEMPORADA_RUIM), None)
         if forma <= FORMA_RUIM and ruim:  # a season to forget is told as one
             depois = [ruim, *[e for e in depois if e is not ruim][:1]]
+        if lance:
+            # The penalty's own headline tells this season: an event of the cold-blood mark
+            # ("sangue frio", a goal at the death) would tell it twice, so it waits for another one.
+            depois = [e for e in depois if MARCA_GOL not in e.condicao.requer]
+            marca = MARCA_GOL if lance.resultado == "gol" else MARCA_ERRO
+            if marca in self.dados.marcas:  # a world built for a test may not have it
+                self._marcar(marca)
         if evento_lance:  # the final's penalty is the season's headline
             depois = [evento_lance, *depois]
         eventos = antes + depois
@@ -632,9 +639,6 @@ class _Simulacao:
                 else "trave"
             )
         gol = resultado == "gol"
-        marca = MARCA_GOL if gol else MARCA_ERRO
-        if marca in self.dados.marcas:  # a world built for a test may not have it
-            self._marcar(marca)
         evento_id = "penalti-gol" if gol else "penalti-erro"
         evento = next((e for e in self.dados.eventos if e.id == evento_id), None)
         return ResultadoLance(
