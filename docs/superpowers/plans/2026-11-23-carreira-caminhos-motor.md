@@ -58,9 +58,9 @@
 
 **Interfaces — Produces:** `MAX_ESCOLHAS = {"rapida": 5, "completa": 8}`; `ARCO_TENTATIVAS = 2`; `_Simulacao.arco: tuple[str, int] | None` (marca que abriu o arco, tentativas restantes).
 
-- [ ] Testes: `test_arco_continua_na_temporada_seguinte` (Rápida e Completa; com `perguntadas` já no teto, a próxima `Escolha.id` é a decisão `continua` que requer a marca); `test_arco_segue_a_ordem` (o passo 2 nunca aparece sem a marca); `test_arco_que_nao_casa_morre` (condição impossível → após 2 temporadas, a carreira termina normal); `test_teto_por_modo` (Rápida nunca passa de 5 perguntas sorteadas; Completa de 8). FAIL.
-- [ ] Em `_pergunta`: se há arco pendente e alguma decisão `continua` não perguntada casa e requer a marca, ela é escolhida sem `CHANCE_ESCOLHA` nem teto; passos de arco não entram na contagem do teto (guardar à parte). Decisões `continua` nunca saem no sorteio comum. PASS.
-- [ ] Commit `feat: arcos garantidos e mais decisões por carreira`.
+- [x] Testes: `test_arco_continua_na_temporada_seguinte` (Rápida e Completa; com `perguntadas` já no teto, a próxima `Escolha.id` é a decisão `continua` que requer a marca); `test_arco_segue_a_ordem` (o passo 2 nunca aparece sem a marca); `test_arco_que_nao_casa_morre` (condição impossível → após 2 temporadas, a carreira termina normal); `test_teto_por_modo` (Rápida nunca passa de 5 perguntas sorteadas; Completa de 8). FAIL.
+- [x] Em `_pergunta`: se há arco pendente e alguma decisão `continua` não perguntada casa e requer a marca, ela é escolhida sem `CHANCE_ESCOLHA` nem teto; passos de arco não entram na contagem do teto (guardar à parte). Decisões `continua` nunca saem no sorteio comum. PASS.
+- [x] Commit `feat: arcos garantidos e mais decisões por carreira`.
 
 ### Task 4: Posição nova, marcas no final, finais por marca, manchetes sem repetir
 

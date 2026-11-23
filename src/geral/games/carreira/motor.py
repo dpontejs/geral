@@ -28,7 +28,8 @@ from geral.games.carreira.regras import NOMES, POSICOES, geral
 PRIMEIRO_ANO = 2027
 IDADE_INICIAL, IDADE_MAXIMA = 16, 42
 RISCO = 8  # taken off every risky day-to-day chance: daring has to cost something
-MAX_ESCOLHAS = 4  # decision questions per career (both modes)
+MAX_ESCOLHAS = {"rapida": 5, "completa": 8}  # drawn decision questions per career
+ARCO_TENTATIVAS = 2  # seasons an arc's next step waits for its condition before it dies
 MAX_RESPOSTAS = 60  # every answer of a Completa career: a day-to-day one per season, the market
 CHANCE_ESCOLHA = 0.4  # per season, when one fits
 ARRISCADA = 25  # an option with this chance or less is shown as a long shot
@@ -274,6 +275,8 @@ class _Simulacao:
     temporadas: list[Temporada] = field(default_factory=list)
     historico: set[str] = field(default_factory=set)
     perguntadas: list[str] = field(default_factory=list)
+    passos: int = 0  # how many of `perguntadas` were arc steps (outside the cap)
+    arco: tuple[str, int] | None = None  # the mark that opened an arc, tries left
     respondidas: int = 0
     emprestado_de: Clube | None = None
     aposentou: bool = False
@@ -706,26 +709,36 @@ class _Simulacao:
         marca = self.dados.marcas[marca_id]
         self._efeito_agora(marca.efeito)
         self.marcas_novas.append(marca.texto.format_map({"nome": self.entrada.craque.nome}))
+        if any(
+            d.continua and marca_id in d.condicao.requer and d.id not in self.perguntadas
+            for d in self.dados.decisoes
+        ):
+            self.arco = (marca_id, ARCO_TENTATIVAS)  # its next step comes next winter
 
     def _pergunta(self, temporada: Temporada) -> tuple[Escolha | None, bool]:
         """Maybe a question this season: (pending question, the fan settled this winter)."""
-        if len(self.perguntadas) >= MAX_ESCOLHAS or self.rng.random() >= CHANCE_ESCOLHA:
-            return None, False
         ctx = self._contexto()
         ctx.gols, ctx.jogos = temporada.gols, temporada.jogos
         ctx.titulo, ctx.selecao = bool(temporada.titulos), temporada.selecao > 0
         ctx.copa, ctx.mundial = temporada.copa, "Copa do Mundo" in temporada.titulos
-        cabem = [
-            d for d in self.dados.decisoes if d.id not in self.perguntadas and ctx.casa(d.condicao)
-        ]
-        if not cabem:
-            return None, False
-        decisao = self.rng.choices(cabem, weights=[d.peso for d in cabem])[0]
-        destinos = {
-            o.destino: self._destino(o.destino) for o in decisao.opcoes if o.destino in COM_CLUBE
-        }
-        if any(clube is None for clube in destinos.values()):
-            return None, False
+        decisao, destinos = self._passo_do_arco(ctx)
+        if decisao is not None:
+            self.passos += 1  # an arc's step is always asked and never counts in the cap
+        else:
+            sorteadas = len(self.perguntadas) - self.passos
+            if sorteadas >= MAX_ESCOLHAS[self.entrada.modo] or self.rng.random() >= CHANCE_ESCOLHA:
+                return None, False
+            cabem = [
+                d
+                for d in self.dados.decisoes
+                if not d.continua and d.id not in self.perguntadas and ctx.casa(d.condicao)
+            ]
+            if not cabem:
+                return None, False
+            decisao = self.rng.choices(cabem, weights=[d.peso for d in cabem])[0]
+            destinos = self._destinos(decisao)
+            if any(clube is None for clube in destinos.values()):
+                return None, False
         self.perguntadas.append(decisao.id)
         resposta = self._resposta(len(decisao.opcoes))
         if resposta is None:
@@ -745,6 +758,30 @@ class _Simulacao:
             self._mudar(destinos[destino], emprestimo=destino == "emprestimo")
         # A market question holds the winter whatever the answer; one off the market lets it run.
         return None, bool(destinos) or self.aposentou
+
+    def _destinos(self, decisao: Decisao) -> dict[str, Clube | None]:
+        return {
+            o.destino: self._destino(o.destino) for o in decisao.opcoes if o.destino in COM_CLUBE
+        }
+
+    def _passo_do_arco(self, ctx: _Contexto) -> tuple[Decisao | None, dict[str, Clube | None]]:
+        """The open arc's next step, when its condition fits this winter; else one try less."""
+        if self.arco is None:
+            return None, {}
+        marca, restantes = self.arco
+        for decisao in self.dados.decisoes:
+            if (
+                decisao.continua
+                and decisao.id not in self.perguntadas
+                and marca in decisao.condicao.requer
+                and ctx.casa(decisao.condicao)
+            ):
+                destinos = self._destinos(decisao)
+                if all(destinos.values()):
+                    self.arco = None
+                    return decisao, destinos
+        self.arco = (marca, restantes - 1) if restantes > 1 else None
+        return None, {}
 
     def _escolha(self, decisao: Decisao, destinos: dict[str, Clube | None]) -> Escolha:
         alvos = [c for c in destinos.values() if c]

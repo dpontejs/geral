@@ -123,3 +123,72 @@ def test_decisao_sem_clube_nao_segura_o_mercado(sempre) -> None:
             assert len(depois.temporadas) == len(antes.temporadas)  # the decision's winter
             return
     pytest.fail("decisão 'ficar' nunca deixou o mercado rodar em 200 sementes")
+
+
+def _ate_a_decisao(dados, e, alvo: str, resposta=lambda p: 0):
+    """Answer until the question `alvo` is pending (or the career ends)."""
+    while (carreira := simular(dados, "geral", e)).final is None:
+        if carreira.pendente.id == alvo:
+            break
+        e = e.model_copy(update={"escolhas": [*e.escolhas, resposta(carreira.pendente)]})
+    return carreira, e
+
+
+def _arco(**condicao_passo):
+    passo = _decisao(
+        "d2",
+        Opcao(texto="Seguir", marca="b"),
+        Opcao(texto="Parar"),
+        condicao=Condicao(requer=("a",), **condicao_passo),
+        continua=True,
+    )
+    return _decisao("d1"), passo
+
+
+@pytest.mark.parametrize("modo", ["rapida", "completa"])
+def test_arco_continua_na_temporada_seguinte(sempre, monkeypatch, modo) -> None:
+    monkeypatch.setattr(motor, "MAX_ESCOLHAS", {"rapida": 1, "completa": 1})  # the cap is full
+    dados = _dados(*_arco())
+    for i in range(10):
+        e = _modo(entrada(f"a{i}", dados=dados), modo)
+        antes, e = _ate_a_decisao(dados, e, "d1")
+        e = e.model_copy(update={"escolhas": [*e.escolhas, 0]})
+        depois, _ = _ate_a_decisao(dados, e, "d2", lambda p: 0)
+
+        assert depois.pendente and depois.pendente.id == "d2"
+        assert len(depois.temporadas) == len(antes.temporadas) + 1
+
+
+def test_arco_segue_a_ordem(sempre) -> None:
+    dados = _dados(*_arco())
+    for i in range(20):
+        e = entrada(f"o{i}", dados=dados)
+        _, e = _ate_a_decisao(dados, e, "d1")
+        sem_marca = e.model_copy(update={"escolhas": [*e.escolhas, 1]})  # no mark: no arc
+        carreira, _ = _ate_a_decisao(dados, sem_marca, "d2")
+        assert carreira.final and "d2" not in carreira.final.perguntas
+
+
+def test_arco_que_nao_casa_morre(sempre) -> None:
+    for espera, chega in ((2, True), (3, False)):  # two seasons of tries, then the arc dies
+        primeiro, passo = _arco(idade_min=20 + espera)
+        dados = _dados(dataclasses.replace(primeiro, condicao=Condicao(idade_min=20)), passo)
+        for i in range(10):
+            e = entrada(f"n{i}", dados=dados)
+            antes, e = _ate_a_decisao(dados, e, "d1")
+            if antes.final or antes.temporadas[-1].idade != 20:
+                continue
+            e = e.model_copy(update={"escolhas": [*e.escolhas, 0]})
+            carreira, _ = _ate_a_decisao(dados, e, "d2")
+            if chega:
+                assert carreira.pendente and carreira.temporadas[-1].idade == 22
+            else:
+                assert carreira.final and "d2" not in carreira.final.perguntas
+
+
+@pytest.mark.parametrize(("modo", "teto"), [("rapida", 5), ("completa", 8)])
+def test_teto_por_modo(sempre, modo, teto) -> None:
+    dados = _dados(*(_decisao(f"t{i}", Opcao(texto="a"), Opcao(texto="b")) for i in range(30)))
+    for i in range(10):
+        carreira, _ = _ate_a_decisao(dados, _modo(entrada(f"t{i}", dados=dados), modo), "-")
+        assert len(carreira.final.perguntas) == teto
