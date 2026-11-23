@@ -13,8 +13,11 @@
 - Não altere decisões de arquitetura do PLAN sem registrar o motivo na seção "Decisões" do PLAN.
 
 ## Stack e convenções de código
-- Python 3.12, gerenciado com `uv`. Lint/format com `ruff`. Testes com `pytest`.
+- Python 3.12, gerenciado com `uv`. Lint/format com `ruff`. Testes com `pytest`, em paralelo por padrão (`pytest-xdist`, `-n auto` no `pyproject.toml`; `-n0` para depurar um teste).
 - Código, nomes e logs em inglês; conteúdo da newsletter e prompts em **pt-BR**.
 - Segredos só via variáveis de ambiente (`.env` local, GitHub Secrets no CI). Nunca commitar `.env`.
 - Toda chamada de rede deve ser mockável (`respx` para `httpx`); testes não acessam a internet.
 - Antes de commitar: `uv run ruff check . && uv run ruff format --check . && uv run pytest`.
+- Testes da Carreira que jogam carreiras inteiras usam `motor.jogar` (uma passada, respondendo na
+  hora), não `simular` em laço com a lista de respostas crescendo (refaz a carreira a cada resposta
+  e deixa a suíte quadrática).

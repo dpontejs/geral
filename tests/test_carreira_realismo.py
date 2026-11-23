@@ -5,7 +5,7 @@ from geral.games.carreira import regras
 from geral.games.carreira.dados import carregar
 from geral.games.carreira.draft import OFERTA, Roubo, montar, oferta
 from geral.games.carreira.jogadores import jogadores_da_base, lista_do_draft, notas_do_jogador
-from geral.games.carreira.motor import Craque, Entrada, simular
+from geral.games.carreira.motor import Craque, Entrada, jogar
 from geral.games.velha.base import Player, load
 
 
@@ -105,8 +105,7 @@ def carreira_humana(dados, i: int, modo: str = "rapida"):
         modo=modo,
     )
     rng = random.Random(i)
-    while (c := simular(dados, "geral", e)).final is None:
-        e = e.model_copy(update={"escolhas": [*e.escolhas, rng.randrange(len(c.pendente.opcoes))]})
+    c, _ = jogar(dados, "geral", e, lambda pendente: rng.randrange(len(pendente.opcoes)))
     return c
 
 

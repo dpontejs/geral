@@ -5,6 +5,7 @@ changes a season that came before it: the career grows in front of the fan, it n
 """
 
 import random
+from collections.abc import Callable
 from dataclasses import dataclass, field, replace
 from typing import Annotated, Literal
 
@@ -245,10 +246,29 @@ def clube_inicial(dados: Dados, edicao: str, escolhido: str | None) -> Clube:
 
 
 def simular(dados: Dados, edicao: str, entrada: Entrada) -> Carreira:
+    return _simulacao(dados, edicao, entrada).rodar()
+
+
+Responder = Callable[["Escolha"], int]
+
+
+def jogar(
+    dados: Dados, edicao: str, entrada: Entrada, responder: Responder
+) -> tuple[Carreira, Entrada]:
+    """The whole career in one pass, `responder` answering each question as it comes (after the
+    answers `entrada` already has). The same career `simular` gives replaying those answers one by
+    one, the way the site does, without simulating it again at every answer."""
+    sim = _simulacao(dados, edicao, entrada)
+    sim.responder = responder
+    carreira = sim.rodar()
+    return carreira, entrada.model_copy(update={"escolhas": sim.escolhas})
+
+
+def _simulacao(dados: Dados, edicao: str, entrada: Entrada) -> "_Simulacao":
     ofertadas = oferta(dados, edicao, entrada.semente_draft, entrada.craque.clube)
     notas = montar(ofertadas, entrada.roubos)
     inicio = clube_inicial(dados, edicao, entrada.craque.clube)
-    return _Simulacao(dados, entrada, notas, inicio).rodar()
+    return _Simulacao(dados, entrada, notas, inicio)
 
 
 def artigos(campo: str, clube: Clube | None) -> dict[str, str]:
@@ -341,8 +361,10 @@ class _Simulacao:
     marcas_novas: list[str] = field(default_factory=list)  # told in the next season
     saida_extra: float = 0.0  # a decision's push towards the door, for this winter's market
     lances: int = 0  # penalties he took
+    responder: Responder | None = None  # `jogar`: answers the questions as they come
 
     def __post_init__(self) -> None:
+        self.escolhas = list(self.entrada.escolhas)  # grows when a `responder` answers
         self.rng = random.Random(f"carreira:{self.entrada.semente}")
         self.posicao = self.entrada.craque.posicao
         base = geral(self.notas, self.posicao)
@@ -390,7 +412,7 @@ class _Simulacao:
                 break
             self.idade, self.ano = self.idade + 1, self.ano + 1
             self._evoluir()
-        if self.respondidas < len(self.entrada.escolhas):
+        if self.respondidas < len(self.escolhas):
             raise JogadaInvalida("a carreira já terminou: escolhas demais")
         return Carreira(temporadas=self.temporadas, final=self._final())
 
@@ -648,8 +670,8 @@ class _Simulacao:
                 competicao, adversario = liga.campeonato, self._da_liga()
             minuto = _minuto(self.rng.randint(70, 94))
         sorte = self.rng.random()
-        resposta = self._resposta(len(LANCES)) if self.minijogos else None
-        if self.minijogos and resposta is None:
+
+        def pergunta() -> Escolha:
             return Escolha(
                 id=f"penalti-{tipo}",
                 tipo="lance",
@@ -667,6 +689,10 @@ class _Simulacao:
                     copa=copa,
                 ),
             )
+
+        resposta = self._resposta(len(LANCES), pergunta) if self.minijogos else None
+        if self.minijogos and resposta is None:
+            return pergunta()
         self.lances += 1
         if resposta is not None and resposta < len(LANCES) - 1:
             resultado = LANCES[resposta]
@@ -830,18 +856,22 @@ class _Simulacao:
             destinos=["maior", "ficar"],
             clubes=[destino.id, None],
         )
-        resposta = self._resposta(len(escolha.opcoes))
+        resposta = self._resposta(len(escolha.opcoes), lambda: escolha)
         if resposta is None:
             return escolha
         if resposta == 0:
             self._mudar(destino)
         return None
 
-    def _resposta(self, opcoes: int) -> int | None:
-        """The fan's next answer, or None when the career waits for it."""
-        if self.respondidas >= len(self.entrada.escolhas):
-            return None
-        resposta = self.entrada.escolhas[self.respondidas]
+    def _resposta(self, opcoes: int, pergunta: Callable[[], Escolha]) -> int | None:
+        """The fan's next answer, or None when the career waits for it. With a `responder`
+        (`jogar`), the question is put to it instead of waiting; building the question must not
+        draw from the random stream, so both ways give the same career."""
+        if self.respondidas >= len(self.escolhas):
+            if self.responder is None:
+                return None
+            self.escolhas.append(self.responder(pergunta()))
+        resposta = self.escolhas[self.respondidas]
         self.respondidas += 1
         if not 0 <= resposta < opcoes:
             raise JogadaInvalida("essa opção não existe")
@@ -867,8 +897,8 @@ class _Simulacao:
             }
         )
         texto = rotina.texto.format_map(campos)
-        resposta = self._resposta(len(rotina.opcoes))
-        if resposta is None:
+
+        def pergunta() -> Escolha:
             return Escolha(
                 id=rotina.id,
                 tipo="dia",
@@ -878,6 +908,10 @@ class _Simulacao:
                 destinos=["ficar"] * len(rotina.opcoes),
                 clubes=[None] * len(rotina.opcoes),
             )
+
+        resposta = self._resposta(len(rotina.opcoes), pergunta)
+        if resposta is None:
+            return pergunta()
         opcao = rotina.opcoes[resposta]
         deu_certo, efeito = self._aplicar(opcao)
         self.resultado = ResultadoRotina(
@@ -977,7 +1011,7 @@ class _Simulacao:
             if any(clube is None for clube in destinos.values()):
                 return None, False
         self.perguntadas.append(decisao.id)
-        resposta = self._resposta(len(decisao.opcoes))
+        resposta = self._resposta(len(decisao.opcoes), lambda: self._escolha(decisao, destinos))
         if resposta is None:
             return self._escolha(decisao, destinos), False
         self.historico.add(decisao.id)  # an answered question can open others (`requer`)

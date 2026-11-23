@@ -7,7 +7,7 @@ from velha_fakes import base, player
 from geral.games.carreira import regras
 from geral.games.carreira.dados import carregar
 from geral.games.carreira.final import parecido, rotular
-from geral.games.carreira.motor import Temporada, artigos, simular
+from geral.games.carreira.motor import Temporada, artigos, jogar, simular
 
 
 def test_careers_vary() -> None:
@@ -28,10 +28,7 @@ def _ao_acaso(semente: str, posicao: str):
     rng = random.Random(semente)
     melhor = rng.choice((True, False, None))
     e = entrada(semente, posicao=posicao, melhor=melhor, clube=rng.choice(BR))
-    while (carreira := simular(dados, "geral", e)).final is None:
-        resposta = rng.randrange(len(carreira.pendente.opcoes))
-        e = e.model_copy(update={"escolhas": [*e.escolhas, resposta]})
-    return carreira, e
+    return jogar(dados, "geral", e, lambda pendente: rng.randrange(len(pendente.opcoes)))
 
 
 BR = sorted(c.id for c in carregar().clubes.values() if carregar().ligas[c.liga].pais == "Brasil")
