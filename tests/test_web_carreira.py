@@ -364,7 +364,7 @@ def test_carreira_nova_sem_modo_e_completa(game) -> None:
 
 
 def _ate_o_lance(game, pedido) -> tuple[dict, dict]:
-    """Answers 0 until the cup final's penalty is pending (or the career ends)."""
+    """Answers 0 until a penalty is pending (or the career ends)."""
     for _ in range(MAX_RESPOSTAS + 1):
         corpo = game.post(f"{API}/geral/simular", json=pedido).json()
         pendente = corpo["carreira"]["pendente"]
@@ -383,15 +383,20 @@ def test_payload_do_lance_e_linha_do_tempo(game) -> None:
             break
     else:
         raise AssertionError("no penalty in 40 careers")
-    assert pendente["id"] == "penalti-final"
+    lance = pendente["lance"]
+    assert lance["tipo"] in ("jogo", "classico", "final")
+    assert pendente["id"] == f"penalti-{lance['tipo']}"
     assert pendente["opcoes"] == ["gol", "defesa", "fora", "trave", "motor"]
     assert 1 <= pendente["info"][0]["chance"] <= 99
-    lance = pendente["lance"]
-    assert lance["copa"] and lance["adversario"] and lance["clube"]
+    assert lance["competicao"] and lance["adversario"] and lance["clube"] and lance["minuto"]
 
     gol = pedido | {"escolhas": [*pedido["escolhas"], 0]}  # the fan scores
     t = game.post(f"{API}/geral/simular", json=gol).json()["carreira"]["temporadas"][-1]
-    assert t["lance"]["resultado"] == "gol" and lance["copa"] in t["titulos"]
+    assert t["lance"]["resultado"] == "gol" and t["lance"]["tipo"] == lance["tipo"]
+    assert t["lance"]["competicao"] == lance["competicao"]
+    assert t["lance"]["minuto"] == lance["minuto"]
+    if lance["tipo"] == "final":
+        assert lance["copa"] in t["titulos"]
     assert t["lance"]["adversario"] == lance["adversario"] and t["lance"]["manchete"]
 
 

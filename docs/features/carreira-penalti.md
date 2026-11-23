@@ -107,3 +107,18 @@ Critérios de aceite novos: `test_penalti_em_todas_as_posicoes` (≥ 1 pênalti 
 carreiras por posição), `test_media_de_penaltis_por_carreira` (2–3), `test_jogo_comum_nao_mexe_em_titulo`,
 `test_classico_usa_o_rival`, `test_no_maximo_um_por_temporada_e_quatro_por_carreira`, mais os
 anteriores de link, replay e taxa de copas.
+
+Implementado (2026-11-23):
+
+- [x] `test_penalti_em_todas_as_posicoes`, `test_media_de_penaltis_por_carreira`,
+  `test_jogo_comum_nao_mexe_em_titulo`, `test_classico_usa_o_rival_e_da_as_marcas`,
+  `test_no_maximo_um_por_temporada_e_quatro_por_carreira`, `test_replay_estavel`,
+  `test_taxa_de_copas_da_completa_sem_minijogos_parecida_com_a_de_hoje` e
+  `test_link_comporta_todas_as_respostas_de_uma_carreira` (formato 4 do código, contador de
+  respostas com 7 bits; os formatos 1, 2 e 3 continuam abrindo).
+- Final: a chance de a final ir para o pênalti é `chance da copa / chance_penalti(finalização)`,
+  para qualquer posição; assim a taxa de títulos de copa sem minijogos fica a mesma de antes.
+- Jogo e clássico: 20% por temporada em campo (≥ 5 jogos) até o primeiro pênalti, 8% depois;
+  metade dos sorteados cai no clássico quando o clube tem um. Ids das perguntas: `penalti-jogo`,
+  `penalti-classico`, `penalti-final`; manchetes `penalti-jogo-gol/erro` e
+  `penalti-classico-gol/erro` (com `{adversario}`, `{minuto}` e `{competicao}`).

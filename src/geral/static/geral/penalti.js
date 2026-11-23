@@ -1,9 +1,11 @@
-// Carreira's first minigame: the cup final's penalty, 90+4'. The aim wanders over the goal, a
-// lamp bar sets the power, the keeper dives. The player's finishing (`finalizacao`) sets how wide
-// the good power band is and how fast the aim moves. Click, touch or space: aim, then power.
+// Carreira's first minigame: a penalty in a league game, a derby or a cup final (90+4'). The aim
+// wanders over the goal, a lamp bar sets the power, the keeper dives. The player's finishing
+// (`finalizacao`) sets how wide the good power band is and how fast the aim moves. Click, touch or
+// space: aim, then power.
 //
-// window.jogarPenalti(el, {finalizacao, clube, adversario, copa, camisa})
+// window.jogarPenalti(el, {finalizacao, clube, adversario, tipo, minuto, competicao, copa, camisa})
 //   -> Promise<"gol" | "defesa" | "fora" | "trave" | "motor">
+// `tipo` is "jogo", "classico" or "final" (the default, with `copa` as its competition).
 // The result comes from the browser: a game to share, not a ranking.
 (() => {
   const W = 360, H = 470;
@@ -15,19 +17,59 @@
   const MARCA = { x: 180, y: 392 };
   const ZONA = { centro: 0.68 };
   const FIM = { gol: "GOOOL", defesa: "DEFENDEU", fora: "PRA FORA", trave: "NA TRAVE" };
-  const DICAS = {
-    gol: "Gol! É campeão",
-    defesa: "Defendeu. A taça escapou",
-    fora: "Pra fora. A taça escapou",
-    trave: "Na trave. A taça escapou",
-  };
-  const TEXTOS = {
-    gol: [["É campeão! Frieza na marca da cal", "Aos 94 minutos, a bola no canto e o estádio abaixo."],
-          ["Não tremeu: título na última bola", "Pênalti cobrado com a calma de quem já viu tudo."]],
-    defesa: [["O goleiro adivinhou e a taça escapou", "A cobrança foi no canto que ele escolheu."],
-             ["Pênalti defendido, festa adiada", "Faltou convicção na batida decisiva."]],
-    fora: [["Isolou! A bola foi parar na Geral", "O título escapou no último lance da final."]],
-    trave: [["Na trave! O grito ficou preso", "O barulho do poste ecoou no estádio calado."]],
+  // What is at stake, by match: the hint under the pitch and the clipping's lines.
+  const PARTIDAS = {
+    final: {
+      placar: ["1 × 1", "2 × 1"],
+      dicas: {
+        gol: "Gol! É campeão",
+        defesa: "Defendeu. A taça escapou",
+        fora: "Pra fora. A taça escapou",
+        trave: "Na trave. A taça escapou",
+      },
+      textos: {
+        gol: [["É campeão! Frieza na marca da cal", "Aos 94 minutos, a bola no canto e o estádio abaixo."],
+              ["Não tremeu: título na última bola", "Pênalti cobrado com a calma de quem já viu tudo."]],
+        defesa: [["O goleiro adivinhou e a taça escapou", "A cobrança foi no canto que ele escolheu."],
+                 ["Pênalti defendido, festa adiada", "Faltou convicção na batida decisiva."]],
+        fora: [["Isolou! A bola foi parar na Geral", "O título escapou no último lance da final."]],
+        trave: [["Na trave! O grito ficou preso", "O barulho do poste ecoou no estádio calado."]],
+      },
+    },
+    classico: {
+      placar: ["0 × 0", "1 × 0"],
+      dicas: {
+        gol: "Gol! O clássico é seu",
+        defesa: "Defendeu. A torcida rival faz festa",
+        fora: "Pra fora. A torcida rival faz festa",
+        trave: "Na trave. A torcida rival faz festa",
+      },
+      textos: {
+        gol: [["Calou o rival! Frieza no clássico", "A vaia virou silêncio do outro lado do estádio."],
+              ["O clássico tem dono", "Pênalti no canto e a cidade dividida vai lembrar."]],
+        defesa: [["O goleiro rival adivinhou", "A defesa virou festa na arquibancada adversária."],
+                 ["Pênalti defendido no clássico", "A provocação da semana vai continuar."]],
+        fora: [["Isolou no clássico!", "A bola subiu, e a torcida rival também."]],
+        trave: [["Na trave! O clássico ficou no quase", "O poste ainda treme, e o rival respira."]],
+      },
+    },
+    jogo: {
+      placar: ["0 × 0", "1 × 0"],
+      dicas: {
+        gol: "Gol! Mais um na conta",
+        defesa: "Defendeu. Fica para a próxima",
+        fora: "Pra fora. Fica para a próxima",
+        trave: "Na trave. Fica para a próxima",
+      },
+      textos: {
+        gol: [["Bola de um lado, goleiro do outro", "Cobrança firme e mais um gol na conta da temporada."],
+              ["Pênalti é com ele", "Pegou a bola, ajeitou com calma e mandou no canto."]],
+        defesa: [["O goleiro foi buscar", "A cobrança saiu fraca no canto que ele escolheu."],
+                 ["Pênalti defendido", "Os pontos escaparam na marca da cal."]],
+        fora: [["Pra fora! A bola foi parar na Geral", "Uma cobrança para esquecer depressa."]],
+        trave: [["Na trave! O grito ficou preso", "O barulho do poste ecoou no estádio."]],
+      },
+    },
   };
 
   // The ad board behind the goal: made-up betting brands (never a real one), as in any Brazilian
@@ -83,7 +125,12 @@
     }
   }
 
-  function jogarPenalti(raiz, { finalizacao, clube, adversario, copa, camisa = 9 }) {
+  function jogarPenalti(raiz, opcoes) {
+    const { finalizacao, clube, adversario, copa, camisa = 9 } = opcoes;
+    const tipo = PARTIDAS[opcoes.tipo] ? opcoes.tipo : "final";
+    const partida = PARTIDAS[tipo];
+    const competicao = opcoes.competicao || copa;
+    const minuto = opcoes.minuto || "90+4'";
     const numero = camisa;
     const fin = Math.max(40, Math.min(95, Number(finalizacao) || 60));
     const largZona = 0.10 + (fin - 40) / 55 * 0.16;
@@ -92,22 +139,23 @@
     // -- the markup: scoreboard, pitch, the hint strip, the clipping and the engine's button ---
     const palco = el("div", "pn-palco");
     const placar = el("div", "pn-placar");
-    const gols = el("div", "pn-gols lamp", "1 × 1");
-    const relogio = el("span", "", "90+4'");
+    const gols = el("div", "pn-gols lamp", partida.placar[0]);
+    const relogio = el("span", "", minuto);
     const linha2 = el("div", "pn-linha2 lamp");
-    linha2.append(relogio, el("span", "pn-copa", copa));
+    linha2.append(relogio, el("span", "pn-copa", competicao));
     const times = [el("div", "pn-time lamp", clube), el("div", "pn-time lamp", adversario)];
     placar.append(times[0], gols, times[1], linha2);
     const cv = el("canvas", "pn-campo");
     cv.setAttribute("role", "img");
-    cv.setAttribute("aria-label", `Pênalti na final da ${copa}: toque ou aperte espaço para travar a mira e depois a força`);
+    const onde = tipo === "final" ? `na final da ${competicao}` : tipo === "classico" ? `no ${competicao}` : `pelo ${competicao}, contra ${adversario}`;
+    cv.setAttribute("aria-label", `Pênalti ${onde}: toque ou aperte espaço para travar a mira e depois a força`);
     const dica = el("div", "pn-faixa", "Toque para travar a mira");
     dica.setAttribute("aria-live", "polite");
     palco.append(placar, cv, dica);
 
     const recorte = el("div", "pn-recorte");
     const jornal = el("div", "pn-jornal");
-    jornal.append(el("span", "", "A Geral · Edição extra"), el("b", "", copa));
+    jornal.append(el("span", "", tipo === "final" ? "A Geral · Edição extra" : "A Geral · Esporte"), el("b", "", competicao));
     const manchete = el("h2", "");
     const sub = el("p", "");
     recorte.append(jornal, manchete, sub);
@@ -186,14 +234,14 @@
     function terminar() {
       resultado = julgar(); fase = "fim"; t0 = performance.now();
       if (resultado === "gol") {
-        festa = 1; flash = 1; gols.textContent = "2 × 1";
+        festa = 1; flash = 1; gols.textContent = partida.placar[1];
         rede = { x: chute.para.x, y: chute.para.y, t: performance.now() };
       }
-      relogio.textContent = "Fim de jogo";
-      const opcoes = TEXTOS[resultado];
-      const [titulo, linha] = opcoes[Math.floor(Math.random() * opcoes.length)];
+      if (tipo === "final") relogio.textContent = "Fim de jogo"; // the last kick; a league game goes on
+      const textos = partida.textos[resultado];
+      const [titulo, linha] = textos[Math.floor(Math.random() * textos.length)];
       manchete.textContent = titulo; sub.textContent = linha;
-      dica.textContent = DICAS[resultado];
+      dica.textContent = partida.dicas[resultado];
       setTimeout(() => {
         recorte.classList.add("on");
         seguir.hidden = false;

@@ -1386,3 +1386,55 @@ manchetes = [
   "A copa estava nos pés de {nome}, mas a cobrança não entrou",
   "\"Assumo a culpa\": {nome} lamenta o pênalti perdido na final",
 ]
+
+# O pênalti num jogo do campeonato (motor.py, `_lance`): vale um gol, não vale taça. Peso 0: só o
+# motor escolhe. Têm {adversario}, {minuto} e {competicao} além dos campos de sempre.
+[[evento]]
+id = "penalti-jogo-gol"
+peso = 0
+unico = false
+manchetes = [
+  "{nome} cobra com categoria aos {minuto} e {o_clube} vence {o_adversario}",
+  "Pênalti batido no canto: {nome} deixa o dele contra {o_adversario}",
+  "Na marca da cal, {nome} não perdoa e {o_clube} sai com os três pontos",
+  "Goleiro de um lado, bola do outro: {nome} marca de pênalti pelo {competicao}",
+  "{nome} pede a bola, ajeita com calma e converte o pênalti contra {o_adversario}",
+]
+
+[[evento]]
+id = "penalti-jogo-erro"
+peso = 0
+unico = false
+manchetes = [
+  "{nome} perde pênalti aos {minuto} e {o_clube} tropeça diante {do_adversario}",
+  "O goleiro {do_adversario} adivinhou: {nome} desperdiça a cobrança",
+  "Pênalti perdido: {nome} vira alvo da torcida depois do jogo contra {o_adversario}",
+  "{nome} bate mal, a bola não entra e os pontos ficam pelo caminho",
+  "\"Vou continuar batendo\": {nome} assume o pênalti perdido contra {o_adversario}",
+]
+
+# O pênalti no clássico: mesmo peso de um gol, mas com a marca (frio nas decisões ou o pênalti
+# perdido). {rival} e {classico} são os do ano, os mesmos do lance.
+[[evento]]
+id = "penalti-classico-gol"
+peso = 0
+unico = false
+manchetes = [
+  "No {classico}, {nome} bate o pênalti sem tremer e cala a torcida {do_rival}",
+  "Frieza no clássico: {nome} converte aos {minuto} e a festa é {do_clube}",
+  "{nome} encara a vaia, desloca o goleiro {do_rival} e decide o {classico}",
+  "Pênalti no {classico}, e {nome} não falhou: a rivalidade ganhou mais um capítulo",
+  "Com a arquibancada rival gritando, {nome} manda no canto e vira herói do {classico}",
+]
+
+[[evento]]
+id = "penalti-classico-erro"
+peso = 0
+unico = false
+manchetes = [
+  "{nome} perde o pênalti no {classico} e a torcida {do_rival} faz a festa",
+  "Pesadelo no clássico: {nome} desperdiça a cobrança aos {minuto}",
+  "O {classico} fica marcado: {nome} perde pênalti diante {do_rival}",
+  "A bola do clássico estava nos pés de {nome}, mas o goleiro {do_rival} levou a melhor",
+  "Pênalti perdido no {classico}: {nome} vai ouvir essa por muito tempo",
+]
