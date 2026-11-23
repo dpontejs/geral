@@ -503,7 +503,9 @@ class _Simulacao:
         manchete = ""
         if principal:
             novas = [m for m in principal.manchetes if m not in self.manchetes_usadas]
-            modelo = self.rng.choice(novas or principal.manchetes)
+            # Its own stream: adding or editing headlines never reshuffles the careers.
+            sorteio = random.Random(f"manchete:{self.entrada.semente}:{self.ano}")
+            modelo = sorteio.choice(novas or principal.manchetes)
             self.manchetes_usadas.add(modelo)
             manchete = modelo.format_map(campos)
         temporada = Temporada(

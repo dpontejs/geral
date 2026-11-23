@@ -4,8 +4,8 @@ The code also carries the card's summary, so a link made before the data changed
 the card that was shared (the career itself would come out different with the new data).
 
 Two formats open. The first one (JSON + zlib, ~600 characters) is only read now. New links are
-a packed bit string (~90 characters) whose first byte is `FORMATO`; it leans on a few things
-staying put, or old links stop opening right:
+a packed bit string (~90 characters) whose first byte is the format (`FORMATOS`); it leans on a
+few things staying put, or old links stop opening right:
 
 - the order of `regras.ATRIBUTOS`, `regras.POSICOES`, `PES` and `MODOS`;
 - the data's version goes as its first 16 bits: a link replays when they match today's;
@@ -34,7 +34,8 @@ from geral.games.carreira.regras import ATRIBUTOS, POSICOES
 
 LIMITE = 2000  # characters
 MAX_JSON = 8192  # bytes once decompressed: a real career is ~1.5 KB
-FORMATO = 1  # first byte of a short code; an old one starts with zlib's 0x78
+FORMATO = 2  # first byte of a short code; an old one starts with zlib's 0x78
+FORMATOS = (1, 2)  # 2 adds the card's final position (a career can change it); 1 still opens
 PES = ("direito", "esquerdo", "ambos")
 MODOS = ("rapida", "completa")
 TOKEN = 8  # bytes behind a secrets.token_urlsafe(8) seed
@@ -108,6 +109,10 @@ def codificar(
     b.put(min(resumo.titulos, 255), 8)
     v.rotulo_put(b, resumo.rotulo)
     _clubes_put(b, v, resumo.clubes, craque.clube)
+    mudou = resumo.posicao != craque.posicao
+    b.put(mudou, 1)
+    if mudou:
+        b.put(POSICOES.index(resumo.posicao), 3)
     return base64.urlsafe_b64encode(b.bytes()).decode().rstrip("=")
 
 
@@ -116,7 +121,7 @@ def decodificar(codigo: str, dados: Dados | None = None) -> Compartilhado:
         raise CodigoInvalido("código vazio ou grande demais")
     try:
         bruto = base64.urlsafe_b64decode(codigo + "=" * (-len(codigo) % 4))
-        if bruto[:1] == bytes([FORMATO]):
+        if bruto[:1] and bruto[0] in FORMATOS:
             return _curto(bruto, dados or carregar())
         return _antigo(bruto)
     except (
@@ -141,7 +146,7 @@ def _antigo(bruto: bytes) -> Compartilhado:
 def _curto(bruto: bytes, dados: Dados) -> Compartilhado:
     v = _Vocabulario(dados)
     b = _Leitura(bruto)
-    b.get(8)  # FORMATO
+    formato = b.get(8)
     versao = _versao_get(b, dados.versao)
     edicao = "geral" if b.get(1) else b.texto()
     modo, posicao, pe = MODOS[b.get(1)], POSICOES[b.get(3)], PES[b.get(2)]
@@ -153,6 +158,7 @@ def _curto(bruto: bytes, dados: Dados) -> Compartilhado:
     nota, titulos = b.get(7), b.get(8)
     rotulo = v.rotulo_get(b) or ROTULO_PERDIDO
     clubes = _clubes_get(b, v, clube)
+    final = POSICOES[b.get(3)] if formato >= 2 and b.get(1) else posicao
     b.fim()
     craque = Craque(nome=nome, camisa=camisa, posicao=posicao, pe=pe, clube=clube)
     return Compartilhado(
@@ -168,7 +174,7 @@ def _curto(bruto: bytes, dados: Dados) -> Compartilhado:
         ),
         resumo=Resumo(
             nome=craque.nome,
-            posicao=posicao,
+            posicao=final,
             rotulo=rotulo,
             nota=nota,
             titulos=titulos,

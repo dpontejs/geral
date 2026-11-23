@@ -194,6 +194,15 @@ def test_codigo_curto_corrompido_e_codigo_invalido() -> None:
     for n in range(1, len(bruto)):
         with pytest.raises(CodigoInvalido):
             decodificar(_b64(bruto[:n]))
-    for ruim in (bruto + b"\0", b"\x02" + bruto[1:], b"\x01", b"\x01" + b"\xff" * 80):
+    # 0x03: no such format (0x01 and 0x02 are short codes)
+    for ruim in (bruto + b"\0", b"\x03" + bruto[1:], b"\x01", b"\x01" + b"\xff" * 80):
         with pytest.raises(CodigoInvalido):
             decodificar(_b64(ruim))
+
+
+def test_link_guarda_a_posicao_final_do_card() -> None:
+    carreira, e = _carreira("completa")
+    resumo = resumir(e, carreira).model_copy(update={"posicao": "meia"})
+    assert e.craque.posicao != "meia"
+    aberto = decodificar(codificar(carregar().versao, "geral", e, resumo))
+    assert aberto.resumo.posicao == "meia" and aberto.entrada.craque.posicao == e.craque.posicao
