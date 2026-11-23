@@ -4,14 +4,7 @@ import statistics
 from geral.games.carreira import regras
 from geral.games.carreira.dados import carregar
 from geral.games.carreira.draft import OFERTA, Roubo, montar, oferta
-from geral.games.carreira.jogadores import (
-    CORTE_FAMA,
-    CORTE_NORDESTE,
-    CORTE_SELECAO,
-    conhecido,
-    jogadores_da_base,
-    notas_do_jogador,
-)
+from geral.games.carreira.jogadores import jogadores_da_base, lista_do_draft, notas_do_jogador
 from geral.games.carreira.motor import Craque, Entrada, simular
 from geral.games.velha.base import Player, load
 
@@ -31,40 +24,24 @@ def test_oferta_tem_uma_lenda_e_nove_jogadores_reais() -> None:
     assert not curadas & {x.wikidata for x in jogadores_da_base(dados)}
 
 
-def _conhecido(p: Player, nordeste: bool) -> bool:
-    return (not p.paises or p.selecao) and (
-        p.fama >= CORTE_FAMA
-        or (p.selecao and p.fama >= CORTE_SELECAO)
-        or (nordeste and p.fama >= CORTE_NORDESTE)
-    )
-
-
-def test_os_jogadores_do_draft_sao_conhecidos() -> None:
+def test_os_jogadores_do_draft_sao_os_da_lista_curada() -> None:
     dados = carregar()
-    base = load().players
+    lista = lista_do_draft()
     pool = jogadores_da_base(dados)
-    assert all(_conhecido(base[x.wikidata], x.regiao == "nordeste") for x in pool)
-    assert 300 <= len(pool) <= 500, len(pool)
-    assert CORTE_NORDESTE < CORTE_FAMA
+    assert {x.wikidata for x in pool} <= lista
+    assert len(pool) >= 200, len(pool)
     for i in range(50):
         for clube in ("flamengo", "abc"):
             for x in oferta(dados, "geral", f"c{i}", clube):
                 if x.tipo == "jogador":
-                    assert _conhecido(base[x.wikidata], x.regiao == "nordeste"), x.nome
+                    assert x.wikidata in lista, x.nome
 
 
-def test_estrangeiro_e_desconhecido_ficam_fora() -> None:
-    def p(pid, paises=(), fama=100, selecao=False):
-        return Player(pid, "X", "", ("atacante",), paises, fama, frozenset(), selecao, False)
-
-    assert conhecido(p("Q1"), nordeste=False)
-    assert not conhecido(p("Q2", paises=("Q739",)), nordeste=False)  # Colombia, say
-    assert conhecido(p("Q8", paises=("Q29",), selecao=True), nordeste=False)  # Marcelo, Spain
-    assert not conhecido(p("Q3", fama=CORTE_FAMA - 1), nordeste=False)
-    assert conhecido(p("Q4", fama=CORTE_SELECAO, selecao=True), nordeste=False)
-    assert not conhecido(p("Q5", fama=CORTE_SELECAO - 1, selecao=True), nordeste=False)
-    assert conhecido(p("Q6", fama=CORTE_NORDESTE), nordeste=True)
-    assert not conhecido(p("Q7", fama=CORTE_NORDESTE), nordeste=False)
+def test_quem_nao_esta_na_lista_fica_fora() -> None:
+    pool = {x.wikidata for x in jogadores_da_base(carregar())}
+    base = load().players
+    famosos_fora = [p for p in base.values() if p.fama >= 40 and p.id not in lista_do_draft()]
+    assert famosos_fora and not pool & {p.id for p in famosos_fora}
 
 
 def test_nota_de_jogador_da_base_segue_fama_e_posicao() -> None:
@@ -91,7 +68,9 @@ def test_quem_comeca_no_nordeste_ve_jogadores_da_regiao() -> None:
         daqui = {x.nome for x in nomes if x.regiao == "nordeste" and x.tipo == "jogador"}
         assert len(daqui) >= 3
         regionais |= daqui
-    assert len(regionais) >= 60, len(regionais)  # not the same few every time
+    # Not the same few every time: every Northeastern player of the curated list comes up.
+    da_lista = {x.nome for x in jogadores_da_base(dados) if x.regiao == "nordeste"}
+    assert regionais == da_lista, sorted(da_lista - regionais)
 
 
 def roubos_humanos(dados, semente: str, posicao: str, clube: str = "flamengo") -> list[Roubo]:

@@ -1,6 +1,6 @@
 """Real players for the draft, from the jogo da velha base: the curated legends are few and all
-great, so most of the offer is made of real players, only the ones fans know (Brazilians who
-played for the Seleção or are famous; in the Northeast, the region's own names too).
+great, so most of the offer is made of real players, only the ones fans know: a curated list in
+conhecidos.toml (fame alone let in too many names nobody remembers).
 
 Their ratings come from a formula, the same for a player every time (seeded by his id): the level
 from his fame (number of Wikipedias), the profile from his position, a little noise.
@@ -24,33 +24,27 @@ PERFIS = {
     "zagueiro": (-6, -19, -5, -14, 11, 6, 10, 3),
 }
 FAMA_TOPO = 80  # from here a player is as good as the formula allows
-# Who counts as known (fame = number of Wikipedias): a Seleção player from CORTE_SELECAO, anyone
-# from CORTE_FAMA, a player of a Northeastern club from CORTE_NORDESTE.
-CORTE_SELECAO = 20
-CORTE_FAMA = 40
-CORTE_NORDESTE = 25
+AJUSTES = Path(__file__).parent / "conhecidos.toml"
 
 
 @cache
-def _ajustes() -> tuple[dict[str, str], frozenset[str]]:
-    """Fan names for players the base lists by their registered name, and who stays out."""
-    raw = tomllib.loads((Path(__file__).parent / "conhecidos.toml").read_text(encoding="utf-8"))
-    fora = raw["fora"]
-    return raw["apelidos"], frozenset(fora["tecnicos"]) | frozenset(fora["sem_apelido"])
+def _ajustes() -> dict:
+    return tomllib.loads(AJUSTES.read_text(encoding="utf-8"))
 
 
-def conhecido(p: Player, nordeste: bool) -> bool:
-    """A Brazilian (no other country, or he played for the Seleção) fans would know."""
-    return (not p.paises or p.selecao) and (
-        p.fama >= CORTE_FAMA
-        or (p.selecao and p.fama >= CORTE_SELECAO)
-        or (nordeste and p.fama >= CORTE_NORDESTE)
-    )
+def apelidos() -> dict[str, str]:
+    """Fan names for players the base lists by their registered name."""
+    return _ajustes()["apelidos"]
+
+
+def lista_do_draft() -> frozenset[str]:
+    """The curated list of players fans know: only they come up in the draft."""
+    return frozenset(_ajustes()["draft"]["jogadores"])
 
 
 def nivel(fama: int) -> float:
-    """Fame 20 ≈ 62, 40 ≈ 67, 80+ ≈ 72 (calibrated: a careful draft lands around 71)."""
-    return 40 + 32 * min(1.0, math.log(1 + fama) / math.log(1 + FAMA_TOPO))
+    """Fame 20 ≈ 61, 40 ≈ 66, 80+ ≈ 71 (calibrated on the curated list: a careful draft ~72)."""
+    return 39 + 32 * min(1.0, math.log(1 + fama) / math.log(1 + FAMA_TOPO))
 
 
 def notas_do_jogador(p: Player) -> dict[str, int]:
@@ -65,19 +59,17 @@ def notas_do_jogador(p: Player) -> dict[str, int]:
 
 @cache
 def _todos(versao: str, nordeste: frozenset[str], curadas: frozenset[str]) -> tuple[Lenda, ...]:
-    apelidos, fora = _ajustes()
+    nomes, lista = apelidos(), lista_do_draft()
     jogadores = []
     for p in sorted(load().players.values(), key=lambda p: p.id):
         if not p.posicoes or "goleiro" in p.posicoes or p.id in curadas:
             continue
-        if p.id in fora or p.nome in fora:
+        if p.id not in lista:
             continue
         da_regiao = bool(p.clubes & nordeste)
-        if not conhecido(p, da_regiao):
-            continue
         jogadores.append(
             Lenda(
-                nome=apelidos.get(p.id, p.nome),
+                nome=nomes.get(p.id, p.nome),
                 wikidata=p.id,
                 edicoes=("base",),
                 notas=notas_do_jogador(p),

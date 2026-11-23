@@ -23,12 +23,10 @@ def test_quem_e_conhecido_como_tecnico_fica_fora() -> None:
     assert not nomes & {"Felipão", "Tite", "Péricles Chamusca", "Abel Braga", "Cuca"}
 
 
-def test_ajustes_apontam_para_jogadores_da_base() -> None:
-    from geral.games.carreira.jogadores import _ajustes
+def test_lista_e_apelidos_apontam_para_jogadores_da_base() -> None:
+    from geral.games.carreira.jogadores import apelidos, lista_do_draft
     from geral.games.velha.base import load
 
     base = load().players
-    apelidos, fora = _ajustes()
-    nomes = {p.nome for p in base.values()}
-    assert [i for i in apelidos if i not in base] == []
-    assert [x for x in fora if x not in base and x not in nomes] == []
+    assert [i for i in apelidos() if i not in base] == []
+    assert [i for i in lista_do_draft() if i not in base] == []

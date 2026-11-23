@@ -21,15 +21,14 @@ profissionais, 2–3 craques, uma lenda de vez em quando.
 
 - **Draft com gente de verdade:** a oferta tem **10 nomes** (8 da vez + 2 reservas para os **2
   sorteios**): **1 lenda** curada (o achado do draft) e **9 jogadores reais conhecidos** da base
-  do jogo da velha. *Conhecido* (`jogadores.conhecido`, revisto em 2026-11-23): brasileiro (sem
-  país esportivo/cidadania além do Brasil, ou jogou pela Seleção — Marcelo, Marquinhos) e fama
-  (nº de Wikipédias) ≥ 40, ou Seleção com fama ≥ 20, ou passou por clube nordestino com fama ≥ 25.
-  `carreira/conhecidos.toml` dá o nome de torcedor a quem a base lista pelo nome de registro
-  (Marcelo Vieira da Silva Júnior → Marcelo) e tira quem é mais conhecido como técnico (Felipão,
-  Tite…) e os nomes de registro sem apelido confirmado.
-  Pool: **455 jogadores de linha**, **142 do Nordeste** (antes: todos os ~5.050 de linha). Nota dos jogadores por fórmula, determinística pelo id: nível pela fama (fama 20 ≈ 62, fama 40 ≈ 67,
-  fama 80+ ≈ 72; recalibrado com o pool novo para o draft cuidadoso continuar em ~71 de mediana,
-  média 70,6 antes, 71,0 depois), perfil pela posição (atacante finaliza, zagueiro marca e cabeceia,
+  do jogo da velha. *Conhecido* = está na **lista curada** `[draft] jogadores` de
+  `carreira/conhecidos.toml` (v1 revisada pelo dev em 2026-11-23; o corte por fama deixava entrar
+  nomes que ninguém lembra). O mesmo arquivo dá o nome de torcedor a quem a base lista pelo nome
+  de registro (Marcelo Vieira da Silva Júnior → Marcelo).
+  Pool: **235 jogadores de linha**, **52 do Nordeste** (antes: 455 pelo corte de fama; antes
+  disso, todos os ~5.050). Nota dos jogadores por fórmula, determinística pelo id: nível pela
+  fama (fama 20 ≈ 61, fama 40 ≈ 66, fama 80+ ≈ 71; recalibrado com a lista para a distribuição
+  continuar: ~21% não decolam, ~22% craques, ~1,5% lendas), perfil pela posição (atacante finaliza, zagueiro marca e cabeceia,
   meio-campo passa e dribla, lateral corre), ruído de ±6. Quem começa no Nordeste: a lenda é da
   região e ≥ 3 jogadores da região (passaram por clube nordestino). `Lenda.tipo: "lenda" |
   "jogador"` e `Lenda.resumo` ("Atacante · 1997–2018") para a tela. A versão dos dados passa a
