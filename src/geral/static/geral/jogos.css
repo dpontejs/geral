@@ -358,7 +358,8 @@ select.chip { appearance: auto; }
 .pn-palco { display: flex; flex-direction: column; border: 3px solid var(--ink); box-shadow: 6px 6px 0 rgba(0, 0, 0, .3); background: var(--board); }
 .pn-placar { background: var(--board); padding: 10px 12px 8px; border-bottom: 3px solid var(--ink); display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 6px; }
 .pn-placar .lamp { letter-spacing: .08em; }
-.pn-time { font-size: clamp(13px, 3.8vw, 20px); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pn-placar .pn-time { letter-spacing: .04em; }
+.pn-time { font-size: clamp(13px, 3.8vw, 20px); line-height: 1.15; overflow: hidden; overflow-wrap: normal; word-break: normal; }
 .pn-time:nth-child(3) { text-align: right; }
 .pn-gols { font-size: clamp(26px, 8vw, 36px); text-align: center; white-space: nowrap; }
 .pn-linha2 { grid-column: 1 / -1; display: flex; justify-content: space-between; gap: 10px; font-size: 13px; margin-top: 4px; }

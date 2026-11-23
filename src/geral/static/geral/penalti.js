@@ -30,6 +30,22 @@
     trave: [["Na trave! O grito ficou preso", "O barulho do poste ecoou no estádio calado."]],
   };
 
+  // The ad board behind the goal: made-up betting brands (never a real one), as in any Brazilian
+  // stadium today, taking turns with the paper's own ad. Same yellow lamps as the scoreboard.
+  const ANUNCIOS = [
+    "A GERAL · O JORNAL DA TORCIDA",
+    "PÊNALTIBET · ODD 1.01 NO GOL",
+    "CHUTEBET",
+    "APOSTA DO TIO",
+    "BETCALDO",
+    "ESCANTEIOBET · ODD ATÉ PRO ARREMESSO LATERAL",
+    "BET DA FIRMA · O BOLÃO VIROU APP",
+    "ACRÉSCIMOBET · AINDA DÁ TEMPO",
+  ];
+  // each ad repeated along the board, like the old one
+  const LINHAS = ANUNCIOS.map((a) => Array(Math.ceil(64 / (a.length + 3))).fill(a).join(" · "));
+  const PLACA = { ms: 2600, troca: 280 }; // each ad's turn and the roll to the next, in ms
+
   // The crowd behind the goal: muted dots, a few ticket-yellow (radinho, papel picado).
   const TORCIDA = [];
   {
@@ -53,6 +69,20 @@
   };
   const gauss = () => (Math.random() + Math.random() + Math.random() - 1.5) / 1.5;
 
+  // A long club name ("Olympique de Marseille") shrinks and takes two lines, never an ellipsis.
+  function caber(no) {
+    no.style.fontSize = "";
+    let tamanho = parseFloat(getComputedStyle(no).fontSize);
+    const cabe = () => {
+      const linha = parseFloat(getComputedStyle(no).lineHeight) || tamanho * 1.1;
+      return no.scrollWidth <= no.clientWidth + 1 && no.scrollHeight <= linha * 2 + 2;
+    };
+    while (!cabe() && tamanho > 10) {
+      tamanho -= 1;
+      no.style.fontSize = `${tamanho}px`;
+    }
+  }
+
   function jogarPenalti(raiz, { finalizacao, clube, adversario, copa, camisa = 9 }) {
     const numero = camisa;
     const fin = Math.max(40, Math.min(95, Number(finalizacao) || 60));
@@ -66,7 +96,8 @@
     const relogio = el("span", "", "90+4'");
     const linha2 = el("div", "pn-linha2 lamp");
     linha2.append(relogio, el("span", "pn-copa", copa));
-    placar.append(el("div", "pn-time lamp", clube), gols, el("div", "pn-time lamp", adversario), linha2);
+    const times = [el("div", "pn-time lamp", clube), el("div", "pn-time lamp", adversario)];
+    placar.append(times[0], gols, times[1], linha2);
     const cv = el("canvas", "pn-campo");
     cv.setAttribute("role", "img");
     cv.setAttribute("aria-label", `Pênalti na final da ${copa}: toque ou aperte espaço para travar a mira e depois a força`);
@@ -100,6 +131,7 @@
       cv.width = Math.round(w * r);
       cv.height = Math.round(w * H / W * r);
       ctx.setTransform(cv.width / W, 0, 0, cv.height / H, 0, 0);
+      times.forEach(caber);
     }
 
     // -- the state ------------------------------------------------------------------------------
@@ -195,10 +227,20 @@
       // the low wall of the old Geral and the ad boards
       ctx.fillStyle = C.concreteLt; ctx.fillRect(0, 146, W, 10);
       ctx.fillStyle = C.board; ctx.fillRect(0, 150, W, 14);
+      placa(agora);
+    }
+
+    // The electronic ad board: one ad at a time, the next one rolling up from below.
+    function placa(agora) {
+      const n = Math.floor(agora / PLACA.ms), resto = agora % PLACA.ms;
+      const rola = Math.max(0, (resto - (PLACA.ms - PLACA.troca)) / PLACA.troca); // 0..1
+      ctx.save();
+      ctx.beginPath(); ctx.rect(0, 150, W, 14); ctx.clip();
       ctx.font = "900 9px Doto, monospace"; ctx.fillStyle = C.lamp; ctx.textAlign = "center";
       ctx.shadowColor = "rgba(255,194,26,.7)"; ctx.shadowBlur = 4;
-      ctx.fillText("A GERAL · O JORNAL DA TORCIDA · A GERAL · O JORNAL DA TORCIDA", W / 2, 160);
-      ctx.shadowBlur = 0;
+      ctx.fillText(LINHAS[n % LINHAS.length], W / 2, 160 - rola * 14);
+      if (rola) ctx.fillText(LINHAS[(n + 1) % LINHAS.length], W / 2, 174 - rola * 14);
+      ctx.restore();
     }
 
     function gramado() {
@@ -390,6 +432,7 @@
     seguir.addEventListener("click", () => encerrar(resultado));
 
     ajustar();
+    document.fonts?.ready.then(() => times.forEach(caber));
     quadroId = requestAnimationFrame(quadro);
     return promessa;
   }
