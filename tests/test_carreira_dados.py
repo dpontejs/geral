@@ -74,3 +74,51 @@ def test_versao_muda_quando_um_toml_muda(tmp_path) -> None:
     depois = carregar(_pasta(tmp_path, lendas.replace("Fulano", "Beltrano"))).versao
 
     assert antes != depois and len(antes) == 8
+
+
+def _pasta_caminhos(tmp_path: Path, escolhas: str, marcas: str = "") -> Path:
+    for nome in ("lendas.toml", "mundo.toml", "eventos.toml", "finais.toml"):
+        (tmp_path / nome).write_text((PASTA / nome).read_text(encoding="utf-8"), encoding="utf-8")
+    (tmp_path / "escolhas.toml").write_text(escolhas, encoding="utf-8")
+    (tmp_path / "marcas.toml").write_text(marcas, encoding="utf-8")
+    return tmp_path
+
+
+MARCA = '[[marca]]\nid = "x"\nnome = "Xis"\ntexto = "{nome} vira xis"\nefeito = { nota = 1 }\n'
+
+
+def _escolha(opcao: str, condicao: str = "", extra: str = "") -> str:
+    return (
+        f'[[escolha]]\nid = "e1"\npergunta = "?"\n{extra}{condicao}'
+        f'[[escolha.opcao]]\ntexto = "a"\ndestino = "ficar"\n{opcao}'
+        '[[escolha.opcao]]\ntexto = "b"\ndestino = "ficar"\n'
+    )
+
+
+def test_carrega_marcas_e_opcao_com_risco(tmp_path) -> None:
+    opcao = 'chance = 20\nbonus = "lideranca"\nmarca = "x"\nsucesso = { teto = 3 }\n'
+    dados = carregar(_pasta_caminhos(tmp_path, _escolha(opcao, extra="continua = true\n"), MARCA))
+
+    marca = dados.marcas["x"]
+    assert (marca.nome, marca.texto, marca.efeito.nota) == ("Xis", "{nome} vira xis", 1)
+    decisao = dados.decisoes[0]
+    a, b = decisao.opcoes
+    assert (a.chance, a.bonus, a.marca, a.sucesso.teto) == (20, "lideranca", "x", 3)
+    assert (b.chance, b.marca) == (100, "")
+    assert decisao.continua
+
+
+def test_dados_rejeitam_marca_inexistente(tmp_path) -> None:
+    for escolhas in (
+        _escolha("", condicao='condicao = { requer = ["nao-existe"] }\n'),
+        _escolha('marca = "nao-existe"\n'),
+    ):
+        with pytest.raises(ValueError, match="nao-existe"):
+            carregar(_pasta_caminhos(tmp_path, escolhas, MARCA))
+
+
+def test_dados_rejeitam_posicao_invalida(tmp_path) -> None:
+    marca = MARCA.replace("nota = 1", 'posicao = "goleiro"')
+
+    with pytest.raises(ValueError, match="goleiro"):
+        carregar(_pasta_caminhos(tmp_path, _escolha(""), marca))

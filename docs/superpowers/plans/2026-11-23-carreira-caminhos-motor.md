@@ -38,9 +38,9 @@
 - `Decisao.continua: bool = False`. `Efeito.posicao: str = ""` (valor em `regras.POSICOES`).
 - Ids válidos para `requer`/`exclui`/`marca`: ids de eventos, decisões e marcas.
 
-- [ ] Testes: `test_carrega_marcas_e_opcao_com_risco` (TOML de `tmp_path` com marca e opção `chance = 20, marca = "x"` → campos carregados); `test_dados_rejeitam_marca_inexistente` (`requer = ["nao-existe"]` → `ValueError` citando o id); `test_dados_rejeitam_posicao_invalida`. Rodar: FAIL.
-- [ ] Implementar em `dados.py` (seguir `_efeito`/`_condicao`); validação no fim de `carregar`. Atenção: hoje `requer` só cita eventos — confirmar que os dados reais passam. Rodar: PASS.
-- [ ] Commit `feat: marcas e opções com risco nos dados da carreira`.
+- [x] Testes: `test_carrega_marcas_e_opcao_com_risco` (TOML de `tmp_path` com marca e opção `chance = 20, marca = "x"` → campos carregados); `test_dados_rejeitam_marca_inexistente` (`requer = ["nao-existe"]` → `ValueError` citando o id); `test_dados_rejeitam_posicao_invalida`. Rodar: FAIL.
+- [x] Implementar em `dados.py` (seguir `_efeito`/`_condicao`); validação no fim de `carregar`. Atenção: hoje `requer` só cita eventos — confirmar que os dados reais passam. Rodar: PASS.
+- [x] Commit `feat: marcas e opções com risco nos dados da carreira`.
 
 ### Task 2: Motor — aplicar opção com risco e marca (decisões e dia a dia)
 

@@ -9,7 +9,7 @@ from dataclasses import dataclass, field
 from functools import cache
 from pathlib import Path
 
-from geral.games.carreira.regras import ATRIBUTOS
+from geral.games.carreira.regras import ATRIBUTOS, POSICOES
 
 PASTA = Path(__file__).parent
 
@@ -64,8 +64,8 @@ class Condicao:
     forca_max: int = 100
     posicoes: tuple[str, ...] = ()
     fases: tuple[str, ...] = ()
-    requer: tuple[str, ...] = ()  # event ids that must have happened before
-    exclui: tuple[str, ...] = ()  # event ids that must not
+    requer: tuple[str, ...] = ()  # event, decision or mark ids that must have happened before
+    exclui: tuple[str, ...] = ()  # ids that must not
     gols_min: int = 0  # this season (only for events after the season's numbers)
     gols_max: int = 999
     jogos_min: int = 0
@@ -89,6 +89,7 @@ class Efeito:
     titulo: str = ""  # a trophy this event gives
     teto: int = 0  # added to the potential for good (a serious injury takes some away)
     atributos: dict[str, int] = field(default_factory=dict, hash=False)  # added to the ratings
+    posicao: str = ""  # the position from then on ("virou meia")
 
 
 @dataclass(frozen=True)
@@ -103,9 +104,13 @@ class Evento:
 
 
 @dataclass(frozen=True)
-class Opcao:
-    texto: str
-    destino: str
+class Marca:
+    """A mark in the career's history (captain, polemic…): conditions can require or exclude it."""
+
+    id: str
+    nome: str  # "Capitão"
+    texto: str  # the timeline's line: "{nome} ganha a braçadeira"
+    efeito: Efeito = Efeito()  # applied once, when it is won
 
 
 @dataclass(frozen=True)
@@ -115,6 +120,15 @@ class OpcaoRotina:
     bonus: str = ""  # an attribute that adds (rating - 70) / 2 to the chance
     sucesso: Efeito = Efeito()
     fracasso: Efeito = Efeito()
+    marca: str = ""  # mark won when it goes well
+    marca_fracasso: str = ""  # mark won when it goes wrong
+
+
+@dataclass(frozen=True)
+class Opcao(OpcaoRotina):
+    """A decision's option: a day-to-day option that may also move him (`destino`)."""
+
+    destino: str = "ficar"
 
 
 @dataclass(frozen=True)
@@ -135,6 +149,7 @@ class Decisao:
     opcoes: tuple[Opcao, ...]
     peso: float = 1.0
     condicao: Condicao = Condicao()
+    continua: bool = False  # an arc's step: asked the season after its mark, never drawn
 
 
 @dataclass(frozen=True)
@@ -174,6 +189,7 @@ class Dados:
     rotinas: tuple[Rotina, ...] = ()
     estados: dict[str, Estado] = field(default_factory=dict, hash=False)
     classicos: tuple[Classico, ...] = ()
+    marcas: dict[str, Marca] = field(default_factory=dict, hash=False)
 
     def regiao(self, clube: Clube) -> str | None:
         estado = self.estados.get(clube.estado or "")
@@ -285,22 +301,29 @@ def _efeito(raw: dict, onde: str) -> Efeito:
         raise ValueError(f"{onde}: {erro}") from None
     if set(efeito.atributos) - set(ATRIBUTOS):
         raise ValueError(f"{onde}: unknown atributos {efeito.atributos}")
+    if efeito.posicao and efeito.posicao not in POSICOES:
+        raise ValueError(f"{onde}: unknown posicao {efeito.posicao!r}")
     return efeito
+
+
+def _opcao[T: OpcaoRotina](tipo: type[T], raw: dict, onde: str) -> T:
+    raw = dict(raw)
+    sucesso = _efeito(raw.pop("sucesso", {}), onde)
+    fracasso = _efeito(raw.pop("fracasso", {}), onde)
+    try:
+        opcao = tipo(sucesso=sucesso, fracasso=fracasso, **raw)
+    except TypeError as erro:
+        raise ValueError(f"{onde}: {erro}") from None
+    if not 1 <= opcao.chance <= 100 or opcao.bonus not in ("", *ATRIBUTOS):
+        raise ValueError(f"{onde}: chance 1-100 and bonus an attribute")
+    return opcao
 
 
 def _rotina(entry: dict) -> Rotina:
     onde = f"rotina.toml: {entry.get('id')!r}"
     entry = dict(entry)
     condicao = _condicao(entry.pop("condicao", {}), onde)
-    opcoes = []
-    for raw in entry.pop("opcao", []):
-        raw = dict(raw)
-        sucesso = _efeito(raw.pop("sucesso", {}), onde)
-        fracasso = _efeito(raw.pop("fracasso", {}), onde)
-        opcao = OpcaoRotina(sucesso=sucesso, fracasso=fracasso, **raw)
-        if not 1 <= opcao.chance <= 100 or opcao.bonus not in ("", *ATRIBUTOS):
-            raise ValueError(f"{onde}: chance 1-100 and bonus an attribute")
-        opcoes.append(opcao)
+    opcoes = [_opcao(OpcaoRotina, raw, onde) for raw in entry.pop("opcao", [])]
     if len(opcoes) < 2:
         raise ValueError(f"{onde}: needs 2+ opcoes")
     try:
@@ -313,13 +336,40 @@ def _decisao(entry: dict) -> Decisao:
     onde = f"escolhas.toml: {entry.get('id')!r}"
     entry = dict(entry)
     condicao = _condicao(entry.pop("condicao", {}), onde)
-    opcoes = tuple(Opcao(**o) for o in entry.pop("opcao", []))
+    opcoes = tuple(_opcao(Opcao, o, onde) for o in entry.pop("opcao", []))
     if len(opcoes) < 2 or any(o.destino not in DESTINOS for o in opcoes):
         raise ValueError(f"{onde}: needs 2+ opcoes with destino in {DESTINOS}")
     try:
         return Decisao(condicao=condicao, opcoes=opcoes, **entry)
     except TypeError as erro:
         raise ValueError(f"{onde}: {erro}") from None
+
+
+def _marca(entry: dict) -> Marca:
+    onde = f"marcas.toml: {entry.get('id')!r}"
+    entry = dict(entry)
+    efeito = _efeito(entry.pop("efeito", {}), onde)
+    try:
+        return Marca(efeito=efeito, **entry)
+    except TypeError as erro:
+        raise ValueError(f"{onde}: {erro}") from None
+
+
+def _validar_ids(
+    eventos: tuple[Evento, ...],
+    decisoes: tuple[Decisao, ...],
+    rotinas: tuple[Rotina, ...],
+    marcas: dict[str, Marca],
+) -> None:
+    """Every `requer`/`exclui`/`marca` names an event, a decision or a mark that exists."""
+    conhecidos = {e.id for e in eventos} | {d.id for d in decisoes} | set(marcas)
+    for item in (*eventos, *decisoes, *rotinas):
+        citados = [*item.condicao.requer, *item.condicao.exclui]
+        for opcao in getattr(item, "opcoes", ()):
+            citados += [opcao.marca, opcao.marca_fracasso]
+        desconhecidos = sorted({c for c in citados if c} - conhecidos)
+        if desconhecidos:
+            raise ValueError(f"{item.id!r}: unknown ids {desconhecidos}")
 
 
 BASE = PASTA.parent / "velha" / "base.json"  # the draft's real players come from it
@@ -347,10 +397,23 @@ def _carregar(pasta: Path, versao: str) -> Dados:
     eventos = tuple(_evento(e) for e in _toml(pasta, "eventos.toml").get("evento", []))
     decisoes = tuple(_decisao(e) for e in _toml(pasta, "escolhas.toml").get("escolha", []))
     rotinas = tuple(_rotina(e) for e in _toml(pasta, "rotina.toml").get("rotina", []))
+    marcas = {m.id: m for m in map(_marca, _toml(pasta, "marcas.toml").get("marca", []))}
     ids = [e.id for e in eventos] + [d.id for d in decisoes] + [r.id for r in rotinas]
+    ids += [m["id"] for m in _toml(pasta, "marcas.toml").get("marca", [])]
     if len(ids) != len(set(ids)):
-        raise ValueError("eventos.toml/escolhas.toml: repeated id")
+        raise ValueError("eventos.toml/escolhas.toml/rotina.toml/marcas.toml: repeated id")
+    _validar_ids(eventos, decisoes, rotinas, marcas)
     finais = tuple(_toml(pasta, "finais.toml").get("final", []))
     return Dados(
-        lendas, ligas, clubes, versao, eventos, decisoes, finais, rotinas, estados, classicos
+        lendas,
+        ligas,
+        clubes,
+        versao,
+        eventos,
+        decisoes,
+        finais,
+        rotinas,
+        estados,
+        classicos,
+        marcas,
     )
