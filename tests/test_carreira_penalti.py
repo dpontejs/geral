@@ -13,6 +13,7 @@ from geral.games.carreira.motor import (
     chance_penalti,
     simular,
 )
+from geral.games.carreira.motor import jogar as motor_jogar
 
 GOL, MOTOR = 0, 4
 
@@ -24,15 +25,15 @@ def com(semente: str, minijogos: bool = True, **extra):
 
 def jogar(e, lance=lambda p: GOL, resto=lambda p, rng: 0):
     """Play to the end; `lance` answers the penalty. Returns (career, penalties asked, entry)."""
-    dados, rng, lances = carregar(), random.Random(e.semente), []
-    while (carreira := simular(dados, "geral", e)).final is None:
-        p = carreira.pendente
+    rng, lances = random.Random(e.semente), []
+
+    def responde(p):
         if p.tipo == "lance":
             lances.append(p)
-            resposta = lance(p)
-        else:
-            resposta = resto(p, rng)
-        e = e.model_copy(update={"escolhas": [*e.escolhas, resposta]})
+            return lance(p)
+        return resto(p, rng)
+
+    carreira, e = motor_jogar(carregar(), "geral", e, responde)
     return carreira, lances, e
 
 

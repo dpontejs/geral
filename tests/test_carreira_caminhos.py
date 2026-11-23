@@ -11,6 +11,7 @@ from geral.games.carreira.codigo import codificar, decodificar, resumir
 from geral.games.carreira.dados import PASTA, Condicao, Decisao, Efeito, Marca, Opcao, carregar
 from geral.games.carreira.draft import JogadaInvalida, montar, oferta
 from geral.games.carreira.motor import _Simulacao, chance_de, clube_inicial, simular
+from geral.games.carreira.motor import jogar as motor_jogar
 
 MARCAS = {
     "a": Marca("a", "Aço", "{nome} vira aço", Efeito(teto=1)),
@@ -259,9 +260,9 @@ def test_manchete_nao_repete_na_carreira() -> None:
     for i in range(200):
         rng = random.Random(i)
         e = entrada(f"h{i}", posicao=regras.POSICOES[i % 5])
-        while (carreira := simular(dados, "geral", e)).final is None:
-            resposta = rng.randrange(len(carreira.pendente.opcoes))
-            e = e.model_copy(update={"escolhas": [*e.escolhas, resposta]})
+        carreira, e = motor_jogar(
+            dados, "geral", e, lambda pendente, rng=rng: rng.randrange(len(pendente.opcoes))
+        )
         vistas: dict[str, list[str]] = {}  # principal event -> its headlines so far
         for t in carreira.temporadas:
             if not t.eventos:
@@ -285,9 +286,12 @@ def _mais_arriscada(pendente) -> int:
 def jogar(dados, e, responder):
     """Play to the end; returns (career, entrada, every pending question)."""
     perguntas = []
-    while (carreira := simular(dados, "geral", e)).final is None:
-        perguntas.append(carreira.pendente)
-        e = e.model_copy(update={"escolhas": [*e.escolhas, responder(carreira.pendente)]})
+
+    def responde(pendente):
+        perguntas.append(pendente)
+        return responder(pendente)
+
+    carreira, e = motor_jogar(dados, "geral", e, responde)
     return carreira, e, perguntas
 
 

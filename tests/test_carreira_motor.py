@@ -6,7 +6,7 @@ import pytest
 from geral.games.carreira import regras
 from geral.games.carreira.dados import PASTA, carregar
 from geral.games.carreira.draft import JogadaInvalida, Roubo, oferta
-from geral.games.carreira.motor import Craque, Entrada, simular
+from geral.games.carreira.motor import Craque, Entrada, jogar, simular
 
 DRAFT = "d1"
 
@@ -38,10 +38,7 @@ def entrada(semente="s1", escolhas=(), melhor=None, posicao="atacante", clube="b
 
 def ate_o_fim(e: Entrada, dados=None, edicao="geral"):
     """Answer every question with option 0 until the career ends."""
-    dados = dados or carregar()
-    while (carreira := simular(dados, edicao, e)).final is None:
-        e = e.model_copy(update={"escolhas": [*e.escolhas, 0]})
-    return carreira, e
+    return jogar(dados or carregar(), edicao, e, lambda pendente: 0)
 
 
 def test_same_input_gives_the_same_career() -> None:

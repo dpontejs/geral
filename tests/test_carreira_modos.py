@@ -6,6 +6,7 @@ from test_carreira_motor import entrada
 from geral.games.carreira import regras
 from geral.games.carreira.dados import carregar
 from geral.games.carreira.motor import chance_de, simular
+from geral.games.carreira.motor import jogar as motor_jogar
 
 
 def completa(semente: str, **extra):
@@ -14,12 +15,15 @@ def completa(semente: str, **extra):
 
 
 def jogar(e, responder=lambda pendente, rng: 0, semente="r"):
-    """Play to the end; returns every (career before the answer, question, answer)."""
-    dados, rng, passos = carregar(), random.Random(semente), []
-    while (carreira := simular(dados, "geral", e)).final is None:
-        resposta = responder(carreira.pendente, rng)
-        passos.append((carreira, carreira.pendente, resposta))
-        e = e.model_copy(update={"escolhas": [*e.escolhas, resposta]})
+    """Play to the end in one pass; returns every (None, question, answer)."""
+    rng, passos = random.Random(semente), []
+
+    def responde(pendente):
+        resposta = responder(pendente, rng)
+        passos.append((None, pendente, resposta))
+        return resposta
+
+    carreira, _ = motor_jogar(carregar(), "geral", e, responde)
     return carreira, passos
 
 
