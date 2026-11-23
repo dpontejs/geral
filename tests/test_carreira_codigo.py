@@ -194,8 +194,8 @@ def test_codigo_curto_corrompido_e_codigo_invalido() -> None:
     for n in range(1, len(bruto)):
         with pytest.raises(CodigoInvalido):
             decodificar(_b64(bruto[:n]))
-    # 0x03: no such format (0x01 and 0x02 are short codes)
-    for ruim in (bruto + b"\0", b"\x03" + bruto[1:], b"\x01", b"\x01" + b"\xff" * 80):
+    # 0x04: no such format (0x01, 0x02 and 0x03 are short codes)
+    for ruim in (bruto + b"\0", b"\x04" + bruto[1:], b"\x01", b"\x01" + b"\xff" * 80):
         with pytest.raises(CodigoInvalido):
             decodificar(_b64(ruim))
 
@@ -206,3 +206,23 @@ def test_link_guarda_a_posicao_final_do_card() -> None:
     assert e.craque.posicao != "meia"
     aberto = decodificar(codificar(carregar().versao, "geral", e, resumo))
     assert aberto.resumo.posicao == "meia" and aberto.entrada.craque.posicao == e.craque.posicao
+
+
+# A format-2 code (before the penalty's bit), made by `codificar` at 54e6aa5f: a Completa
+# career of seed "k9", answering 0 to everything.
+CODIGO_FORMATO_2 = "AsvRcBSBLXTrcgCyMQBa3MtYAAAlAAAAAABGDZeJ__LnnTr5xtQp5QGq9oA"
+
+
+def test_link_guarda_minijogos_e_codigo_antigo_abre() -> None:
+    dados = carregar()
+    for minijogos in (True, False):
+        e = entrada("k9").model_copy(update={"modo": "completa", "minijogos": minijogos})
+        carreira, e = ate_o_fim(e)
+        aberto = decodificar(codificar(dados.versao, "geral", e, resumir(e, carreira)))
+        assert aberto.entrada == e
+        assert simular(dados, "geral", aberto.entrada) == carreira
+
+    antigo = decodificar(CODIGO_FORMATO_2)
+    assert antigo.entrada.minijogos is False
+    assert antigo.entrada.modo == "completa" and antigo.entrada.semente == "k9"
+    assert antigo.resumo.rotulo == "Rei do Nordeste" and antigo.resumo.nota == 70

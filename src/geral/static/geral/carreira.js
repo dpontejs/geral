@@ -35,6 +35,7 @@
     escolhas: [],
     mostradas: 0,
     modo: "completa", // the only mode offered; old Rápida links still replay on the server
+    minijogos: true, // the cup final's penalty on screen; else the engine kicks it
     temporadas: [],
     corpo: null,
   });
@@ -50,6 +51,12 @@
       group.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(c === chip)));
     }),
   );
+  const minis = form.querySelector(".cr-minis");
+  minis.addEventListener("click", (event) => {
+    const botao = event.target.closest(".cr-mini");
+    if (!botao) return;
+    minis.querySelectorAll(".cr-mini").forEach((m) => m.setAttribute("aria-pressed", String(m === botao)));
+  });
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const nome = $("cr-nome").value.trim();
@@ -62,6 +69,7 @@
       pe: pressed("pe"),
       clube: $("cr-clube").value,
     };
+    estado.minijogos = form.querySelector('.cr-mini[aria-pressed="true"]').dataset.minijogos === "true";
     const go = form.querySelector(".cr-go");
     go.disabled = true;
     try {
@@ -158,6 +166,7 @@
     semente: estado.semente,
     craque: estado.craque,
     modo: estado.modo,
+    minijogos: estado.minijogos,
     roubos: Object.entries(estado.roubos).map(([atributo, r]) => ({ lenda: r.lenda, atributo })),
     escolhas: estado.escolhas,
   });
@@ -278,6 +287,7 @@
       atual.append(tacas);
     }
     atual.append(el("p", "cr-headline", t.manchete));
+    if (t.lance) atual.append(el("p", `cr-lance ${t.lance.resultado === "gol" ? "ok" : "bad"}`, textoDoLance(t.lance)));
     (t.marcas || []).forEach((m) => atual.append(el("p", "cr-mark", m)));
     if (t.rotina) {
       const r = t.rotina;
@@ -291,6 +301,9 @@
     const ate = estado ? vistas : (jogo.compartilhada?.carreira?.temporadas || []);
     $("cr-cabinet").hidden = salaDeTrofeus($("cr-shelf"), ate) === 0;
   }
+
+  const LANCE = { gol: "gol", defesa: "defendido", fora: "pra fora", trave: "na trave" };
+  const textoDoLance = (l) => `Pênalti na final da ${l.copa}, contra ${l.adversario}: ${LANCE[l.resultado]}`;
 
   const plural = (n, um, varios) => `${n} ${n === 1 ? um : varios}`;
 
@@ -308,6 +321,7 @@
       t.titulos.forEach((nome) => tacas.append(selo(nome, "cr-line-trophy")));
       corpo.append(tacas);
     }
+    if (t.lance) corpo.append(el("div", "cr-line-lance", textoDoLance(t.lance)));
     if (t.marcas && t.marcas.length) corpo.append(el("div", "cr-line-marks", t.marcas.join(" · ")));
     li.append(corpo);
     li.title = t.manchete;
@@ -332,7 +346,30 @@
 
   const TIPOS = { dia: "Dia a dia", mercado: "Mercado", decisao: "Decisão" };
 
+  // The cup final's penalty: the minigame takes the question's place and answers its index.
+  async function baterPenalti(pendente) {
+    const palco = $("cr-penalti");
+    palco.hidden = false;
+    rolar(palco, "start");
+    const resultado = await window.jogarPenalti(palco, {
+      finalizacao: pendente.info[0].chance,
+      clube: pendente.lance.clube,
+      adversario: pendente.lance.adversario,
+      copa: pendente.lance.copa,
+      camisa: estado.craque.camisa,
+    });
+    palco.hidden = true;
+    palco.replaceChildren();
+    estado.escolhas.push(pendente.opcoes.indexOf(resultado));
+    simular();
+  }
+
   function perguntar(pendente) {
+    if (pendente.tipo === "lance") {
+      if (window.jogarPenalti) return baterPenalti(pendente);
+      estado.escolhas.push(pendente.opcoes.indexOf("motor")); // no minigame loaded: the engine kicks
+      return simular();
+    }
     const caixa = $("cr-question");
     caixa.dataset.tipo = pendente.tipo;
     $("cr-q-kind").textContent = TIPOS[pendente.tipo] || "Decisão";

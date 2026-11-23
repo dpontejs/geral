@@ -34,8 +34,10 @@ from geral.games.carreira.regras import ATRIBUTOS, POSICOES
 
 LIMITE = 2000  # characters
 MAX_JSON = 8192  # bytes once decompressed: a real career is ~1.5 KB
-FORMATO = 2  # first byte of a short code; an old one starts with zlib's 0x78
-FORMATOS = (1, 2)  # 2 adds the card's final position (a career can change it); 1 still opens
+FORMATO = 3  # first byte of a short code; an old one starts with zlib's 0x78
+# 2 adds the card's final position (a career can change it), 3 the minijogos switch; older still
+# open (without minijogos)
+FORMATOS = (1, 2, 3)
 PES = ("direito", "esquerdo", "ambos")
 MODOS = ("rapida", "completa")
 TOKEN = 8  # bytes behind a secrets.token_urlsafe(8) seed
@@ -94,6 +96,7 @@ def codificar(
     if edicao != "geral":
         b.texto(edicao)
     b.put(MODOS.index(entrada.modo), 1)
+    b.put(entrada.minijogos, 1)
     b.put(POSICOES.index(craque.posicao), 3)
     b.put(PES.index(craque.pe), 2)
     b.put(craque.camisa, 7)
@@ -149,7 +152,9 @@ def _curto(bruto: bytes, dados: Dados) -> Compartilhado:
     formato = b.get(8)
     versao = _versao_get(b, dados.versao)
     edicao = "geral" if b.get(1) else b.texto()
-    modo, posicao, pe = MODOS[b.get(1)], POSICOES[b.get(3)], PES[b.get(2)]
+    modo = MODOS[b.get(1)]
+    minijogos = formato >= 3 and bool(b.get(1))
+    posicao, pe = POSICOES[b.get(3)], PES[b.get(2)]
     camisa, nome = b.get(7), b.texto()
     clube = v.clube_get(b) if b.get(1) else None
     semente_draft, semente = _semente_get(b), _semente_get(b)
@@ -171,6 +176,7 @@ def _curto(bruto: bytes, dados: Dados) -> Compartilhado:
             roubos=roubos,
             escolhas=escolhas,
             modo=modo,
+            minijogos=minijogos,
         ),
         resumo=Resumo(
             nome=craque.nome,

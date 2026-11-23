@@ -78,6 +78,7 @@ class Condicao:
     paises: tuple[str, ...] = ()  # country of the current league
     regioes: tuple[str, ...] = ()  # region of the current club (Brazil): nordeste, sudeste…
     classico: bool | None = None  # the current club has a named derby ({classico}, {rival})
+    chegou_de_fora: bool | None = None  # arrived this season from another region or country
 
 
 @dataclass(frozen=True)

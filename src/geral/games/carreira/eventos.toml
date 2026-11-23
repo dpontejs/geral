@@ -967,7 +967,7 @@ efeito = { saida = -0.3 }
 [[evento]]
 id = "volta-ao-nordeste"
 peso = 2
-condicao = { regioes = ["nordeste"], no_clube_inicial = false, idade_min = 28 }
+condicao = { regioes = ["nordeste"], no_clube_inicial = false, idade_min = 28, chegou_de_fora = true }
 manchetes = [
   "De volta ao Nordeste, {nome} é recebido como rei {no_clube}",
   "{nome} troca o frio pela praia e brilha {no_clube}",
@@ -1360,3 +1360,29 @@ manchetes = [
   "A arquibancada que adotou {nome} ganha o {classico} de presente",
 ]
 efeito = { nota = 1 }
+
+# O pênalti decisivo (motor.py, `_lance`): a final de copa que vai para a cobrança dele. Peso 0: só
+# o motor escolhe, na temporada do lance. Sem {copa} nem {adversario}: a linha do tempo diz os dois.
+[[evento]]
+id = "penalti-gol"
+peso = 0
+unico = false
+manchetes = [
+  "Aos 94, {nome} bate o pênalti sem tremer e {o_clube} é campeão da copa",
+  "Na marca da cal, no último lance: {nome} decide a final e a taça é {do_clube}",
+  "Coração gelado: {nome} desloca o goleiro e põe a copa na galeria {do_clube}",
+  "A bola foi para {nome} no 90+4', e ele não falhou: {o_clube} levanta a copa",
+  "Silêncio, corrida, rede: {nome} converte o pênalti do título {do_clube}",
+]
+
+[[evento]]
+id = "penalti-erro"
+peso = 0
+unico = false
+manchetes = [
+  "No último lance da final, {nome} perde o pênalti e {o_clube} fica sem a copa",
+  "Drama nos acréscimos: {nome} desperdiça o pênalti e a taça escapa {do_clube}",
+  "Pênalti perdido aos 94: {nome} sai de campo amparado pelos companheiros",
+  "A copa estava nos pés de {nome}, mas a cobrança não entrou",
+  "\"Assumo a culpa\": {nome} lamenta o pênalti perdido na final",
+]

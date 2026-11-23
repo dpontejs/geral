@@ -103,3 +103,8 @@ id = "canela-de-vidro"
 nome = "Canela de vidro"
 texto = "{nome} ganha fama de canela de vidro"
 efeito = { atributos = { fisico = -3 } }
+
+[[marca]]
+id = "perdeu-o-penalti"
+nome = "Perdeu o pênalti da final"
+texto = "{nome} carrega o pênalti perdido na final"
