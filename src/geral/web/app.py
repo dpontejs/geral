@@ -240,6 +240,7 @@ class CarreiraIn(BaseModel):
     escolhas: list[int] = Field(default=[], max_length=carreira_motor.MAX_RESPOSTAS)
     # Only Completa is offered; "rapida" still comes from pages opened before it was removed.
     modo: Literal["rapida", "completa"] = "completa"
+    minijogos: bool = False  # the cup final's penalty on screen; the form sends it
 
 
 class VelhaIn(BaseModel):

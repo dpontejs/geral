@@ -48,9 +48,9 @@
 
 **Files:** `codigo.py`, `web/app.py`; Test `tests/test_carreira_codigo.py`, `tests/test_web_carreira.py`
 
-- [ ] `test_link_guarda_minijogos_e_codigo_antigo_abre` (fixar um código gerado **antes** da mudança); teste web do payload do `lance` (`tipo`, `info[0].chance`) e da linha do tempo com `lance`. FAIL.
-- [ ] 1 bit de `minijogos` no formato, compatível com os códigos atuais (use o byte de versão do formato para distinguir). Corpo da API aceita `minijogos: bool = False`. PASS.
-- [ ] Commit `feat: link e API guardam a escolha de minijogos`.
+- [x] `test_link_guarda_minijogos_e_codigo_antigo_abre` (fixar um código gerado **antes** da mudança); teste web do payload do `lance` (`tipo`, `info[0].chance`) e da linha do tempo com `lance`. FAIL.
+- [x] 1 bit de `minijogos` no formato, compatível com os códigos atuais (use o byte de versão do formato para distinguir). Corpo da API aceita `minijogos: bool = False`. PASS.
+- [x] Commit `feat: link e API guardam a escolha de minijogos`.
 
 ### Task 4: Tela
 

@@ -361,3 +361,43 @@ def test_carreira_nova_sem_modo_e_completa(game) -> None:
     pedido = _comeco(game) | {"semente": "fixa", "escolhas": []}
     corpo = game.post(f"{API}/geral/simular", json=pedido).json()
     assert corpo["carreira"]["pendente"]["tipo"] == "dia"
+
+
+def _ate_o_lance(game, pedido) -> tuple[dict, dict]:
+    """Answers 0 until the cup final's penalty is pending (or the career ends)."""
+    for _ in range(MAX_RESPOSTAS + 1):
+        corpo = game.post(f"{API}/geral/simular", json=pedido).json()
+        pendente = corpo["carreira"]["pendente"]
+        if pendente is None or pendente["tipo"] == "lance":
+            return corpo, pedido
+        pedido = pedido | {"escolhas": [*pedido["escolhas"], 0]}
+    raise AssertionError("never ended")
+
+
+def test_payload_do_lance_e_linha_do_tempo(game) -> None:
+    base = _comeco(game) | {"minijogos": True}
+    for i in range(40):
+        corpo, pedido = _ate_o_lance(game, base | {"semente": f"w{i}", "escolhas": []})
+        pendente = corpo["carreira"]["pendente"]
+        if pendente:
+            break
+    else:
+        raise AssertionError("no penalty in 40 careers")
+    assert pendente["id"] == "penalti-final"
+    assert pendente["opcoes"] == ["gol", "defesa", "fora", "trave", "motor"]
+    assert 1 <= pendente["info"][0]["chance"] <= 99
+    lance = pendente["lance"]
+    assert lance["copa"] and lance["adversario"] and lance["clube"]
+
+    gol = pedido | {"escolhas": [*pedido["escolhas"], 0]}  # the fan scores
+    t = game.post(f"{API}/geral/simular", json=gol).json()["carreira"]["temporadas"][-1]
+    assert t["lance"]["resultado"] == "gol" and lance["copa"] in t["titulos"]
+    assert t["lance"]["adversario"] == lance["adversario"] and t["lance"]["manchete"]
+
+
+def test_sem_minijogos_a_api_nao_pergunta_o_lance(game) -> None:
+    base = _comeco(game) | {"minijogos": False}
+    for i in range(10):
+        corpo, _ = _ate_o_lance(game, base | {"semente": f"w{i}", "escolhas": []})
+        assert corpo["carreira"]["pendente"] is None and corpo["codigo"]
+        assert decodificar(corpo["codigo"]).entrada.minijogos is False
