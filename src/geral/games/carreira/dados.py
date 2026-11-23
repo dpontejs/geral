@@ -360,6 +360,7 @@ def _validar_ids(
     decisoes: tuple[Decisao, ...],
     rotinas: tuple[Rotina, ...],
     marcas: dict[str, Marca],
+    finais: tuple[dict, ...] = (),
 ) -> None:
     """Every `requer`/`exclui`/`marca` names an event, a decision or a mark that exists."""
     conhecidos = {e.id for e in eventos} | {d.id for d in decisoes} | set(marcas)
@@ -370,6 +371,10 @@ def _validar_ids(
         desconhecidos = sorted({c for c in citados if c} - conhecidos)
         if desconhecidos:
             raise ValueError(f"{item.id!r}: unknown ids {desconhecidos}")
+    for final in finais:
+        desconhecidos = sorted(set(final.get("requer", ())) - set(marcas))
+        if desconhecidos:
+            raise ValueError(f"finais.toml {final.get('rotulo')!r}: unknown marks {desconhecidos}")
 
 
 BASE = PASTA.parent / "velha" / "base.json"  # the draft's real players come from it
@@ -402,8 +407,8 @@ def _carregar(pasta: Path, versao: str) -> Dados:
     ids += [m["id"] for m in _toml(pasta, "marcas.toml").get("marca", [])]
     if len(ids) != len(set(ids)):
         raise ValueError("eventos.toml/escolhas.toml/rotina.toml/marcas.toml: repeated id")
-    _validar_ids(eventos, decisoes, rotinas, marcas)
     finais = tuple(_toml(pasta, "finais.toml").get("final", []))
+    _validar_ids(eventos, decisoes, rotinas, marcas, finais)
     return Dados(
         lendas,
         ligas,

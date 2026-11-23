@@ -291,3 +291,11 @@ def test_nome_so_com_espacos_e_422(game) -> None:
     pedido["craque"] = CRAQUE | {"nome": "   "}
 
     assert game.post(f"{API}/geral/simular", json=pedido).status_code == 422
+
+
+def test_link_antigo_ainda_abre(game) -> None:
+    from test_carreira_codigo import LINK_ANTIGO
+
+    page = game.get(f"/jogos/carreira/c/{LINK_ANTIGO}")
+
+    assert page.status_code == 200 and "Artilheiro nato" in page.text

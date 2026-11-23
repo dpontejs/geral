@@ -121,6 +121,8 @@ class Final(BaseModel):
     copa: bool
     parecido: str  # "your career recalls ___"
     perguntas: list[str]  # ids of the questions asked
+    posicao: str = ""  # where he ended up playing ("virou meia")
+    marcas: list[str] = []  # the names of the marks he won, in order
     vereditos: list[final.Veredito] = []  # what each club's fans say
 
 
@@ -277,6 +279,8 @@ class _Simulacao:
     perguntadas: list[str] = field(default_factory=list)
     passos: int = 0  # how many of `perguntadas` were arc steps (outside the cap)
     arco: tuple[str, int] | None = None  # the mark that opened an arc, tries left
+    marcas_ganhas: list[str] = field(default_factory=list)  # mark ids, in order
+    manchetes_usadas: set[str] = field(default_factory=set)  # headline templates told
     respondidas: int = 0
     emprestado_de: Clube | None = None
     aposentou: bool = False
@@ -492,7 +496,12 @@ class _Simulacao:
                 "idade": self.idade,
             }
         )
-        manchete = self.rng.choice(principal.manchetes).format_map(campos) if principal else ""
+        manchete = ""
+        if principal:
+            novas = [m for m in principal.manchetes if m not in self.manchetes_usadas]
+            modelo = self.rng.choice(novas or principal.manchetes)
+            self.manchetes_usadas.add(modelo)
+            manchete = modelo.format_map(campos)
         temporada = Temporada(
             ano=self.ano,
             idade=self.idade,
@@ -692,6 +701,12 @@ class _Simulacao:
         return deu_certo, efeito
 
     def _efeito_agora(self, efeito: Efeito) -> None:
+        if efeito.posicao and efeito.posicao != self.posicao:
+            # a new position: the same ratings weigh differently from now on
+            delta = geral(self.notas, efeito.posicao) - geral(self.notas, self.posicao)
+            self.posicao = efeito.posicao
+            self.nota = max(20, min(99, self.nota + delta))
+            self.teto = max(35, min(99, self.teto + delta))
         antes = geral(self.notas, self.posicao)
         for atributo, delta in efeito.atributos.items():
             self.notas[atributo] = max(1, min(99, self.notas[atributo] + delta))
@@ -706,6 +721,7 @@ class _Simulacao:
         if marca_id in self.historico:
             return
         self.historico.add(marca_id)
+        self.marcas_ganhas.append(marca_id)
         marca = self.dados.marcas[marca_id]
         self._efeito_agora(marca.efeito)
         self.marcas_novas.append(marca.texto.format_map({"nome": self.entrada.craque.nome}))
@@ -824,7 +840,7 @@ class _Simulacao:
         for t in self.temporadas:
             for nome in t.titulos:
                 titulos[nome] = titulos.get(nome, 0) + 1
-        rotulo, descricao = final.rotular(self.dados, self.temporadas)
+        rotulo, descricao = final.rotular(self.dados, self.temporadas, self.marcas_ganhas)
         return Final(
             nota=final.nota(self.temporadas),
             rotulo=rotulo,
@@ -837,6 +853,8 @@ class _Simulacao:
             copa=any(t.copa for t in self.temporadas),
             parecido=final.parecido(self.dados, final.base_real(), self.temporadas, self.posicao),
             perguntas=list(self.perguntadas),
+            posicao=self.posicao,
+            marcas=[self.dados.marcas[m].nome for m in self.marcas_ganhas],
             vereditos=final.vereditos(self.dados, self.temporadas),
         )
 

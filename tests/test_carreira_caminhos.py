@@ -1,12 +1,14 @@
 """Paths of a career: marks, risky decisions, arcs, a change of position."""
 
 import dataclasses
+import random
 
 import pytest
 from test_carreira_motor import entrada
 
-from geral.games.carreira import motor
-from geral.games.carreira.dados import Condicao, Decisao, Efeito, Marca, Opcao, carregar
+from geral.games.carreira import motor, regras
+from geral.games.carreira.codigo import codificar, decodificar, resumir
+from geral.games.carreira.dados import PASTA, Condicao, Decisao, Efeito, Marca, Opcao, carregar
 from geral.games.carreira.draft import JogadaInvalida, montar, oferta
 from geral.games.carreira.motor import _Simulacao, chance_de, clube_inicial, simular
 
@@ -192,3 +194,71 @@ def test_teto_por_modo(sempre, modo, teto) -> None:
     for i in range(10):
         carreira, _ = _ate_a_decisao(dados, _modo(entrada(f"t{i}", dados=dados), modo), "-")
         assert len(carreira.final.perguntas) == teto
+
+
+MEIA = MARCAS | {"v": Marca("v", "Virou meia", "{nome} vira meia", Efeito(posicao="meia"))}
+
+
+def test_virou_meia_muda_posicao_e_nota() -> None:
+    sim = _simulacao(_dados(marcas=MEIA))
+    nota, atacante = sim.nota, regras.geral(sim.notas, "atacante")
+
+    sim._marcar("v")
+
+    assert sim.posicao == "meia"
+    assert sim.nota == nota + regras.geral(sim.notas, "meia") - atacante
+
+
+def test_virou_meia_vai_para_o_card(sempre) -> None:
+    dados = _dados(_decisao("d1", Opcao(texto="Virar meia", marca="v"), Opcao("Não")), marcas=MEIA)
+    e = entrada("v1", dados=dados)
+    _, e = _ate_a_decisao(dados, e, "d1")
+    e = e.model_copy(update={"escolhas": [*e.escolhas, 0]})
+    carreira, e = _ate_a_decisao(dados, e, "-")
+
+    assert carreira.final.posicao == "meia" and carreira.final.marcas == ["Virou meia"]
+    resumo = resumir(e, carreira)
+    assert resumo.posicao == "meia"
+    assert decodificar(codificar(dados.versao, "geral", e, resumo, dados)).entrada == e
+
+
+def test_final_por_marca(sempre) -> None:
+    capitao = {"rotulo": "Capitão eterno", "descricao": "Braçadeira para sempre.", "requer": ["a"]}
+    dados = dataclasses.replace(_dados(_decisao()), finais=(capitao, *carregar().finais))
+    for resposta, rotulo in ((0, True), (1, False)):
+        e = entrada("f1", dados=dados)
+        _, e = _ate_a_decisao(dados, e, "d1")
+        e = e.model_copy(update={"escolhas": [*e.escolhas, resposta]})
+        carreira, _ = _ate_a_decisao(dados, e, "-")
+        assert (carreira.final.rotulo == "Capitão eterno") == rotulo
+
+
+def test_dados_rejeitam_final_com_marca_inexistente(tmp_path) -> None:
+    for nome in ("lendas.toml", "mundo.toml", "eventos.toml", "escolhas.toml", "marcas.toml"):
+        (tmp_path / nome).write_text((PASTA / nome).read_text(encoding="utf-8"), encoding="utf-8")
+    finais = '[[final]]\nrotulo = "X"\ndescricao = "Y"\nrequer = ["nao-existe"]\n'
+    (tmp_path / "finais.toml").write_text(finais, encoding="utf-8")
+
+    with pytest.raises(ValueError, match="nao-existe"):
+        carregar(tmp_path)
+
+
+def test_manchete_nao_repete_na_carreira() -> None:
+    dados = carregar()
+    eventos = {e.id: e for e in dados.eventos}
+    for i in range(200):
+        rng = random.Random(i)
+        e = entrada(f"h{i}", posicao=regras.POSICOES[i % 5])
+        while (carreira := simular(dados, "geral", e)).final is None:
+            resposta = rng.randrange(len(carreira.pendente.opcoes))
+            e = e.model_copy(update={"escolhas": [*e.escolhas, resposta]})
+        vistas: dict[str, list[str]] = {}  # principal event -> its headlines so far
+        for t in carreira.temporadas:
+            if not t.eventos:
+                continue
+            depois = [x for x in t.eventos if eventos[x].momento == "depois"]
+            principal = (depois or t.eventos)[0]
+            antes = vistas.setdefault(principal, [])
+            if len(antes) < len(eventos[principal].manchetes):
+                assert t.manchete not in antes, (f"h{i}", principal, t.manchete)
+            antes.append(t.manchete)

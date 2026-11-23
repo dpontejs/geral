@@ -68,9 +68,9 @@
 
 **Interfaces — Produces:** `Final.posicao: str`, `Final.marcas: list[str]` (nomes); `finais.toml` aceita `requer = ["marca"]` (lido de `numeros(...)` + marcas passadas a `rotular(dados, temporadas, marcas)`); `resumir` usa `final.posicao`.
 
-- [ ] Testes: `test_virou_meia_muda_posicao_e_nota` (efeito `posicao = "meia"` → `self.posicao`, `geral(...)` recalculado, `Final.posicao == "meia"`, `Resumo.posicao == "meia"`); `test_final_por_marca` (entrada de `finais.toml` com `requer` vence quando a marca existe); `test_manchete_nao_repete_na_carreira` (200 carreiras: nenhum texto repetido quando o evento tinha outro não usado); `test_link_antigo_ainda_abre` (código fixado em `test_carreira_codigo.py` continua decodificando e a rota responde 200). FAIL.
-- [ ] Implementar: `posicao` em `_aplicar`/`_marcar`; `self.manchetes_usadas: set[str]` e escolha entre as não usadas do evento (fallback: todas). PASS.
-- [ ] Commit `feat: mudança de posição, marcas no card e manchetes sem repetir`.
+- [x] Testes: `test_virou_meia_muda_posicao_e_nota` (efeito `posicao = "meia"` → `self.posicao`, `geral(...)` recalculado, `Final.posicao == "meia"`, `Resumo.posicao == "meia"`); `test_final_por_marca` (entrada de `finais.toml` com `requer` vence quando a marca existe); `test_manchete_nao_repete_na_carreira` (200 carreiras: nenhum texto repetido quando o evento tinha outro não usado); `test_link_antigo_ainda_abre` (código fixado em `test_carreira_codigo.py` continua decodificando e a rota responde 200). FAIL.
+- [x] Implementar: `posicao` em `_aplicar`/`_marcar`; `self.manchetes_usadas: set[str]` e escolha entre as não usadas do evento (fallback: todas). PASS.
+- [x] Commit `feat: mudança de posição, marcas no card e manchetes sem repetir`.
 
 ### Task 5: Tela, conteúdo de exemplo e realismo
 
