@@ -3,6 +3,7 @@ from webkit import make_client
 
 from geral.games.carreira import regras
 from geral.games.carreira.codigo import decodificar
+from geral.games.carreira.motor import MAX_RESPOSTAS
 
 API = "/api/jogos/carreira"
 CRAQUE = {"nome": "Zé", "camisa": 10, "posicao": "atacante", "pe": "direito", "clube": "bahia"}
@@ -27,9 +28,9 @@ def _comeco(game, edicao="geral") -> dict:
 
 
 def test_oferta_e_simulacao_ate_o_fim(game) -> None:
-    pedido = _comeco(game) | {"escolhas": []}
+    pedido = _comeco(game) | {"escolhas": []}  # no modo: Completa, the only one offered
 
-    for _ in range(10):
+    for _ in range(MAX_RESPOSTAS + 1):
         resposta = game.post(f"{API}/geral/simular", json=pedido)
         assert resposta.status_code == 200, resposta.text
         corpo = resposta.json()
@@ -349,3 +350,14 @@ def test_link_mostra_a_posicao_final(game) -> None:
     page = game.get(f"/jogos/carreira/c/{codigo}")
 
     assert f"A carreira de Zé · {carreira.final.posicao}" in page.text
+
+
+def test_pagina_nao_oferece_mais_o_modo_rapida(game) -> None:
+    page = game.get("/jogos/carreira").text
+    assert 'data-modo="rapida"' not in page and "cr-modes" not in page
+
+
+def test_carreira_nova_sem_modo_e_completa(game) -> None:
+    pedido = _comeco(game) | {"semente": "fixa", "escolhas": []}
+    corpo = game.post(f"{API}/geral/simular", json=pedido).json()
+    assert corpo["carreira"]["pendente"]["tipo"] == "dia"

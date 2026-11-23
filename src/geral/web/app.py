@@ -238,7 +238,8 @@ class CarreiraIn(BaseModel):
     craque: carreira_motor.Craque
     roubos: list[carreira_draft.Roubo] = Field(max_length=9)
     escolhas: list[int] = Field(default=[], max_length=carreira_motor.MAX_RESPOSTAS)
-    modo: Literal["rapida", "completa"] = "rapida"
+    # Only Completa is offered; "rapida" still comes from pages opened before it was removed.
+    modo: Literal["rapida", "completa"] = "completa"
 
 
 class VelhaIn(BaseModel):

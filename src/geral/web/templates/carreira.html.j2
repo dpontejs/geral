@@ -38,10 +38,6 @@
         <label class="cr-field"><span>Começa na base do</span>
           <select id="cr-clube" required>{% for c in jogo.clubes %}<option value="{{ c.id }}"{% if c.id == "abc" %} selected{% endif %}>{{ c.nome }}</option>{% endfor %}</select>
         </label>
-        <fieldset class="cr-modes"><legend>Modo</legend>
-          <button type="button" class="cr-mode" data-modo="rapida" aria-pressed="true"><b>Rápida</b><span>~1 minuto. O jogo decide quase tudo; você só entra nas grandes decisões.</span></button>
-          <button type="button" class="cr-mode" data-modo="completa" aria-pressed="false"><b>Completa</b><span>~5 minutos. Você decide o dia a dia de cada temporada e toda proposta de clube.</span></button>
-        </fieldset>
         <button class="btn cr-go" type="submit">Começar o draft</button>
       </form>
 
@@ -72,7 +68,6 @@
         <p class="how" id="cr-error" role="alert" hidden></p>
         <div class="cr-controls">
           <button class="btn cr-next" type="button" id="cr-next" hidden>Próxima temporada →</button>
-          <button class="btn secondary cr-skip" type="button" id="cr-skip" hidden>Pular até o fim</button>
           <button class="btn" type="button" id="cr-retry" hidden>Tentar de novo</button>
         </div>
         <section class="cr-cabinet" id="cr-cabinet" hidden><h3>Sala de troféus</h3><ul class="cr-shelf" id="cr-shelf"></ul></section>

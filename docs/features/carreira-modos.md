@@ -1,7 +1,9 @@
 # Carreira: modos Rápida e Completa, dia a dia e tela nova
 
 - **Data:** 2026-11-16
-- **Status:** aprovada
+- **Status:** aprovada. **Atualização 2026-11-23:** a Rápida saiu da tela a pedido do dev; só a
+  Completa é oferecida (padrão da API também). O motor continua refazendo carreiras Rápidas, para
+  os links antigos abrirem. A personalização passa a ser "com ou sem minijogos" (vem com o pênalti).
 - **ADRs:** —
 - **Depois de:** `carreira.md` (motor e primeira tela). Projeto 1 de 5: base → Nordeste →
   veredito das torcidas → capa da Geral → desafio com o mesmo sorteio.
