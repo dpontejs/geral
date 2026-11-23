@@ -1,5 +1,6 @@
 """Real players for the draft, from the jogo da velha base: the curated legends are few and all
-great, so most of the offer is made of real players of every level.
+great, so most of the offer is made of real players, only the ones fans know (Brazilians who
+played for the Seleção or are famous; in the Northeast, the region's own names too).
 
 Their ratings come from a formula, the same for a player every time (seeded by his id): the level
 from his fame (number of Wikipedias), the profile from his position, a little noise.
@@ -21,11 +22,25 @@ PERFIS = {
     "zagueiro": (-6, -19, -5, -14, 11, 6, 10, 3),
 }
 FAMA_TOPO = 80  # from here a player is as good as the formula allows
+# Who counts as known (fame = number of Wikipedias): a Seleção player from CORTE_SELECAO, anyone
+# from CORTE_FAMA, a player of a Northeastern club from CORTE_NORDESTE.
+CORTE_SELECAO = 20
+CORTE_FAMA = 40
+CORTE_NORDESTE = 25
+
+
+def conhecido(p: Player, nordeste: bool) -> bool:
+    """A Brazilian (no other country, or he played for the Seleção) fans would know."""
+    return (not p.paises or p.selecao) and (
+        p.fama >= CORTE_FAMA
+        or (p.selecao and p.fama >= CORTE_SELECAO)
+        or (nordeste and p.fama >= CORTE_NORDESTE)
+    )
 
 
 def nivel(fama: int) -> float:
-    """Fame 1 ≈ 47, 10 ≈ 59, 80+ ≈ 74 (calibrated: a careful draft lands around 71)."""
-    return 42 + 32 * min(1.0, math.log(1 + fama) / math.log(1 + FAMA_TOPO))
+    """Fame 20 ≈ 62, 40 ≈ 67, 80+ ≈ 72 (calibrated: a careful draft lands around 71)."""
+    return 40 + 32 * min(1.0, math.log(1 + fama) / math.log(1 + FAMA_TOPO))
 
 
 def notas_do_jogador(p: Player) -> dict[str, int]:
@@ -44,13 +59,16 @@ def _todos(versao: str, nordeste: frozenset[str], curadas: frozenset[str]) -> tu
     for p in sorted(load().players.values(), key=lambda p: p.id):
         if not p.posicoes or "goleiro" in p.posicoes or p.id in curadas:
             continue
+        da_regiao = bool(p.clubes & nordeste)
+        if not conhecido(p, da_regiao):
+            continue
         jogadores.append(
             Lenda(
                 nome=p.nome,
                 wikidata=p.id,
                 edicoes=("base",),
                 notas=notas_do_jogador(p),
-                regiao="nordeste" if p.clubes & nordeste else "",
+                regiao="nordeste" if da_regiao else "",
                 tipo="jogador",
                 resumo=f"{POSITIONS[p.posicoes[0]]} · {p.anos}"
                 if p.anos
@@ -61,7 +79,7 @@ def _todos(versao: str, nordeste: frozenset[str], curadas: frozenset[str]) -> tu
 
 
 def jogadores_da_base(dados: Dados) -> tuple[Lenda, ...]:
-    """Every outfield player of the base but the curated legends, as draft entries."""
+    """The known outfield players of the base but the curated legends, as draft entries."""
     nordeste = frozenset(
         c.wikidata for c in dados.clubes.values() if c.wikidata and dados.regiao(c) == "nordeste"
     )
