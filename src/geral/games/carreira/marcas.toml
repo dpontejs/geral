@@ -3,3 +3,42 @@
 # errado; a partir dali, eventos, escolhas e finais podem exigir (`requer`) ou excluir a marca.
 # texto: a linha do tempo da temporada seguinte ({nome}). efeito: aplicado uma vez, ao ganhar
 # (nota, teto, atributos, posicao). Nunca reuse um id: carreiras compartilhadas dependem deles.
+
+[[marca]]
+id = "bracadeira"
+nome = "Capitão"
+texto = "{nome} ganha a braçadeira de capitão"
+efeito = { atributos = { lideranca = 2 } }
+
+[[marca]]
+id = "lider-do-vestiario"
+nome = "Líder do vestiário"
+texto = "{nome} vira a voz do vestiário"
+efeito = { atributos = { lideranca = 2 }, nota = 1 }
+
+[[marca]]
+id = "polemico"
+nome = "Polêmico"
+texto = "{nome} ganha fama de encrenqueiro"
+
+[[marca]]
+id = "brigou-com-tecnico"
+nome = "Brigou com o técnico"
+texto = "{nome} rompe com o técnico"
+
+[[marca]]
+id = "virou-meia"
+nome = "Virou meia"
+texto = "{nome} deixa a antiga posição e vira meia"
+efeito = { posicao = "meia" }
+
+[[marca]]
+id = "idolo-de-um-clube"
+nome = "Ídolo de um clube só"
+texto = "{nome} beija o escudo e jura amor eterno"
+
+[[marca]]
+id = "baladeiro"
+nome = "Baladeiro"
+texto = "{nome} ganha fama de baladeiro"
+efeito = { atributos = { fisico = -2 } }

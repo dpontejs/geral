@@ -1,7 +1,7 @@
 # Carreira: decisões que mudam o caminho
 
 - **Data:** 2026-11-23
-- **Status:** aprovada (revisada por um leitor de fora; decisões de Claude marcadas em Contratos:
+- **Status:** em andamento (PR 1: motor, tela e conteúdo de exemplo; PR 2: o grosso do conteúdo) — aprovada (revisada por um leitor de fora; decisões de Claude marcadas em Contratos:
   mercado depois de "ficar", o que conta no teto, posição final)
 - **ADRs:** —
 

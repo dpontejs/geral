@@ -76,7 +76,7 @@
 
 **Files:** Modify `src/geral/static/geral/carreira.js` (+ CSS do template se precisar), `escolhas.toml`, `marcas.toml`, `scripts/carreira_amostra.py`; Test `tests/test_carreira_caminhos.py`, `tests/test_web_carreira.py`
 
-- [ ] Conteúdo: 6 marcas (capitao, polemico, brigou-com-tecnico, virou-meia, idolo-de-um-clube, baladeiro); 2 arcos completos (técnico: briga → banco → sair/desculpas; braçadeira: aceitar → crise no vestiário → liderar/se omitir); 4 decisões fora do mercado; 2 opções arriscadas (chance 15–25). `carreira_amostra.py` ganha `--modo` e respostas aleatórias.
-- [ ] Testes: `test_mesmo_draft_caminhos_diferentes`; `test_arriscar_tudo_nao_quebra_o_realismo` (respondendo sempre a opção de menor chance em 500 carreiras: lendas ≤ 5%, não decolam ≥ 15%); `test_replay_estavel`; teste web: payload da `Escolha` com `info.arriscada` e `Final.marcas`. FAIL→PASS.
-- [ ] JS: selo "arriscada" na opção (`info.arriscada`); marcas da temporada na linha do tempo; marcas na tela final e no card. Conferir no navegador (`/jogos/carreira`) uma Rápida e uma Completa.
-- [ ] Commit `feat: marcas e decisões arriscadas na tela da carreira`; push; PR contra `main` (descrição em pt-BR, sem atribuição a IA), marcar a feature como "em andamento (PR 1)".
+- [x] Conteúdo: 6 marcas (capitao, polemico, brigou-com-tecnico, virou-meia, idolo-de-um-clube, baladeiro); 2 arcos completos (técnico: briga → banco → sair/desculpas; braçadeira: aceitar → crise no vestiário → liderar/se omitir); 4 decisões fora do mercado; 2 opções arriscadas (chance 15–25). `carreira_amostra.py` ganha `--modo` e respostas aleatórias.
+- [x] Testes: `test_mesmo_draft_caminhos_diferentes`; `test_arriscar_tudo_nao_quebra_o_realismo` (respondendo sempre a opção de menor chance em 500 carreiras: lendas ≤ 5%, não decolam ≥ 15%); `test_replay_estavel`; teste web: payload da `Escolha` com `info.arriscada` e `Final.marcas`. FAIL→PASS.
+- [x] JS: selo "arriscada" na opção (`info.arriscada`); marcas da temporada na linha do tempo; marcas na tela final e no card. Conferir no navegador (`/jogos/carreira`) uma Rápida e uma Completa.
+- [x] Commit `feat: marcas e decisões arriscadas na tela da carreira`; push; PR contra `main` (descrição em pt-BR, sem atribuição a IA), marcar a feature como "em andamento (PR 1)".

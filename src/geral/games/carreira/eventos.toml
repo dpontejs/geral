@@ -576,3 +576,17 @@ peso = 0
 unico = false
 manchetes = ["Temporada para esquecer: {nome} não rende e vira alvo de críticas {no_clube}", "{nome} some em campo e a torcida {do_clube} perde a paciência", "Ano ruim de {nome}: pouco futebol e muitas cobranças {no_clube}"]
 efeito = { saida = 0.2 }
+
+# Eventos de marcas (marcas.toml): só acontecem para quem tem a marca.
+
+[[evento]]
+id = "capitao-ergue-a-taca"
+peso = 3
+condicao = { requer = ["bracadeira"], titulo = true, jogos_min = 15 }
+manchetes = [
+  "Capitão {nome} ergue a taça {do_clube}",
+  "Braçadeira no braço, taça na mão: {nome} lidera {o_clube}",
+  "O capitão {nome} levanta o troféu e chora com a torcida {do_clube}",
+  "{nome}, o capitão, comanda a festa {do_clube}",
+]
+efeito = { nota = 1 }

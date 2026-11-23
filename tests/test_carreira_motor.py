@@ -124,7 +124,7 @@ def _dados_fracos(tmp_path: Path):
         ),
         encoding="utf-8",
     )
-    for nome in ("mundo.toml", "eventos.toml", "escolhas.toml", "finais.toml"):
+    for nome in ("mundo.toml", "eventos.toml", "escolhas.toml", "finais.toml", "marcas.toml"):
         if (PASTA / nome).exists():
             (tmp_path / nome).write_text((PASTA / nome).read_text(encoding="utf-8"))
     return carregar(tmp_path)

@@ -80,7 +80,8 @@ def _pasta_caminhos(tmp_path: Path, escolhas: str, marcas: str = "") -> Path:
     for nome in ("lendas.toml", "mundo.toml", "eventos.toml", "finais.toml"):
         (tmp_path / nome).write_text((PASTA / nome).read_text(encoding="utf-8"), encoding="utf-8")
     (tmp_path / "escolhas.toml").write_text(escolhas, encoding="utf-8")
-    (tmp_path / "marcas.toml").write_text(marcas, encoding="utf-8")
+    reais = (PASTA / "marcas.toml").read_text(encoding="utf-8")  # the real events cite them
+    (tmp_path / "marcas.toml").write_text(reais + "\n" + marcas, encoding="utf-8")
     return tmp_path
 
 

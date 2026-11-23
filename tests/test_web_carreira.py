@@ -299,3 +299,31 @@ def test_link_antigo_ainda_abre(game) -> None:
     page = game.get(f"/jogos/carreira/c/{LINK_ANTIGO}")
 
     assert page.status_code == 200 and "Artilheiro nato" in page.text
+
+
+def test_payload_traz_opcao_arriscada_e_marcas_do_final(game) -> None:
+    from test_carreira_caminhos import _mais_arriscada, jogar
+    from test_carreira_motor import entrada
+
+    from geral.games.carreira.dados import carregar
+
+    dados = carregar()
+    for i in range(100):
+        e = entrada(f"p{i}").model_copy(update={"modo": "completa"})
+        carreira, e, perguntas = jogar(dados, e, _mais_arriscada)
+        risco = next((n for n, p in enumerate(perguntas) if any(x.arriscada for x in p.info)), None)
+        if risco is not None and carreira.final.marcas:
+            break
+    else:
+        pytest.fail("nenhuma carreira com opção arriscada e marca em 100 sementes")
+    pedido = e.model_dump()
+
+    pendente = game.post(f"{API}/geral/simular", json=pedido | {"escolhas": e.escolhas[:risco]})
+    fim = game.post(f"{API}/geral/simular", json=pedido)
+
+    info = pendente.json()["carreira"]["pendente"]["info"]
+    assert any(x["arriscada"] for x in info)
+    final = fim.json()["carreira"]["final"]
+    assert final["marcas"] == carreira.final.marcas and final["posicao"]
+    marcas = [m for t in fim.json()["carreira"]["temporadas"] for m in t["marcas"]]
+    assert len(marcas) >= 1

@@ -202,3 +202,122 @@ destino = "maior"
 [[escolha.opcao]]
 texto = "Recusar: aqui é casa"
 destino = "ficar"
+
+# Decisões fora do mercado (destino "ficar"): o resultado pode gravar uma marca.
+# chance / bonus / sucesso / fracasso como no dia a dia; marca (deu certo) e marca_fracasso.
+# continua = true: passo de um arco. Vem obrigatoriamente no inverno seguinte à marca que ele
+# requer; nunca sai no sorteio.
+
+[[escolha]]
+id = "tecnico-barra"
+pergunta = "O técnico {do_clube} tira {nome} do time titular sem dar explicação."
+peso = 2
+condicao = { idade_min = 20, idade_max = 32, exclui = ["brigou-com-tecnico"] }
+[[escolha.opcao]]
+texto = "Treinar calado e esperar a chance"
+chance = 65
+bonus = "fisico"
+sucesso = { nota = 1 }
+fracasso = { jogos = 0.8 }
+[[escolha.opcao]]
+texto = "Cobrar o técnico na frente do grupo"
+marca = "brigou-com-tecnico"
+sucesso = { saida = 0.3 }
+[[escolha.opcao]]
+texto = "Desafiar o técnico: \"me põe no clássico e eu decido\""
+chance = 22
+bonus = "lideranca"
+sucesso = { nota = 3, teto = 3 }
+fracasso = { nota = -2, saida = 0.3 }
+marca_fracasso = "brigou-com-tecnico"
+
+[[escolha]]
+id = "fim-da-fila"
+pergunta = "Depois da briga, {nome} vai para o fim da fila {no_clube}. O técnico nem olha para ele."
+continua = true
+condicao = { requer = ["brigou-com-tecnico"], idade_max = 35 }
+[[escolha.opcao]]
+texto = "Pedir desculpas em público"
+chance = 55
+bonus = "lideranca"
+sucesso = { nota = 2 }
+fracasso = { nota = -1, saida = 0.3 }
+[[escolha.opcao]]
+texto = "Forçar a saída"
+marca = "polemico"
+sucesso = { saida = 0.7 }
+
+[[escolha]]
+id = "bracadeira-oferecida"
+pergunta = "O técnico oferece a braçadeira {do_clube} a {nome}, {idade} anos."
+peso = 1.5
+condicao = { idade_min = 23, idade_max = 33, nota_min = 64, exclui = ["bracadeira", "capitao"] }
+[[escolha.opcao]]
+texto = "Aceitar e vestir a braçadeira"
+marca = "bracadeira"
+[[escolha.opcao]]
+texto = "Recusar: prefere só jogar"
+
+[[escolha]]
+id = "crise-no-vestiario"
+pergunta = "Derrotas seguidas e o vestiário {do_clube} racha. Todos olham para o capitão {nome}."
+continua = true
+condicao = { requer = ["bracadeira"], idade_max = 36 }
+[[escolha.opcao]]
+texto = "Reunir o grupo e assumir a culpa"
+chance = 55
+bonus = "lideranca"
+marca = "lider-do-vestiario"
+fracasso = { nota = -1 }
+[[escolha.opcao]]
+texto = "Ficar na sua e deixar o técnico resolver"
+sucesso = { nota = -1, saida = 0.2 }
+[[escolha.opcao]]
+texto = "Dar uma coletiva e chamar a torcida para a briga"
+chance = 20
+bonus = "lideranca"
+sucesso = { nota = 3, teto = 2 }
+marca = "lider-do-vestiario"
+fracasso = { nota = -3, saida = 0.3 }
+marca_fracasso = "polemico"
+
+[[escolha]]
+id = "teste-no-meio"
+pergunta = "O técnico {do_clube} quer testar {nome} no meio-campo."
+peso = 1.5
+condicao = { idade_min = 20, idade_max = 29, posicoes = ["atacante", "volante", "lateral"] }
+[[escolha.opcao]]
+texto = "Topar e aprender a posição"
+chance = 60
+bonus = "passe"
+marca = "virou-meia"
+fracasso = { nota = -2 }
+[[escolha.opcao]]
+texto = "Pedir para seguir onde sempre jogou"
+
+[[escolha]]
+id = "feriado-com-os-amigos"
+pergunta = "Os amigos de infância chamam {nome} para três dias de festa no feriado."
+peso = 1.5
+condicao = { idade_min = 18, idade_max = 30, exclui = ["baladeiro"] }
+[[escolha.opcao]]
+texto = "Ir e curtir sem culpa"
+chance = 45
+sucesso = { atributos = { lideranca = 1 } }
+fracasso = { nota = -3 }
+marca_fracasso = "baladeiro"
+[[escolha.opcao]]
+texto = "Ficar em casa e descansar"
+sucesso = { atributos = { fisico = 1 } }
+
+[[escolha]]
+id = "beijar-o-escudo"
+pergunta = "A torcida {do_clube} pede que {nome} jure ficar para sempre."
+peso = 1.5
+condicao = { idade_min = 22, idade_max = 30, no_clube_inicial = true, exclui = ["idolo-de-um-clube"] }
+[[escolha.opcao]]
+texto = "Beijar o escudo e renovar até o fim da carreira"
+marca = "idolo-de-um-clube"
+sucesso = { saida = -0.6 }
+[[escolha.opcao]]
+texto = "Desconversar: no futebol nada é para sempre"

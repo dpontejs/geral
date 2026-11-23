@@ -146,6 +146,8 @@ def descrever(efeito: Efeito) -> str:
     ]
     if efeito.nota:
         partes.append(f"{'+' if efeito.nota > 0 else '−'}{abs(efeito.nota)} de forma")
+    if efeito.teto:
+        partes.append(f"{'+' if efeito.teto > 0 else '−'}{abs(efeito.teto)} de potencial")
     if efeito.jogos < 1:
         partes.append("lesão: perde parte da temporada" if efeito.jogos <= 0.7 else "lesão leve")
     if efeito.saida > 0:
@@ -278,7 +280,7 @@ class _Simulacao:
     historico: set[str] = field(default_factory=set)
     perguntadas: list[str] = field(default_factory=list)
     passos: int = 0  # how many of `perguntadas` were arc steps (outside the cap)
-    arco: tuple[str, int] | None = None  # the mark that opened an arc, tries left
+    arco: tuple[str, int, str] | None = None  # the arc's mark, tries left, the club it is at
     marcas_ganhas: list[str] = field(default_factory=list)  # mark ids, in order
     manchetes_usadas: set[str] = field(default_factory=set)  # headline templates told
     respondidas: int = 0
@@ -729,7 +731,7 @@ class _Simulacao:
             d.continua and marca_id in d.condicao.requer and d.id not in self.perguntadas
             for d in self.dados.decisoes
         ):
-            self.arco = (marca_id, ARCO_TENTATIVAS)  # its next step comes next winter
+            self.arco = (marca_id, ARCO_TENTATIVAS, self.clube.id)  # next winter, same club
 
     def _pergunta(self, temporada: Temporada) -> tuple[Escolha | None, bool]:
         """Maybe a question this season: (pending question, the fan settled this winter)."""
@@ -784,7 +786,10 @@ class _Simulacao:
         """The open arc's next step, when its condition fits this winter; else one try less."""
         if self.arco is None:
             return None, {}
-        marca, restantes = self.arco
+        marca, restantes, clube = self.arco
+        if clube != self.clube.id:  # a new club: the story of the old one is over
+            self.arco = None
+            return None, {}
         for decisao in self.dados.decisoes:
             if (
                 decisao.continua
@@ -796,7 +801,7 @@ class _Simulacao:
                 if all(destinos.values()):
                     self.arco = None
                     return decisao, destinos
-        self.arco = (marca, restantes - 1) if restantes > 1 else None
+        self.arco = (marca, restantes - 1, clube) if restantes > 1 else None
         return None, {}
 
     def _escolha(self, decisao: Decisao, destinos: dict[str, Clube | None]) -> Escolha:

@@ -299,6 +299,7 @@
       atual.append(tacas);
     }
     atual.append(el("p", "cr-headline", t.manchete));
+    (t.marcas || []).forEach((m) => atual.append(el("p", "cr-mark", m)));
     if (t.rotina) {
       const r = t.rotina;
       const linha = el("p", r.deu_certo ? "cr-routine ok" : "cr-routine bad");
@@ -328,6 +329,7 @@
       t.titulos.forEach((nome) => tacas.append(selo(nome, "cr-line-trophy")));
       corpo.append(tacas);
     }
+    if (t.marcas && t.marcas.length) corpo.append(el("div", "cr-line-marks", t.marcas.join(" · ")));
     li.append(corpo);
     li.title = t.manchete;
     return li;
@@ -362,6 +364,7 @@
       const info = (pendente.info || [])[i];
       const b = el("button", "cr-option");
       b.type = "button";
+      if (info && info.arriscada) b.append(el("span", "cr-risky", "Arriscada"));
       b.append(el("span", "cr-option-text", texto));
       if (info && info.chance !== null && info.chance !== undefined) {
         const barra = el("span", "cr-chance");
@@ -388,9 +391,13 @@
   async function fim(final, codigo) {
     const craque = estado ? estado.craque : jogo.compartilhada.craque;
     const titulos = Object.values(final.titulos).reduce((a, b) => a + b, 0);
-    $("cr-end-kicker").textContent = `${craque.nome} · #${craque.camisa} · ${craque.posicao}`;
+    const posicao = final.posicao || craque.posicao; // "virou meia" along the way
+    $("cr-end-kicker").textContent = `${craque.nome} · #${craque.camisa} · ${posicao}`;
     $("cr-end-label").textContent = `${final.rotulo} · ${final.nota}`;
     $("cr-end-desc").textContent = `${final.descricao} Sua carreira lembra a de ${final.parecido}.`;
+    const marcas = final.marcas || [];
+    $("cr-end-marks").replaceChildren(...marcas.map((m) => el("li", "cr-end-mark", m)));
+    $("cr-end-marks").hidden = !marcas.length;
     mostrarVereditos(final.vereditos || []);
     const placar = estado && estado.corpo ? estado.corpo.placar : null;
     $("cr-end-placar").hidden = !placar;
@@ -607,7 +614,8 @@
     // kicker and main headline
     g.fillStyle = "#B23A2A";
     g.font = `800 34px ${display}`;
-    g.fillText(`${craque.nome.toUpperCase()} · #${craque.camisa} · ${craque.posicao.toUpperCase()}`, M, 336);
+    const posicao = (final.posicao || craque.posicao).toUpperCase();
+    g.fillText(`${craque.nome.toUpperCase()} · #${craque.camisa} · ${posicao}`, M, 336);
     g.fillStyle = ink;
     const rotulo = final.rotulo.toUpperCase();
     const tam = caber(rotulo, W - 2 * M, (t) => `900 ${t}px ${display}`, 170);
@@ -615,6 +623,15 @@
     let y = 336 + tam * 0.95 + 58;
     g.font = `italic 500 34px ${body}`;
     y += (quebrar(final.descricao, W - 2 * M, `italic 500 34px ${body}`, M, y, 44, 2) - 1) * 44;
+    if (final.marcas && final.marcas.length) {
+      // the marks of the career, one line: "CAPITÃO · VIROU MEIA"
+      y += 52;
+      g.fillStyle = "#B23A2A";
+      const marcas = final.marcas.join("  ·  ").toUpperCase();
+      caber(marcas, W - 2 * M, (t) => `800 ${t}px ${display}`, 30);
+      g.fillText(marcas, M, y);
+      g.fillStyle = ink;
+    }
     y += 36;
     regua(y, 3);
 

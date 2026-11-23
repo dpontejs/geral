@@ -91,7 +91,7 @@ def test_decisao_com_risco_mostra_chance_e_arriscada(sempre) -> None:
 
     assert len(pendente.info) == 2
     assert pendente.info[0].chance == chance_de(arriscada, notas) and pendente.info[0].arriscada
-    assert "Aço" in pendente.info[0].efeitos
+    assert "Aço" in pendente.info[0].efeitos and "+4 de potencial" in pendente.info[0].efeitos
     assert pendente.info[1].chance is None and not pendente.info[1].arriscada
 
 
@@ -151,14 +151,19 @@ def _arco(**condicao_passo):
 def test_arco_continua_na_temporada_seguinte(sempre, monkeypatch, modo) -> None:
     monkeypatch.setattr(motor, "MAX_ESCOLHAS", {"rapida": 1, "completa": 1})  # the cap is full
     dados = _dados(*_arco())
-    for i in range(10):
+    vistos = 0
+    for i in range(20):
         e = _modo(entrada(f"a{i}", dados=dados), modo)
         antes, e = _ate_a_decisao(dados, e, "d1")
         e = e.model_copy(update={"escolhas": [*e.escolhas, 0]})
         depois, _ = _ate_a_decisao(dados, e, "d2", lambda p: 0)
-
+        seguinte = depois.temporadas[len(antes.temporadas)]
+        if seguinte.clube_id != antes.temporadas[-1].clube_id:
+            continue  # the winter's market moved him: the arc stays with the old club
         assert depois.pendente and depois.pendente.id == "d2"
         assert len(depois.temporadas) == len(antes.temporadas) + 1
+        vistos += 1
+    assert vistos >= 5
 
 
 def test_arco_segue_a_ordem(sempre) -> None:
@@ -175,17 +180,22 @@ def test_arco_que_nao_casa_morre(sempre) -> None:
     for espera, chega in ((2, True), (3, False)):  # two seasons of tries, then the arc dies
         primeiro, passo = _arco(idade_min=20 + espera)
         dados = _dados(dataclasses.replace(primeiro, condicao=Condicao(idade_min=20)), passo)
-        for i in range(10):
+        vistos = 0
+        for i in range(30):
             e = entrada(f"n{i}", dados=dados)
             antes, e = _ate_a_decisao(dados, e, "d1")
             if antes.final or antes.temporadas[-1].idade != 20:
                 continue
             e = e.model_copy(update={"escolhas": [*e.escolhas, 0]})
             carreira, _ = _ate_a_decisao(dados, e, "d2")
+            if len({t.clube_id for t in carreira.temporadas if 20 <= t.idade <= 22}) > 1:
+                continue  # he moved: the arc stays with the old club
             if chega:
                 assert carreira.pendente and carreira.temporadas[-1].idade == 22
             else:
                 assert carreira.final and "d2" not in carreira.final.perguntas
+            vistos += 1
+        assert vistos >= 3, espera
 
 
 @pytest.mark.parametrize(("modo", "teto"), [("rapida", 5), ("completa", 8)])
@@ -262,3 +272,87 @@ def test_manchete_nao_repete_na_carreira() -> None:
             if len(antes) < len(eventos[principal].manchetes):
                 assert t.manchete not in antes, (f"h{i}", principal, t.manchete)
             antes.append(t.manchete)
+
+
+def _mais_arriscada(pendente) -> int:
+    """The option with the smallest chance (a sure one counts as 100); the first on a tie."""
+    if not pendente.info:
+        return 0
+    chances = [100 if i.chance is None else i.chance for i in pendente.info]
+    return chances.index(min(chances))
+
+
+def jogar(dados, e, responder):
+    """Play to the end; returns (career, entrada, every pending question)."""
+    perguntas = []
+    while (carreira := simular(dados, "geral", e)).final is None:
+        perguntas.append(carreira.pendente)
+        e = e.model_copy(update={"escolhas": [*e.escolhas, responder(carreira.pendente)]})
+    return carreira, e, perguntas
+
+
+def test_mesmo_draft_caminhos_diferentes() -> None:
+    dados = carregar()
+    for i in range(100):
+        e = _modo(entrada(f"w{i}"), "completa")
+        primeira, _, _ = jogar(dados, e, lambda p: 0)
+        ultima, _, _ = jogar(dados, e, lambda p: len(p.opcoes) - 1)
+        if primeira.final.marcas != ultima.final.marcas:
+            assert [t.manchete for t in primeira.temporadas] != [
+                t.manchete for t in ultima.temporadas
+            ]
+            return
+    pytest.fail("as mesmas respostas em 100 drafts nunca mudaram as marcas")
+
+
+def test_arriscar_tudo_nao_quebra_o_realismo() -> None:
+    from test_carreira_realismo import roubos_humanos
+
+    dados, carreiras = carregar(), []
+    for i in range(500):
+        posicao = regras.POSICOES[i % 5]
+        clube = ["flamengo", "abc", "sport", "palmeiras", "bahia", "goias"][i % 6]
+        e = motor.Entrada(
+            semente_draft=f"d{i}",
+            semente=f"c{i}",
+            craque=motor.Craque(nome="Zé", camisa=10, posicao=posicao, pe="direito", clube=clube),
+            roubos=roubos_humanos(dados, f"d{i}", posicao, clube),
+            modo="completa",
+        )
+        carreiras.append(jogar(dados, e, _mais_arriscada)[0])
+    picos = [max(t.nota for t in c.temporadas) for c in carreiras]
+    lendas = sum(c.final.nota >= 90 for c in carreiras) / len(carreiras)
+    nao_decolou = sum(p < 65 for p in picos) / len(carreiras)
+
+    assert lendas <= 0.05, lendas
+    assert nao_decolou >= 0.15, nao_decolou
+
+
+def test_replay_estavel() -> None:
+    dados = carregar()
+    for i in range(30):
+        rng = random.Random(i)
+        e = _modo(entrada(f"y{i}"), "completa")
+        final, e, _ = jogar(dados, e, lambda p, rng=rng: rng.randrange(len(p.opcoes)))
+        assert simular(dados, "geral", e) == final
+        for corte in range(len(e.escolhas)):
+            antes = simular(dados, "geral", e.model_copy(update={"escolhas": e.escolhas[:corte]}))
+            assert final.temporadas[: len(antes.temporadas)] == antes.temporadas
+
+
+def test_arco_fica_no_clube_onde_comecou(sempre) -> None:
+    sair = Opcao(texto="Ir {para_o_destino}", destino="menor", marca="a")
+    primeiro, passo = _arco()
+    dados = _dados(dataclasses.replace(primeiro, opcoes=(sair, Opcao(texto="Ficar"))), passo)
+    vistos = 0
+    for i in range(30):
+        e = entrada(f"c{i}", dados=dados)
+        antes, e = _ate_a_decisao(dados, e, "d1")
+        if antes.final:
+            continue
+        carreira, _ = _ate_a_decisao(
+            dados, e.model_copy(update={"escolhas": [*e.escolhas, 0]}), "d2"
+        )
+        assert carreira.final and "d2" not in carreira.final.perguntas  # moved: the arc is over
+        vistos += 1
+    assert vistos
