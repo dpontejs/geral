@@ -376,6 +376,11 @@ select.chip { appearance: auto; }
 .cr-chance { position: relative; height: 26px; border: 2px solid var(--ink); background: linear-gradient(90deg, #2F7D3A 0 var(--chance), #B23A2A var(--chance)); }
 .cr-chance-n { position: absolute; left: 8px; top: 50%; transform: translateY(-50%); font: 900 16px/1 var(--display); color: #fff; text-shadow: 0 1px 2px rgba(0, 0, 0, .6); }
 .cr-option-effects { font: 600 14px/1.35 var(--body); color: var(--ink-soft); }
+.cr-risky { align-self: flex-start; background: #B23A2A; color: #fff; font: 800 13px/1 var(--display); text-transform: uppercase; letter-spacing: .06em; padding: 5px 8px; }
+.cr-mark { margin: 0; align-self: flex-start; background: var(--ink); color: var(--lamp); font: 800 15px/1.2 var(--display); text-transform: uppercase; letter-spacing: .04em; padding: 6px 10px; }
+.cr-line-marks { font: 700 13px/1.3 var(--display); text-transform: uppercase; letter-spacing: .04em; color: var(--lamp); }
+.cr-end-marks { display: flex; flex-wrap: wrap; gap: 8px; margin: 0; padding: 0; list-style: none; }
+.cr-end-mark { background: var(--ink); color: var(--lamp); font: 800 15px/1 var(--display); text-transform: uppercase; letter-spacing: .05em; padding: 8px 12px; }
 .cr-controls { display: flex; flex-wrap: wrap; gap: 10px; }
 .cr-next { background: var(--lamp); color: var(--ink); }
 .cr-history { background: rgba(14, 51, 32, .85); color: var(--paper); border: 3px solid var(--turf); padding: 10px 14px; }

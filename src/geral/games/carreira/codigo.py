@@ -70,7 +70,7 @@ def resumir(entrada: Entrada, carreira: Carreira) -> Resumo:
         raise ValueError("only a finished career has a card")
     return Resumo(
         nome=entrada.craque.nome,
-        posicao=entrada.craque.posicao,
+        posicao=final.posicao or entrada.craque.posicao,  # where he ended up ("virou meia")
         rotulo=final.rotulo,
         nota=final.nota,
         titulos=sum(final.titulos.values()),
@@ -83,7 +83,7 @@ def codificar(
 ) -> str:
     dados = dados or carregar()
     craque = entrada.craque
-    if (resumo.nome, resumo.posicao) != (craque.nome, craque.posicao):
+    if resumo.nome != craque.nome:  # the position may have changed along the career
         raise ValueError("the card is of another player")
     v = _Vocabulario(dados)
     b = _Escrita()

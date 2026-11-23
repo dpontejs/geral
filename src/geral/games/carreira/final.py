@@ -1,6 +1,7 @@
 """The end of a career: the score, the label from `finais.toml` and the real player it recalls."""
 
 from collections import Counter
+from collections.abc import Iterable
 from functools import cache
 
 from pydantic import BaseModel
@@ -78,11 +79,12 @@ def _casa(condicao: dict, n: dict) -> bool:
     return True
 
 
-def rotular(dados: Dados, temporadas: list) -> tuple[str, str]:
-    """(label, description): the first entry of finais.toml whose condition matches."""
-    n = numeros(temporadas)
+def rotular(dados: Dados, temporadas: list, marcas: Iterable[str] = ()) -> tuple[str, str]:
+    """(label, description): the first entry of finais.toml whose condition matches and whose
+    `requer` marks he won."""
+    n, marcas = numeros(temporadas), set(marcas)
     for final in dados.finais:
-        if _casa(final.get("condicao", {}), n):
+        if set(final.get("requer", ())) <= marcas and _casa(final.get("condicao", {}), n):
             return final["rotulo"], final["descricao"]
     raise ValueError("finais.toml needs a last entry without condicao")
 

@@ -5,7 +5,7 @@ changes a season that came before it: the career grows in front of the fan, it n
 """
 
 import random
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Annotated, Literal
 
 from pydantic import BaseModel, Field, StringConstraints
@@ -19,6 +19,7 @@ from geral.games.carreira.dados import (
     Decisao,
     Efeito,
     Evento,
+    Opcao,
     OpcaoRotina,
 )
 from geral.games.carreira.draft import JogadaInvalida, Roubo, montar, oferta
@@ -27,9 +28,11 @@ from geral.games.carreira.regras import NOMES, POSICOES, geral
 PRIMEIRO_ANO = 2027
 IDADE_INICIAL, IDADE_MAXIMA = 16, 42
 RISCO = 8  # taken off every risky day-to-day chance: daring has to cost something
-MAX_ESCOLHAS = 4  # decision questions per career (both modes)
+MAX_ESCOLHAS = {"rapida": 5, "completa": 8}  # drawn decision questions per career
+ARCO_TENTATIVAS = 2  # seasons an arc's next step waits for its condition before it dies
 MAX_RESPOSTAS = 60  # every answer of a Completa career: a day-to-day one per season, the market
 CHANCE_ESCOLHA = 0.4  # per season, when one fits
+ARRISCADA = 25  # an option with this chance or less is shown as a long shot
 COPA_DO_NORDESTE = "Copa do Nordeste"
 REALIZACAO = 0.0  # points the ceiling sits from the draft's rating, on average
 REALIZACAO_DESVIO = 9.0  # how much careers differ in it: both busts and stars come from here
@@ -80,6 +83,7 @@ class Temporada(BaseModel):
     forma: int = 0  # how the season went against his level, -10..10
     chegada: str | None = None  # "Chegou do Vasco": every change of club says so
     rotina: "ResultadoRotina | None" = None  # the day-to-day choice before this season
+    marcas: list[str] = []  # the marks won since the last season, told: "Zé ganha a braçadeira"
 
 
 class ResultadoRotina(BaseModel):
@@ -92,6 +96,7 @@ class ResultadoRotina(BaseModel):
 class InfoOpcao(BaseModel):
     chance: int | None = None  # % of it going well; None when there is no risk
     efeitos: str = ""  # "certo: +3 finalização · errado: lesão leve"
+    arriscada: bool = False  # a long shot: chance of ARRISCADA or less
 
 
 class Escolha(BaseModel):
@@ -99,7 +104,7 @@ class Escolha(BaseModel):
     tipo: Literal["dia", "mercado", "decisao"] = "decisao"
     pergunta: str
     opcoes: list[str]
-    info: list[InfoOpcao] = []  # chance and effects of each option (day-to-day ones)
+    info: list[InfoOpcao] = []  # chance and effects of each option (day-to-day, risky decisions)
     destinos: list[str]  # the kind of each option (ficar, europa, aposentar…)
     clubes: list[str | None]  # the club each option moves to, None when it stays put
 
@@ -116,6 +121,8 @@ class Final(BaseModel):
     copa: bool
     parecido: str  # "your career recalls ___"
     perguntas: list[str]  # ids of the questions asked
+    posicao: str = ""  # where he ended up playing ("virou meia")
+    marcas: list[str] = []  # the names of the marks he won, in order
     vereditos: list[final.Veredito] = []  # what each club's fans say
 
 
@@ -139,6 +146,8 @@ def descrever(efeito: Efeito) -> str:
     ]
     if efeito.nota:
         partes.append(f"{'+' if efeito.nota > 0 else '−'}{abs(efeito.nota)} de forma")
+    if efeito.teto:
+        partes.append(f"{'+' if efeito.teto > 0 else '−'}{abs(efeito.teto)} de potencial")
     if efeito.jogos < 1:
         partes.append("lesão: perde parte da temporada" if efeito.jogos <= 0.7 else "lesão leve")
     if efeito.saida > 0:
@@ -150,13 +159,32 @@ def descrever(efeito: Efeito) -> str:
     return ", ".join(partes)
 
 
-def _info(opcao: OpcaoRotina, notas: dict[str, int]) -> InfoOpcao:
+def _info(opcao: OpcaoRotina, notas: dict[str, int], dados: Dados | None = None) -> InfoOpcao:
     chance = chance_de(opcao, notas)
-    certo, errado = descrever(opcao.sucesso), descrever(opcao.fracasso)
+
+    def lado(efeito: Efeito, marca: str) -> str:
+        partes = [descrever(efeito)]
+        if dados and marca in dados.marcas:
+            partes.append(f"vira {dados.marcas[marca].nome}")
+        return ", ".join(p for p in partes if p)
+
+    certo, errado = lado(opcao.sucesso, opcao.marca), lado(opcao.fracasso, opcao.marca_fracasso)
     if chance >= 100:
         return InfoOpcao(chance=None, efeitos=certo or "nada muda")
     return InfoOpcao(
-        chance=chance, efeitos=f"certo: {certo or 'nada muda'} · errado: {errado or 'nada muda'}"
+        chance=chance,
+        efeitos=f"certo: {certo or 'nada muda'} · errado: {errado or 'nada muda'}",
+        arriscada=chance <= ARRISCADA,
+    )
+
+
+def _com_risco(opcao: OpcaoRotina) -> bool:
+    """An option worth explaining: it has a chance, an effect or a mark."""
+    return (
+        opcao.chance < 100
+        or opcao.sucesso != Efeito()
+        or opcao.fracasso != Efeito()
+        or bool(opcao.marca or opcao.marca_fracasso)
     )
 
 
@@ -251,6 +279,11 @@ class _Simulacao:
     temporadas: list[Temporada] = field(default_factory=list)
     historico: set[str] = field(default_factory=set)
     perguntadas: list[str] = field(default_factory=list)
+    passos: int = 0  # how many of `perguntadas` were arc steps (outside the cap)
+    # open arcs, oldest first: (the mark, tries left, the club it happens at)
+    arcos: list[tuple[str, int, str]] = field(default_factory=list)
+    marcas_ganhas: list[str] = field(default_factory=list)  # mark ids, in order
+    manchetes_usadas: set[str] = field(default_factory=set)  # headline templates told
     respondidas: int = 0
     emprestado_de: Clube | None = None
     aposentou: bool = False
@@ -258,6 +291,8 @@ class _Simulacao:
     efeito: Efeito = Efeito()  # the day-to-day result, for the next season
     resultado: ResultadoRotina | None = None
     rotinas_vistas: list[str] = field(default_factory=list)
+    marcas_novas: list[str] = field(default_factory=list)  # told in the next season
+    saida_extra: float = 0.0  # a decision's push towards the door, for this winter's market
 
     def __post_init__(self) -> None:
         self.rng = random.Random(f"carreira:{self.entrada.semente}")
@@ -295,8 +330,8 @@ class _Simulacao:
                 pendente, decidiu = self._pergunta(temporada)
                 if pendente:
                     return Carreira(temporadas=self.temporadas, pendente=pendente)
-                if not (self.aposentou or decidiu):  # the fan's answer holds this winter
-                    pendente = self._mercado(saida)
+                if not (self.aposentou or decidiu):  # a market answer holds this winter
+                    pendente = self._mercado(saida + self.saida_extra)
                     if pendente:
                         return Carreira(temporadas=self.temporadas, pendente=pendente)
             if self.aposentou or self._encerra():
@@ -464,7 +499,12 @@ class _Simulacao:
                 "idade": self.idade,
             }
         )
-        manchete = self.rng.choice(principal.manchetes).format_map(campos) if principal else ""
+        manchete = ""
+        if principal:
+            novas = [m for m in principal.manchetes if m not in self.manchetes_usadas]
+            modelo = self.rng.choice(novas or principal.manchetes)
+            self.manchetes_usadas.add(modelo)
+            manchete = modelo.format_map(campos)
         temporada = Temporada(
             ano=self.ano,
             idade=self.idade,
@@ -484,9 +524,11 @@ class _Simulacao:
             forma=forma,
             chegada=self.chegada,
             rotina=self.resultado,
+            marcas=self.marcas_novas,
         )
         saida = sum(e.efeito.saida for e in eventos) + self.efeito.saida
         self.chegada, self.efeito, self.resultado = None, Efeito(), None
+        self.marcas_novas, self.saida_extra = [], 0.0
         return temporada, saida
 
     # -- between seasons -------------------------------------------------------------------
@@ -626,20 +668,12 @@ class _Simulacao:
                 tipo="dia",
                 pergunta=texto,
                 opcoes=[o.texto.format_map(campos) for o in rotina.opcoes],
-                info=[_info(o, self.notas) for o in rotina.opcoes],
+                info=[_info(o, self.notas, self.dados) for o in rotina.opcoes],
                 destinos=["ficar"] * len(rotina.opcoes),
                 clubes=[None] * len(rotina.opcoes),
             )
         opcao = rotina.opcoes[resposta]
-        deu_certo = self.rng.random() * 100 < chance_de(opcao, self.notas)
-        efeito = opcao.sucesso if deu_certo else opcao.fracasso
-        antes = geral(self.notas, self.posicao)
-        for atributo, delta in efeito.atributos.items():
-            self.notas[atributo] = max(1, min(99, self.notas[atributo] + delta))
-        ganho = geral(self.notas, self.posicao) - antes + efeito.nota
-        self.nota = max(20, min(99, self.nota + ganho))
-        self.teto = max(35, min(99, self.teto + geral(self.notas, self.posicao) - antes))
-        self.efeito = efeito
+        deu_certo, efeito = self._aplicar(opcao)
         self.resultado = ResultadoRotina(
             situacao=texto,
             escolha=opcao.texto.format_map(campos),
@@ -648,37 +682,134 @@ class _Simulacao:
         )
         return None
 
+    def _aplicar(self, opcao: OpcaoRotina) -> tuple[bool, Efeito]:
+        """Roll the option's chance and apply what came of it: ratings, form and ceiling now; games,
+        national team and the push to leave on the next season; the mark it gives."""
+        chance = chance_de(opcao, self.notas)
+        if isinstance(opcao, Opcao) and chance >= 100:
+            deu_certo = True  # a sure decision rolls no dice: older careers keep their stream
+        else:
+            deu_certo = self.rng.random() * 100 < chance
+        efeito = opcao.sucesso if deu_certo else opcao.fracasso
+        self._efeito_agora(efeito)
+        self.efeito = Efeito(
+            nota=self.efeito.nota + efeito.nota,
+            saida=self.efeito.saida + efeito.saida,
+            jogos=min(self.efeito.jogos, efeito.jogos),
+            selecao=self.efeito.selecao or efeito.selecao,
+        )
+        marca = opcao.marca if deu_certo else opcao.marca_fracasso
+        if marca:
+            self._marcar(marca)
+        return deu_certo, efeito
+
+    def _efeito_agora(self, efeito: Efeito) -> None:
+        if efeito.posicao and efeito.posicao != self.posicao:
+            # a new position: the same ratings weigh differently from now on
+            delta = geral(self.notas, efeito.posicao) - geral(self.notas, self.posicao)
+            self.posicao = efeito.posicao
+            self.nota = max(20, min(99, self.nota + delta))
+            self.teto = max(35, min(99, self.teto + delta))
+        antes = geral(self.notas, self.posicao)
+        for atributo, delta in efeito.atributos.items():
+            self.notas[atributo] = max(1, min(99, self.notas[atributo] + delta))
+        ganho = geral(self.notas, self.posicao) - antes + efeito.nota
+        self.nota = max(20, min(99, self.nota + ganho))
+        self.teto = max(
+            35, min(99, self.teto + geral(self.notas, self.posicao) - antes + efeito.teto)
+        )
+
+    def _marcar(self, marca_id: str) -> None:
+        """Win a mark: once per career, its effect applied then, told in the next season."""
+        if marca_id in self.historico:
+            return
+        self.historico.add(marca_id)
+        self.marcas_ganhas.append(marca_id)
+        marca = self.dados.marcas[marca_id]
+        self._efeito_agora(marca.efeito)
+        self.marcas_novas.append(marca.texto.format_map({"nome": self.entrada.craque.nome}))
+        if any(
+            d.continua and marca_id in d.condicao.requer and d.id not in self.perguntadas
+            for d in self.dados.decisoes
+        ):
+            # its next step comes next winter, at this club, after any arc already open
+            self.arcos.append((marca_id, ARCO_TENTATIVAS, self.clube.id))
+
     def _pergunta(self, temporada: Temporada) -> tuple[Escolha | None, bool]:
         """Maybe a question this season: (pending question, the fan settled this winter)."""
-        if len(self.perguntadas) >= MAX_ESCOLHAS or self.rng.random() >= CHANCE_ESCOLHA:
-            return None, False
         ctx = self._contexto()
         ctx.gols, ctx.jogos = temporada.gols, temporada.jogos
         ctx.titulo, ctx.selecao = bool(temporada.titulos), temporada.selecao > 0
         ctx.copa, ctx.mundial = temporada.copa, "Copa do Mundo" in temporada.titulos
-        cabem = [
-            d for d in self.dados.decisoes if d.id not in self.perguntadas and ctx.casa(d.condicao)
-        ]
-        if not cabem:
-            return None, False
-        decisao = self.rng.choices(cabem, weights=[d.peso for d in cabem])[0]
-        destinos = {
-            o.destino: self._destino(o.destino) for o in decisao.opcoes if o.destino in COM_CLUBE
-        }
-        if any(clube is None for clube in destinos.values()):
-            return None, False
+        decisao, destinos = self._passo_do_arco(ctx)
+        if decisao is not None:
+            self.passos += 1  # an arc's step is always asked and never counts in the cap
+        else:
+            sorteadas = len(self.perguntadas) - self.passos
+            if sorteadas >= MAX_ESCOLHAS[self.entrada.modo] or self.rng.random() >= CHANCE_ESCOLHA:
+                return None, False
+            cabem = [
+                d
+                for d in self.dados.decisoes
+                if not d.continua and d.id not in self.perguntadas and ctx.casa(d.condicao)
+            ]
+            if not cabem:
+                return None, False
+            decisao = self.rng.choices(cabem, weights=[d.peso for d in cabem])[0]
+            destinos = self._destinos(decisao)
+            if any(clube is None for clube in destinos.values()):
+                return None, False
         self.perguntadas.append(decisao.id)
         resposta = self._resposta(len(decisao.opcoes))
         if resposta is None:
             return self._escolha(decisao, destinos), False
-        destino = decisao.opcoes[resposta].destino
+        self.historico.add(decisao.id)  # an answered question can open others (`requer`)
+        opcao = decisao.opcoes[resposta]
+        saida = self.efeito.saida
+        self._aplicar(opcao)
+        # the push to leave of a winter's decision counts in this winter's market
+        self.saida_extra += self.efeito.saida - saida
+        self.efeito = replace(self.efeito, saida=saida)
+        destino = opcao.destino
         if destino == "aposentar":
             self.aposentou = True
         elif destino == "mais_um":
             self.aposenta_aos = min(IDADE_MAXIMA, max(self.aposenta_aos, self.idade + 2))
         elif destino in destinos:
             self._mudar(destinos[destino], emprestimo=destino == "emprestimo")
-        return None, True
+        # A market question holds the winter whatever the answer; one off the market lets it run.
+        return None, bool(destinos) or self.aposentou
+
+    def _destinos(self, decisao: Decisao) -> dict[str, Clube | None]:
+        return {
+            o.destino: self._destino(o.destino) for o in decisao.opcoes if o.destino in COM_CLUBE
+        }
+
+    def _passo_do_arco(self, ctx: _Contexto) -> tuple[Decisao | None, dict[str, Clube | None]]:
+        """The oldest open arc's next step, when its condition fits this winter; else that arc
+        has one try less. Arcs opened meanwhile wait their turn."""
+        while self.arcos:
+            marca, restantes, clube = self.arcos[0]
+            if clube != self.clube.id:  # a new club: the story of the old one is over
+                self.arcos.pop(0)
+                continue
+            for decisao in self.dados.decisoes:
+                if (
+                    decisao.continua
+                    and decisao.id not in self.perguntadas
+                    and marca in decisao.condicao.requer
+                    and ctx.casa(decisao.condicao)
+                ):
+                    destinos = self._destinos(decisao)
+                    if all(destinos.values()):
+                        self.arcos.pop(0)
+                        return decisao, destinos
+            if restantes > 1:
+                self.arcos[0] = (marca, restantes - 1, clube)
+            else:
+                self.arcos.pop(0)
+            break
+        return None, {}
 
     def _escolha(self, decisao: Decisao, destinos: dict[str, Clube | None]) -> Escolha:
         alvos = [c for c in destinos.values() if c]
@@ -705,6 +836,11 @@ class _Simulacao:
             id=decisao.id,
             pergunta=decisao.pergunta.format_map(geral_),
             opcoes=[opcao(o.texto, c) for o, c in zip(decisao.opcoes, clubes, strict=True)],
+            info=(
+                [_info(o, self.notas, self.dados) for o in decisao.opcoes]
+                if any(_com_risco(o) for o in decisao.opcoes)
+                else []
+            ),
             destinos=[o.destino for o in decisao.opcoes],
             clubes=[c.id if c else None for c in clubes],
         )
@@ -716,7 +852,7 @@ class _Simulacao:
         for t in self.temporadas:
             for nome in t.titulos:
                 titulos[nome] = titulos.get(nome, 0) + 1
-        rotulo, descricao = final.rotular(self.dados, self.temporadas)
+        rotulo, descricao = final.rotular(self.dados, self.temporadas, self.marcas_ganhas)
         return Final(
             nota=final.nota(self.temporadas),
             rotulo=rotulo,
@@ -729,6 +865,8 @@ class _Simulacao:
             copa=any(t.copa for t in self.temporadas),
             parecido=final.parecido(self.dados, final.base_real(), self.temporadas, self.posicao),
             perguntas=list(self.perguntadas),
+            posicao=self.posicao,
+            marcas=[self.dados.marcas[m].nome for m in self.marcas_ganhas],
             vereditos=final.vereditos(self.dados, self.temporadas),
         )
 
