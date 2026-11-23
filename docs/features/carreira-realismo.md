@@ -24,8 +24,10 @@ profissionais, 2–3 craques, uma lenda de vez em quando.
   do jogo da velha. *Conhecido* (`jogadores.conhecido`, revisto em 2026-11-23): brasileiro (sem
   país esportivo/cidadania além do Brasil, ou jogou pela Seleção — Marcelo, Marquinhos) e fama
   (nº de Wikipédias) ≥ 40, ou Seleção com fama ≥ 20, ou passou por clube nordestino com fama ≥ 25.
-  Pool: **487 jogadores de linha** (401 pelo corte nacional), **161 do Nordeste** (antes: todos os
-  ~5.050 de linha). Nota dos jogadores por fórmula, determinística pelo id: nível pela fama (fama 20 ≈ 62, fama 40 ≈ 67,
+  `carreira/conhecidos.toml` dá o nome de torcedor a quem a base lista pelo nome de registro
+  (Marcelo Vieira da Silva Júnior → Marcelo) e tira quem é mais conhecido como técnico (Felipão,
+  Tite…) e os nomes de registro sem apelido confirmado.
+  Pool: **455 jogadores de linha**, **142 do Nordeste** (antes: todos os ~5.050 de linha). Nota dos jogadores por fórmula, determinística pelo id: nível pela fama (fama 20 ≈ 62, fama 40 ≈ 67,
   fama 80+ ≈ 72; recalibrado com o pool novo para o draft cuidadoso continuar em ~71 de mediana,
   média 70,6 antes, 71,0 depois), perfil pela posição (atacante finaliza, zagueiro marca e cabeceia,
   meio-campo passa e dribla, lateral corre), ruído de ±6. Quem começa no Nordeste: a lenda é da

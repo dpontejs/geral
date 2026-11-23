@@ -8,7 +8,9 @@ from his fame (number of Wikipedias), the profile from his position, a little no
 
 import math
 import random
+import tomllib
 from functools import cache
+from pathlib import Path
 
 from geral.games.carreira.dados import Dados, Lenda
 from geral.games.carreira.regras import ATRIBUTOS
@@ -27,6 +29,14 @@ FAMA_TOPO = 80  # from here a player is as good as the formula allows
 CORTE_SELECAO = 20
 CORTE_FAMA = 40
 CORTE_NORDESTE = 25
+
+
+@cache
+def _ajustes() -> tuple[dict[str, str], frozenset[str]]:
+    """Fan names for players the base lists by their registered name, and who stays out."""
+    raw = tomllib.loads((Path(__file__).parent / "conhecidos.toml").read_text(encoding="utf-8"))
+    fora = raw["fora"]
+    return raw["apelidos"], frozenset(fora["tecnicos"]) | frozenset(fora["sem_apelido"])
 
 
 def conhecido(p: Player, nordeste: bool) -> bool:
@@ -55,16 +65,19 @@ def notas_do_jogador(p: Player) -> dict[str, int]:
 
 @cache
 def _todos(versao: str, nordeste: frozenset[str], curadas: frozenset[str]) -> tuple[Lenda, ...]:
+    apelidos, fora = _ajustes()
     jogadores = []
     for p in sorted(load().players.values(), key=lambda p: p.id):
         if not p.posicoes or "goleiro" in p.posicoes or p.id in curadas:
+            continue
+        if p.id in fora or p.nome in fora:
             continue
         da_regiao = bool(p.clubes & nordeste)
         if not conhecido(p, da_regiao):
             continue
         jogadores.append(
             Lenda(
-                nome=p.nome,
+                nome=apelidos.get(p.id, p.nome),
                 wikidata=p.id,
                 edicoes=("base",),
                 notas=notas_do_jogador(p),
