@@ -407,7 +407,7 @@
 
     // -- input: pointer events only (no click as well, or a tap would count twice) ---------------
     function tecla(e) {
-      if (e.code !== "Space" || fase === "fim") return;
+      if (e.code !== "Space" || e.repeat || fase === "fim") return; // a held key steps once
       if (e.target.closest && e.target.closest("button, input, select, textarea, a")) return;
       e.preventDefault();
       acao();
