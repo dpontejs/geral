@@ -120,3 +120,21 @@ def test_quem_comeca_no_nordeste_vive_o_nordeste() -> None:
         for c in _carreiras("abc", 150, "v")
     ]
     assert sum(no_nordeste) / len(no_nordeste) >= 4  # seasons in the region, on average
+
+
+def test_volta_ao_nordeste_so_na_temporada_em_que_chegou_de_fora_da_regiao() -> None:
+    """A Vitória veteran in his 5th year there is not 'coming back' to the Northeast."""
+    from test_carreira_motor import ate_o_fim, entrada
+
+    dados = carregar()
+    vistas = 0
+    for i in range(400):
+        clube = ("bahia", "abc", "sport", "flamengo")[i % 4]
+        carreira, _ = ate_o_fim(entrada(f"v{i}", clube=clube, melhor=(True, None)[i % 2]), dados)
+        for antes, t in zip(carreira.temporadas, carreira.temporadas[1:], strict=False):
+            if "volta-ao-nordeste" not in t.eventos:
+                continue
+            vistas += 1
+            assert t.chegada and antes.clube_id != t.clube_id, (i, t.ano, t.clube)
+            assert dados.regiao(dados.clubes[antes.clube_id]) != "nordeste", (i, t.ano)
+    assert vistas >= 3

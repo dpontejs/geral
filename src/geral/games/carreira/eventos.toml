@@ -967,7 +967,7 @@ efeito = { saida = -0.3 }
 [[evento]]
 id = "volta-ao-nordeste"
 peso = 2
-condicao = { regioes = ["nordeste"], no_clube_inicial = false, idade_min = 28 }
+condicao = { regioes = ["nordeste"], no_clube_inicial = false, idade_min = 28, chegou_de_fora = true }
 manchetes = [
   "De volta ao Nordeste, {nome} é recebido como rei {no_clube}",
   "{nome} troca o frio pela praia e brilha {no_clube}",

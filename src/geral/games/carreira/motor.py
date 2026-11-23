@@ -275,6 +275,7 @@ class _Contexto:
     selecao: bool = False
     copa: bool = False
     mundial: bool = False
+    chegou_de_fora: bool = False
 
     def casa(self, c: Condicao) -> bool:
         return (
@@ -295,6 +296,7 @@ class _Contexto:
             and (not c.paises or self.pais in c.paises)
             and (not c.regioes or self.regiao in c.regioes)
             and (c.classico is None or c.classico == self.classico)
+            and (c.chegou_de_fora is None or c.chegou_de_fora == self.chegou_de_fora)
         )
 
 
@@ -317,6 +319,7 @@ class _Simulacao:
     emprestado_de: Clube | None = None
     aposentou: bool = False
     chegada: str | None = None  # how he got to the current club, for the next season
+    veio_de: Clube | None = None  # the club he left, while `chegada` is told
     efeito: Efeito = Efeito()  # the day-to-day result, for the next season
     resultado: ResultadoRotina | None = None
     rotinas_vistas: list[str] = field(default_factory=list)
@@ -436,6 +439,9 @@ class _Simulacao:
             no_clube_inicial=self.clube.id == self.inicio.id,
             regiao=self.dados.regiao(self.clube) or "",
             classico=bool(self.dados.classicos_de(self.clube)),
+            chegou_de_fora=self.chegada is not None
+            and self.veio_de is not None
+            and self.dados.regiao(self.veio_de) != self.dados.regiao(self.clube),
         )
 
     def _sortear_eventos(self, momento: str, ctx: _Contexto) -> list[Evento]:
@@ -583,7 +589,7 @@ class _Simulacao:
             lance=lance,
         )
         saida = sum(e.efeito.saida for e in eventos) + self.efeito.saida + self._saida_das_marcas()
-        self.chegada, self.efeito, self.resultado = None, Efeito(), None
+        self.chegada, self.veio_de, self.efeito, self.resultado = None, None, Efeito(), None
         self.marcas_novas, self.saida_extra = [], 0.0
         return temporada, saida
 
@@ -690,7 +696,7 @@ class _Simulacao:
             de = artigos("c", self.clube)
             motivo = f"Emprestado {de['pelo_c']}" if emprestimo else f"Chegou {de['do_c']}"
         self.emprestado_de = (self.emprestado_de or self.clube) if emprestimo else None
-        self.clube, self.chegada = clube, motivo
+        self.clube, self.chegada, self.veio_de = clube, motivo, self.clube
 
     def _mercado(self, saida: float) -> Escolha | None:
         """The winter's market. Rápida moves him by itself; Completa asks, save for the end of a
