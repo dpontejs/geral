@@ -77,3 +77,33 @@ commitar o visual.
 
 - Frequência: 2 lances numa carreira de ~20 temporadas pode ser pouco ou muito; medir jogando.
 - O rascunho foi feito para tela vertical (~440 px); no computador, centralizar no mesmo tamanho.
+
+## Atualização 2026-11-23: pênalti em qualquer partida (aprovada pelo dev)
+
+Jogando, o dev passou uma carreira inteira sem pênalti (medido: ~55% das carreiras de atacante/meia
+e ~97% das de volante não tinham nenhum). O pênalti é para dar **interatividade**, não só para
+decidir título. Novo contrato, que substitui "Quando" acima:
+
+- **Quando:** em qualquer temporada (a partir dos 17 anos, com o jogador em campo) pode haver um
+  pênalti numa partida; no máximo 1 por temporada e **4 por carreira**. Meta: **2–3 por carreira**
+  em média e pelo menos 1 em **~90%** das carreiras, em **todas as posições**.
+- **Que partida** (sorteada; muda o que está em jogo e o placar de lâmpadas):
+  - **jogo do campeonato** (adversário da liga, minuto 70'–90+4'): gol = +1 gol na temporada e
+    manchete; erro = manchete de cobrança. Sem marca.
+  - **clássico** (contra o rival do clássico do clube; só onde há clássico): idem, e marca
+    `frio-nas-decisoes` no gol / `perdeu-o-penalti` no erro.
+  - **final de copa** (como antes): decide o título da copa, com as mesmas marcas.
+- **Quem bate:** qualquer posição; a dificuldade (e a chance sem minijogos) vem da finalização.
+- **Sem minijogos** ou "Deixar o motor bater": sorteado por `chance_penalti(finalizacao)`.
+- **Equilíbrio:** a taxa de copas sem minijogos fica a ±20% da de hoje (as finais continuam com a
+  frequência calibrada); `test_carreira_realismo.py` passa sem ajuste.
+- **Link:** cada pênalti é uma resposta em `Entrada.escolhas`. Se `MAX_RESPOSTAS` passar do que o
+  contador do link comporta (6 bits = 63), cria-se um formato novo do código que aceite mais,
+  mantendo os antigos abrindo.
+- `Escolha(tipo="lance")` ganha o tipo da partida (`jogo`, `classico`, `final`), o adversário, o
+  minuto e o nome da competição, para a tela montar o placar.
+
+Critérios de aceite novos: `test_penalti_em_todas_as_posicoes` (≥ 1 pênalti em ≥ 85% de 300
+carreiras por posição), `test_media_de_penaltis_por_carreira` (2–3), `test_jogo_comum_nao_mexe_em_titulo`,
+`test_classico_usa_o_rival`, `test_no_maximo_um_por_temporada_e_quatro_por_carreira`, mais os
+anteriores de link, replay e taxa de copas.
