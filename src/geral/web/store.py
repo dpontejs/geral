@@ -63,6 +63,7 @@ CREATE TABLE IF NOT EXISTS drafts (
     removed_topics TEXT NOT NULL DEFAULT '[]',
     sent_at TEXT,
     released_at TEXT,
+    send_now INTEGER NOT NULL DEFAULT 0,
     UNIQUE (team, kind, day)
 );
 -- Stories for the special sections, written each night from the sources; refused ones are kept
@@ -134,6 +135,7 @@ class Draft:
     removed_topics: list[int]
     sent_at: datetime | None
     released_at: datetime | None = None  # let go by the owner after holding it
+    send_now: bool = False  # the owner published it after reviewing: it does not wait send_at
 
 
 @dataclass(frozen=True)
@@ -160,6 +162,8 @@ class SubscriberStore:
             columns = {row[1] for row in db.execute("PRAGMA table_info(drafts)")}
             if "released_at" not in columns:
                 db.execute("ALTER TABLE drafts ADD COLUMN released_at TEXT")
+            if "send_now" not in columns:
+                db.execute("ALTER TABLE drafts ADD COLUMN send_now INTEGER NOT NULL DEFAULT 0")
 
     def _connect(self) -> sqlite3.Connection:
         db = sqlite3.connect(self.path)
@@ -388,7 +392,7 @@ class SubscriberStore:
 
     _DRAFT_COLUMNS = (
         "id, team, kind, day, label, newsletter_json, build_at, send_at, held, removed_topics,"
-        " sent_at, released_at"
+        " sent_at, released_at, send_now"
     )
 
     def _drafts(self, where: str, *params: object) -> list[Draft]:
@@ -407,6 +411,7 @@ class SubscriberStore:
                 json.loads(removed),
                 _when(sent_at),
                 _when(released_at),
+                bool(send_now),
             )
             for (
                 id_,
@@ -421,6 +426,7 @@ class SubscriberStore:
                 removed,
                 sent_at,
                 released_at,
+                send_now,
             ) in rows
         ]
 
@@ -437,12 +443,22 @@ class SubscriberStore:
         return sorted(self._drafts("sent_at IS NULL"), key=lambda d: d.send_at)
 
     def set_held(self, draft_id: int, held: bool, now: datetime) -> Draft | None:
-        """Hold or let go of a draft; letting go records when (a late one is sent right away)."""
+        """Hold or let go of a draft; letting go records when (a late one is sent right away).
+        Either way, a "publish now" is undone: let go early, it waits its send time again."""
         self._run(
-            "UPDATE drafts SET held = ?, released_at = CASE WHEN ? THEN released_at ELSE ? END"
-            " WHERE id = ?",
+            "UPDATE drafts SET held = ?, released_at = CASE WHEN ? THEN released_at ELSE ? END,"
+            " send_now = 0 WHERE id = ?",
             int(held),
             int(held),
+            now.isoformat(),
+            draft_id,
+        )
+        return self.draft_by_id(draft_id)
+
+    def publish_now(self, draft_id: int, now: datetime) -> Draft | None:
+        """Reviewed: it goes out at the next tick, not at its send time."""
+        self._run(
+            "UPDATE drafts SET held = 0, released_at = ?, send_now = 1 WHERE id = ?",
             now.isoformat(),
             draft_id,
         )
@@ -466,11 +482,13 @@ class SubscriberStore:
         self._run("UPDATE drafts SET newsletter_json = ? WHERE id = ?", newsletter_json, draft_id)
 
     def released_due(self, now: datetime) -> list[Draft]:
-        """Drafts let go after their send time and not sent yet: they go out at the next tick."""
+        """Drafts let go after their send time, or published now by the owner, and not sent yet:
+        they go out at the next tick."""
         return [
             d
             for d in self._drafts("sent_at IS NULL AND held = 0 AND released_at IS NOT NULL")
-            if d.send_at <= d.released_at <= now < d.released_at + RELEASE_GRACE
+            if (d.send_now or d.send_at <= d.released_at)
+            and d.released_at <= now < d.released_at + RELEASE_GRACE
         ]
 
     def team_drafts(self, team: str) -> list[Draft]:

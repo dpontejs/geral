@@ -1124,22 +1124,40 @@ def create_app(
 
         return review_action(request, draft_id, t, hold)
 
+    def out_of_order(request: Request, draft) -> Response | None:
+        """The 409 page when a newer edition of that torcida exists (this one stays held)."""
+        if any(d.build_at > draft.build_at for d in store.team_drafts(draft.team)):
+            # A newer draft already carries this one's news (its window reaches back).
+            text = "Já existe uma edição mais nova dessa torcida; esta fica segurada."
+            return message(request, "Edição antiga", text, status=409)
+        latest = store.latest_edition(draft.team)
+        if latest is not None and latest.published_at > draft.send_at:
+            # A newer edition went out meanwhile: this one would arrive out of order.
+            text = "Já saiu uma edição mais nova dessa torcida; esta fica segurada."
+            return message(request, "Edição antiga", text, status=409)
+        return None
+
     @app.post("/revisao/{draft_id}/soltar")
     def review_release(request: Request, draft_id: int, t: Annotated[str, Form()] = ""):
         def release(draft):
-            if any(d.build_at > draft.build_at for d in store.team_drafts(draft.team)):
-                # A newer draft already carries this one's news (its window reaches back).
-                text = "Já existe uma edição mais nova dessa torcida; esta fica segurada."
-                return message(request, "Edição antiga", text, status=409)
-            latest = store.latest_edition(draft.team)
-            if latest is not None and latest.published_at > draft.send_at:
-                # A newer edition went out meanwhile: this one would arrive out of order.
-                text = "Já saiu uma edição mais nova dessa torcida; esta fica segurada."
-                return message(request, "Edição antiga", text, status=409)
-            store.set_held(draft.id, False, now())
-            return None
+            refused = out_of_order(request, draft)
+            if refused is None:
+                store.set_held(draft.id, False, now())
+            return refused
 
         return review_action(request, draft_id, t, release)
+
+    @app.post("/revisao/{draft_id}/publicar")
+    def review_publish(request: Request, draft_id: int, t: Annotated[str, Form()] = ""):
+        """Reviewed: it goes out at the next check (up to 10 min), without waiting its time."""
+
+        def publish(draft):
+            refused = out_of_order(request, draft)
+            if refused is None:
+                store.publish_now(draft.id, now())
+            return refused
+
+        return review_action(request, draft_id, t, publish)
 
     def topic_action(request: Request, draft_id: int, n: int, t: str, removed: bool):
         def change(draft):
