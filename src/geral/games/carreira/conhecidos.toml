@@ -1,8 +1,9 @@
-# Ajustes do draft sobre a base do jogo da velha, que usa o título da Wikipédia: alguns jogadores
-# vêm com o nome de registro ("Marcelo Vieira da Silva Júnior"), que o torcedor não reconhece.
-# Chave = id do Wikidata.
+# Quem entra no draft da Carreira, além das lendas: uma lista curada (v1, revisada pelo dev em
+# 2026-11-23) de jogadores de linha da base do jogo da velha que o torcedor reconhece.
+# Chave = id do Wikidata. Para acrescentar alguém, ponha o id em `[draft] jogadores`.
 
-# Nome pelo qual o torcedor conhece o jogador.
+# Nome pelo qual o torcedor conhece o jogador (a base usa o título da Wikipédia, às vezes o nome
+# de registro: "Marcelo Vieira da Silva Júnior").
 [apelidos]
 Q1027415 = "Rômulo"
 Q1027858 = "Raudinei"
@@ -99,15 +100,241 @@ Q769862 = "Augusto"
 Q931197 = "Joel"
 Q965448 = "Fred"
 
-# Fora do draft: quem o torcedor conhece mais como técnico, e nomes de registro cujo apelido não
-# está confirmado (se não reconhecemos o nome, o torcedor também não reconhece).
-[fora]
-tecnicos = [
-  "Felipão", "Tite", "Péricles Chamusca", "Abel Braga", "Levir Culpi", "Cuca",
-  "Adílson Batista", "Argel Fuchs", "Toninho Cecílio", "Alexandre Gallo", "Milton Cruz",
-]
-sem_apelido = [
-  "Q10333326", "Q1440374", "Q1573490", "Q180906", "Q181126", "Q1825165", "Q197586", "Q210114",
-  "Q210135", "Q217974", "Q217992", "Q2292579", "Q2349653", "Q2712996", "Q2714428", "Q460484",
-  "Q579215", "Q720593", "Q827215", "Q888001", "Q888006",
+[draft]
+jogadores = [
+  "Q197569",  # Adriano Gabiru
+  "Q170452",  # Adriano Imperador
+  "Q615292",  # Alemão
+  "Q507815",  # Alex
+  "Q2001590",  # Alex Mineiro
+  "Q551192",  # Alex Sandro
+  "Q439450",  # Alex Silva
+  "Q515938",  # Alex Teixeira
+  "Q15214940",  # Alex Telles
+  "Q138075",  # Alexandre Pato
+  "Q454934",  # Amarildo
+  "Q309731",  # Amoroso
+  "Q484772",  # Anderson
+  "Q17619350",  # Andreas Pereira
+  "Q218098",  # André Cruz
+  "Q310458",  # André Santos
+  "Q59205608",  # Antony
+  "Q2070423",  # Antônio Carlos Zago
+  "Q366156",  # Arthur Friedenreich
+  "Q39667548",  # Arthur Melo
+  "Q23638974",  # Ayrton Lucas
+  "Q160363",  # Aílton
+  "Q455799",  # Baltazar
+  "Q237561",  # Belletti
+  "Q137242",  # Bernard
+  "Q178774",  # Bismarck
+  "Q455557",  # Borges
+  "Q351827",  # Branco
+  "Q38693097",  # Bremer
+  "Q58323172",  # Bruno Guimarães
+  "Q19956526",  # Bruno Henrique
+  "Q1344142",  # Carlinhos Bala
+  "Q723936",  # Carlos Alberto
+  "Q616664",  # Casemiro
+  "Q221798",  # Cicinho
+  "Q464419",  # Clodoaldo
+  "Q221141",  # Cláudio Caçapa
+  "Q612073",  # Coutinho
+  "Q299367",  # Cris
+  "Q316436",  # César Sampaio
+  "Q517914",  # Dadá Maravilha
+  "Q537644",  # Daniel Carvalho
+  "Q437329",  # Danilo
+  "Q80761",  # Dante
+  "Q193706",  # David Luiz
+  "Q27801691",  # David Neres
+  "Q514577",  # Dentinho
+  "Q311641",  # Denílson
+  "Q459707",  # Diego Costa
+  "Q109428",  # Diego Ribas
+  "Q2449294",  # Diego Souza
+  "Q905206",  # Diego Tardelli
+  "Q455565",  # Dirceu
+  "Q283706",  # Dodô
+  "Q745422",  # Donizete Pantera
+  "Q391680",  # Douglas Costa
+  "Q28363823",  # Douglas Luiz
+  "Q10268484",  # Douglas Santos
+  "Q467232",  # Dudu Cearense
+  "Q215890",  # Dunga
+  "Q718903",  # Dutra
+  "Q296058",  # Edmílson
+  "Q559474",  # Edu Dracena
+  "Q314750",  # Edu Gaspar
+  "Q207407",  # Elano
+  "Q510123",  # Elias
+  "Q47766",  # Elivélton
+  "Q215952",  # Emerson
+  "Q30123152",  # Emerson Royal
+  "Q59870",  # Emerson Sheik
+  "Q197563",  # Euller
+  "Q69975567",  # Evanilson
+  "Q17385902",  # Everton Cebolinha
+  "Q641425",  # Fabinho
+  "Q2314727",  # Fabão
+  "Q932827",  # Fagner
+  "Q312454",  # Falcão
+  "Q1839524",  # Felipe
+  "Q794628",  # Felipe Anderson
+  "Q204450",  # Felipe Melo
+  "Q459356",  # Fernandinho
+  "Q664053",  # Fernandão
+  "Q350547",  # Filipe Luís
+  "Q350536",  # Flávio Conceição
+  "Q712145",  # França
+  "Q312772",  # Fred
+  "Q965448",  # Fred
+  "Q216910",  # Fábio Aurélio
+  "Q726192",  # Fábio Júnior
+  "Q2316179",  # Fábio Santos
+  "Q13646572",  # Gabigol
+  "Q19708656",  # Gabriel Jesus
+  "Q25175970",  # Gabriel Magalhães
+  "Q61460651",  # Gabriel Martinelli
+  "Q14602686",  # Gabriel Paulista
+  "Q18617137",  # Gerson
+  "Q116560",  # Gil
+  "Q311335",  # Gilberto
+  "Q190142",  # Gilberto Silva
+  "Q44815",  # Giovane Élber
+  "Q382069",  # Giovanni
+  "Q713886",  # Giuliano
+  "Q159059",  # Grafite
+  "Q19559974",  # Guilherme Arana
+  "Q19709176",  # Gustavo Scarpa
+  "Q65030995",  # Igor Jesus
+  "Q359160",  # Jadson
+  "Q317863",  # Jardel
+  "Q20047360",  # Joelinton
+  "Q326476",  # Jonas
+  "Q163750",  # Jorginho
+  "Q1353788",  # Josimar
+  "Q161039",  # Josué
+  "Q64005114",  # João Pedro
+  "Q202429",  # Juan
+  "Q318184",  # Juninho Paulista
+  "Q314099",  # Jô
+  "Q204895",  # Júlio Baptista
+  "Q440945",  # Júnior Baiano
+  "Q180894",  # Kléber
+  "Q311035",  # Kléberson
+  "Q62733",  # Leandro Damião
+  "Q46741",  # Leonardo
+  "Q112604843",  # Lucas Beraldo
+  "Q220593",  # Lucas Leiva
+  "Q15207061",  # Lucas Lima
+  "Q312886",  # Lucas Moura
+  "Q30089624",  # Lucas Paquetá
+  "Q210950",  # Luisão
+  "Q72904",  # Luiz Adriano
+  "Q329451",  # Luiz Gustavo
+  "Q101764291",  # Luiz Henrique
+  "Q350756",  # Luizão
+  "Q192963",  # Luís Fabiano
+  "Q2316590",  # Luís Pereira
+  "Q18199184",  # Léo Pereira
+  "Q177686",  # Maicon
+  "Q16745198",  # Malcom
+  "Q296814",  # Mancini
+  "Q378101",  # Marcelinho Carioca
+  "Q262954",  # Marcelinho Paraíba
+  "Q38136",  # Marcelo
+  "Q2089039",  # Marcos Assunção
+  "Q218611",  # Marcos Rocha
+  "Q197729",  # Marques
+  "Q39230",  # Marquinhos
+  "Q35831063",  # Matheus Cunha
+  "Q15831118",  # Matheus Pereira
+  "Q928184",  # Mauro Galvão
+  "Q342457",  # Mauro Silva
+  "Q215040",  # Maxwell
+  "Q694542",  # Mazinho Oliveira
+  "Q62182",  # Mazzola
+  "Q310697",  # Michel Bastos
+  "Q312687",  # Mineiro
+  "Q318119",  # Miranda
+  "Q1440120",  # Márcio Araújo
+  "Q1526974",  # Márcio Santos
+  "Q381729",  # Müller
+  "Q919825",  # Nelinho
+  "Q208687",  # Nilmar
+  "Q83329",  # Nílton Santos
+  "Q959642",  # Obina
+  "Q19497",  # Oscar Emboaba
+  "Q197578",  # Oséas
+  "Q39079181",  # Paulinho
+  "Q73082",  # Paulinho
+  "Q181204",  # Paulinho McLaren
+  "Q552922",  # Paulo Cézar Caju
+  "Q313835",  # Paulo Henrique Ganso
+  "Q125063",  # Paulo Silas
+  "Q47491410",  # Pedro
+  "Q266410",  # Pedro Geromel
+  "Q509491",  # Pepe
+  "Q54858384",  # Pepê
+  "Q350493",  # Rafael Sóbis
+  "Q174926",  # Rafinha
+  "Q204407",  # Ramires
+  "Q181139",  # Ramon Menezes
+  "Q28861547",  # Raphinha
+  "Q115937989",  # Rayan
+  "Q312895",  # Raí
+  "Q742644",  # Reinaldo
+  "Q55055451",  # Renan Lodi
+  "Q357844",  # Renato Augusto
+  "Q1345763",  # Renato Gaúcho
+  "Q180889",  # Ricardinho
+  "Q440999",  # Ricardo Gomes
+  "Q315079",  # Ricardo Oliveira
+  "Q20806743",  # Richarlison
+  "Q921131",  # Richarlyson
+  "Q602525",  # Roberto Firmino
+  "Q220283",  # Roberto Rivellino
+  "Q58441",  # Robinho
+  "Q3438450",  # Rodrigo Caio
+  "Q42728914",  # Rodrygo
+  "Q197565",  # Roger Machado
+  "Q929023",  # Ronaldão
+  "Q28748046",  # Rony
+  "Q315831",  # Roque Júnior
+  "Q1363213",  # Réver
+  "Q99485542",  # Savinho
+  "Q312140",  # Serginho
+  "Q731260",  # Serginho Chulapa
+  "Q313861",  # Sonny Anderson
+  "Q312002",  # Sylvinho
+  "Q372451",  # Sávio
+  "Q303108",  # Taison
+  "Q191885",  # Thiago Motta
+  "Q370014",  # Thiago Neves
+  "Q531080",  # Tinga
+  "Q1353800",  # Tita
+  "Q552917",  # Toninho Cerezo
+  "Q714354",  # Túlio Maravilha
+  "Q937157",  # Valdo
+  "Q509812",  # Viola
+  "Q111016177",  # Vitor Roque
+  "Q295880",  # Vágner Love
+  "Q17403521",  # Walace
+  "Q1378124",  # Walter Casagrande
+  "Q467194",  # Washington
+  "Q73480",  # Willian
+  "Q2035459",  # Willian Arão
+  "Q2469796",  # Willian José
+  "Q535520",  # Wilson Piazza
+  "Q43252427",  # Yuri Alberto
+  "Q311511",  # Zagallo
+  "Q372092",  # Zito
+  "Q212491",  # Zé Elias
+  "Q2321775",  # Zé Maria
+  "Q57167",  # Zé Roberto
+  "Q252711",  # Ânderson Polga
+  "Q273766",  # Éder Aleixo
+  "Q29950055",  # Éder Militão
+  "Q4025436",  # Éverton Ribeiro
 ]
