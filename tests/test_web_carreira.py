@@ -401,3 +401,12 @@ def test_sem_minijogos_a_api_nao_pergunta_o_lance(game) -> None:
         corpo, _ = _ate_o_lance(game, base | {"semente": f"w{i}", "escolhas": []})
         assert corpo["carreira"]["pendente"] is None and corpo["codigo"]
         assert decodificar(corpo["codigo"]).entrada.minijogos is False
+
+
+def test_formulario_tem_a_chave_de_minijogos(game) -> None:
+    page = game.get("/jogos/carreira").text
+    assert 'data-minijogos="true" aria-pressed="true"' in page
+    assert 'data-minijogos="false" aria-pressed="false"' in page
+    assert "Com minijogos" in page and "Sem minijogos" in page
+    assert "/static/geral/penalti.js" in page
+    assert "cr-modes" not in page  # the old mode switch stays gone

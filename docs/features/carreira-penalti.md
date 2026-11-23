@@ -48,19 +48,19 @@ e uma marca, não mexe na evolução do jogador.
 
 ## Critérios de aceite (como testes)
 
-- [ ] `test_final_vai_para_o_penalti`: dado atacante num clube com copa, em N sementes aparece uma
+- [x] `test_final_vai_para_o_penalti`: dado atacante num clube com copa, em N sementes aparece uma
   `Escolha(tipo="lance")` com a finalização em `info[0].chance`.
-- [ ] `test_gol_da_o_titulo_e_erro_tira`: respondendo 0, a temporada tem o título da copa e a marca
+- [x] `test_gol_da_o_titulo_e_erro_tira`: respondendo 0, a temporada tem o título da copa e a marca
   de gol; respondendo 1, 2 ou 3, não tem o título e tem a marca de erro.
-- [ ] `test_sem_minijogos_nao_pergunta_e_sorteia_pela_finalizacao`: com `minijogos=False` não há
+- [x] `test_sem_minijogos_nao_pergunta_e_sorteia_pela_finalizacao`: com `minijogos=False` não há
   pendente `lance`; em 2000 sorteios, a taxa de gol fica perto de `p` (finalização alta > baixa).
-- [ ] `test_motor_bate_quando_pedido`: a resposta 4 dá o mesmo resultado que `minijogos=False`.
-- [ ] `test_no_maximo_dois_lances_e_so_atacante_ou_meia`.
-- [ ] `test_taxa_de_copas_sem_minijogos_parecida_com_a_de_hoje` (±20% em 1000 carreiras).
-- [ ] `test_link_guarda_minijogos_e_codigo_antigo_abre`: ida e volta com `minijogos=True`; um código
+- [x] `test_motor_bate_quando_pedido`: a resposta 4 dá o mesmo resultado que `minijogos=False`.
+- [x] `test_no_maximo_dois_lances_e_so_atacante_ou_meia`.
+- [x] `test_taxa_de_copas_sem_minijogos_parecida_com_a_de_hoje` (±20% em 1000 carreiras).
+- [x] `test_link_guarda_minijogos_e_codigo_antigo_abre`: ida e volta com `minijogos=True`; um código
   fixado do formato atual decodifica com `False`.
-- [ ] `test_realismo_continua`: `test_carreira_realismo.py` passa sem ajuste no teste.
-- [ ] Web: `test_formulario_tem_a_chave_de_minijogos` e o payload do `lance`.
+- [x] `test_realismo_continua`: `test_carreira_realismo.py` passa sem ajuste no teste.
+- [x] Web: `test_formulario_tem_a_chave_de_minijogos` e o payload do `lance`.
 
 ## Verificação ponta a ponta
 

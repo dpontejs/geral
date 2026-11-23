@@ -56,6 +56,6 @@
 
 **Files:** Create `src/geral/static/geral/penalti.js` (do rascunho; exporta `jogarPenalti(el, {finalizacao, clube, adversario, copa}) -> Promise<"gol"|"defesa"|"fora"|"trave"|"motor">`); Modify `carreira.js`, `carreira.html.j2`, `jogos.css`; Test `tests/test_web_carreira.py`
 
-- [ ] `test_formulario_tem_a_chave_de_minijogos` (dois cartões, padrão "com"). FAIL → PASS.
-- [ ] `carreira.js`: chave do formulário → `estado.minijogos`; pendente `lance` abre o pênalti no lugar dos cartões de opção e responde o índice; botão "Deixar o motor bater" → 4. Linha do tempo e card mostram o lance ("Pênalti na final: gol"). Sem o controle de Finalização do rascunho.
-- [ ] Subir o app local, jogar no navegador (390 px e 1280 px) uma carreira com e uma sem minijogos, abrir o link; fotos para o dev. Commit `feat: tela do pênalti decisivo e chave de minijogos`; push; PR.
+- [x] `test_formulario_tem_a_chave_de_minijogos` (dois cartões, padrão "com"). FAIL → PASS.
+- [x] `carreira.js`: chave do formulário → `estado.minijogos`; pendente `lance` abre o pênalti no lugar dos cartões de opção e responde o índice; botão "Deixar o motor bater" → 4. Linha do tempo e card mostram o lance ("Pênalti na final: gol"). Sem o controle de Finalização do rascunho.
+- [x] Subir o app local, jogar no navegador (390 px e 1280 px) uma carreira com e uma sem minijogos, abrir o link; fotos para o dev. Commit `feat: tela do pênalti decisivo e chave de minijogos`; push; PR.
