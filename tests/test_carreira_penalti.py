@@ -1,7 +1,7 @@
 import random
 
 import pytest
-from test_carreira_motor import entrada
+from test_carreira_motor import ate_o_fim, entrada
 
 from geral.games.carreira.dados import carregar
 from geral.games.carreira.draft import JogadaInvalida, montar, oferta
@@ -154,3 +154,21 @@ def test_resposta_de_lance_invalida() -> None:
     for ruim in (5, 9):
         with pytest.raises(JogadaInvalida):
             simular(dados, "geral", final.model_copy(update={"escolhas": [*final.escolhas, ruim]}))
+
+
+# Cup titles per career of strikers and midfielders (Rápida, answering 0) measured on origin/main
+# before the penalty (eaa6d2d7), with this exact loop: 717 in 1000 careers.
+COPAS_ANTES = 0.717
+
+
+def test_taxa_de_copas_sem_minijogos_parecida_com_a_de_hoje() -> None:
+    dados = carregar()
+    copas = {liga.copa for liga in dados.ligas.values() if liga.copa}
+    total = lances = 0
+    for i in range(1000):
+        e = entrada(f"t{i}", posicao=("atacante", "meia")[i % 2], melhor=(True, False, None)[i % 3])
+        c, _ = ate_o_fim(e, dados)
+        total += sum(1 for t in c.temporadas for x in t.titulos if x in copas)
+        lances += sum(1 for t in c.temporadas if t.lance)
+    assert abs(total / 1000 - COPAS_ANTES) <= 0.2 * COPAS_ANTES
+    assert lances > 300  # the penalty does show up

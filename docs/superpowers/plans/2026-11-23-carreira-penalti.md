@@ -41,8 +41,8 @@
 
 **Files:** `motor.py` (`CHANCE_FINAL`); Test `tests/test_carreira_penalti.py`
 
-- [ ] `test_taxa_de_copas_sem_minijogos_parecida_com_a_de_hoje`: medir a taxa de copas em 1000 carreiras com o código do `origin/main` (fixar o número no teste com comentário de onde veio) e exigir ±20% com `minijogos=False`. Ajustar `CHANCE_FINAL` até passar; rodar `test_carreira_realismo.py`.
-- [ ] Commit `feat: calibra a frequência do pênalti decisivo`.
+- [x] `test_taxa_de_copas_sem_minijogos_parecida_com_a_de_hoje`: medir a taxa de copas em 1000 carreiras com o código do `origin/main` (fixar o número no teste com comentário de onde veio) e exigir ±20% com `minijogos=False`. Ajustar `CHANCE_FINAL` até passar; rodar `test_carreira_realismo.py`.
+- [x] Commit `feat: calibra a frequência do pênalti decisivo`.
 
 ### Task 3: Link e API
 
