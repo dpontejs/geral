@@ -761,6 +761,7 @@ class _Simulacao:
         resposta = self._resposta(len(decisao.opcoes))
         if resposta is None:
             return self._escolha(decisao, destinos), False
+        self.historico.add(decisao.id)  # an answered question can open others (`requer`)
         opcao = decisao.opcoes[resposta]
         saida = self.efeito.saida
         self._aplicar(opcao)

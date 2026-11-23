@@ -327,3 +327,25 @@ def test_payload_traz_opcao_arriscada_e_marcas_do_final(game) -> None:
     assert final["marcas"] == carreira.final.marcas and final["posicao"]
     marcas = [m for t in fim.json()["carreira"]["temporadas"] for m in t["marcas"]]
     assert len(marcas) >= 1
+
+
+def test_link_mostra_a_posicao_final(game) -> None:
+    from test_carreira_caminhos import _mais_arriscada, jogar
+    from test_carreira_motor import entrada
+
+    from geral.games.carreira.codigo import codificar, resumir
+    from geral.games.carreira.dados import carregar
+
+    dados = carregar()
+    for i in range(200):
+        e = entrada(f"p{i}").model_copy(update={"modo": "completa"})
+        carreira, e, _ = jogar(dados, e, _mais_arriscada)
+        if carreira.final.posicao != e.craque.posicao:
+            break
+    else:
+        pytest.fail("nenhuma carreira que mudou de posição em 200 sementes")
+    codigo = codificar(dados.versao, "geral", e, resumir(e, carreira), dados)
+
+    page = game.get(f"/jogos/carreira/c/{codigo}")
+
+    assert f"A carreira de Zé · {carreira.final.posicao}" in page.text

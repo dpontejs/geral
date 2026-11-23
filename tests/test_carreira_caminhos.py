@@ -356,3 +356,15 @@ def test_arco_fica_no_clube_onde_comecou(sempre) -> None:
         assert carreira.final and "d2" not in carreira.final.perguntas  # moved: the arc is over
         vistos += 1
     assert vistos
+
+
+def test_decisao_respondida_libera_quem_a_requer(sempre) -> None:
+    depois = _decisao("d3", Opcao(texto="a"), Opcao(texto="b"), condicao=Condicao(requer=("d1",)))
+    dados = _dados(_decisao("d1", Opcao(texto="a"), Opcao(texto="b")), depois)
+    e = entrada("q1", dados=dados)
+    _, e = _ate_a_decisao(dados, e, "d1")
+    e = e.model_copy(update={"escolhas": [*e.escolhas, 0]})
+
+    carreira, _ = _ate_a_decisao(dados, e, "d3")
+
+    assert carreira.pendente and carreira.pendente.id == "d3"

@@ -1529,7 +1529,10 @@ def create_app(
         compartilhada = {
             "codigo": codigo,
             "craque": aberto.entrada.craque.model_dump(),
-            "resumo": aberto.resumo.model_dump(),
+            # a replayed career knows where he ended up playing; the code only has the start
+            "resumo": (
+                carreira_codigo.resumir(aberto.entrada, carreira) if carreira else aberto.resumo
+            ).model_dump(),
             "carreira": carreira.model_dump() if carreira else None,
         }
         return carreira_pagina(
