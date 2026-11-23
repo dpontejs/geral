@@ -1,5 +1,5 @@
-"""The draft: nine legends on offer (eight plus one spare for the single re-roll), one stolen
-attribute from each of eight of them."""
+"""The draft: ten names on offer (eight turns plus two re-rolls), one legend and nine known real
+players, one stolen attribute from each of eight of them."""
 
 import random
 from collections.abc import Iterable
@@ -29,15 +29,15 @@ def edicoes(dados: Dados, times: Iterable[str]) -> list[str]:
     return ["geral", *(t for t in times if t != "geral" and t in proprias)]
 
 
-LENDAS = 3  # curated legends in an offer; the rest are real players of the base
+LENDAS = 1  # curated legends in an offer, the find of the draft; the rest are known real players
 JOGADORES = OFERTA - LENDAS
 REGIONAIS = (1, 3)  # starting in the Northeast: at least this many legends, players of the region
 
 
 def oferta(dados: Dados, edicao: str, semente_draft: str, clube: str | None = None) -> list[Lenda]:
-    """The draft's ten names (8 turns and 2 re-rolls): 3 legends and 7 real players, all with
-    different names; starting in the Northeast brings people of the region. Same seed, same
-    offer."""
+    """The draft's ten names (8 turns and 2 re-rolls): 1 legend and 9 known real players, all
+    with different names; starting in the Northeast brings people of the region (the legend is
+    one of theirs). Same seed, same offer."""
     rng = random.Random(f"draft:{edicao}:{semente_draft}")
     inicio = dados.clubes.get(clube or "")
     regiao = dados.regiao(inicio) if inicio else None
