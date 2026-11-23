@@ -312,3 +312,33 @@ def test_remove_on_this_day(owner, store) -> None:
 
     kept = Newsletter.model_validate_json(store.draft_by_id(d.id).newsletter_json)
     assert kept.on_this_day == [] and kept.story is not None
+
+
+def test_publish_now_sends_at_the_next_check(owner, store) -> None:
+    d = draft(store)  # sends in 5 h
+
+    assert "Publicar agora" in owner.get(f"/revisao?t={link()}").text
+    assert post(owner, f"/revisao/{d.id}/publicar").status_code == 303
+
+    assert [x.id for x in store.released_due(NOW)] == [d.id]
+    assert "sai na próxima verificação" in owner.get(f"/revisao?t={link()}").text
+
+
+def test_publish_now_a_held_draft_lets_it_go(owner, store) -> None:
+    d = draft(store)
+    post(owner, f"/revisao/{d.id}/segurar")
+
+    assert post(owner, f"/revisao/{d.id}/publicar").status_code == 303
+    assert store.draft_by_id(d.id).held is False
+    assert [x.id for x in store.released_due(NOW)] == [d.id]
+
+
+def test_publish_now_after_sent_or_after_a_newer_edition_is_409(owner, store, clock) -> None:
+    sent, old = draft(store), draft(store, kind="post")
+    store.mark_draft_sent("flamengo", "news", sent.day, NOW)
+    clock.now = NOW + timedelta(hours=6)  # a newer edition went out after old's send time
+    store.set_latest_edition("flamengo", "Urubu News — Notícias — x", "h", "t", clock.now)
+
+    assert post(owner, f"/revisao/{sent.id}/publicar", link(clock.now)).status_code == 409
+    assert post(owner, f"/revisao/{old.id}/publicar", link(clock.now)).status_code == 409
+    assert store.released_due(clock.now) == []

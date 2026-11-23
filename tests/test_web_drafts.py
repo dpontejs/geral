@@ -167,3 +167,21 @@ def test_draft_send_at_must_have_a_timezone(client) -> None:
     body = draft_in(send_at="2026-11-16T13:00:00")
 
     assert client.put(URL, json=body, headers=AUTH).status_code == 422
+
+
+def test_publish_now_before_send_at_is_due_right_away(store) -> None:
+    draft = saved(store)  # sends at 13:00
+    store.publish_now(draft.id, datetime(2026, 11, 16, 9, 30, tzinfo=TZ))
+
+    due = store.released_due(datetime(2026, 11, 16, 9, 35, tzinfo=TZ))
+
+    assert [d.id for d in due] == [draft.id]
+
+
+def test_hold_after_publish_now_cancels_it(store) -> None:
+    draft = saved(store)
+    store.publish_now(draft.id, datetime(2026, 11, 16, 9, 30, tzinfo=TZ))
+    store.set_held(draft.id, True, datetime(2026, 11, 16, 9, 31, tzinfo=TZ))
+    store.set_held(draft.id, False, datetime(2026, 11, 16, 9, 32, tzinfo=TZ))  # back to 13:00
+
+    assert store.released_due(datetime(2026, 11, 16, 9, 35, tzinfo=TZ)) == []

@@ -55,6 +55,9 @@ seções especiais (projeto B), em que a revisão é a última rede de seguranç
   `POST /revisao/{id}/segurar`, `/soltar`, `/topicos/{n}/tirar`, `/topicos/{n}/voltar` → 303 para
   `/revisao`. Rascunho já enviado: 409 "já saiu"; segurado e com `send_at` vencido, tudo segue
   permitido.
+- **Publicar agora** (2026-11-23): `POST /revisao/{id}/publicar` → 303; solta o rascunho (mesmas
+  recusas 409 do `soltar`) e marca `send_now`: `due --all` lista a linha `release` na próxima
+  verificação, mesmo antes do `send_at`. Sem clicar, segue saindo no horário. Segurar depois desfaz.
 - **Aviso ao dono**: ao gravar o rascunho, um e-mail "Revisar: <newsletter> — <label>, sai às HH:MM"
   com o link. Um por rascunho.
 
@@ -71,6 +74,8 @@ seções especiais (projeto B), em que a revisão é a última rede de seguranç
 - [x] `test_remove_topic_after_sent_is_409`
 - [x] `test_released_draft_after_send_at_is_due_for_send` e `test_next_window_starts_at_last_real_send`
 - [x] `test_run_build_twice_keeps_first_draft`
+- [x] `test_publish_now_sends_at_the_next_check`, `test_draft_published_before_send_at_is_due_for_send`,
+  `test_hold_after_publish_now_cancels_it`
 
 ## Verificação ponta a ponta
 

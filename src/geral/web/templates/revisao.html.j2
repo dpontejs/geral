@@ -7,14 +7,14 @@
     <div class="sheet">
       <h1>Revisão das edições</h1>
       {% if drafts %}
-      <p>Cada edição sai sozinha no horário. Segure para pausar (ela espera você soltar) ou tire tópicos; com tópico tirado, a manchete e a abertura são reescritas no envio.</p>
+      <p>Cada edição sai sozinha no horário. Revisou e quer mandar já? Publique agora (sai em até 10 minutos). Segure para pausar (ela espera você soltar) ou tire tópicos; com tópico tirado, a manchete e a abertura são reescritas no envio.</p>
       {% for d in drafts %}
       <article class="review{% if d.held %} held{% endif %}">
         <h2>{{ d.newsletter }} — {{ d.label }}</h2>
         <p>
           {% if d.held %}<b>Segurada</b>: não sai até você soltar.
-          {% elif d.late and d.going %}Solta: sai na próxima verificação.
-          {% elif d.late %}Não saiu (passou do horário de {{ d.send_at.astimezone(timezone).strftime("%H:%M de %d/%m") }}). Segure e solte para enviar agora.
+          {% elif d.going %}Publicada: sai na próxima verificação.
+          {% elif d.late %}Não saiu (passou do horário de {{ d.send_at.astimezone(timezone).strftime("%H:%M de %d/%m") }}). Publique agora para enviar.
           {% else %}Sai às {{ d.send_at.astimezone(timezone).strftime("%H:%M de %d/%m") }}.{% endif %}
           · <a href="/revisao/{{ d.id }}/previa?t={{ token }}" target="_blank" rel="noreferrer">Ver a prévia</a>
         </p>
@@ -22,6 +22,12 @@
           <input type="hidden" name="t" value="{{ token }}">
           <button type="submit">{{ "Soltar edição" if d.held else "Segurar edição" }}</button>
         </form>
+        {% if not d.going %}
+        <form method="post" action="/revisao/{{ d.id }}/publicar">
+          <input type="hidden" name="t" value="{{ token }}">
+          <button type="submit">Publicar agora</button>
+        </form>
+        {% endif %}
         <ol class="topics">
           {% for topic in d.topics %}
           <li{% if topic.removed %} class="removed"{% endif %}>

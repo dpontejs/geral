@@ -446,3 +446,23 @@ def test_run_news_on_a_thursday_resolves_for_specials() -> None:
     )
 
     assert edition is not None and edition.label == "Notícias — 22/10/2026"
+
+
+def test_draft_published_before_send_at_is_due_for_send(geral_db, monkeypatch) -> None:
+    follow(geral_db, "ana@example.com", ["vasco"])
+    geral_db.save_draft(
+        "vasco",
+        "news",
+        "2026-10-20",
+        "Notícias — 20/10/2026",
+        "{}",
+        datetime(2026, 10, 20, 8, 0, tzinfo=TZ),
+        datetime(2026, 10, 20, 13, 0, tzinfo=TZ),
+    )
+    draft = geral_db.draft("vasco", "news", "2026-10-20")
+    geral_db.publish_now(draft.id, datetime(2026, 10, 20, 9, 30, tzinfo=TZ))
+    monkeypatch.setattr(cli, "_now", lambda: datetime(2026, 10, 20, 9, 35, tzinfo=TZ))
+
+    lines = CliRunner().invoke(cli.app, ["due", "--all"]).stdout.splitlines()
+
+    assert "vasco\tnews\t2026-10-20\tNotícias — 20/10/2026 (solta 20/10 09:30)\trelease" in lines
