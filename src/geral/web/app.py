@@ -1504,8 +1504,9 @@ def create_app(
 
     @app.get("/jogos/carreira/c/{codigo}", response_class=HTMLResponse)
     def carreira_compartilhada(request: Request, codigo: str):
+        dados = carreira_dados.carregar()
         try:
-            aberto = carreira_codigo.decodificar(codigo)
+            aberto = carreira_codigo.decodificar(codigo, dados)
         except carreira_codigo.CodigoInvalido:
             aberto = None
         if aberto is None or aberto.edicao not in carreira_edicoes():
@@ -1517,7 +1518,6 @@ def create_app(
                 link_url="/jogos/carreira",
                 link_label="Jogar a Carreira",
             )
-        dados = carreira_dados.carregar()
         carreira = None
         if aberto.versao == dados.versao:
             try:
@@ -1574,7 +1574,7 @@ def create_app(
         codigo = contou = None
         if carreira.final:
             resumo = carreira_codigo.resumir(entrada, carreira)
-            codigo = carreira_codigo.codificar(dados.versao, edition, entrada, resumo)
+            codigo = carreira_codigo.codificar(dados.versao, edition, entrada, resumo, dados)
             contou = contar_carreira(request, dados, entrada, codigo, carreira.final.nota)
         return {
             "semente": entrada.semente,
