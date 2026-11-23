@@ -14,6 +14,11 @@ manchetes = [
   "{nome} cumpre mais uma temporada {pelo_clube}",
   "Ano discreto de {nome} {no_clube}",
   "{nome} segue no elenco {do_clube}",
+  "Sem alarde, {nome} faz o feijão com arroz {no_clube}",
+  "Nem herói nem vilão: {nome} fecha o ano no meio da tabela das notas",
+  "{nome} joga o seu, não compromete e segue nos planos {do_clube}",
+  "Temporada morna para {nome}, que promete mais para o ano que vem",
+  "\"Foi um ano de aprendizado\", resume {nome}",
 ]
 
 [[evento]]
@@ -21,14 +26,28 @@ id = "base-destaque"
 peso = 3
 momento = "antes"
 condicao = { idade_max = 16 }
-manchetes = ["Joia da base {do_clube}, {nome} chama a atenção", "{nome}, 16 anos, treina com os profissionais {do_clube}"]
+manchetes = [
+  "Joia da base {do_clube}, {nome} chama a atenção",
+  "{nome}, 16 anos, treina com os profissionais {do_clube}",
+  "Olheiros de meio Brasil vão ao CT {do_clube} só para ver {nome}",
+  "Camisa {camisa} da base, {nome} já tem fã-clube na arquibancada do sub-17",
+  "Técnico do profissional {do_clube} sobe {nome} para treinar com o time principal",
+  "\"Nunca vi um menino assim\", diz o roupeiro {do_clube} sobre {nome}",
+]
 efeito = { nota = 2 }
 
 [[evento]]
 id = "estreia-com-gol"
 peso = 2
 condicao = { idade_max = 19, gols_min = 1, fases = ["inicio"] }
-manchetes = ["{nome} estreia com gol {pelo_clube}", "Garoto {nome} marca na estreia e a torcida {do_clube} já canta o nome"]
+manchetes = [
+  "{nome} estreia com gol {pelo_clube}",
+  "Garoto {nome} marca na estreia e a torcida {do_clube} já canta o nome",
+  "Primeiro jogo, primeiro gol: {nome} não perde tempo {no_clube}",
+  "Aos {idade}, {nome} sai do banco e marca logo na estreia",
+  "Mãe de {nome} chora na arquibancada com o gol da estreia",
+  "Estreia dos sonhos: {nome} guarda a bola do primeiro gol {pelo_clube}",
+]
 efeito = { nota = 2 }
 
 [[evento]]
@@ -36,14 +55,27 @@ id = "lesao-grave"
 peso = 1
 momento = "antes"
 condicao = { idade_min = 18 }
-manchetes = ["{nome} rompe o ligamento do joelho e desfalca {o_clube}", "Lesão grave tira {nome} de quase toda a temporada"]
+manchetes = [
+  "{nome} rompe o ligamento do joelho e desfalca {o_clube}",
+  "Lesão grave tira {nome} de quase toda a temporada",
+  "Cirurgia no joelho: {nome} só volta no fim do ano",
+  "Departamento médico {do_clube} confirma: {nome} está fora por meses",
+  "Torcida {do_clube} manda mensagens de força a {nome} depois da lesão",
+]
 efeito = { nota = -5, jogos = 0.25, teto = -5 }
 
 [[evento]]
 id = "artilheiro"
 peso = 4
 condicao = { gols_min = 20 }
-manchetes = ["{nome} é o artilheiro do {campeonato} com {gols} gols", "Ninguém para {nome}: {gols} gols e a artilharia do {campeonato}"]
+manchetes = [
+  "{nome} é o artilheiro do {campeonato} com {gols} gols",
+  "Ninguém para {nome}: {gols} gols e a artilharia do {campeonato}",
+  "{gols} gols em {jogos} jogos: {nome} termina o ano como artilheiro",
+  "Goleador nato: {nome} leva a artilharia e a torcida {do_clube} pede estátua",
+  "Zagueiros do {campeonato} respiram aliviados: acabou a temporada de {nome}",
+  "Ninguém balançou mais as redes do que {nome} no {campeonato}",
+]
 efeito = { nota = 1, saida = 0.2 }
 
 [[evento]]
@@ -51,55 +83,112 @@ id = "titulo-decisivo"
 peso = 4
 unico = false
 condicao = { titulo = true, jogos_min = 15 }
-manchetes = ["{nome} decide e {o_clube} é campeão", "Com {nome} em campo, {o_clube} levanta a taça"]
+manchetes = [
+  "{nome} decide e {o_clube} é campeão",
+  "Com {nome} em campo, {o_clube} levanta a taça",
+  "É campeão! {O_clube} conquista o título com {nome} como peça-chave",
+  "{nome} dá a volta olímpica e a festa {do_clube} vara a madrugada",
+  "Volta olímpica {do_clube}, e o técnico aponta {nome}: \"esse aqui ganhou o título\"",
+  "Faixa no peito: {nome} é campeão {pelo_clube} depois de {jogos} jogos",
+  "Título no bolso e {nome} no colo da torcida {do_clube}",
+]
 
 [[evento]]
 id = "reserva"
 peso = 2
 unico = false
 condicao = { jogos_max = 10, idade_min = 18 }
-manchetes = ["{nome} esquenta o banco {do_clube}", "Temporada de reserva para {nome} {no_clube}"]
+manchetes = [
+  "{nome} esquenta o banco {do_clube}",
+  "Temporada de reserva para {nome} {no_clube}",
+  "Mais banco do que campo: {nome} vê a temporada de fora {no_clube}",
+  "Sem espaço com o técnico, {nome} pede mais minutos {no_clube}",
+  "{nome} treina bem, mas a vez não chega {no_clube}",
+  "Empresário de {nome} já procura outro clube depois de um ano no banco",
+]
 efeito = { saida = 0.3 }
 
 [[evento]]
 id = "briga-com-tecnico"
 peso = 1
 condicao = { idade_min = 20 }
-manchetes = ["{nome} bate boca com o técnico e é afastado {no_clube}", "Clima pesado: {nome} e o técnico {do_clube} não se falam"]
+manchetes = [
+  "{nome} bate boca com o técnico e é afastado {no_clube}",
+  "Clima pesado: {nome} e o técnico {do_clube} não se falam",
+  "Treino tenso {no_clube}: {nome} chuta cone e sai mais cedo",
+  "{nome} reclama de ser substituído e o técnico manda para o vestiário",
+  "Diretoria {do_clube} tenta apagar o incêndio entre {nome} e o treinador",
+]
 efeito = { saida = 0.5, nota = -1 }
 
 [[evento]]
 id = "convocado"
 peso = 3
 condicao = { selecao = true, exclui = ["convocado"] }
-manchetes = ["{nome} é convocado pela primeira vez para a Seleção", "Seleção chama {nome}, {do_clube}"]
+manchetes = [
+  "{nome} é convocado pela primeira vez para a Seleção",
+  "Seleção chama {nome}, {do_clube}",
+  "É Seleção! {nome} recebe a notícia no CT {do_clube} e cai no choro",
+  "Primeira convocação de {nome} faz a torcida {do_clube} soltar foguetes",
+  "Técnico da Seleção explica a escolha: \"{nome} merece pelo que fez\"",
+  "Orgulho {no_clube}: {nome} entra na lista da Seleção",
+]
 
 [[evento]]
 id = "declinio"
 peso = 2
 unico = false
 condicao = { idade_min = 33 }
-manchetes = ["Aos {idade}, {nome} já não tem o mesmo fôlego", "{nome} sente o peso da idade {no_clube}"]
+manchetes = [
+  "Aos {idade}, {nome} já não tem o mesmo fôlego",
+  "{nome} sente o peso da idade {no_clube}",
+  "{nome} perde a vaga para um garoto da base {do_clube}",
+  "Quem viu {nome} jogar não reconhece o jogador de hoje",
+  "Lento para a velocidade atual, {nome} vira opção de segundo tempo",
+  "Torcida {do_clube} já pergunta quando {nome} vai pendurar as chuteiras",
+]
 
 [[evento]]
 id = "golaco"
 peso = 1.5
 unico = false
 condicao = { gols_min = 5 }
-manchetes = ["Golaço de {nome} roda o mundo nas redes", "{nome} marca de bicicleta e para o {campeonato}"]
+manchetes = [
+  "Golaço de {nome} roda o mundo nas redes",
+  "{nome} marca de bicicleta e para o {campeonato}",
+  "Do meio de campo: {nome} vê o goleiro adiantado e encobre",
+  "Dribla três, tira o goleiro e empurra: o gol de {nome} é candidato ao Puskás",
+  "Narrador perde a voz no gol de placa de {nome}",
+  "Torcida {do_clube} pede placa no estádio para o golaço de {nome}",
+]
 
 [[evento]]
 id = "craque-do-campeonato"
 peso = 2
 condicao = { nota_min = 85, jogos_min = 25 }
-manchetes = ["{nome} é eleito o craque do {campeonato}", "Melhor do {campeonato}: dá {nome}"]
+manchetes = [
+  "{nome} é eleito o craque do {campeonato}",
+  "Melhor do {campeonato}: dá {nome}",
+  "Unanimidade: {nome} é o melhor jogador do {campeonato}",
+  "Prêmio de craque do ano vai para {nome}, {do_clube}",
+  "Técnicos e jornalistas votam, e {nome} leva o troféu de melhor do {campeonato}",
+  "{nome} sobe ao palco da premiação e agradece à torcida {do_clube}",
+]
 efeito = { saida = 0.2 }
 
 [[evento]]
 id = "base-formacao"
 peso = 5
 condicao = { idade_max = 16 }
-manchetes = ["{nome} faz a primeira temporada na base {do_clube}", "Na base {do_clube}, {nome} já usa a camisa {camisa}"]
+manchetes = [
+  "{nome} faz a primeira temporada na base {do_clube}",
+  "Na base {do_clube}, {nome} já usa a camisa {camisa}",
+  "Aos {idade} anos, {nome} acorda às cinco para treinar na base {do_clube}",
+  "Peneira aprovada: {nome} ganha vaga no alojamento {do_clube}",
+  "{nome} divide o beliche e o sonho com os meninos da base {do_clube}",
+  "Na escolinha {do_clube}, {nome} é o primeiro a chegar e o último a sair",
+  "Dever de casa, treino e jogo da base: a rotina de {nome}",
+]
 
 # --- antes da temporada --------------------------------------------------------------------
 
@@ -109,7 +198,13 @@ peso = 1.5
 unico = false
 momento = "antes"
 condicao = { idade_min = 17 }
-manchetes = ["Lesão muscular tira {nome} de parte da temporada", "{nome} sente a coxa e vira desfalque {no_clube}"]
+manchetes = [
+  "Lesão muscular tira {nome} de parte da temporada",
+  "{nome} sente a coxa e vira desfalque {no_clube}",
+  "Entorse no tornozelo deixa {nome} algumas semanas no estaleiro",
+  "Departamento médico {do_clube} vira segunda casa de {nome}",
+  "{nome} desfalca {o_clube} por lesão e acompanha os jogos da tribuna",
+]
 efeito = { jogos = 0.7 }
 
 [[evento]]
@@ -117,7 +212,12 @@ id = "pubalgia"
 peso = 0.6
 momento = "antes"
 condicao = { idade_min = 24 }
-manchetes = ["Pubalgia atormenta {nome}, que joga no sacrifício {pelo_clube}"]
+manchetes = [
+  "Pubalgia atormenta {nome}, que joga no sacrifício {pelo_clube}",
+  "Gelo, fisioterapia e dor: a temporada sofrida de {nome} com a pubalgia",
+  "{nome} joga à base de infiltração {no_clube}",
+  "Pubalgia volta a incomodar e {nome} fica fora de vários jogos",
+]
 efeito = { jogos = 0.6, nota = -2 }
 
 [[evento]]
@@ -126,7 +226,13 @@ peso = 1
 unico = false
 momento = "antes"
 condicao = { idade_min = 18, idade_max = 30 }
-manchetes = ["{nome} volta da pré-temporada voando {no_clube}", "Mais forte e mais rápido: {nome} ganha massa nas férias"]
+manchetes = [
+  "{nome} volta da pré-temporada voando {no_clube}",
+  "Mais forte e mais rápido: {nome} ganha massa nas férias",
+  "Teste físico: {nome} é o melhor do elenco {do_clube}",
+  "Preparador físico {do_clube} se impressiona com {nome}",
+  "{nome} passou as férias treinando e chega em outro nível",
+]
 efeito = { nota = 2 }
 
 [[evento]]
@@ -134,7 +240,13 @@ id = "tecnico-aposta"
 peso = 1.5
 momento = "antes"
 condicao = { idade_min = 17, idade_max = 21 }
-manchetes = ["Novo técnico {do_clube} aposta em {nome} como titular", "\"Esse menino vai longe\": técnico {do_clube} se rende a {nome}"]
+manchetes = [
+  "Novo técnico {do_clube} aposta em {nome} como titular",
+  "\"Esse menino vai longe\": técnico {do_clube} se rende a {nome}",
+  "{nome} ganha a camisa titular {do_clube} no primeiro dia do novo técnico",
+  "\"Se errar, o erro é meu\": técnico {do_clube} banca {nome}",
+  "Garoto de {idade} anos, {nome} vira titular {do_clube}",
+]
 efeito = { nota = 3, jogos = 1.0 }
 
 [[evento]]
@@ -142,7 +254,13 @@ id = "capitao"
 peso = 1.5
 momento = "antes"
 condicao = { idade_min = 26, nota_min = 70 }
-manchetes = ["{nome} ganha a braçadeira de capitão {do_clube}", "Capitão {nome}: o vestiário {do_clube} tem novo líder"]
+manchetes = [
+  "{nome} ganha a braçadeira de capitão {do_clube}",
+  "Capitão {nome}: o vestiário {do_clube} tem novo líder",
+  "Braçadeira no braço de {nome}: o técnico {do_clube} escolhe seu líder",
+  "{nome} herda a faixa de capitão e promete cobrar os mais novos",
+  "Voz do grupo, {nome} passa a falar pelo elenco {do_clube}",
+]
 efeito = { nota = 1 }
 
 [[evento]]
@@ -150,7 +268,12 @@ id = "convocacao-surpresa"
 peso = 1
 momento = "antes"
 condicao = { idade_min = 19, idade_max = 30, nota_min = 70, exclui = ["convocado"] }
-manchetes = ["Surpresa na lista: {nome}, {do_clube}, é convocado para a Seleção"]
+manchetes = [
+  "Surpresa na lista: {nome}, {do_clube}, é convocado para a Seleção",
+  "Ninguém esperava: {nome} aparece na lista da Seleção",
+  "Convocação de {nome} pega até o próprio jogador de surpresa",
+  "Aposta do técnico da Seleção, {nome} ganha a primeira chance",
+]
 efeito = { selecao = true }
 
 [[evento]]
@@ -159,7 +282,12 @@ peso = 0.6
 unico = false
 momento = "antes"
 condicao = { idade_min = 19, idade_max = 32 }
-manchetes = ["Vídeo de {nome} na balada na véspera do jogo irrita a torcida {do_clube}", "{nome} chega atrasado ao treino depois de festa e é multado"]
+manchetes = [
+  "Vídeo de {nome} na balada na véspera do jogo irrita a torcida {do_clube}",
+  "{nome} chega atrasado ao treino depois de festa e é multado",
+  "Diretoria {do_clube} afasta {nome} depois de noitada às vésperas de clássico",
+  "{nome} pede desculpas por festa e promete foco total",
+]
 efeito = { nota = -2, saida = 0.3 }
 
 [[evento]]
@@ -167,7 +295,13 @@ id = "virou-pai"
 peso = 0.8
 momento = "antes"
 condicao = { idade_min = 22, idade_max = 36 }
-manchetes = ["{nome} vira pai e promete gol com chupeta", "Paternidade faz bem: {nome} diz estar mais focado do que nunca"]
+manchetes = [
+  "{nome} vira pai e promete gol com chupeta",
+  "Paternidade faz bem: {nome} diz estar mais focado do que nunca",
+  "Nasceu! {nome} sai do treino correndo para a maternidade",
+  "Gol dedicado ao filho: {nome} comemora embalando o bebê",
+  "Fralda e chuteira: {nome} conta como é a vida de pai",
+]
 efeito = { nota = 1 }
 
 [[evento]]
@@ -176,14 +310,25 @@ peso = 0.5
 unico = false
 momento = "antes"
 condicao = { idade_min = 17, idade_max = 34 }
-manchetes = ["{nome} aparece com cabelo novo e vira meme na internet", "O novo visual de {nome} divide a torcida {do_clube}"]
+manchetes = [
+  "{nome} aparece com cabelo novo e vira meme na internet",
+  "O novo visual de {nome} divide a torcida {do_clube}",
+  "Cabelo pintado de loiro: {nome} estreia o visual e a torcida não perdoa",
+  "Tatuagem nova de {nome} vira assunto no vestiário {do_clube}",
+]
 
 [[evento]]
 id = "sobrevida"
 peso = 1
 momento = "antes"
 condicao = { idade_min = 31 }
-manchetes = ["{nome} contrata nutricionista, corta o churrasco e ganha sobrevida", "Aos {idade}, {nome} diz que se sente com 25"]
+manchetes = [
+  "{nome} contrata nutricionista, corta o churrasco e ganha sobrevida",
+  "Aos {idade}, {nome} diz que se sente com 25",
+  "Crioterapia, yoga e sono regrado: o segredo de {nome} para durar",
+  "{nome} desafia a idade e volta a ser titular {no_clube}",
+  "\"Idade é só um número\": {nome}, {idade} anos, voa nos testes físicos",
+]
 efeito = { nota = 3 }
 
 [[evento]]
@@ -192,7 +337,12 @@ peso = 0.7
 unico = false
 momento = "antes"
 condicao = { idade_min = 17, forca_max = 75 }
-manchetes = ["Salários atrasados e crise {no_clube}; {nome} cobra a diretoria", "{clube} em crise: elenco ameaça greve e {nome} lidera o protesto"]
+manchetes = [
+  "Salários atrasados e crise {no_clube}; {nome} cobra a diretoria",
+  "{clube} em crise: elenco ameaça greve e {nome} lidera o protesto",
+  "{nome} vira porta-voz do elenco na crise {do_clube}",
+  "Sem salário, {nome} treina e cobra: \"queremos respeito\"",
+]
 efeito = { saida = 0.4 }
 
 # --- depois dos números --------------------------------------------------------------------
@@ -202,14 +352,28 @@ id = "hat-trick"
 peso = 1.5
 unico = false
 condicao = { gols_min = 10 }
-manchetes = ["Três gols num jogo só: {nome} leva a bola para casa", "Hat-trick de {nome} e goleada {do_clube}"]
+manchetes = [
+  "Três gols num jogo só: {nome} leva a bola para casa",
+  "Hat-trick de {nome} e goleada {do_clube}",
+  "Pé direito, pé esquerdo e cabeça: o hat-trick perfeito de {nome}",
+  "{nome} marca três e ganha a bola autografada pelo elenco {do_clube}",
+  "Noite de {nome}: três gols e o placar da rodada",
+  "Tripleta! {nome} faz a festa da torcida {do_clube}",
+]
 
 [[evento]]
 id = "gol-no-classico"
 peso = 2
 unico = false
 condicao = { gols_min = 3 }
-manchetes = ["{nome} decide o clássico e vira herói da torcida {do_clube}", "Gol de {nome} no fim cala o rival"]
+manchetes = [
+  "{nome} decide o clássico e vira herói da torcida {do_clube}",
+  "Gol de {nome} no fim cala o rival",
+  "Clássico tem dono: {nome} marca e corre para a torcida {do_clube}",
+  "Gol de {nome} vale mais que três pontos: vale a gozação da semana",
+  "No jogo que importa, {nome} aparece",
+  "Torcida {do_clube} canta o nome de {nome} depois do gol no clássico",
+]
 efeito = { nota = 1 }
 
 [[evento]]
@@ -217,7 +381,14 @@ id = "gol-do-titulo"
 peso = 3
 unico = false
 condicao = { titulo = true, gols_min = 5, posicoes = ["atacante", "meia"] }
-manchetes = ["É de {nome} o gol do título {do_clube}", "{nome} marca na final e {o_clube} é campeão"]
+manchetes = [
+  "É de {nome} o gol do título {do_clube}",
+  "{nome} marca na final e {o_clube} é campeão",
+  "Um chute, um título: {nome} entra para a história {do_clube}",
+  "Gol de {nome} vira o grito de campeão {do_clube}",
+  "Na decisão, ele: {nome} marca o gol do título",
+  "{nome} faz o gol que a torcida {do_clube} vai contar para os netos",
+]
 efeito = { nota = 1 }
 
 [[evento]]
@@ -225,81 +396,152 @@ id = "maestro"
 peso = 2
 unico = false
 condicao = { jogos_min = 28, posicoes = ["meia"] }
-manchetes = ["{nome}, o maestro {do_clube}", "Passe de {nome} para tudo: {o_clube} joga por ele"]
+manchetes = [
+  "{nome}, o maestro {do_clube}",
+  "Passe de {nome} para tudo: {o_clube} joga por ele",
+  "Tudo passa pelos pés de {nome} {no_clube}",
+  "Cabeça erguida, passe na medida: {nome} rege o meio de campo",
+  "{jogos} jogos e uma batuta: {nome} é o dono do meio {do_clube}",
+  "Técnico {do_clube} resume: \"sem {nome}, a gente não joga\"",
+]
 
 [[evento]]
 id = "muralha"
 peso = 2
 unico = false
 condicao = { jogos_min = 28, posicoes = ["zagueiro", "volante"] }
-manchetes = ["{nome} é a muralha {do_clube}: ninguém passa", "Com {nome} lá atrás, {o_clube} tem a melhor defesa do {campeonato}"]
+manchetes = [
+  "{nome} é a muralha {do_clube}: ninguém passa",
+  "Com {nome} lá atrás, {o_clube} tem a melhor defesa do {campeonato}",
+  "Atacantes do {campeonato} já sabem: por {nome} não se passa",
+  "Desarme, antecipação e voz de comando: o ano de {nome} lá atrás",
+  "{nome} joga {jogos} partidas e vira o xerife {do_clube}",
+  "Ponta adversário pede para trocar de lado quando vê {nome}",
+]
 
 [[evento]]
 id = "lateral-que-apoia"
 peso = 2
 unico = false
 condicao = { jogos_min = 25, posicoes = ["lateral"] }
-manchetes = ["{nome} vira ponta: o lateral que mais cruza no {campeonato}", "Corredor de {nome} é a arma {do_clube}"]
+manchetes = [
+  "{nome} vira ponta: o lateral que mais cruza no {campeonato}",
+  "Corredor de {nome} é a arma {do_clube}",
+  "Sobe e desce o jogo inteiro: {nome} não cansa {no_clube}",
+  "Cruzamento de {nome} vira gol de novo, e a torcida já espera",
+  "{nome} é lateral no papel e ponta no campo",
+  "O pulmão {do_clube} joga pela lateral e se chama {nome}",
+]
 
 [[evento]]
 id = "ladrao-de-bola"
 peso = 2
 unico = false
 condicao = { jogos_min = 25, posicoes = ["volante"] }
-manchetes = ["{nome} lidera o {campeonato} em desarmes", "O cão de guarda {do_clube} se chama {nome}"]
+manchetes = [
+  "{nome} lidera o {campeonato} em desarmes",
+  "O cão de guarda {do_clube} se chama {nome}",
+  "{nome} rouba, toca simples e recomeça: o volante que todo técnico quer",
+  "Carrinho limpo de {nome} é aplaudido como gol {no_clube}",
+  "Meia adversário não acha espaço: {nome} está em todo lugar",
+  "Sem {nome}, o meio {do_clube} fica de portas abertas",
+]
 
 [[evento]]
 id = "zagueiro-artilheiro"
 peso = 2
 condicao = { gols_min = 4, posicoes = ["zagueiro", "lateral", "volante"] }
-manchetes = ["Defensor artilheiro: {nome} faz {gols} gols na temporada", "{nome} é o defensor mais goleador do {campeonato}"]
+manchetes = [
+  "Defensor artilheiro: {nome} faz {gols} gols na temporada",
+  "{nome} é o defensor mais goleador do {campeonato}",
+  "Bola parada é com {nome}: o defensor que faz gol de centroavante",
+  "{gols} gols vindo de trás: {nome} vira arma no escanteio {do_clube}",
+  "Tem atacante {do_clube} com inveja dos gols do defensor {nome}",
+  "Sobe para a área, sobe para a manchete: {nome} marca de novo",
+]
 
 [[evento]]
 id = "gol-contra"
 peso = 0.5
 condicao = { jogos_min = 10 }
-manchetes = ["Gol contra bizarro de {nome} vira piada nas redes", "{nome} marca contra e pede desculpas à torcida {do_clube}"]
+manchetes = [
+  "Gol contra bizarro de {nome} vira piada nas redes",
+  "{nome} marca contra e pede desculpas à torcida {do_clube}",
+  "Na tentativa de cortar, {nome} manda para o próprio gol",
+]
 
 [[evento]]
 id = "expulsao"
 peso = 0.7
 unico = false
 condicao = { jogos_min = 10 }
-manchetes = ["{nome} é expulso no primeiro tempo e {o_clube} perde", "Cartão vermelho para {nome} depois de discussão com o árbitro"]
+manchetes = [
+  "{nome} é expulso no primeiro tempo e {o_clube} perde",
+  "Cartão vermelho para {nome} depois de discussão com o árbitro",
+  "Carrinho por trás e vermelho direto: {nome} desfalca {o_clube}",
+]
 efeito = { nota = -1 }
 
 [[evento]]
 id = "penalti-perdido"
 peso = 0.6
 condicao = { jogos_min = 15, posicoes = ["atacante", "meia"] }
-manchetes = ["{nome} perde pênalti decisivo e {o_clube} é eliminado", "A bola de {nome} vai para a arquibancada na disputa de pênaltis"]
+manchetes = [
+  "{nome} perde pênalti decisivo e {o_clube} é eliminado",
+  "A bola de {nome} vai para a arquibancada na disputa de pênaltis",
+  "{nome} bate mal, o goleiro defende e a torcida {do_clube} não perdoa",
+]
 efeito = { nota = -1 }
 
 [[evento]]
 id = "rebaixamento"
 peso = 0.6
 condicao = { titulo = false, forca_min = 50, forca_max = 75, nota_max = 72, jogos_min = 15 }
-manchetes = ["{O_clube} é rebaixado e {nome} chora no gramado", "Queda dolorosa: {nome} não evita o rebaixamento {do_clube}"]
+manchetes = [
+  "{O_clube} cai para a divisão de baixo e {nome} chora no gramado",
+  "Queda dolorosa: {nome} não evita o rebaixamento {do_clube}",
+  "Noite triste {no_clube}: {nome} cai com o time",
+]
 efeito = { saida = 0.6 }
 
 [[evento]]
 id = "acesso"
 peso = 1.5
 condicao = { forca_max = 55, jogos_min = 20 }
-manchetes = ["Acesso! {nome} comanda a subida {do_clube}", "{O_clube} sobe de divisão com gols de {nome}"]
+manchetes = [
+  "Acesso! {nome} comanda a subida {do_clube}",
+  "{O_clube} sobe de divisão com gols de {nome}",
+  "{nome} sobe e já avisa: \"lugar {do_clube} é lá em cima\"",
+  "Festa no gramado: {O_clube} conquista o acesso e {nome} é carregado",
+  "{jogos} jogos, muito suor e um acesso: o ano de {nome}",
+]
 efeito = { nota = 1 }
 
 [[evento]]
 id = "idolo-da-torcida"
 peso = 2
 condicao = { no_clube_inicial = true, idade_min = 22, jogos_min = 30 }
-manchetes = ["Cria da casa, {nome} vira ídolo da torcida {do_clube}", "A torcida {do_clube} canta: \"{nome}, {nome}!\""]
+manchetes = [
+  "Cria da casa, {nome} vira ídolo da torcida {do_clube}",
+  "A torcida {do_clube} canta: \"{nome}, {nome}!\"",
+  "Bandeirão com o rosto de {nome} estreia na arquibancada {do_clube}",
+  "Da base ao coração da torcida: {nome} é a cara {do_clube}",
+  "Criança de camisa {camisa} e nome de {nome} nas costas: o ídolo virou moda",
+  "Torcida {do_clube} faz abaixo-assinado para {nome} nunca sair",
+]
 
 [[evento]]
 id = "revelacao"
 peso = 2
 condicao = { idade_max = 20, jogos_min = 25 }
-manchetes = ["{nome} é eleito a revelação do {campeonato}", "Aos {idade}, {nome} é a revelação do ano"]
+manchetes = [
+  "{nome} é eleito a revelação do {campeonato}",
+  "Aos {idade}, {nome} é a revelação do ano",
+  "Com {idade} anos, {nome} já é titular e já é cobiçado",
+  "Prêmio de revelação vai para {nome}, {do_clube}",
+  "Clubes da Europa anotam o nome: {nome}, {idade} anos, {do_clube}",
+  "{nome} termina a temporada como a grande surpresa do {campeonato}",
+]
 efeito = { nota = 2, saida = 0.3 }
 
 [[evento]]
@@ -307,14 +549,27 @@ id = "seca-de-gols"
 peso = 1.5
 unico = false
 condicao = { gols_max = 4, jogos_min = 12, posicoes = ["atacante"] }
-manchetes = ["{nome} passa a temporada quase sem marcar e é cobrado", "Seca de gols: torcida {do_clube} perde a paciência com {nome}"]
+manchetes = [
+  "{nome} passa a temporada quase sem marcar e é cobrado",
+  "Seca de gols: torcida {do_clube} perde a paciência com {nome}",
+  "Atacante que não faz gol: {nome} vira piada nas redes",
+  "Trave, goleiro, arquibancada: a bola de {nome} não quer entrar",
+  "Psicólogo, simpatia e promessa: {nome} tenta de tudo para voltar a marcar",
+]
 efeito = { saida = 0.3 }
 
 [[evento]]
 id = "recorde"
 peso = 3
 condicao = { gols_min = 32 }
-manchetes = ["{gols} gols! {nome} quebra o recorde {do_clube} numa temporada"]
+manchetes = [
+  "{gols} gols! {nome} quebra o recorde {do_clube} numa temporada",
+  "Livro de história {do_clube} ganha página nova: {gols} gols de {nome}",
+  "Recorde batido! Ninguém fez tantos gols {pelo_clube} numa temporada quanto {nome}",
+  "{nome} supera os ídolos antigos e chega a {gols} gols no ano",
+  "Placa no estádio: os {gols} gols de {nome} entram para a história {do_clube}",
+  "Ex-artilheiros {do_clube} se rendem ao recorde de {nome}",
+]
 efeito = { nota = 1, saida = 0.3 }
 
 [[evento]]
@@ -322,7 +577,11 @@ id = "vaiado"
 peso = 0.8
 unico = false
 condicao = { nota_max = 62, jogos_min = 20, forca_min = 68 }
-manchetes = ["{nome} é vaiado pela própria torcida {no_clube}", "Pressão da arquibancada: {nome} vira alvo {no_clube}"]
+manchetes = [
+  "{nome} é vaiado pela própria torcida {no_clube}",
+  "Pressão da arquibancada: {nome} vira alvo {no_clube}",
+  "Substituído, {nome} sai sob vaias e não olha para a arquibancada",
+]
 efeito = { saida = 0.3 }
 
 [[evento]]
@@ -330,7 +589,11 @@ id = "renovacao"
 peso = 0.5
 unico = false
 condicao = { idade_min = 20, idade_max = 31, jogos_min = 25 }
-manchetes = ["{nome} renova com {o_clube} por mais três anos", "Contrato novo: {o_clube} segura {nome}"]
+manchetes = [
+  "{nome} renova com {o_clube} por mais três anos",
+  "Contrato novo: {o_clube} segura {nome}",
+  "{nome} assina até o fim da década com {o_clube}",
+]
 efeito = { saida = -0.3 }
 
 [[evento]]
@@ -338,96 +601,196 @@ id = "gol-pela-selecao"
 peso = 1.5
 unico = false
 condicao = { selecao = true, gols_min = 6, requer = ["convocado"] }
-manchetes = ["{nome} marca pela Seleção e é o nome da rodada", "Com a amarelinha, {nome} deixa o dele"]
+manchetes = [
+  "{nome} marca pela Seleção e é o nome da rodada",
+  "Com a amarelinha, {nome} deixa o dele",
+  "{nome} balança a rede com a camisa da Seleção",
+  "Gol de {nome} pela Seleção faz o técnico sorrir no banco",
+  "{nome} deixa a marca na data FIFA e ganha moral com a Seleção",
+]
 
 [[evento]]
 id = "cortado"
 peso = 0.8
 condicao = { selecao = false, idade_min = 21, idade_max = 33, nota_min = 72, requer = ["convocado"] }
-manchetes = ["{nome} fica fora da lista da Seleção e reclama", "Esquecido: {nome} perde espaço na Seleção"]
+manchetes = [
+  "{nome} fica fora da lista da Seleção e reclama",
+  "Esquecido: {nome} perde espaço na Seleção",
+  "Fora da Seleção, {nome} promete trabalhar para voltar",
+]
 
 [[evento]]
 id = "copa-do-mundo"
 peso = 5
 unico = false
 condicao = { copa = true, mundial = false }
-manchetes = ["{nome} disputa a Copa do Mundo, mas o Brasil cai", "Copa de {nome} termina cedo: eliminação e choro no vestiário"]
+manchetes = [
+  "{nome} disputa a Copa do Mundo, mas o Brasil cai",
+  "Copa de {nome} termina cedo: eliminação e choro no vestiário",
+  "O sonho acaba cedo: {nome} e o Brasil se despedem da Copa",
+  "Mais uma Copa sem o hexa, e {nome} sai de cabeça baixa",
+  "{nome} joga a Copa, mas o Brasil volta para casa antes da final",
+  "\"Vamos voltar mais fortes\", diz {nome} após a queda na Copa",
+]
 
 [[evento]]
 id = "campeao-do-mundo"
 peso = 10
 unico = false
 condicao = { mundial = true }
-manchetes = ["CAMPEÃO DO MUNDO! {nome} levanta a taça com a Seleção", "{nome} é campeão do mundo e o Brasil vai às ruas"]
+manchetes = [
+  "CAMPEÃO DO MUNDO! {nome} levanta a taça com a Seleção",
+  "{nome} é campeão do mundo e o Brasil vai às ruas",
+  "HEXA! {nome} chora abraçado à taça",
+  "Brasil campeão do mundo, e {nome} está na foto",
+  "Buzinaço em todo o país: {nome} e a Seleção trazem a Copa",
+  "Do {clube} para o topo do mundo: {nome} é campeão",
+]
 efeito = { nota = 2 }
 
 [[evento]]
 id = "adaptacao-europa"
 peso = 2
 condicao = { forca_min = 80, idade_max = 24, jogos_max = 20 }
-manchetes = ["{nome} sofre com o frio e a adaptação na {liga}", "Saudade do feijão: {nome} ainda não se encontrou na {liga}"]
+manchetes = [
+  "{nome} sofre com o frio e a adaptação na {liga}",
+  "Saudade do feijão: {nome} ainda não se encontrou na {liga}",
+  "Longe de casa, {nome} sofre com a língua e perde espaço {no_clube}",
+  "Poucos minutos e muito frio: o primeiro ano de {nome} na Europa",
+  "{nome} liga para a mãe todo dia e ainda procura o melhor futebol {no_clube}",
+  "Técnico {do_clube} pede paciência com {nome}: \"ele vai se adaptar\"",
+]
 
 [[evento]]
 id = "brilha-na-europa"
 peso = 2
 unico = false
 condicao = { forca_min = 80, nota_min = 78, jogos_min = 25 }
-manchetes = ["{nome} brilha e vira titular absoluto {no_clube}", "Imprensa da {liga} se rende a {nome}"]
+manchetes = [
+  "{nome} brilha e vira titular absoluto {no_clube}",
+  "Imprensa da {liga} se rende a {nome}",
+  "Jornais europeus dão capa para {nome}",
+  "{nome} vira titular indiscutível e a camisa {camisa} esgota na loja {do_clube}",
+  "Brasileiro {do_clube}, {nome} é eleito o melhor do time no ano",
+  "Grandes da Europa de olho em {nome}, que brilha {no_clube}",
+]
 
 [[evento]]
 id = "noite-de-champions"
 peso = 1.5
 unico = false
 condicao = { forca_min = 80, gols_min = 6, paises = ["Espanha", "Inglaterra", "Itália", "Alemanha", "França", "Portugal", "Holanda"] }
-manchetes = ["Noite de Champions: {nome} marca e {o_clube} avança", "Gol de {nome} na Champions faz a {liga} falar português"]
+manchetes = [
+  "Noite de Champions: {nome} marca e {o_clube} avança",
+  "Gol de {nome} na Champions faz a {liga} falar português",
+  "Hino da Champions toca e {nome} responde com gol",
+  "{nome} marca na Champions e a Europa aprende a pronunciar seu nome",
+  "Liga dos Campeões tem sotaque brasileiro: gol de {nome}",
+]
 
 [[evento]]
 id = "premier-intensa"
 peso = 2
 condicao = { paises = ["Inglaterra"] }
-manchetes = ["Intensidade da Premier assusta, mas {nome} se adapta {no_clube}", "Jogo no Boxing Day e {nome} descobre o futebol inglês"]
+manchetes = [
+  "Intensidade da Premier assusta, mas {nome} se adapta {no_clube}",
+  "Jogo no Boxing Day e {nome} descobre o futebol inglês",
+  "Chuva, frio e jogo a cada três dias: {nome} sobrevive à Premier",
+  "{nome} ganha massa muscular para aguentar o tranco do futebol inglês",
+  "Torcida inglesa canta música em homenagem a {nome}",
+  "Do Brasil para a Premier: {nome} aprende a jogar no ritmo inglês",
+]
 
 [[evento]]
 id = "vida-de-sheik"
 peso = 3
 condicao = { paises = ["Arábia Saudita"] }
-manchetes = ["Vida de sheik: {nome} posta carro de luxo no deserto", "{nome} ganha uma fortuna e vira atração na Arábia"]
+manchetes = [
+  "Vida de sheik: {nome} posta carro de luxo no deserto",
+  "{nome} ganha uma fortuna e vira atração na Arábia",
+  "{nome} ganha camelo de presente da torcida {do_clube}",
+  "Petrodólares e calor de 45 graus: o novo mundo de {nome}",
+  "Mansão, piscina e futebol: {nome} se acostuma rápido à Arábia",
+  "Sheiks aplaudem de pé as jogadas de {nome} {no_clube}",
+]
 
 [[evento]]
 id = "aprende-japones"
 peso = 3
 condicao = { paises = ["Japão"] }
-manchetes = ["{nome} aprende japonês e vira ídolo {no_clube}", "No Japão, {nome} é recebido com festa e karaokê"]
+manchetes = [
+  "{nome} aprende japonês e vira ídolo {no_clube}",
+  "No Japão, {nome} é recebido com festa e karaokê",
+  "{nome} faz reverência à torcida e vira febre no Japão",
+  "Sushi no café da manhã: {nome} se adapta à vida em Tóquio",
+  "Torcida japonesa faz coreografia com o nome de {nome}",
+  "Organização japonesa impressiona {nome}: \"aqui o trem nunca atrasa\"",
+]
 
 [[evento]]
 id = "astro-na-mls"
 peso = 3
 condicao = { paises = ["Estados Unidos"] }
-manchetes = ["{nome} vira astro da MLS e posa ao lado de celebridades", "Estádio lotado nos EUA para ver {nome}"]
+manchetes = [
+  "{nome} vira astro da MLS e posa ao lado de celebridades",
+  "Estádio lotado nos EUA para ver {nome}",
+  "{nome} aparece em jogo da NBA e é ovacionado",
+  "Marketing a mil: a camisa de {nome} é a mais vendida {do_clube}",
+  "{nome} aprende o inglês nas entrevistas e vira astro nos EUA",
+  "Hollywood descobre {nome}: convite para participar de série",
+]
 
 [[evento]]
 id = "bombonera"
 peso = 3
 condicao = { paises = ["Argentina"] }
-manchetes = ["{nome} encara a pressão do futebol argentino {no_clube}", "Os hermanos aplaudem: {nome} conquista a torcida {do_clube}"]
+manchetes = [
+  "{nome} encara a pressão do futebol argentino {no_clube}",
+  "Os hermanos aplaudem: {nome} conquista a torcida {do_clube}",
+  "Garra hermana: {nome} aprende a jogar com sangue nos olhos",
+  "Arquibancada pula e o estádio treme: {nome} se acostuma ao barulho",
+  "{nome} toma mate, fala portunhol e conquista a Argentina",
+  "Imprensa argentina se rende: \"el brasileño {nome}\" é o melhor do time",
+]
 
 [[evento]]
 id = "caldeirao-turco"
 peso = 3
 condicao = { paises = ["Turquia"] }
-manchetes = ["{nome} conhece o caldeirão da torcida turca", "Sinalizadores e festa: {nome} é recebido como rei em Istambul"]
+manchetes = [
+  "{nome} conhece o caldeirão da torcida turca",
+  "Sinalizadores e festa: {nome} é recebido como rei em Istambul",
+  "Fumaça vermelha e gritaria: {nome} nunca viu nada igual",
+  "{nome} vira xodó da torcida {do_clube} na Turquia",
+  "Kebab, chá e futebol: {nome} se acostuma à vida em Istambul",
+  "Torcida turca faz mosaico com o rosto de {nome}",
+]
 
 [[evento]]
 id = "idolo-no-mexico"
 peso = 3
 condicao = { paises = ["México"] }
-manchetes = ["{nome} vira ídolo no México e ganha apelido em espanhol", "{O_clube} tem um brasileiro de estimação: {nome}"]
+manchetes = [
+  "{nome} vira ídolo no México e ganha apelido em espanhol",
+  "{O_clube} tem um brasileiro de estimação: {nome}",
+  "Tacos, mariachis e futebol: {nome} se dá bem no México",
+  "Torcida {do_clube} grita \"¡olé!\" a cada drible de {nome}",
+  "{nome} aprende o espanhol e dá entrevista sem tradutor",
+  "Estádio lotado canta para {nome}: o México adotou o brasileiro",
+]
 
 [[evento]]
 id = "vitrine-portugal"
 peso = 3
 condicao = { paises = ["Portugal"] }
-manchetes = ["Portugal vira vitrine: {nome} chama a atenção dos grandes da Europa", "{nome} se adapta rápido {no_clube}: \"a língua ajuda\""]
+manchetes = [
+  "Portugal vira vitrine: {nome} chama a atenção dos grandes da Europa",
+  "{nome} se adapta rápido {no_clube}: \"a língua ajuda\"",
+  "Bacalhau, fado e bola no pé: {nome} se sente em casa {no_clube}",
+  "Imprensa portuguesa compara {nome} aos craques brasileiros do passado",
+  "Olheiros de Inglaterra e Espanha viajam a Portugal para ver {nome}",
+  "Primeira temporada de {nome} em Portugal enche os olhos",
+]
 efeito = { saida = 0.3 }
 
 [[evento]]
@@ -435,27 +798,50 @@ id = "veterano-decisivo"
 peso = 2
 unico = false
 condicao = { idade_min = 34, gols_min = 5 }
-manchetes = ["Aos {idade}, {nome} ainda decide jogos {para_o_clube}", "O vinho de {nome}: quanto mais velho, melhor"]
+manchetes = [
+  "Aos {idade}, {nome} ainda decide jogos {para_o_clube}",
+  "O vinho de {nome}: quanto mais velho, melhor",
+  "Experiência fala alto: {nome}, {idade} anos, resolve de novo",
+  "Garotada corre, {nome} pensa e marca",
+  "\"Não vou parar agora\": {nome} segue decisivo aos {idade}",
+  "Velha guarda: {nome} faz {gols} gols e humilha os mais novos",
+]
 
 [[evento]]
 id = "documentario"
 peso = 1
 condicao = { idade_min = 29, nota_min = 85 }
-manchetes = ["{nome} ganha documentário em plataforma de streaming", "Série sobre a vida de {nome} estreia e bomba"]
+manchetes = [
+  "{nome} ganha documentário em plataforma de streaming",
+  "Série sobre a vida de {nome} estreia e bomba",
+  "Câmeras seguem {nome} por um ano inteiro {no_clube}",
+  "Do campinho de terra ao estrelato: a história de {nome} vira filme",
+  "Trailer do documentário de {nome} tem milhões de visualizações",
+]
 
 [[evento]]
 id = "polemica-redes"
 peso = 0.5
 unico = false
 condicao = { idade_min = 18, idade_max = 35 }
-manchetes = ["Post de {nome} nas redes gera polêmica e ele apaga", "{nome} responde torcedor nas redes e o caldo entorna"]
+manchetes = [
+  "Post de {nome} nas redes gera polêmica e ele apaga",
+  "{nome} responde torcedor nas redes e o caldo entorna",
+  "Story de {nome} vira caso de diretoria {no_clube}",
+]
 
 [[evento]]
 id = "assistencias"
 peso = 1.5
 unico = false
 condicao = { jogos_min = 30, posicoes = ["meia", "lateral"], nota_min = 70 }
-manchetes = ["{nome} é o líder de assistências do {campeonato}", "Garçom: {nome} serve os companheiros {no_clube}"]
+manchetes = [
+  "{nome} é o líder de assistências do {campeonato}",
+  "Garçom: {nome} serve os companheiros {no_clube}",
+  "{nome} dá passe para gol como quem dá bom dia",
+  "Atacantes {do_clube} agradecem: {nome} deixa todo mundo na cara do gol",
+  "Mais passes para gol do que ninguém: {nome} faz o time jogar",
+]
 
 # --- clássicos (o clube tem um clássico com nome) -------------------------------------------
 
@@ -464,14 +850,26 @@ id = "decide-o-classico"
 peso = 3
 unico = false
 condicao = { classico = true, gols_min = 2 }
-manchetes = ["{nome} decide o {classico} e cala a torcida {do_rival}", "Deu {nome} no {classico}: gol no fim contra {o_rival}", "{classico} é de {nome}: a festa é {do_clube}"]
+manchetes = [
+  "{nome} decide o {classico} e cala a torcida {do_rival}",
+  "Deu {nome} no {classico}: gol no fim contra {o_rival}",
+  "{classico} é de {nome}: a festa é {do_clube}",
+  "Semana de gozação garantida: {nome} marca no {classico}",
+  "{O_rival} até tentou, mas {nome} resolveu o {classico}",
+  "Herói do {classico}, {nome} sai do estádio nos braços da torcida {do_clube}",
+]
 efeito = { nota = 1 }
 
 [[evento]]
 id = "expulso-no-classico"
 peso = 0.8
 condicao = { classico = true, jogos_min = 10 }
-manchetes = ["{nome} perde a cabeça e é expulso no {classico}", "Vermelho no {classico}: {nome} deixa {o_clube} com dez contra {o_rival}"]
+manchetes = [
+  "{nome} perde a cabeça e é expulso no {classico}",
+  "Vermelho no {classico}: {nome} deixa {o_clube} com dez contra {o_rival}",
+  "Cabeça quente no {classico}: {nome} vê o vermelho e {o_clube} se complica",
+  "Torcida {do_clube} não perdoa a expulsão de {nome} contra {o_rival}",
+]
 efeito = { nota = -1 }
 
 # --- Nordeste (o clube atual é nordestino) ----------------------------------------------------
@@ -481,7 +879,12 @@ id = "viagem-de-onibus"
 peso = 1.5
 momento = "antes"
 condicao = { regioes = ["nordeste"], idade_min = 17 }
-manchetes = ["Catorze horas de ônibus pela BR: {nome} chega moído, mas joga", "Ônibus quebra na estrada e {o_clube} chega em cima da hora; {nome} salva o empate"]
+manchetes = [
+  "Catorze horas de ônibus pela BR: {nome} chega moído, mas joga",
+  "Ônibus quebra na estrada e {o_clube} chega em cima da hora; {nome} salva o empate",
+  "Estrada esburacada, ar-condicionado quebrado: a rotina de {nome} {no_clube}",
+  "Pastel na parada e viagem de madrugada: {nome} encara o interior",
+]
 efeito = { jogos = 0.9 }
 
 [[evento]]
@@ -489,21 +892,38 @@ id = "calor-do-meio-dia"
 peso = 1.5
 unico = false
 condicao = { regioes = ["nordeste"], jogos_min = 15 }
-manchetes = ["Jogo às 16h, 38 graus: {nome} é o único que não cai de rendimento", "Sol de rachar e {nome} correndo pelos dois: o calor é casa para ele"]
+manchetes = [
+  "Jogo às 16h, 38 graus: {nome} é o único que não cai de rendimento",
+  "Sol de rachar e {nome} correndo pelos dois: o calor é casa para ele",
+  "Termômetro marca 40 graus, e {nome} pede a bola o jogo inteiro",
+  "Visitante derrete no calor, {nome} corre como se fosse de manhã",
+]
 
 [[evento]]
 id = "arena-lotada-nordestao"
 peso = 2
 unico = false
 condicao = { regioes = ["nordeste"], jogos_min = 15, idade_min = 18 }
-manchetes = ["Estádio lotado no Nordestão e {nome} faz a festa da torcida {do_clube}", "Noite de Copa do Nordeste: {nome} decide diante de 40 mil"]
+manchetes = [
+  "Estádio lotado no Nordestão e {nome} faz a festa da torcida {do_clube}",
+  "Noite de Copa do Nordeste: {nome} decide diante de 40 mil",
+  "Casa cheia no Nordestão: torcida {do_clube} empurra e {nome} responde",
+  "Batucada, bandeiras e show de {nome}: noite de festa {no_clube}",
+  "Na Copa do Nordeste, {nome} se agiganta diante da torcida {do_clube}",
+  "Arquibancada lotada, céu estrelado e {nome} brilhando: arretado",
+]
 efeito = { nota = 1 }
 
 [[evento]]
 id = "proposta-do-sul"
 peso = 1.5
 condicao = { regioes = ["nordeste"], nota_min = 62, idade_min = 19, idade_max = 27 }
-manchetes = ["Clubes do Sul e do Sudeste de olho em {nome}, a joia {do_clube}", "Empresários lotam a tribuna para ver {nome}: o Brasil descobre o ídolo da terra"]
+manchetes = [
+  "Clubes do Sul e do Sudeste de olho em {nome}, a joia {do_clube}",
+  "Empresários lotam a tribuna para ver {nome}: o Brasil descobre o ídolo da terra",
+  "Grandes do Sudeste fazem fila para tirar {nome} {do_clube}",
+  "Torcida {do_clube} teme perder {nome} para os clubes do Sul",
+]
 efeito = { saida = 0.4 }
 
 [[evento]]
@@ -511,47 +931,90 @@ id = "festa-junina"
 peso = 1
 momento = "antes"
 condicao = { regioes = ["nordeste"], idade_min = 17 }
-manchetes = ["São João na concentração: {nome} dança quadrilha e o grupo se fecha", "Forró, milho e união: a festa junina {do_clube} anima {nome}"]
+manchetes = [
+  "São João na concentração: {nome} dança quadrilha e o grupo se fecha",
+  "Forró, milho e união: a festa junina {do_clube} anima {nome}",
+  "{nome} vence o concurso de quadrilha do elenco {do_clube}",
+  "Pamonha, canjica e forró pé de serra: {nome} chega animado à temporada",
+]
 efeito = { nota = 1 }
 
 [[evento]]
 id = "torcida-no-aeroporto"
 peso = 1.2
 condicao = { regioes = ["nordeste"], titulo = true }
-manchetes = ["Torcida invade o aeroporto para receber {nome} e os campeões {do_clube}", "Carreata pela cidade: {nome} ergue a taça em cima do trio elétrico"]
+manchetes = [
+  "Torcida invade o aeroporto para receber {nome} e os campeões {do_clube}",
+  "Carreata pela cidade: {nome} ergue a taça em cima do trio elétrico",
+  "Mar de gente no aeroporto: {nome} chega com a taça e a cidade para",
+  "Buzinaço, forró e a taça na mão de {nome}: a festa {do_clube} toma as ruas",
+]
 
 [[evento]]
 id = "idolo-da-terra"
 peso = 2
 condicao = { regioes = ["nordeste"], no_clube_inicial = true, idade_min = 21, jogos_min = 25 }
-manchetes = ["Filho da terra, {nome} vira o maior ídolo {do_clube} da década", "\"É daqui, é nosso\": a torcida {do_clube} adota {nome} de vez"]
+manchetes = [
+  "Filho da terra, {nome} vira o maior ídolo {do_clube} da década",
+  "\"É daqui, é nosso\": a torcida {do_clube} adota {nome} de vez",
+  "Nasceu aqui, joga aqui: {nome} é o orgulho {do_clube}",
+  "Menino da terra vira rei: {nome} tem o nome gritado em cada jogo",
+  "Vizinho de infância, ídolo de agora: o bairro de {nome} vai em peso ao estádio",
+  "Oxente, que craque! A torcida {do_clube} não cansa de {nome}",
+]
 efeito = { saida = -0.3 }
 
 [[evento]]
 id = "volta-ao-nordeste"
 peso = 2
 condicao = { regioes = ["nordeste"], no_clube_inicial = false, idade_min = 28 }
-manchetes = ["De volta ao Nordeste, {nome} é recebido como rei {no_clube}", "{nome} troca o frio pela praia e brilha {no_clube}"]
+manchetes = [
+  "De volta ao Nordeste, {nome} é recebido como rei {no_clube}",
+  "{nome} troca o frio pela praia e brilha {no_clube}",
+  "Volta pra casa: {nome} reencontra o sol e o futebol {no_clube}",
+  "Rodou o mundo e voltou: {nome} desembarca para fazer história {no_clube}",
+  "Rapaz, que volta! {nome} chega com experiência e lota o estádio {do_clube}",
+  "Água de coco, praia e futebol: aos {idade}, {nome} vive nova fase {no_clube}",
+]
 
 [[evento]]
 id = "gramado-ruim"
 peso = 1
 unico = false
 condicao = { regioes = ["nordeste"], jogos_min = 10 }
-manchetes = ["Gramado esburacado no interior e {nome} ainda dá chapéu", "Campo pesado, bola quicando: {nome} se vira e marca no estadual"]
+manchetes = [
+  "Gramado esburacado no interior e {nome} ainda dá chapéu",
+  "Campo pesado, bola quicando: {nome} se vira e marca no estadual",
+  "Gramado parece pasto, mas {nome} não reclama e joga",
+  "Bola pula como cabrito no campo do interior; {nome} domina mesmo assim",
+]
 
 [[evento]]
 id = "classico-lotado"
 peso = 2
 unico = false
 condicao = { regioes = ["nordeste"], classico = true, jogos_min = 15 }
-manchetes = ["{classico} com casa cheia: {nome} é o nome do jogo", "A cidade para no {classico}, e {nome} não decepciona"]
+manchetes = [
+  "{classico} com casa cheia: {nome} é o nome do jogo",
+  "A cidade para no {classico}, e {nome} não decepciona",
+  "{classico} de estádio cheio e {nome} faz {o_rival} sentir o peso da camisa",
+  "Ingressos esgotados, rivalidade lá em cima: {nome} brilha no {classico}",
+  "Do lado de lá, {o_rival}; do lado de cá, {nome} vestindo o manto {do_clube}",
+  "Cidade dividida no {classico}, e o nome do jogo é {nome}",
+]
 
 [[evento]]
 id = "artilheiro-do-nordestao"
 peso = 2
 condicao = { regioes = ["nordeste"], gols_min = 12 }
-manchetes = ["{nome} é o artilheiro da Copa do Nordeste", "Ninguém fez mais gols no Nordestão do que {nome}"]
+manchetes = [
+  "{nome} é o artilheiro da Copa do Nordeste",
+  "Ninguém fez mais gols no Nordestão do que {nome}",
+  "Goleiros do Nordeste já conhecem bem o chute de {nome}",
+  "Artilharia do Nordestão é de {nome}: gol para todo lado",
+  "Do Maranhão à Bahia, ninguém segura {nome} na Copa do Nordeste",
+  "Bola na rede e vaqueiro na arquibancada: {nome} lidera a artilharia do Nordestão",
+]
 efeito = { nota = 1, saida = 0.2 }
 
 [[evento]]
@@ -559,14 +1022,24 @@ id = "salario-atrasado-nordeste"
 peso = 0.8
 momento = "antes"
 condicao = { regioes = ["nordeste"], forca_max = 45 }
-manchetes = ["Três meses de salário atrasado {no_clube}: {nome} joga por amor à camisa", "Vaquinha da torcida paga o salário do elenco, e {nome} agradece em campo"]
+manchetes = [
+  "Três meses de salário atrasado {no_clube}: {nome} joga por amor à camisa",
+  "Vaquinha da torcida paga o salário do elenco, e {nome} agradece em campo",
+  "Sem salário e sem luz no CT, {nome} treina e segura a barra {no_clube}",
+  "{nome} recusa sair na crise {do_clube}: \"eu fico\"",
+]
 efeito = { saida = 0.3 }
 
 [[evento]]
 id = "vaquejada"
 peso = 0.6
 condicao = { regioes = ["nordeste"], idade_min = 20 }
-manchetes = ["Nas férias, {nome} vai à vaquejada e vira assunto nas redes", "{nome} aparece de chapéu de couro e a torcida aprova"]
+manchetes = [
+  "Nas férias, {nome} vai à vaquejada e vira assunto nas redes",
+  "{nome} aparece de chapéu de couro e a torcida aprova",
+  "Gibão, chapéu e cavalo: {nome} vive o sertão nas férias",
+  "{nome} cai do cavalo na vaquejada e o departamento médico arranca os cabelos",
+]
 
 # --- temporada para esquecer (a forma da temporada foi muito ruim; o motor escolhe este) ------
 
@@ -574,7 +1047,15 @@ manchetes = ["Nas férias, {nome} vai à vaquejada e vira assunto nas redes", "{
 id = "temporada-ruim"
 peso = 0
 unico = false
-manchetes = ["Temporada para esquecer: {nome} não rende e vira alvo de críticas {no_clube}", "{nome} some em campo e a torcida {do_clube} perde a paciência", "Ano ruim de {nome}: pouco futebol e muitas cobranças {no_clube}"]
+manchetes = [
+  "Temporada para esquecer: {nome} não rende e vira alvo de críticas {no_clube}",
+  "{nome} some em campo e a torcida {do_clube} perde a paciência",
+  "Ano ruim de {nome}: pouco futebol e muitas cobranças {no_clube}",
+  "Torcida {do_clube} chama {nome} de \"pé frio\" depois de mais uma derrota",
+  "Técnico {do_clube} sai em defesa de {nome}: \"vai voltar a jogar\"",
+  "Números ruins, atuações piores: {nome} não se encontra {no_clube}",
+  "Ano de {nome} vira meme: \"cadê o craque?\"",
+]
 efeito = { saida = 0.2 }
 
 # Eventos de marcas (marcas.toml): só acontecem para quem tem a marca.
@@ -588,5 +1069,7 @@ manchetes = [
   "Braçadeira no braço, taça na mão: {nome} lidera {o_clube}",
   "O capitão {nome} levanta o troféu e chora com a torcida {do_clube}",
   "{nome}, o capitão, comanda a festa {do_clube}",
+  "Sob chuva de papel picado, {nome} beija a taça como capitão {do_clube}",
+  "Faixa de capitão e de campeão: {nome} fecha o ano no alto",
 ]
 efeito = { nota = 1 }

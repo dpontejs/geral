@@ -7,7 +7,7 @@ from velha_fakes import base, player
 from geral.games.carreira import regras
 from geral.games.carreira.dados import carregar
 from geral.games.carreira.final import parecido, rotular
-from geral.games.carreira.motor import Temporada, simular
+from geral.games.carreira.motor import Temporada, artigos, simular
 
 
 def test_careers_vary() -> None:
@@ -137,3 +137,30 @@ def test_mudanca_escolhida_vale_na_temporada_seguinte() -> None:
                 assert depois.pais != carreira.temporadas[-1].pais
             vistas += 1
     assert vistas > 100
+
+
+def test_todo_evento_frequente_tem_quatro_manchetes() -> None:
+    dados = carregar()
+    poucas = {e.id: len(e.manchetes) for e in dados.eventos if e.peso >= 1 and len(e.manchetes) < 4}
+    assert poucas == {}
+
+    for clube, rival in (("vasco", "flamengo"), ("lazio", "roma")):
+        campos = (
+            artigos("clube", dados.clubes[clube])
+            | {"classico": "Clássico"}
+            | artigos("rival", dados.clubes.get(rival))
+            | {
+                "nome": "Fulano",
+                "camisa": 10,
+                "liga": "Brasil",
+                "campeonato": "Brasileirão",
+                "gols": 12,
+                "jogos": 38,
+                "idade": 24,
+            }
+        )
+        for e in dados.eventos:
+            assert len(set(e.manchetes)) == len(e.manchetes), e.id
+            for m in e.manchetes:
+                texto = m.format_map(campos)
+                assert "{" not in texto and "}" not in texto, (e.id, m)
