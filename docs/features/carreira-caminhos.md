@@ -36,8 +36,12 @@ arcos roteirizados, caros de escrever — arcos curtos saem das próprias marcas
   `Final.marcas: list[str]` (no card e na tela final). `finais.toml` aceita `requer` de marcas.
 - Perguntas por carreira: `MAX_ESCOLHAS` vira por modo — Rápida 5, Completa 8 (hoje 4 e 4). O
   teto conta só decisões (não as propostas de mercado nem o dia a dia, que seguem como hoje).
-- Só uma resposta que **muda de clube** (ou aposenta) segura o mercado daquele inverno; decisão com
-  `destino = "ficar"` deixa o mercado rodar depois (na Completa, pode vir decisão + proposta).
+- Uma decisão que **oferece clube** (Europa, Arábia, empréstimo…) segura o mercado daquele inverno
+  qualquer que seja a resposta, inclusive "ficar": recusar a Europa não pode terminar com o jogador
+  indo para outro clube logo depois. Aposentar também segura. Decisão **sem clube** (vestiário,
+  técnico, imprensa) deixa o mercado rodar depois (na Completa, pode vir decisão + proposta).
+  (Confirmado pelo dev em 2026-11-23; a primeira versão desta página dizia que todo "ficar" deixava o
+  mercado rodar.)
 - Depois de "virou meia", tudo usa a posição final: card, `Resumo` do link, comparação com
   jogador real e Fábrica de craques. `Final.posicao` (nova) guarda a posição final; a linha do
   tempo mostra a mudança.

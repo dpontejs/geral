@@ -34,7 +34,7 @@
     semente: null,
     escolhas: [],
     mostradas: 0,
-    modo: "rapida",
+    modo: "completa", // the only mode offered; old Rápida links still replay on the server
     temporadas: [],
     corpo: null,
   });
@@ -50,12 +50,6 @@
       group.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(c === chip)));
     }),
   );
-  const modos = form.querySelector(".cr-modes");
-  modos.addEventListener("click", (event) => {
-    const botao = event.target.closest(".cr-mode");
-    if (!botao) return;
-    modos.querySelectorAll(".cr-mode").forEach((m) => m.setAttribute("aria-pressed", String(m === botao)));
-  });
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
     const nome = $("cr-nome").value.trim();
@@ -68,7 +62,6 @@
       pe: pressed("pe"),
       clube: $("cr-clube").value,
     };
-    estado.modo = form.querySelector('.cr-mode[aria-pressed="true"]').dataset.modo;
     const go = form.querySelector(".cr-go");
     go.disabled = true;
     try {
@@ -160,8 +153,6 @@
 
   // -- 3. the career ----------------------------------------------------------------------------
 
-  const AUTO = 1800; // ms per season in the Rápida mode
-
   const pedido = () => ({
     semente_draft: estado.oferta.semente_draft,
     semente: estado.semente,
@@ -215,34 +206,22 @@
   }
 
   // One season on screen at a time; the earlier ones go to the timeline.
-  let relogio = null;
   function avancar() {
-    clearTimeout(relogio);
     const { temporadas } = estado;
     if (estado.mostradas < temporadas.length) {
       mostrarTemporada(temporadas[estado.mostradas]);
       estado.mostradas += 1;
       const faltam = estado.mostradas < temporadas.length;
       $("cr-next").hidden = !faltam;
-      $("cr-skip").hidden = !faltam || estado.modo === "completa";
-      if (faltam && estado.modo === "rapida") relogio = setTimeout(avancar, AUTO);
       if (faltam) return;
     }
-    $("cr-next").hidden = $("cr-skip").hidden = true;
+    $("cr-next").hidden = true;
     const { pendente, final } = estado.corpo.carreira;
     if (pendente) return perguntar(pendente);
     if (final) fim(final, estado.corpo.codigo);
   }
 
   $("cr-next").addEventListener("click", avancar);
-  $("cr-skip").addEventListener("click", () => {
-    clearTimeout(relogio);
-    while (estado.mostradas < estado.temporadas.length - 1) {
-      mostrarTemporada(estado.temporadas[estado.mostradas]);
-      estado.mostradas += 1;
-    }
-    avancar();
-  });
   $("cr-retry").addEventListener("click", () => simular());
 
   const chip = (texto, cls = "cr-chip") => el("span", cls, texto);

@@ -343,11 +343,6 @@ select.chip { appearance: auto; }
 /* Carreira, the career: a bar on top, the season just played as a newspaper clipping, the
    question as cards with the odds, the earlier seasons as a compact timeline. */
 #cr-carreira { width: 100%; max-width: 820px; align-self: center; }
-.cr-modes { border: 0; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.cr-modes legend { color: var(--paper); font: 700 14px/1 var(--body); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 8px; }
-.cr-mode { display: flex; flex-direction: column; gap: 6px; text-align: left; padding: 14px; border: 3px solid var(--paper); background: transparent; color: var(--paper); cursor: pointer; font: 500 15px/1.35 var(--body); }
-.cr-mode b { font: 900 28px/1 var(--display); text-transform: uppercase; }
-.cr-mode[aria-pressed="true"] { background: var(--lamp); color: var(--ink); border-color: var(--lamp); }
 .cr-bar { position: sticky; top: 0; z-index: 2; display: flex; justify-content: space-between; gap: 12px; flex-wrap: wrap; padding: 10px 14px; border: 3px solid var(--turf); font-size: 15px; }
 .cr-now { position: relative; background: var(--paper); color: var(--ink); border: 3px solid var(--ink); padding: 20px 22px 22px; display: flex; flex-direction: column; gap: 10px; box-shadow: 6px 6px 0 rgba(0, 0, 0, .35); background-image: linear-gradient(transparent 0 calc(100% - 6px), var(--ticket) calc(100% - 6px)); }
 .cr-now:empty { display: none; }
@@ -419,7 +414,6 @@ select.chip { appearance: auto; }
 
 @media (max-width: 480px) {
   .cr-fields { grid-template-columns: minmax(0, 1fr) 90px; }
-  .cr-modes { grid-template-columns: 1fr; }
   .cr-bar { font-size: 12px; padding: 8px 10px; flex-wrap: nowrap; }
   .cr-bar #cr-bar-who { display: none; }
   .cr-bar #cr-bar-nota { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
