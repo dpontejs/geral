@@ -363,15 +363,24 @@
       quadroId = requestAnimationFrame(quadro);
     }
 
-    // -- input: one pointerdown per touch (no click as well, or a tap would count twice) ---------
+    // -- input: pointer events only (no click as well, or a tap would count twice) ---------------
     function tecla(e) {
       if (e.code !== "Space" || fase === "fim") return;
       if (e.target.closest && e.target.closest("button, input, select, textarea, a")) return;
       e.preventDefault();
       acao();
     }
+    // A tap acts when the finger lifts where it went down: a scroll that starts on the pitch
+    // (the canvas is most of a phone's screen) moves away or gets cancelled, and kicks nothing.
+    let toque = null;
     cv.addEventListener("pointerdown", (e) => {
-      if (e.button !== 0) return;
+      if (e.button === 0) toque = { id: e.pointerId, x: e.clientX, y: e.clientY };
+    });
+    cv.addEventListener("pointercancel", () => (toque = null));
+    cv.addEventListener("pointerup", (e) => {
+      const t = toque;
+      toque = null;
+      if (!t || t.id !== e.pointerId || Math.hypot(e.clientX - t.x, e.clientY - t.y) > 12) return;
       e.preventDefault();
       acao();
     });
