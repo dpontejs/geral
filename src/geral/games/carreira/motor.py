@@ -30,7 +30,8 @@ IDADE_INICIAL, IDADE_MAXIMA = 16, 42
 RISCO = 8  # taken off every risky day-to-day chance: daring has to cost something
 MAX_ESCOLHAS = {"rapida": 5, "completa": 8}  # drawn decision questions per career
 ARCO_TENTATIVAS = 2  # seasons an arc's next step waits for its condition before it dies
-MAX_RESPOSTAS = 60  # every answer of a Completa career: a day-to-day one per season, the market
+MAX_LANCES = 2  # cup finals decided on a penalty, per career
+MAX_RESPOSTAS = 60 + MAX_LANCES  # every answer of a Completa career: day-to-day, market, penalties
 CHANCE_ESCOLHA = 0.4  # per season, when one fits
 ARRISCADA = 25  # an option with this chance or less is shown as a long shot
 COPA_DO_NORDESTE = "Copa do Nordeste"
@@ -44,6 +45,10 @@ SALTO = 18  # the biggest jump in level of a move up
 EUROPA = 80  # league strength from which a league counts as the top of Europe
 EXOTICAS = ("ara", "jap", "eua", "tur", "mex")
 GOL = {"atacante": 0.5, "meia": 0.24, "volante": 0.07, "lateral": 0.06, "zagueiro": 0.05}
+LANCES = ("gol", "defesa", "fora", "trave", "motor")  # the penalty's answers; "motor" rolls it
+CHANCE_FINAL = 1.6  # a cup final is this many times as likely as the cup title used to be
+COBRADORES = ("atacante", "meia")  # who takes the final's penalty
+MARCA_GOL, MARCA_ERRO = "frio-nas-decisoes", "perdeu-o-penalti"
 ASSIST = {"atacante": 0.16, "meia": 0.26, "volante": 0.09, "lateral": 0.13, "zagueiro": 0.03}
 
 
@@ -62,6 +67,7 @@ class Entrada(BaseModel):
     roubos: list[Roubo] = Field(max_length=9)
     escolhas: list[int] = Field(default=[], max_length=MAX_RESPOSTAS)
     modo: Literal["rapida", "completa"] = "rapida"
+    minijogos: bool = False  # the cup final's penalty is played on screen; else the engine rolls it
 
 
 class Temporada(BaseModel):
@@ -84,6 +90,22 @@ class Temporada(BaseModel):
     chegada: str | None = None  # "Chegou do Vasco": every change of club says so
     rotina: "ResultadoRotina | None" = None  # the day-to-day choice before this season
     marcas: list[str] = []  # the marks won since the last season, told: "Zé ganha a braçadeira"
+    lance: "ResultadoLance | None" = None  # the cup final's penalty, when this season had one
+
+
+class ResultadoLance(BaseModel):
+    resultado: Literal["gol", "defesa", "fora", "trave"]
+    adversario: str
+    manchete: str
+    copa: str = ""
+
+
+class Lance(BaseModel):
+    """The scoreboard of a penalty on screen: the club against whom, in which cup's final."""
+
+    clube: str
+    adversario: str
+    copa: str
 
 
 class ResultadoRotina(BaseModel):
@@ -101,12 +123,13 @@ class InfoOpcao(BaseModel):
 
 class Escolha(BaseModel):
     id: str
-    tipo: Literal["dia", "mercado", "decisao"] = "decisao"
+    tipo: Literal["dia", "mercado", "decisao", "lance"] = "decisao"
     pergunta: str
     opcoes: list[str]
     info: list[InfoOpcao] = []  # chance and effects of each option (day-to-day, risky decisions)
     destinos: list[str]  # the kind of each option (ficar, europa, aposentar…)
     clubes: list[str | None]  # the club each option moves to, None when it stays put
+    lance: Lance | None = None  # a penalty's scoreboard (tipo "lance")
 
 
 class Final(BaseModel):
@@ -138,6 +161,11 @@ def chance_de(opcao: OpcaoRotina, notas: dict[str, int]) -> int:
         return 100
     bonus = (notas[opcao.bonus] - 70) // 2 if opcao.bonus else 0
     return max(5, min(95, opcao.chance + bonus - RISCO))
+
+
+def chance_penalti(finalizacao: int) -> float:
+    """The engine's penalty: a goal this often, by the player's finishing."""
+    return max(0.35, min(0.85, 0.45 + (finalizacao - 60) / 100))
 
 
 def descrever(efeito: Efeito) -> str:
@@ -294,6 +322,7 @@ class _Simulacao:
     rotinas_vistas: list[str] = field(default_factory=list)
     marcas_novas: list[str] = field(default_factory=list)  # told in the next season
     saida_extra: float = 0.0  # a decision's push towards the door, for this winter's market
+    lances: int = 0  # cup finals that went to the penalty
 
     def __post_init__(self) -> None:
         self.rng = random.Random(f"carreira:{self.entrada.semente}")
@@ -307,6 +336,7 @@ class _Simulacao:
         self.aposenta_aos = self.rng.randint(33, 38) + (2 if self.notas["fisico"] >= 85 else 0)
         self.idade, self.ano, self.clube = IDADE_INICIAL, PRIMEIRO_ANO, self.inicio
         self.completa = self.entrada.modo == "completa"
+        self.minijogos = self.completa and self.entrada.minijogos  # Rápida never asks a penalty
         self._pesos_estado: dict[str, int] = {}
         self._peso_nordeste = 1
         for clube in self.dados.clubes.values():
@@ -325,7 +355,10 @@ class _Simulacao:
                 pendente = self._dia_a_dia()
                 if pendente:
                     return Carreira(temporadas=self.temporadas, pendente=pendente)
-            temporada, saida = self._temporada()
+            jogada = self._temporada()
+            if isinstance(jogada, Escolha):  # the cup final's penalty, before the season ends
+                return Carreira(temporadas=self.temporadas, pendente=jogada)
+            temporada, saida = jogada
             self.temporadas.append(temporada)
             if not self._encerra():
                 pendente, decidiu = self._pergunta(temporada)
@@ -426,7 +459,7 @@ class _Simulacao:
             return [primeiro, self.rng.choices(outros, weights=[e.peso for e in outros])[0]]
         return [primeiro]
 
-    def _temporada(self) -> tuple[Temporada, float]:
+    def _temporada(self) -> tuple[Temporada, float] | Escolha:
         liga = self.dados.ligas[self.clube.liga]
         nivel = self._nivel(self.clube)
         antes = self._sortear_eventos("antes", self._contexto())
@@ -435,6 +468,8 @@ class _Simulacao:
         titulos: list[str] = []
         copa = False
         forma = 0
+        lance: ResultadoLance | None = None
+        evento_lance: Evento | None = None
         if self.idade > IDADE_INICIAL:
             forma = max(-10, min(10, round(self.rng.gauss(0, FORMA))))
             em_campo = self.nota + forma  # the rating this season actually played at
@@ -452,8 +487,21 @@ class _Simulacao:
             chance *= peso * min(1.0, jogos / 15)  # a title needs the player on the pitch
             if self.rng.random() < chance:
                 titulos.append(liga.campeonato)
-            if liga.copa and self.rng.random() < chance * 0.6:
-                titulos.append(liga.copa)
+            if liga.copa:
+                sorte = self.rng.random()
+                if (
+                    self.posicao in COBRADORES
+                    and self.lances < MAX_LANCES
+                    and sorte < min(0.9, chance * 0.6 * CHANCE_FINAL)
+                ):
+                    jogada = self._lance(liga.copa)
+                    if isinstance(jogada, Escolha):
+                        return jogada
+                    lance, evento_lance = jogada
+                    if lance.resultado == "gol":
+                        titulos.append(liga.copa)
+                elif sorte < chance * 0.6:
+                    titulos.append(liga.copa)
             if (
                 liga.continental
                 and self.clube.prestigio >= 68
@@ -477,6 +525,8 @@ class _Simulacao:
         ruim = next((e for e in self.dados.eventos if e.id == TEMPORADA_RUIM), None)
         if forma <= FORMA_RUIM and ruim:  # a season to forget is told as one
             depois = [ruim, *[e for e in depois if e is not ruim][:1]]
+        if evento_lance:  # the final's penalty is the season's headline
+            depois = [evento_lance, *depois]
         eventos = antes + depois
         if self.idade > IDADE_INICIAL:
             self.parte, self.forma, self.nivel_atual = jogos / 44, forma, nivel
@@ -508,6 +558,8 @@ class _Simulacao:
             modelo = sorteio.choice(novas or principal.manchetes)
             self.manchetes_usadas.add(modelo)
             manchete = modelo.format_map(campos)
+        if lance:
+            lance.manchete = manchete
         temporada = Temporada(
             ano=self.ano,
             idade=self.idade,
@@ -528,11 +580,73 @@ class _Simulacao:
             chegada=self.chegada,
             rotina=self.resultado,
             marcas=self.marcas_novas,
+            lance=lance,
         )
         saida = sum(e.efeito.saida for e in eventos) + self.efeito.saida + self._saida_das_marcas()
         self.chegada, self.efeito, self.resultado = None, Efeito(), None
         self.marcas_novas, self.saida_extra = [], 0.0
         return temporada, saida
+
+    def _lance(self, copa: str) -> tuple[ResultadoLance, Evento | None] | Escolha:
+        """The cup final, decided on his penalty: the fan kicks it (minijogos) or the engine rolls
+        it by his finishing. The roll is drawn either way, so the rest of the career never
+        depends on how the penalty was taken; only on whether it went in."""
+        finalizacao = self.notas["finalizacao"]
+        sorte = self.rng.random()
+        adversario = self._adversario(copa)
+        resposta = self._resposta(len(LANCES)) if self.minijogos else None
+        if self.minijogos and resposta is None:
+            return Escolha(
+                id="penalti-final",
+                tipo="lance",
+                pergunta=(
+                    f"Final da {copa}, 90+4': pênalti para {artigos('c', self.clube)['o_c']}. "
+                    f"{self.entrada.craque.nome} pega a bola."
+                ),
+                opcoes=list(LANCES),
+                info=[InfoOpcao(chance=finalizacao)] + [InfoOpcao() for _ in LANCES[1:]],
+                destinos=["ficar"] * len(LANCES),
+                clubes=[None] * len(LANCES),
+                lance=Lance(clube=self.clube.nome, adversario=adversario.nome, copa=copa),
+            )
+        self.lances += 1
+        if resposta is not None and resposta < len(LANCES) - 1:
+            resultado = LANCES[resposta]
+        else:
+            p = chance_penalti(finalizacao)
+            # a miss is told from the same roll: most are saved, some go wide, a few hit the post
+            erro = (sorte - p) / (1 - p)
+            resultado = (
+                "gol"
+                if sorte < p
+                else "defesa"
+                if erro < 0.55
+                else "fora"
+                if erro < 0.85
+                else "trave"
+            )
+        gol = resultado == "gol"
+        marca = MARCA_GOL if gol else MARCA_ERRO
+        if marca in self.dados.marcas:  # a world built for a test may not have it
+            self._marcar(marca)
+        evento_id = "penalti-gol" if gol else "penalti-erro"
+        evento = next((e for e in self.dados.eventos if e.id == evento_id), None)
+        return ResultadoLance(
+            resultado=resultado, adversario=adversario.nome, manchete="", copa=copa
+        ), evento
+
+    def _adversario(self, copa: str) -> Clube:
+        """The other finalist, with no dice: one of the strongest clubs that play this cup, by
+        year."""
+        outros = sorted(
+            (
+                c
+                for c in self.dados.clubes.values()
+                if c.id != self.clube.id and self.dados.ligas[c.liga].copa == copa
+            ),
+            key=lambda c: (-c.prestigio, c.id),
+        )[:6]
+        return outros[self.ano % len(outros)] if outros else self.clube
 
     # -- between seasons -------------------------------------------------------------------
 

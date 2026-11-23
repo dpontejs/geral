@@ -33,9 +33,9 @@
 
 **Produces:** `Entrada.minijogos: bool = False`; `Escolha.tipo` aceita `"lance"`; `MAX_LANCES = 2`; `CHANCE_FINAL` (calibrada na Task 2); `chance_penalti(finalizacao: int) -> float` = `clamp(0.45 + (f - 60) / 100, 0.35, 0.85)`; `ResultadoLance(resultado: Literal["gol","defesa","fora","trave"], adversario: str, manchete: str)`; `Temporada.lance: ResultadoLance | None = None`.
 
-- [ ] Testes `test_final_vai_para_o_penalti`, `test_gol_da_o_titulo_e_erro_tira`, `test_sem_minijogos_nao_pergunta_e_sorteia_pela_finalizacao`, `test_motor_bate_quando_pedido`, `test_no_maximo_dois_lances_e_so_atacante_ou_meia`, `test_resposta_de_lance_invalida`. FAIL.
-- [ ] Em `_temporada`, quando `liga.copa`, posição atual em (atacante, meia), lances < 2 e o sorteio de `CHANCE_FINAL` passa: a copa **não** sai do sorteio normal daquela temporada; vira lance. Com minijogos, a temporada fica pendente na pergunta do lance (siga o padrão de `_pergunta`/`_resposta`); sem minijogos ou resposta 4, sorteia com `chance_penalti`. Gol: título + marca `frio-na-marca-da-cal` + manchete `penalti-gol`; erro: marca `perdeu-o-penalti` + `penalti-erro`. Adversário: rival do clássico (`_campos_classico`) ou outro clube da mesma liga, escolhido sem rng extra fora do lance. PASS.
-- [ ] Commit `feat: pênalti decisivo na final de copa da carreira`.
+- [x] Testes `test_final_vai_para_o_penalti`, `test_gol_da_o_titulo_e_erro_tira`, `test_sem_minijogos_nao_pergunta_e_sorteia_pela_finalizacao`, `test_motor_bate_quando_pedido`, `test_no_maximo_dois_lances_e_so_atacante_ou_meia`, `test_resposta_de_lance_invalida`. FAIL.
+- [x] Em `_temporada`, quando `liga.copa`, posição atual em (atacante, meia), lances < 2 e o sorteio de `CHANCE_FINAL` passa: a copa **não** sai do sorteio normal daquela temporada; vira lance. Com minijogos, a temporada fica pendente na pergunta do lance (siga o padrão de `_pergunta`/`_resposta`); sem minijogos ou resposta 4, sorteia com `chance_penalti`. Gol: título + marca `frio-na-marca-da-cal` + manchete `penalti-gol`; erro: marca `perdeu-o-penalti` + `penalti-erro`. Adversário: rival do clássico (`_campos_classico`) ou outro clube da mesma liga, escolhido sem rng extra fora do lance. PASS.
+- [x] Commit `feat: pênalti decisivo na final de copa da carreira`.
 
 ### Task 2: Calibragem
 
