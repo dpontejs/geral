@@ -48,9 +48,9 @@
 
 **Interfaces — Consumes:** Task 1. **Produces:** `_Simulacao._aplicar(opcao: Opcao | OpcaoRotina) -> tuple[bool, Efeito]` (sorteia `chance_de`, aplica atributos/nota/teto como hoje em `_dia_a_dia`, grava marca); `_Simulacao._marcar(marca_id: str) -> None` (no-op se já está em `historico`; aplica `Marca.efeito`; guarda o nome em `self.marcas_novas`). `Temporada.marcas: list[str] = []`. `InfoOpcao.arriscada: bool = False` (chance ≤ 25).
 
-- [ ] Testes (usar `Dados` montado em `tmp_path` ou monkeypatch de `dados.decisoes`, como `test_carreira_motor.py` faz): `test_marca_gravada_conforme_o_resultado`; `test_marca_repetida_aplica_efeito_uma_vez`; `test_decisao_com_risco_mostra_chance_e_arriscada` (`Escolha.info[i].chance == chance_de(...)`, `arriscada` com chance 20); `test_resposta_fora_das_opcoes_e_invalida`; `test_decisao_sem_clube_nao_segura_o_mercado` (após decisão "ficar", `_mercado` roda no mesmo inverno). FAIL.
-- [ ] `_dia_a_dia` passa a usar `_aplicar`; `_pergunta` aplica `_aplicar` na opção escolhida e devolve `decidiu=True` só se mudou de clube ou aposentou; `_escolha` preenche `info` quando alguma opção tem chance < 100 ou efeito. Marcas novas vão para a `Temporada` da temporada seguinte (a linha do tempo conta "ganhou a braçadeira" ao lado do que aconteceu). PASS.
-- [ ] Commit `feat: decisões com risco e marcas no motor da carreira`.
+- [x] Testes (usar `Dados` montado em `tmp_path` ou monkeypatch de `dados.decisoes`, como `test_carreira_motor.py` faz): `test_marca_gravada_conforme_o_resultado`; `test_marca_repetida_aplica_efeito_uma_vez`; `test_decisao_com_risco_mostra_chance_e_arriscada` (`Escolha.info[i].chance == chance_de(...)`, `arriscada` com chance 20); `test_resposta_fora_das_opcoes_e_invalida`; `test_decisao_sem_clube_nao_segura_o_mercado` (após decisão "ficar", `_mercado` roda no mesmo inverno). FAIL.
+- [x] `_dia_a_dia` passa a usar `_aplicar`; `_pergunta` aplica `_aplicar` na opção escolhida e devolve `decidiu=True` só se mudou de clube ou aposentou; `_escolha` preenche `info` quando alguma opção tem chance < 100 ou efeito. Marcas novas vão para a `Temporada` da temporada seguinte (a linha do tempo conta "ganhou a braçadeira" ao lado do que aconteceu). PASS.
+- [x] Commit `feat: decisões com risco e marcas no motor da carreira`.
 
 ### Task 3: Arcos garantidos e teto por modo
 
