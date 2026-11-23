@@ -164,3 +164,26 @@ def test_todo_evento_frequente_tem_quatro_manchetes() -> None:
             for m in e.manchetes:
                 texto = m.format_map(campos)
                 assert "{" not in texto and "}" not in texto, (e.id, m)
+
+
+def test_mexer_nas_manchetes_nao_muda_a_carreira() -> None:
+    """Headlines are drawn apart from the simulation: editing texts never reshuffles careers."""
+    from dataclasses import replace
+
+    dados = carregar()
+    outra = replace(
+        dados,
+        eventos=tuple(
+            replace(e, manchetes=(*e.manchetes, "{nome} em manchete extra")) for e in dados.eventos
+        ),
+    )
+
+    def numeros(carreira):
+        return [(t.clube_id, t.jogos, t.gols, t.nota, t.titulos) for t in carreira.temporadas]
+
+    for i in range(20):
+        e = entrada(f"m{i}")
+        antes, respostas = ate_o_fim(e, dados)
+        depois = simular(outra, "geral", respostas)
+        assert depois.final is not None
+        assert numeros(depois) == numeros(antes), i
