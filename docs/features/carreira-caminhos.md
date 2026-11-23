@@ -25,6 +25,11 @@ arcos roteirizados, caros de escrever — arcos curtos saem das próprias marcas
   ("{nome} ganha a braçadeira"), `efeito: Efeito` aplicado uma vez ao ganhar. Guardadas em
   `_Simulacao.historico`, o mesmo conjunto que `Condicao.requer/exclui` já lê; por isso eventos,
   decisões, dia a dia e finais podem exigir ou excluir uma marca.
+- `efeito.saida` de uma marca vale **todo inverno** enquanto ele estiver no clube onde a ganhou
+  (PR 2). Motivo: beijar o escudo prometia ficar, mas a saída da opção valia um inverno só, e na
+  Rápida o mercado o vendia no ano seguinte; por conteúdo não havia como segurar o mercado
+  sozinho. Além disso, as decisões que oferecem clube excluem `idolo-de-um-clube`, e o juramento
+  ganha um passo de arco (`o-preco-da-promessa`) que o põe à prova.
 - `dados.Opcao` (decisão) ganha os campos de `OpcaoRotina`: `chance`, `bonus`, `sucesso`,
   `fracasso`, e mais `marca` / `marca_fracasso` (id gravado conforme o resultado). Sem `chance`,
   a opção é certa, como hoje. `OpcaoRotina` ganha `marca` / `marca_fracasso` também.
@@ -86,7 +91,7 @@ arcos roteirizados, caros de escrever — arcos curtos saem das próprias marcas
   quando o evento tinha outro disponível.
 - [ ] `test_mesmo_draft_caminhos_diferentes`: mesmo draft e semente, respostas diferentes dão
   conjuntos de marcas e linhas do tempo diferentes.
-- [ ] `test_variedade_de_decisoes`: em 500 carreiras Completa, ≥ 60% das decisões (de
+- [x] `test_variedade_de_decisoes`: em 500 carreiras Completa, ≥ 60% das decisões (de
   `escolhas.toml`, sem contar propostas e dia a dia) não mudam de clube.
 - [ ] `test_decisao_sem_clube_nao_segura_o_mercado`: depois de uma decisão "ficar", o mercado do
   inverno ainda pode trazer proposta.

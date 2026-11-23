@@ -328,6 +328,31 @@ def test_arriscar_tudo_nao_quebra_o_realismo() -> None:
     assert nao_decolou >= 0.15, nao_decolou
 
 
+def test_variedade_de_decisoes() -> None:
+    """In 500 Completa careers, 60%+ of the decisions asked (escolhas.toml, not the market's
+    offers nor the day-to-day) offer no club: contract, coach, dressing room, press, life."""
+    from test_carreira_realismo import roubos_humanos
+
+    dados, fora, todas = carregar(), 0, 0
+    for i in range(500):
+        posicao = regras.POSICOES[i % 5]
+        clube = ["flamengo", "abc", "sport", "palmeiras", "bahia", "goias"][i % 6]
+        e = motor.Entrada(
+            semente_draft=f"d{i}",
+            semente=f"c{i}",
+            craque=motor.Craque(nome="Zé", camisa=10, posicao=posicao, pe="direito", clube=clube),
+            roubos=roubos_humanos(dados, f"d{i}", posicao, clube),
+            modo="completa",
+        )
+        rng = random.Random(i)
+        _, _, perguntas = jogar(dados, e, lambda p, rng=rng: rng.randrange(len(p.opcoes)))
+        decisoes = [p for p in perguntas if p.tipo == "decisao"]
+        todas += len(decisoes)
+        fora += sum(not any(p.clubes) for p in decisoes)
+
+    assert fora / todas >= 0.6, (fora, todas)
+
+
 def test_replay_estavel() -> None:
     dados = carregar()
     for i in range(30):

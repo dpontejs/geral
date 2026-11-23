@@ -36,9 +36,70 @@ efeito = { posicao = "meia" }
 id = "idolo-de-um-clube"
 nome = "Ídolo de um clube só"
 texto = "{nome} beija o escudo e jura amor eterno"
+efeito = { saida = -0.6 }
 
 [[marca]]
 id = "baladeiro"
 nome = "Baladeiro"
 texto = "{nome} ganha fama de baladeiro"
 efeito = { atributos = { fisico = -2 } }
+
+# efeito.saida de uma marca vale todo inverno enquanto ele estiver no clube onde a ganhou (o
+# juramento ao clube dura; a torcida que pede a saída do mercenário também).
+
+[[marca]]
+id = "andarilho"
+nome = "Andarilho"
+texto = "{nome} assina por um ano e deixa a mala sempre pronta"
+
+[[marca]]
+id = "rato-de-academia"
+nome = "Rato de academia"
+texto = "{nome} vira rato de academia"
+efeito = { atributos = { fisico = 2 } }
+
+[[marca]]
+id = "xodo-da-torcida"
+nome = "Xodó da torcida"
+texto = "{nome} vira o xodó da arquibancada"
+efeito = { saida = -0.2 }
+
+[[marca]]
+id = "recusou-a-selecao"
+nome = "Recusou a Seleção"
+texto = "{nome} pede dispensa da Seleção"
+
+[[marca]]
+id = "frio-nas-decisoes"
+nome = "Frio nas decisões"
+texto = "{nome} ganha fama de sangue frio"
+efeito = { nota = 1 }
+
+[[marca]]
+id = "mercenario"
+nome = "Mercenário"
+texto = "{nome} ganha fama de mercenário"
+efeito = { saida = 0.3 }
+
+[[marca]]
+id = "garoto-propaganda"
+nome = "Garoto-propaganda"
+texto = "{nome} vira garoto-propaganda e aparece em todo intervalo"
+
+[[marca]]
+id = "cria-do-nordeste"
+nome = "Cria do Nordeste"
+texto = "{nome} vira a cara do futebol nordestino"
+efeito = { saida = -0.3 }
+
+[[marca]]
+id = "homem-de-confianca"
+nome = "Homem de confiança"
+texto = "{nome} vira o homem de confiança do técnico"
+efeito = { nota = 1 }
+
+[[marca]]
+id = "canela-de-vidro"
+nome = "Canela de vidro"
+texto = "{nome} ganha fama de canela de vidro"
+efeito = { atributos = { fisico = -3 } }

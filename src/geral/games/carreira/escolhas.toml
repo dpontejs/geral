@@ -9,7 +9,7 @@
 id = "proposta-europa"
 pergunta = "{O_destino} quer {nome}, de {idade} anos. E agora?"
 peso = 3
-condicao = { idade_min = 19, idade_max = 28, nota_min = 66, forca_max = 79 }
+condicao = { idade_min = 19, idade_max = 28, nota_min = 66, forca_max = 79, exclui = ["idolo-de-um-clube"] }
 [[escolha.opcao]]
 texto = "Aceitar e ir {para_o_destino}"
 destino = "europa"
@@ -21,7 +21,7 @@ destino = "ficar"
 id = "emprestimo-ou-banco"
 pergunta = "Pouco espaço {no_clube}. {O_destino} pede {nome} emprestado por um ano."
 peso = 2
-condicao = { idade_min = 18, idade_max = 23, jogos_max = 15 }
+condicao = { idade_min = 18, idade_max = 23, jogos_max = 15, exclui = ["idolo-de-um-clube"] }
 [[escolha.opcao]]
 texto = "Ir emprestado {para_o_destino} para jogar"
 destino = "emprestimo"
@@ -33,7 +33,7 @@ destino = "ficar"
 id = "proposta-maior"
 pergunta = "{O_destino} faz uma proposta alta por {nome}."
 peso = 2
-condicao = { idade_min = 20, idade_max = 30, nota_min = 58 }
+condicao = { idade_min = 20, idade_max = 30, nota_min = 58, exclui = ["idolo-de-um-clube"] }
 [[escolha.opcao]]
 texto = "Dar o salto {para_o_destino}"
 destino = "maior"
@@ -45,7 +45,7 @@ destino = "ficar"
 id = "proposta-arabia"
 pergunta = "Os petrodólares {do_destino} batem à porta de {nome}, {idade} anos."
 peso = 1.5
-condicao = { idade_min = 28, idade_max = 34, nota_min = 68 }
+condicao = { idade_min = 28, idade_max = 34, nota_min = 68, exclui = ["idolo-de-um-clube"] }
 [[escolha.opcao]]
 texto = "Topar e ir {para_o_destino}"
 destino = "arabia"
@@ -81,7 +81,7 @@ destino = "mais_um"
 id = "volta-por-cima"
 pergunta = "{nome} volta de lesão grave. {O_destino} oferece minutos para recuperar o ritmo."
 peso = 4
-condicao = { idade_min = 19, idade_max = 33, requer = ["lesao-grave"] }
+condicao = { idade_min = 19, idade_max = 33, requer = ["lesao-grave"], exclui = ["idolo-de-um-clube"] }
 [[escolha.opcao]]
 texto = "Ir {para_o_destino} jogar"
 destino = "emprestimo"
@@ -105,7 +105,7 @@ destino = "ficar"
 id = "fim-de-contrato"
 pergunta = "O contrato de {nome} com {o_clube} acaba. Tem proposta {do_destino} e {do_outro} ({pais_outro})."
 peso = 2
-condicao = { idade_min = 24, idade_max = 32 }
+condicao = { idade_min = 24, idade_max = 32, exclui = ["idolo-de-um-clube"] }
 [[escolha.opcao]]
 texto = "Assinar com {o_destino}"
 destino = "maior"
@@ -132,7 +132,7 @@ destino = "ficar"
 id = "capitao-ou-dinheiro"
 pergunta = "Capitão {do_clube}, {nome} recebe uma oferta milionária {do_destino}."
 peso = 2
-condicao = { idade_min = 26, idade_max = 32, nota_min = 70, requer = ["capitao"] }
+condicao = { idade_min = 26, idade_max = 32, nota_min = 70, requer = ["capitao"], exclui = ["idolo-de-um-clube"] }
 [[escolha.opcao]]
 texto = "Aceitar o dinheiro {do_destino}"
 destino = "arabia"
@@ -144,7 +144,7 @@ destino = "ficar"
 id = "aventura-no-fim"
 pergunta = "Aos {idade}, {nome} pode encerrar a carreira longe: {o_destino} quer ele."
 peso = 2
-condicao = { idade_min = 31, idade_max = 36 }
+condicao = { idade_min = 31, idade_max = 36, exclui = ["idolo-de-um-clube"] }
 [[escolha.opcao]]
 texto = "Viver a aventura {no_destino}"
 destino = "exotico"
@@ -183,7 +183,7 @@ destino = "mais_um"
 id = "salario-atrasado"
 pergunta = "Com salários atrasados {no_clube}, {o_destino} oferece uma saída a {nome}."
 peso = 4
-condicao = { requer = ["crise-do-clube"], idade_max = 34 }
+condicao = { requer = ["crise-do-clube"], idade_max = 34, exclui = ["idolo-de-um-clube"] }
 [[escolha.opcao]]
 texto = "Sair {para_o_destino}"
 destino = "menor"
@@ -195,7 +195,7 @@ destino = "ficar"
 id = "rival-chama"
 pergunta = "{O_destino} quer tirar {nome} {do_clube}. A torcida não vai perdoar."
 peso = 2
-condicao = { idade_min = 21, idade_max = 31, nota_min = 62, forca_max = 79 }
+condicao = { idade_min = 21, idade_max = 31, nota_min = 62, forca_max = 79, exclui = ["idolo-de-um-clube"] }
 [[escolha.opcao]]
 texto = "Atravessar a rua e ir {para_o_destino}"
 destino = "maior"
@@ -251,7 +251,7 @@ sucesso = { saida = 0.7 }
 id = "bracadeira-oferecida"
 pergunta = "O técnico oferece a braçadeira {do_clube} a {nome}, {idade} anos."
 peso = 1.5
-condicao = { idade_min = 23, idade_max = 33, nota_min = 64, exclui = ["bracadeira", "capitao"] }
+condicao = { idade_min = 23, idade_max = 33, nota_min = 64, exclui = ["bracadeira", "capitao", "mercenario"] }
 [[escolha.opcao]]
 texto = "Aceitar e vestir a braçadeira"
 marca = "bracadeira"
@@ -299,7 +299,7 @@ texto = "Pedir para seguir onde sempre jogou"
 id = "feriado-com-os-amigos"
 pergunta = "Os amigos de infância chamam {nome} para três dias de festa no feriado."
 peso = 1.5
-condicao = { idade_min = 18, idade_max = 30, exclui = ["baladeiro"] }
+condicao = { idade_min = 18, idade_max = 30, exclui = ["baladeiro", "rato-de-academia"] }
 [[escolha.opcao]]
 texto = "Ir e curtir sem culpa"
 chance = 45
@@ -313,11 +313,578 @@ sucesso = { atributos = { fisico = 1 } }
 [[escolha]]
 id = "beijar-o-escudo"
 pergunta = "A torcida {do_clube} pede que {nome} jure ficar para sempre."
-peso = 1.5
-condicao = { idade_min = 22, idade_max = 30, no_clube_inicial = true, exclui = ["idolo-de-um-clube"] }
+peso = 3
+condicao = { idade_min = 22, idade_max = 30, no_clube_inicial = true, exclui = ["idolo-de-um-clube", "andarilho", "mercenario"] }
 [[escolha.opcao]]
 texto = "Beijar o escudo e renovar até o fim da carreira"
 marca = "idolo-de-um-clube"
-sucesso = { saida = -0.6 }
 [[escolha.opcao]]
 texto = "Desconversar: no futebol nada é para sempre"
+
+# --- contrato ----------------------------------------------------------------------------------
+
+[[escolha]]
+id = "renovacao-longa"
+pergunta = "{O_clube} oferece a {nome} contrato de cinco anos, com salário abaixo do mercado."
+peso = 1.5
+condicao = { idade_min = 21, idade_max = 29, nota_min = 58, exclui = ["andarilho", "mercenario"] }
+[[escolha.opcao]]
+texto = "Assinar e criar raízes"
+sucesso = { saida = -0.4 }
+[[escolha.opcao]]
+texto = "Bater o pé por um aumento"
+chance = 55
+bonus = "lideranca"
+sucesso = { nota = 1 }
+fracasso = { saida = 0.5 }
+marca_fracasso = "mercenario"
+[[escolha.opcao]]
+texto = "Assinar por um ano só e deixar a mala pronta"
+marca = "andarilho"
+sucesso = { saida = 0.5 }
+
+[[escolha]]
+id = "multa-baixa"
+pergunta = "O empresário quer uma multa rescisória baixa no contrato de {nome}, para facilitar a venda."
+peso = 1
+condicao = { idade_min = 19, idade_max = 26, nota_min = 56, exclui = ["idolo-de-um-clube", "cria-do-nordeste"] }
+[[escolha.opcao]]
+texto = "Topar a multa baixa e esperar a vitrine"
+sucesso = { saida = 0.5 }
+[[escolha.opcao]]
+texto = "Multa alta: quem quiser que pague"
+sucesso = { saida = -0.3 }
+
+[[escolha]]
+id = "luvas-atrasadas"
+pergunta = "{O_clube} atrasa as luvas de {nome} e pede paciência até o fim do ano."
+peso = 1.2
+condicao = { idade_min = 20, idade_max = 33, forca_max = 75 }
+[[escolha.opcao]]
+texto = "Esperar e confiar na diretoria"
+sucesso = { saida = -0.2 }
+[[escolha.opcao]]
+texto = "Entrar na Justiça para cobrar"
+marca = "mercenario"
+sucesso = { saida = 0.5 }
+
+[[escolha]]
+id = "salario-por-produtividade"
+pergunta = "A diretoria propõe a {nome} salário menor e bônus por gol, vitória e título."
+peso = 1
+condicao = { idade_min = 22, idade_max = 31, nota_min = 60 }
+[[escolha.opcao]]
+texto = "Salário fixo, sem invenção"
+[[escolha.opcao]]
+texto = "Topar e prometer a melhor temporada da vida"
+chance = 22
+bonus = "finalizacao"
+sucesso = { nota = 3, teto = 3 }
+fracasso = { nota = -3 }
+marca_fracasso = "polemico"
+
+[[escolha]]
+id = "a-cara-do-clube"
+pergunta = "{O_clube} quer renovar com {nome} e fazer dele a cara do time no Nordestão."
+peso = 3
+condicao = { regioes = ["nordeste"], no_clube_inicial = true, idade_min = 19, idade_max = 25, nota_min = 50, exclui = ["mercenario"] }
+[[escolha.opcao]]
+texto = "Renovar e vestir a camisa da terra"
+marca = "cria-do-nordeste"
+[[escolha.opcao]]
+texto = "Segurar a assinatura e esperar o Sudeste"
+sucesso = { saida = 0.4 }
+
+# --- técnico -----------------------------------------------------------------------------------
+
+[[escolha]]
+id = "tecnico-novo"
+pergunta = "Chega técnico novo {no_clube}, e ele mal sabe o nome de {nome}."
+peso = 1.5
+condicao = { idade_min = 19, idade_max = 33, exclui = ["homem-de-confianca"] }
+[[escolha.opcao]]
+texto = "Ser o primeiro a chegar no treino, todo dia"
+chance = 60
+bonus = "fisico"
+sucesso = { nota = 1 }
+marca = "homem-de-confianca"
+fracasso = { jogos = 0.85 }
+[[escolha.opcao]]
+texto = "Esperar a vez sem fazer barulho"
+sucesso = { nota = -1 }
+[[escolha.opcao]]
+texto = "Bater na sala dele e dizer onde rende mais"
+chance = 45
+bonus = "lideranca"
+marca = "homem-de-confianca"
+fracasso = { saida = 0.3 }
+marca_fracasso = "brigou-com-tecnico"
+
+[[escolha]]
+id = "ponta-pelo-time"
+pergunta = "O técnico quer {nome} aberto na ponta, longe da área, para fechar o lado do campo."
+peso = 1.2
+condicao = { posicoes = ["atacante"], idade_min = 20, idade_max = 31 }
+[[escolha.opcao]]
+texto = "Aceitar e correr pelo time"
+marca = "homem-de-confianca"
+sucesso = { atributos = { passe = 1, finalizacao = -1 } }
+[[escolha.opcao]]
+texto = "Recusar: nasceu para fazer gol"
+chance = 45
+bonus = "finalizacao"
+sucesso = { nota = 1 }
+fracasso = { saida = 0.4 }
+marca_fracasso = "brigou-com-tecnico"
+
+[[escolha]]
+id = "fritura-do-tecnico"
+pergunta = "A diretoria quer demitir o técnico que bancou {nome}, e os repórteres perguntam o que ele acha."
+peso = 3
+condicao = { requer = ["homem-de-confianca"], idade_max = 35 }
+[[escolha.opcao]]
+texto = "Defender o técnico com unhas e dentes"
+chance = 50
+bonus = "lideranca"
+sucesso = { nota = 1, saida = -0.2 }
+fracasso = { saida = 0.4 }
+marca_fracasso = "polemico"
+[[escolha.opcao]]
+texto = "\"Quem decide é a diretoria\""
+
+[[escolha]]
+id = "escalacao-vazada"
+pergunta = "A escalação vaza antes do jogo, e o técnico {do_clube} desconfia de {nome}."
+peso = 1
+condicao = { idade_min = 20, idade_max = 34, exclui = ["homem-de-confianca", "brigou-com-tecnico"] }
+[[escolha.opcao]]
+texto = "Provar a inocência com calma"
+chance = 65
+bonus = "lideranca"
+fracasso = { nota = -1 }
+[[escolha.opcao]]
+texto = "Esbravejar no vestiário contra a acusação"
+marca = "brigou-com-tecnico"
+sucesso = { saida = 0.3 }
+
+# --- vestiário ---------------------------------------------------------------------------------
+
+[[escolha]]
+id = "trote-do-novato"
+pergunta = "Os veteranos {do_clube} preparam um trote pesado para {nome}, recém-subido da base."
+peso = 0.7
+condicao = { idade_min = 17, idade_max = 19 }
+[[escolha.opcao]]
+texto = "Raspar a cabeça e levar na esportiva"
+sucesso = { atributos = { lideranca = 1 } }
+[[escolha.opcao]]
+texto = "Encarar os veteranos no primeiro coletivo"
+chance = 20
+bonus = "drible"
+sucesso = { nota = 2, teto = 3 }
+fracasso = { nota = -2 }
+marca_fracasso = "polemico"
+
+[[escolha]]
+id = "panelinha"
+pergunta = "O elenco {do_clube} racha em dois grupos, e cada lado quer {nome} na sua mesa."
+peso = 1.2
+condicao = { idade_min = 22, idade_max = 34, exclui = ["lider-do-vestiario"] }
+[[escolha.opcao]]
+texto = "Sentar com os veteranos"
+sucesso = { atributos = { lideranca = 1 } }
+[[escolha.opcao]]
+texto = "Tentar juntar os dois lados num churrasco"
+chance = 40
+bonus = "lideranca"
+marca = "lider-do-vestiario"
+fracasso = { nota = -1, saida = 0.2 }
+
+[[escolha]]
+id = "companheiro-na-pior"
+pergunta = "Um companheiro {do_clube} enfrenta uma depressão e se afasta de todo mundo."
+peso = 1
+condicao = { idade_min = 21, idade_max = 36 }
+[[escolha.opcao]]
+texto = "Ficar do lado dele todo dia"
+sucesso = { atributos = { lideranca = 2 } }
+[[escolha.opcao]]
+texto = "Deixar com o departamento médico"
+
+[[escolha]]
+id = "entrada-no-treino"
+pergunta = "Um zagueiro {do_clube} acerta uma entrada maldosa em {nome} no coletivo."
+peso = 1
+condicao = { idade_min = 18, idade_max = 34 }
+[[escolha.opcao]]
+texto = "Levantar e seguir o treino"
+chance = 80
+bonus = "fisico"
+fracasso = { jogos = 0.8 }
+[[escolha.opcao]]
+texto = "Revidar ali mesmo"
+marca = "polemico"
+sucesso = { saida = 0.2 }
+
+[[escolha]]
+id = "bicho-dividido"
+pergunta = "{O_clube} paga um bicho gordo pela classificação e o elenco discute como dividir."
+peso = 1
+condicao = { idade_min = 22, titulo = true }
+[[escolha.opcao]]
+texto = "Repartir com roupeiros, massagistas e o pessoal da cozinha"
+marca = "xodo-da-torcida"
+[[escolha.opcao]]
+texto = "Cada um recebe o que diz o contrato"
+
+# --- Seleção -----------------------------------------------------------------------------------
+
+[[escolha]]
+id = "amistoso-ou-clube"
+pergunta = "A Seleção chama {nome} para amistosos bem na reta decisiva {do_clube}."
+peso = 2
+condicao = { requer = ["convocado"], idade_min = 20, idade_max = 34, exclui = ["recusou-a-selecao"] }
+[[escolha.opcao]]
+texto = "Ir sem pensar duas vezes"
+sucesso = { selecao = true }
+[[escolha.opcao]]
+texto = "Pedir dispensa para ajudar {o_clube}"
+marca = "recusou-a-selecao"
+sucesso = { saida = -0.3 }
+
+[[escolha]]
+id = "sub-20"
+pergunta = "A Seleção sub-20 chama {nome} para o Sul-Americano, e {o_clube} não quer liberar."
+peso = 1.5
+condicao = { idade_min = 17, idade_max = 20, nota_min = 52 }
+[[escolha.opcao]]
+texto = "Bater o pé e ir defender a amarelinha"
+chance = 55
+bonus = "lideranca"
+sucesso = { nota = 2 }
+fracasso = { saida = 0.3 }
+[[escolha.opcao]]
+texto = "Abrir mão da convocação e ficar"
+marca = "recusou-a-selecao"
+sucesso = { saida = -0.2 }
+
+[[escolha]]
+id = "naturalizacao"
+pergunta = "Sem chance na Seleção, {nome} é convidado a se naturalizar e defender outro país."
+peso = 1
+condicao = { idade_min = 24, idade_max = 31, nota_min = 68, exclui = ["convocado", "recusou-a-selecao"] }
+[[escolha.opcao]]
+texto = "Aceitar e jogar Eliminatórias por outra bandeira"
+sucesso = { nota = 1 }
+marca = "recusou-a-selecao"
+[[escolha.opcao]]
+texto = "Recusar e jurar que ainda veste a amarelinha"
+chance = 20
+bonus = "finalizacao"
+sucesso = { selecao = true, nota = 2, teto = 2 }
+fracasso = { nota = -1 }
+
+[[escolha]]
+id = "joelho-antes-da-copa"
+pergunta = "Às vésperas da convocação para a Copa, {nome} sente o joelho."
+peso = 2
+condicao = { requer = ["convocado"], idade_min = 22, idade_max = 33, nota_min = 74 }
+[[escolha.opcao]]
+texto = "Esconder a dor e ir para a Copa"
+chance = 20
+bonus = "fisico"
+sucesso = { selecao = true, nota = 2 }
+marca = "frio-nas-decisoes"
+fracasso = { jogos = 0.5, teto = -3 }
+marca_fracasso = "canela-de-vidro"
+[[escolha.opcao]]
+texto = "Contar ao médico e tratar"
+sucesso = { jogos = 0.85 }
+
+[[escolha]]
+id = "a-cbf-liga"
+pergunta = "Depois da dispensa, a CBF liga para {nome}: ele ainda quer a amarelinha?"
+continua = true
+condicao = { requer = ["recusou-a-selecao"], idade_max = 34 }
+[[escolha.opcao]]
+texto = "Pedir desculpas e se colocar à disposição"
+chance = 50
+bonus = "lideranca"
+sucesso = { selecao = true, nota = 1 }
+fracasso = { nota = -1 }
+[[escolha.opcao]]
+texto = "Manter a palavra: agora é só {o_clube}"
+sucesso = { saida = -0.3 }
+
+# --- imprensa ----------------------------------------------------------------------------------
+
+[[escolha]]
+id = "microfone-na-cara"
+pergunta = "Derrota feia {do_clube}, e o repórter põe o microfone na frente de {nome} ainda no gramado."
+peso = 1.5
+condicao = { idade_min = 19, idade_max = 36 }
+[[escolha.opcao]]
+texto = "Assumir a culpa pelo time"
+sucesso = { atributos = { lideranca = 1 } }
+[[escolha.opcao]]
+texto = "Detonar a arbitragem com todas as letras"
+marca = "polemico"
+[[escolha.opcao]]
+texto = "Soltar uma frase de efeito"
+chance = 40
+bonus = "lideranca"
+marca = "xodo-da-torcida"
+marca_fracasso = "polemico"
+
+[[escolha]]
+id = "entrevista-de-domingo"
+pergunta = "Um programa de domingo quer gravar com {nome} na casa onde ele cresceu."
+peso = 1
+condicao = { idade_min = 20, idade_max = 34, nota_min = 62 }
+[[escolha.opcao]]
+texto = "Abrir a porta e contar a história toda"
+chance = 65
+marca = "xodo-da-torcida"
+fracasso = { nota = -1 }
+[[escolha.opcao]]
+texto = "Recusar: a vida dele é dentro de campo"
+
+[[escolha]]
+id = "boato-de-saida"
+pergunta = "Um site crava que {nome} está de saída {do_clube}. O telefone não para."
+peso = 1.2
+condicao = { idade_min = 20, idade_max = 31, nota_min = 60 }
+[[escolha.opcao]]
+texto = "Desmentir em vídeo, com a camisa do clube"
+sucesso = { saida = -0.3 }
+[[escolha.opcao]]
+texto = "Ficar em silêncio e deixar o mercado falar"
+sucesso = { saida = 0.4 }
+
+[[escolha]]
+id = "mesa-redonda"
+pergunta = "A mesa-redonda da noite chama {nome} para responder às polêmicas ao vivo."
+continua = true
+condicao = { requer = ["polemico"], idade_max = 36 }
+[[escolha.opcao]]
+texto = "Ir e pedir desculpas no ar"
+chance = 55
+bonus = "lideranca"
+sucesso = { nota = 1, saida = -0.2 }
+fracasso = { nota = -1 }
+[[escolha.opcao]]
+texto = "Ir e dobrar a aposta contra os comentaristas"
+chance = 20
+bonus = "lideranca"
+sucesso = { nota = 2 }
+marca = "xodo-da-torcida"
+fracasso = { nota = -2, saida = 0.4 }
+marca_fracasso = "mercenario"
+[[escolha.opcao]]
+texto = "Não ir e mandar recado nas redes"
+sucesso = { saida = 0.2 }
+
+[[escolha]]
+id = "radio-da-cidade"
+pergunta = "A rádio AM da cidade quer {nome} toda segunda no programa esportivo das sete."
+peso = 2
+condicao = { regioes = ["nordeste"], idade_min = 20, idade_max = 36 }
+[[escolha.opcao]]
+texto = "Topar e conversar com o ouvinte"
+chance = 70
+bonus = "lideranca"
+marca = "xodo-da-torcida"
+marca_fracasso = "polemico"
+[[escolha.opcao]]
+texto = "Recusar: segunda é dia de gelo e descanso"
+
+# --- vida pessoal ------------------------------------------------------------------------------
+
+[[escolha]]
+id = "casamento"
+pergunta = "{nome} vai casar, e a noiva quer a festa no meio do campeonato."
+peso = 1
+condicao = { idade_min = 21, idade_max = 32 }
+[[escolha.opcao]]
+texto = "Casar no civil e deixar a festa para as férias"
+sucesso = { nota = 1 }
+[[escolha.opcao]]
+texto = "Festão de três dias com banda de forró"
+chance = 25
+sucesso = { atributos = { lideranca = 2 } }
+fracasso = { nota = -3 }
+marca_fracasso = "baladeiro"
+
+[[escolha]]
+id = "comercial-nacional"
+pergunta = "Uma marca de refrigerante quer {nome} na campanha nacional do ano."
+peso = 1.2
+condicao = { idade_min = 19, idade_max = 32, nota_min = 66, exclui = ["garoto-propaganda"] }
+[[escolha.opcao]]
+texto = "Assinar e gravar nas folgas"
+marca = "garoto-propaganda"
+sucesso = { saida = 0.2 }
+[[escolha.opcao]]
+texto = "Recusar para não perder o foco"
+
+[[escolha]]
+id = "academia-em-casa"
+pergunta = "{nome} pode montar uma academia em casa e treinar até nas folgas."
+peso = 1.2
+condicao = { idade_min = 19, idade_max = 33, exclui = ["rato-de-academia", "baladeiro"] }
+[[escolha.opcao]]
+texto = "Montar e puxar ferro até no Natal"
+chance = 65
+bonus = "fisico"
+marca = "rato-de-academia"
+fracasso = { jogos = 0.85 }
+[[escolha.opcao]]
+texto = "Folga é folga"
+
+[[escolha]]
+id = "palco-do-sao-joao"
+pergunta = "O São João da cidade chama {nome} para subir no palco com o trio de forró."
+peso = 2
+condicao = { regioes = ["nordeste"], idade_min = 19, idade_max = 33 }
+[[escolha.opcao]]
+texto = "Subir, dançar e voltar cedo para a concentração"
+chance = 55
+marca = "xodo-da-torcida"
+fracasso = { nota = -2 }
+marca_fracasso = "baladeiro"
+[[escolha.opcao]]
+texto = "Ficar no hotel e mandar um vídeo"
+
+[[escolha]]
+id = "pai-empresario"
+pergunta = "O pai de {nome} quer largar o emprego para ser o empresário do filho."
+peso = 1
+condicao = { idade_min = 18, idade_max = 26 }
+[[escolha.opcao]]
+texto = "Deixar o pai cuidar de tudo"
+chance = 50
+sucesso = { saida = -0.2 }
+fracasso = { saida = 0.4 }
+marca_fracasso = "mercenario"
+[[escolha.opcao]]
+texto = "Contratar um empresário de fora"
+
+[[escolha]]
+id = "curso-de-treinador"
+pergunta = "Aos {idade}, {nome} pode tirar a licença de treinador nas férias."
+peso = 1.2
+condicao = { idade_min = 30, idade_max = 37 }
+[[escolha.opcao]]
+texto = "Estudar e já pensar no depois"
+sucesso = { atributos = { lideranca = 2, passe = 1 } }
+[[escolha.opcao]]
+texto = "Férias são sagradas"
+sucesso = { nota = 1 }
+
+[[escolha]]
+id = "infiltracao"
+pergunta = "O departamento médico {do_clube} oferece infiltração para {nome} jogar a reta final."
+peso = 1.2
+condicao = { idade_min = 21, idade_max = 35 }
+[[escolha.opcao]]
+texto = "Tomar a injeção e jogar"
+chance = 55
+bonus = "fisico"
+sucesso = { nota = 1 }
+fracasso = { jogos = 0.6, nota = -1 }
+marca_fracasso = "canela-de-vidro"
+[[escolha.opcao]]
+texto = "Parar e tratar direito"
+sucesso = { jogos = 0.85 }
+
+[[escolha]]
+id = "bisturi-ou-paciencia"
+pergunta = "Os médicos {do_clube} dão duas saídas para o joelho de {nome}: bisturi ou paciência."
+continua = true
+condicao = { requer = ["canela-de-vidro"], idade_max = 36 }
+[[escolha.opcao]]
+texto = "Operar e perder meio ano"
+chance = 70
+bonus = "fisico"
+sucesso = { jogos = 0.6, atributos = { fisico = 2 } }
+fracasso = { jogos = 0.4, teto = -2 }
+[[escolha.opcao]]
+texto = "Fisioterapia e jogar no limite"
+sucesso = { jogos = 0.85, nota = -1 }
+[[escolha.opcao]]
+texto = "Ir atrás de um rezador famoso do sertão"
+chance = 15
+sucesso = { nota = 2, teto = 2, atributos = { fisico = 3 } }
+fracasso = { jogos = 0.5, nota = -2 }
+
+# --- campo: pênalti, clássico, título ---------------------------------------------------------
+
+[[escolha]]
+id = "quinto-penalti"
+pergunta = "A decisão {do_clube} vai para os pênaltis, e o técnico pergunta quem bate o quinto."
+peso = 1.5
+condicao = { idade_min = 19, idade_max = 36, nota_min = 58 }
+[[escolha.opcao]]
+texto = "Pegar a bola e bater no canto"
+chance = 60
+bonus = "finalizacao"
+marca = "frio-nas-decisoes"
+fracasso = { nota = -2 }
+[[escolha.opcao]]
+texto = "Bater de cavadinha"
+chance = 15
+bonus = "drible"
+sucesso = { nota = 3, teto = 3 }
+marca = "frio-nas-decisoes"
+fracasso = { nota = -3 }
+marca_fracasso = "polemico"
+[[escolha.opcao]]
+texto = "Deixar para o mais experiente"
+
+[[escolha]]
+id = "semana-de-classico"
+pergunta = "Semana de clássico, e o rival provoca {nome} nas redes."
+peso = 2
+condicao = { classico = true, idade_min = 18, idade_max = 35 }
+[[escolha.opcao]]
+texto = "Ignorar e falar só em campo"
+[[escolha.opcao]]
+texto = "Prometer gol e responder no domingo"
+chance = 25
+bonus = "finalizacao"
+sucesso = { nota = 3, teto = 1 }
+marca = "xodo-da-torcida"
+fracasso = { nota = -2 }
+marca_fracasso = "polemico"
+[[escolha.opcao]]
+texto = "Responder no mesmo tom"
+marca = "polemico"
+
+[[escolha]]
+id = "festa-do-titulo"
+pergunta = "Campeão {pelo_clube}, {nome} é chamado para a festa da torcida que vai até o sol nascer."
+peso = 1.5
+condicao = { titulo = true, idade_min = 18, idade_max = 34 }
+[[escolha.opcao]]
+texto = "Cair na festa com o povo"
+chance = 60
+marca = "xodo-da-torcida"
+fracasso = { nota = -2 }
+marca_fracasso = "baladeiro"
+[[escolha.opcao]]
+texto = "Comemorar em casa com a família"
+
+# --- o juramento ({nome} beijou o escudo): a promessa é posta à prova ---------------------------
+
+[[escolha]]
+id = "o-preco-da-promessa"
+pergunta = "Um ano depois do juramento, {o_destino} oferece a {nome} o triplo do salário."
+continua = true
+condicao = { requer = ["idolo-de-um-clube"], idade_max = 34 }
+[[escolha.opcao]]
+texto = "Recusar: palavra dada não volta"
+marca = "xodo-da-torcida"
+[[escolha.opcao]]
+texto = "Quebrar a promessa e ir {para_o_destino}"
+destino = "maior"
+marca = "mercenario"
