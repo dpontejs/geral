@@ -34,10 +34,11 @@ from geral.games.carreira.regras import ATRIBUTOS, POSICOES
 
 LIMITE = 2000  # characters
 MAX_JSON = 8192  # bytes once decompressed: a real career is ~1.5 KB
-FORMATO = 3  # first byte of a short code; an old one starts with zlib's 0x78
-# 2 adds the card's final position (a career can change it), 3 the minijogos switch; older still
-# open (without minijogos)
-FORMATOS = (1, 2, 3)
+FORMATO = 4  # first byte of a short code; an old one starts with zlib's 0x78
+# 2 adds the card's final position (a career can change it), 3 the minijogos switch, 4 counts the
+# answers in 7 bits (up to 4 penalties take a career past 63); older still open
+FORMATOS = (1, 2, 3, 4)
+RESPOSTAS = {1: 6, 2: 6, 3: 6, 4: 7}  # bits of the answer count, by format
 PES = ("direito", "esquerdo", "ambos")
 MODOS = ("rapida", "completa")
 TOKEN = 8  # bytes behind a secrets.token_urlsafe(8) seed
@@ -107,7 +108,7 @@ def codificar(
     _semente_put(b, entrada.semente_draft)
     _semente_put(b, entrada.semente)
     _roubos_put(b, entrada.roubos, oferta(dados, edicao, entrada.semente_draft, craque.clube))
-    _escolhas_put(b, entrada.escolhas)
+    _escolhas_put(b, entrada.escolhas, RESPOSTAS[FORMATO])
     b.put(min(resumo.nota, 127), 7)
     b.put(min(resumo.titulos, 255), 8)
     v.rotulo_put(b, resumo.rotulo)
@@ -159,7 +160,7 @@ def _curto(bruto: bytes, dados: Dados) -> Compartilhado:
     clube = v.clube_get(b) if b.get(1) else None
     semente_draft, semente = _semente_get(b), _semente_get(b)
     roubos = _roubos_get(b, oferta(dados, edicao, semente_draft, clube))
-    escolhas = _escolhas_get(b)
+    escolhas = _escolhas_get(b, RESPOSTAS[formato])
     nota, titulos = b.get(7), b.get(8)
     rotulo = v.rotulo_get(b) or ROTULO_PERDIDO
     clubes = _clubes_get(b, v, clube)
@@ -400,7 +401,7 @@ def _roubos_get(b: _Leitura, ofertadas: list) -> list[Roubo]:
     ]
 
 
-def _escolhas_put(b: _Escrita, escolhas: list[int]) -> None:
+def _escolhas_put(b: _Escrita, escolhas: list[int], contador: int) -> None:
     """The answers as one number in base (largest answer + 1)."""
     base = max(escolhas, default=0) + 1
     if base > 17 or min(escolhas, default=0) < 0:
@@ -409,13 +410,13 @@ def _escolhas_put(b: _Escrita, escolhas: list[int]) -> None:
     numero = 0
     for escolha in escolhas:
         numero = numero * base + escolha
-    b.put(len(escolhas), 6)
+    b.put(len(escolhas), contador)
     b.put(base - 2, 4)
     b.put(numero, (base ** len(escolhas) - 1).bit_length())
 
 
-def _escolhas_get(b: _Leitura) -> list[int]:
-    quantas, base = b.get(6), b.get(4) + 2
+def _escolhas_get(b: _Leitura, contador: int) -> list[int]:
+    quantas, base = b.get(contador), b.get(4) + 2
     numero = b.get((base**quantas - 1).bit_length())
     escolhas = []
     for _ in range(quantas):

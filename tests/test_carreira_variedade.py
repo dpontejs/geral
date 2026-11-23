@@ -149,6 +149,8 @@ def test_todo_evento_frequente_tem_quatro_manchetes() -> None:
             artigos("clube", dados.clubes[clube])
             | {"classico": "Clássico"}
             | artigos("rival", dados.clubes.get(rival))
+            | artigos("adversario", dados.clubes["bahia"])  # a penalty's (motor.py, `_lance`)
+            | {"minuto": "87'", "competicao": "Brasileirão"}
             | {
                 "nome": "Fulano",
                 "camisa": 10,

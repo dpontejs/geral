@@ -303,7 +303,14 @@
   }
 
   const LANCE = { gol: "gol", defesa: "defendido", fora: "pra fora", trave: "na trave" };
-  const textoDoLance = (l) => `Pênalti na final da ${l.copa}, contra ${l.adversario}: ${LANCE[l.resultado]}`;
+  // "Pênalti na final da Copa do Brasil, contra o Vasco: gol"; a league game or a derby says the
+  // minute too. Older careers have no `tipo`: they were all finals.
+  function textoDoLance(l) {
+    const fim = LANCE[l.resultado];
+    if (!l.tipo || l.tipo === "final") return `Pênalti na final da ${l.copa}, contra ${l.adversario}: ${fim}`;
+    if (l.tipo === "classico") return `Pênalti no ${l.competicao}, contra ${l.adversario}, aos ${l.minuto}: ${fim}`;
+    return `Pênalti contra ${l.adversario}, aos ${l.minuto}, pelo ${l.competicao}: ${fim}`;
+  }
 
   const plural = (n, um, varios) => `${n} ${n === 1 ? um : varios}`;
 
@@ -346,7 +353,8 @@
 
   const TIPOS = { dia: "Dia a dia", mercado: "Mercado", decisao: "Decisão" };
 
-  // The cup final's penalty: the minigame takes the question's place and answers its index.
+  // A penalty (league game, derby or cup final): the minigame takes the question's place and
+  // answers its index.
   async function baterPenalti(pendente) {
     const palco = $("cr-penalti");
     palco.hidden = false;
@@ -356,6 +364,9 @@
       clube: pendente.lance.clube,
       adversario: pendente.lance.adversario,
       copa: pendente.lance.copa,
+      tipo: pendente.lance.tipo,
+      minuto: pendente.lance.minuto,
+      competicao: pendente.lance.competicao,
       camisa: estado.craque.camisa,
     });
     palco.hidden = true;

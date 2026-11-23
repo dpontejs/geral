@@ -13,7 +13,7 @@ from geral.games.carreira.codigo import (
 )
 from geral.games.carreira.dados import carregar
 from geral.games.carreira.draft import oferta
-from geral.games.carreira.motor import simular
+from geral.games.carreira.motor import MAX_RESPOSTAS, simular
 
 
 def test_career_code_reopens_the_exact_career() -> None:
@@ -194,8 +194,8 @@ def test_codigo_curto_corrompido_e_codigo_invalido() -> None:
     for n in range(1, len(bruto)):
         with pytest.raises(CodigoInvalido):
             decodificar(_b64(bruto[:n]))
-    # 0x04: no such format (0x01, 0x02 and 0x03 are short codes)
-    for ruim in (bruto + b"\0", b"\x04" + bruto[1:], b"\x01", b"\x01" + b"\xff" * 80):
+    # 0x05: no such format (0x01 to 0x04 are short codes)
+    for ruim in (bruto + b"\0", b"\x05" + bruto[1:], b"\x01", b"\x01" + b"\xff" * 80):
         with pytest.raises(CodigoInvalido):
             decodificar(_b64(ruim))
 
@@ -226,3 +226,28 @@ def test_link_guarda_minijogos_e_codigo_antigo_abre() -> None:
     assert antigo.entrada.minijogos is False
     assert antigo.entrada.modo == "completa" and antigo.entrada.semente == "k9"
     assert antigo.resumo.rotulo == "Rei do Nordeste" and antigo.resumo.nota == 70
+
+
+# A format-3 code (answers counted in 6 bits), made by `codificar` at 3d072e2c: a Completa career
+# of seed "k9" with minigames, answering 0 to everything (37 answers).
+CODIGO_FORMATO_3 = "A8vReApAlrp1uQBZGIAtbmWsAAASgAAAAAAjBkvGf_lzzp1842oU8oDUDaWPW71OgA"
+
+
+def test_codigo_de_formato_3_ainda_abre() -> None:
+    antigo = decodificar(CODIGO_FORMATO_3)
+    assert antigo.entrada.minijogos is True and antigo.entrada.modo == "completa"
+    assert antigo.entrada.semente == "k9" and antigo.entrada.escolhas == [0] * 37
+    assert antigo.resumo.rotulo == "Rei do Nordeste" and antigo.resumo.nota == 70
+    assert antigo.resumo.titulos == 12 and antigo.resumo.clubes[0] == "Bahia"
+
+
+def test_link_comporta_todas_as_respostas_de_uma_carreira() -> None:
+    """Four penalties take the answers past 63, what the old 6-bit counter held."""
+    assert MAX_RESPOSTAS > 63
+    carreira, e = _carreira("completa")
+    resumo = resumir(e, carreira)
+    for escolhas in ([3, 1, 4] * 30)[:MAX_RESPOSTAS], [0] * MAX_RESPOSTAS, [16] * 64:
+        cheia = e.model_copy(update={"escolhas": escolhas[:MAX_RESPOSTAS]})
+        codigo = codificar(carregar().versao, "geral", cheia, resumo)
+        assert decodificar(codigo).entrada == cheia
+        assert codigo[0] == "B"  # format 4: the first byte is 0x04

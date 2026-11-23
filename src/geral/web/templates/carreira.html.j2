@@ -39,7 +39,7 @@
           <select id="cr-clube" required>{% for c in jogo.clubes %}<option value="{{ c.id }}"{% if c.id == "abc" %} selected{% endif %}>{{ c.nome }}</option>{% endfor %}</select>
         </label>
         <fieldset class="cr-minis"><legend>Lances decisivos</legend>
-          <button type="button" class="cr-mini" data-minijogos="true" aria-pressed="true"><b>Com minijogos</b><span>Numa final de copa, você bate o pênalti decisivo.</span></button>
+          <button type="button" class="cr-mini" data-minijogos="true" aria-pressed="true"><b>Com minijogos</b><span>Saiu pênalti no campeonato, no clássico ou na final? Você bate.</span></button>
           <button type="button" class="cr-mini" data-minijogos="false" aria-pressed="false"><b>Sem minijogos</b><span>O motor bate por você, pela finalização do craque.</span></button>
         </fieldset>
         <button class="btn cr-go" type="submit">Começar o draft</button>
@@ -109,7 +109,7 @@
 
     <script type="application/json" id="cr-data">{{ jogo | tojson }}</script>
     <p class="credit">As notas das lendas são da redação da Geral: discorda? Responda qualquer newsletter.</p>
-    {% set rules_key = "carreira" %}{% set rules %}Dê nome, camisa, posição e pé ao seu craque.|No draft passam 8 nomes, entre lendas e jogadores de verdade: de cada um você rouba um atributo. Escolha bem, porque cada atributo só pode ser roubado uma vez. Você pode trocar o nome da vez duas vezes.|Depois é com ele: a carreira acontece temporada a temporada, dos 16 anos até a aposentadoria, e de vez em quando você decide o rumo. Com minijogos, se o time chegar a uma final de copa, você bate o pênalti decisivo.|No fim, um card com a nota, os títulos e o jogador real com quem sua carreira mais se parece. Jogue quantas vezes quiser.{% endset %}{% set rules = rules.split("|") %}{% include "_regras.html.j2" %}
+    {% set rules_key = "carreira" %}{% set rules %}Dê nome, camisa, posição e pé ao seu craque.|No draft passam 8 nomes, entre lendas e jogadores de verdade: de cada um você rouba um atributo. Escolha bem, porque cada atributo só pode ser roubado uma vez. Você pode trocar o nome da vez duas vezes.|Depois é com ele: a carreira acontece temporada a temporada, dos 16 anos até a aposentadoria, e de vez em quando você decide o rumo. Com minijogos, quando sai um pênalti para o seu craque, seja no campeonato, num clássico ou numa final de copa, é você quem bate.|No fim, um card com a nota, os títulos e o jogador real com quem sua carreira mais se parece. Jogue quantas vezes quiser.{% endset %}{% set rules = rules.split("|") %}{% include "_regras.html.j2" %}
   </div>
 </section>
 <script src="/static/geral/penalti.js?v={{ asset_version }}" defer></script>
