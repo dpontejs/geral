@@ -1,0 +1,31 @@
+{% extends "base.html.j2" %}
+{% block title %}Prancheta · Geral{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/geral/jogos.css?v={{ asset_version }}">
+<link rel="stylesheet" href="/static/geral/prancheta.css?v={{ asset_version }}">{% endblock %}
+{% block content %}
+{# Everything on the stage is drawn by prancheta.js from the server's `estado` and events. #}
+<section class="jogo wall pr">
+  <div class="wrap" id="pr" data-sala="{{ sala_id }}" data-url="{{ public_url }}">
+    {% include "_game_tabs.html.j2" %}
+    <div class="game-title"><h1>Prancheta</h1><button type="button" class="rules-open" aria-label="Como jogar">?</button></div>
+    <div class="palco" id="palco" aria-live="polite">
+      <noscript><div class="ticket"><h2>Precisa de JavaScript</h2><p>A Prancheta é ao vivo: ligue o JavaScript para criar ou entrar numa sala.</p></div></noscript>
+    </div>
+    <p class="credit">Sala privada: só entra quem tem o link. Desenhos não são guardados. Reiniciar o servidor encerra as salas abertas.<span id="pr-sair-box" hidden> · <button type="button" class="pr-sair" id="pr-sair">Sair da sala</button></span></p>
+    {% set rules_key = "prancheta" %}{% include "_regras.html.j2" %}
+
+    <dialog class="pr-caixa" id="pr-cartao" aria-labelledby="pr-cartao-titulo"><div class="caixa">
+      <h2 id="pr-cartao-titulo"><span class="vermelho"></span>Cartão vermelho?</h2>
+      <p>Dar cartão para <b id="pr-cartao-nome"></b>. Sai da sala quando a maioria dos presentes concordar.</p>
+      <div class="votos" id="pr-cartao-votos"></div>
+      <p class="fine">Seu voto vale até ele sair. O anfitrião pode tirar direto.</p>
+      <div class="acoes">
+        <button class="btn vermelho" type="button" id="pr-cartao-dar">Dar cartão</button>
+        <button class="btn vermelho" type="button" id="pr-cartao-tirar" hidden>Tirar agora</button>
+        <button class="btn secondary" type="button" data-fecha>Cancelar</button>
+      </div>
+    </div></dialog>
+  </div>
+</section>
+<script src="/static/geral/prancheta.js?v={{ asset_version }}" defer></script>
+{% endblock %}

@@ -1,0 +1,17 @@
+{# The súmula on paper: the page at the room's link and, fetched by prancheta.js, the live room's end. #}
+{% set jogadores = sumula.jogadores %}
+{% set topo = jogadores[0].pontos if jogadores else 0 %}
+{% set campeoes = jogadores | selectattr("pontos", "equalto", topo) | map(attribute="apelido") | list %}
+<div class="placar board campeao"><span class="lamp">Fim de jogo{% if jogadores %} · {{ campeoes | join(" e ") }}{% endif %}</span><span class="lamp n">{{ topo }} pts</span></div>
+<article class="sumula">
+  <div class="cab"><h2>Súmula</h2><p>Sala {{ sala_id }}{% if sumula.rodadas %} · {{ sumula.rodadas }} rodada{{ "s" if sumula.rodadas > 1 }}{% endif %} · {{ sumula.lances | length }} lance{{ "s" if sumula.lances | length != 1 }}</p></div>
+  <div class="colunas">
+    <section><h3>Placar</h3><table><thead><tr><th>#</th><th>Jogador</th><th>Pts</th><th>Gols</th><th>Assist.</th></tr></thead>
+      <tbody>{% for j in jogadores %}<tr><td>{{ loop.index }}</td><td>{{ j.apelido }}</td><td class="pts">{{ j.pontos }}</td><td>{{ j.gols }}</td><td>{{ j.assist }}</td></tr>{% endfor %}</tbody></table>
+      <p class="fine" style="margin-top:10px">Gol é acerto; assistência, acerto no seu desenho.</p></section>
+    <section><h3>Lances</h3>{% if sumula.lances %}<ol class="lances">{% for l in sumula.lances %}<li><span class="n">{{ loop.index }}</span><span class="pal">{{ l.palavra }}</span><span class="quem">{{ l.desenhista }} desenhou · {{ l.acertaram | join(", ") if l.acertaram else "ninguém acertou" }}</span></li>{% endfor %}</ol>{% else %}<p class="fine">A partida acabou antes do primeiro lance.</p>{% endif %}</section>
+  </div>
+  <div class="link"><code>{{ link }}</code><button class="btn" type="button" data-copiar="{{ link }}">Copiar</button></div>
+  <div class="acoes"><a class="btn lamp-btn" href="/jogos/prancheta">Nova sala</a><a class="btn secondary" href="https://wa.me/?text={{ ('Súmula da Prancheta na Geral: ' ~ link) | urlencode }}" target="_blank" rel="noopener">Mandar no Zap</a></div>
+  <p class="fine">A súmula fica neste link. Os desenhos não são guardados.</p>
+</article>

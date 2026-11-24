@@ -1,0 +1,24 @@
+{% extends "base.html.j2" %}
+{% block title %}Súmula da sala {{ sala_id }} · Prancheta · Geral{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/geral/jogos.css?v={{ asset_version }}">
+<link rel="stylesheet" href="/static/geral/prancheta.css?v={{ asset_version }}">{% endblock %}
+{% block content %}
+{# What is left of a room at its short link: points and plays, never a drawing. #}
+{% set link = public_url ~ "/jogos/prancheta/s/" ~ sala_id %}
+<section class="jogo wall pr">
+  <div class="wrap">
+    {% include "_game_tabs.html.j2" %}
+    <div class="game-title"><h1>Prancheta</h1><button type="button" class="rules-open" aria-label="Como jogar">?</button></div>
+    <div class="palco" id="pr-sumula">
+      {% include "_prancheta_sumula.html.j2" %}
+    </div>
+    <p class="credit">Sala privada: só entra quem tem o link. Desenhos não são guardados.</p>
+    {% set rules_key = "prancheta" %}{% include "_regras.html.j2" %}
+  </div>
+</section>
+<script>
+  document.querySelectorAll("[data-copiar]").forEach((botao) => botao.addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(botao.dataset.copiar); botao.textContent = "Copiado"; } catch { /* the link is on screen */ }
+  }));
+</script>
+{% endblock %}
