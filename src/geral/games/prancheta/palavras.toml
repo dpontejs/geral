@@ -1,0 +1,1811 @@
+# Palavras da Prancheta: banco único de futebol, sem tema, curado à mão
+# (docs/features/prancheta.md). Toda palavra tem de ser desenhável ou mimável em 80 s e
+# reconhecida por qualquer torcedor brasileiro; de um clube só entra o que é de todos.
+# `aceita` são outras formas certas do chute (sinônimo, apelido, nome completo).
+
+# ============================================================
+# lance: Lances, jogadas e regras: o que acontece dentro de campo.
+# ============================================================
+
+[[palavra]]
+texto = "Gol"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Pênalti"
+aceita = ["penalidade máxima"]
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Escanteio"
+aceita = ["córner"]
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Falta"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Bicicleta"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Cabeçada"
+aceita = ["gol de cabeça"]
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Chute"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Passe"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Drible"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Defesa"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Carrinho"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Impedimento"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Embaixadinha"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Gol contra"
+aceita = ["autogol"]
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Frango"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Bola na trave"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Expulsão"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Substituição"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Chapéu"
+aceita = ["lençol"]
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Caneta"
+aceita = ["janelinha"]
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Pedalada"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Goleada"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Empate"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Virada"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Comemoração"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Disputa de pênaltis"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Tiro de meta"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Pontapé inicial"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Mão na bola"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Olé"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Gol olímpico"
+aceita = ["gol de escanteio"]
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Gol de placa"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Elástico"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Cavadinha"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Paradinha"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Voleio"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Peixinho"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Gol de calcanhar"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Letra"
+aceita = ["rabona"]
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Trivela"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Barreira"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Gol de falta"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Tabelinha"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Cruzamento"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Matada no peito"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Ponte"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Rebote"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Simulação"
+aceita = ["cai-cai"]
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Cera"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Contra-ataque"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Cobrança de lateral"
+aceita = ["arremesso lateral"]
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Prorrogação"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Gol do meio de campo"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Bola nas costas"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Chute de bico"
+aceita = ["bicuda"]
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Chutão"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Gol anulado"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Rolinho"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Firula"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Furada"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Bola dividida"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Folha seca"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Lambreta"
+aceita = ["carretilha"]
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Drible da vaca"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Mão de Deus"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Chuveirinho"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Banheira"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Retranca"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Ferrolho"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Catimba"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Lei da vantagem"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Recuo para o goleiro"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Linha burra"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Ligação direta"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Pressão alta"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Gol de ouro"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Hat-trick"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Meia-bicicleta"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Bobinho"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Gol de canela"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Tiro livre indireto"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Bola ao chão"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Pênalti perdido"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Gol relâmpago"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Saída de bola"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Sete a um"
+aceita = ["7 a 1"]
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Levantar a taça"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Bola fora"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Escorregão"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Aquecimento"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Alongamento"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Pisar na bola"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Puxão de camisa"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Cotovelada"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Rasteira"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Cara ou coroa"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Troca de camisa"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Volta olímpica"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Cãibra"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "VAR"
+aceita = ["árbitro de vídeo"]
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Chute cruzado"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Escanteio curto"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Gol de cobertura"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Chute de primeira"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Bola parada"
+dificuldade = "dificil"
+tipo = "lance"
+
+# ============================================================
+# objeto: Objetos, equipamento e taças.
+# ============================================================
+
+[[palavra]]
+texto = "Bola"
+dificuldade = "facil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Apito"
+dificuldade = "facil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Chuteira"
+dificuldade = "facil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Trave"
+dificuldade = "facil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Rede"
+dificuldade = "facil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Taça"
+aceita = ["troféu"]
+dificuldade = "facil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Medalha"
+dificuldade = "facil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Cartão vermelho"
+dificuldade = "facil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Cartão amarelo"
+dificuldade = "facil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Camisa 10"
+dificuldade = "facil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Caneleira"
+dificuldade = "facil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Luva de goleiro"
+dificuldade = "facil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Placar"
+dificuldade = "facil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Cronômetro"
+dificuldade = "facil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Bandeira de escanteio"
+dificuldade = "facil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Meião"
+dificuldade = "facil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Uniforme"
+dificuldade = "facil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Copa do Mundo"
+dificuldade = "facil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Braçadeira de capitão"
+aceita = ["faixa de capitão"]
+dificuldade = "media"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Prancheta"
+dificuldade = "media"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Spray de barreira"
+aceita = ["spray"]
+dificuldade = "media"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Placa de substituição"
+dificuldade = "media"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Colete"
+dificuldade = "media"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Cone"
+dificuldade = "media"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Travessão"
+dificuldade = "media"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Ângulo"
+aceita = ["gaveta"]
+dificuldade = "media"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Trava da chuteira"
+dificuldade = "media"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Bomba de encher bola"
+dificuldade = "media"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Maca"
+dificuldade = "media"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Cachecol"
+dificuldade = "media"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Vuvuzela"
+dificuldade = "media"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Álbum de figurinhas"
+dificuldade = "media"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Figurinha"
+dificuldade = "media"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Radinho de pilha"
+dificuldade = "media"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Futebol de botão"
+dificuldade = "media"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Pebolim"
+aceita = ["totó"]
+dificuldade = "media"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Apito final"
+dificuldade = "media"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Faixa de campeão"
+dificuldade = "media"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Bola de ouro"
+dificuldade = "media"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Amarelinha"
+dificuldade = "media"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Libertadores"
+dificuldade = "media"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Taça Jules Rimet"
+dificuldade = "dificil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Jabulani"
+dificuldade = "dificil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Bola de capotão"
+dificuldade = "dificil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Chuteira de ouro"
+dificuldade = "dificil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Tira-teima"
+dificuldade = "dificil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Bola murcha"
+dificuldade = "dificil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Tornozeleira"
+dificuldade = "dificil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Brasileirão"
+dificuldade = "dificil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Champions League"
+dificuldade = "dificil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Mundial de Clubes"
+dificuldade = "dificil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Copa América"
+dificuldade = "dificil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Escudo"
+dificuldade = "facil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Ônibus do time"
+dificuldade = "media"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Estrela no escudo"
+dificuldade = "dificil"
+tipo = "objeto"
+
+# ============================================================
+# estadio: Estádios que o Brasil todo conhece e as partes de um estádio.
+# ============================================================
+
+[[palavra]]
+texto = "Estádio"
+dificuldade = "facil"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Maracanã"
+dificuldade = "facil"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Gramado"
+dificuldade = "facil"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Grande área"
+dificuldade = "facil"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Marca do pênalti"
+dificuldade = "facil"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Meio de campo"
+dificuldade = "facil"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Banco de reservas"
+dificuldade = "facil"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Vestiário"
+dificuldade = "facil"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Placar eletrônico"
+dificuldade = "facil"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Arquibancada"
+dificuldade = "facil"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Mineirão"
+dificuldade = "media"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Morumbi"
+dificuldade = "media"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Pacaembu"
+dificuldade = "media"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Pequena área"
+dificuldade = "media"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Círculo central"
+dificuldade = "media"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Linha de fundo"
+dificuldade = "media"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Túnel"
+dificuldade = "media"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Refletor"
+aceita = ["holofote"]
+dificuldade = "media"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Bilheteria"
+dificuldade = "media"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Catraca"
+dificuldade = "media"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Alambrado"
+dificuldade = "media"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Telão"
+dificuldade = "media"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Cabine de imprensa"
+dificuldade = "media"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Geral do Maracanã"
+aceita = ["a geral"]
+dificuldade = "dificil"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Vila Belmiro"
+dificuldade = "dificil"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Fonte Nova"
+dificuldade = "dificil"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Wembley"
+dificuldade = "dificil"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Camp Nou"
+dificuldade = "dificil"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Bombonera"
+dificuldade = "dificil"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Camarote"
+dificuldade = "dificil"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Fosso"
+dificuldade = "dificil"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Meia-lua"
+dificuldade = "dificil"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Cadeira numerada"
+dificuldade = "dificil"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Cabine do VAR"
+dificuldade = "dificil"
+tipo = "estadio"
+
+# ============================================================
+# torcida: Torcida, arquibancada e cultura do futebol.
+# ============================================================
+
+[[palavra]]
+texto = "Torcida"
+dificuldade = "facil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Torcedor"
+dificuldade = "facil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Hino"
+dificuldade = "facil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Bandeirão"
+dificuldade = "facil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Grito de gol"
+dificuldade = "facil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Ola"
+aceita = ["onda"]
+dificuldade = "facil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Corneta"
+dificuldade = "facil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Bumbo"
+dificuldade = "facil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Papel picado"
+dificuldade = "facil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Pipoca"
+dificuldade = "facil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Cachorro-quente"
+dificuldade = "facil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Ingresso"
+dificuldade = "facil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Pelada"
+dificuldade = "facil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Futsal"
+dificuldade = "facil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Futevôlei"
+dificuldade = "facil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Futebol de areia"
+dificuldade = "facil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Camisa autografada"
+dificuldade = "facil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Narrador"
+dificuldade = "facil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Mosaico"
+dificuldade = "media"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Charanga"
+dificuldade = "media"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Coreografia"
+dificuldade = "media"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Pé quente"
+dificuldade = "media"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Pé frio"
+dificuldade = "media"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Amuleto"
+dificuldade = "media"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Bolão"
+dificuldade = "media"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Peneira"
+dificuldade = "media"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Olheiro"
+dificuldade = "media"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Entrevista coletiva"
+aceita = ["coletiva"]
+dificuldade = "media"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Repórter de campo"
+dificuldade = "media"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Comentarista"
+dificuldade = "media"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Campinho"
+dificuldade = "media"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Várzea"
+aceita = ["futebol de várzea"]
+dificuldade = "media"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Rachão"
+dificuldade = "media"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Caravana"
+dificuldade = "media"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Fila do ingresso"
+dificuldade = "media"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Bandeira na janela"
+dificuldade = "media"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Churrasquinho"
+dificuldade = "dificil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Zica"
+dificuldade = "dificil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Secador"
+dificuldade = "dificil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Mesa redonda"
+dificuldade = "dificil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Altinha"
+dificuldade = "dificil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Rua pintada"
+dificuldade = "dificil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Concentração"
+dificuldade = "dificil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Preleção"
+dificuldade = "dificil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Camisa 12"
+dificuldade = "dificil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Galvão Bueno"
+dificuldade = "dificil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Hexa"
+dificuldade = "dificil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Penta"
+dificuldade = "dificil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Tetra"
+dificuldade = "dificil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Fuleco"
+dificuldade = "dificil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Canarinho Pistola"
+dificuldade = "dificil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Mascote"
+dificuldade = "facil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Bandeira"
+dificuldade = "facil"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Torcida organizada"
+dificuldade = "media"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Invasão de campo"
+dificuldade = "media"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Hino nacional"
+dificuldade = "media"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Fogos de artifício"
+dificuldade = "media"
+tipo = "torcida"
+
+[[palavra]]
+texto = "Camisa retrô"
+dificuldade = "dificil"
+tipo = "torcida"
+
+# ============================================================
+# jogador: Quem está em campo: posições, arbitragem e jogadores que o Brasil todo conhece.
+# ============================================================
+
+[[palavra]]
+texto = "Goleiro"
+dificuldade = "facil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Zagueiro"
+dificuldade = "facil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Atacante"
+dificuldade = "facil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Juiz"
+aceita = ["árbitro"]
+dificuldade = "facil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Bandeirinha"
+aceita = ["assistente"]
+dificuldade = "facil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Capitão"
+dificuldade = "facil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Gandula"
+dificuldade = "facil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Craque"
+dificuldade = "facil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Artilheiro"
+dificuldade = "facil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Reserva"
+dificuldade = "facil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Pelé"
+aceita = ["rei do futebol", "edson arantes do nascimento"]
+dificuldade = "facil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Neymar"
+dificuldade = "facil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Ronaldinho"
+aceita = ["ronaldinho gaúcho"]
+dificuldade = "facil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Ronaldo"
+aceita = ["fenômeno"]
+dificuldade = "facil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Romário"
+aceita = ["baixinho"]
+dificuldade = "facil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Messi"
+dificuldade = "facil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Cristiano Ronaldo"
+aceita = ["cr7"]
+dificuldade = "facil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Lateral"
+dificuldade = "media"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Volante"
+dificuldade = "media"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Centroavante"
+dificuldade = "media"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Ponta"
+dificuldade = "media"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Meia"
+dificuldade = "media"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Camisa 9"
+dificuldade = "media"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Garrincha"
+aceita = ["mané"]
+dificuldade = "media"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Zico"
+aceita = ["galinho"]
+dificuldade = "media"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Maradona"
+dificuldade = "media"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Kaká"
+dificuldade = "media"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Cafu"
+dificuldade = "media"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Roberto Carlos"
+dificuldade = "media"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Rivaldo"
+dificuldade = "media"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Bebeto"
+dificuldade = "media"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Taffarel"
+dificuldade = "media"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Dunga"
+dificuldade = "media"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Sócrates"
+aceita = ["doutor"]
+dificuldade = "media"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Rogério Ceni"
+dificuldade = "media"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Adriano"
+aceita = ["imperador"]
+dificuldade = "media"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Marta"
+dificuldade = "media"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Vini Jr"
+aceita = ["vinícius júnior", "vinicius jr"]
+dificuldade = "media"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Hulk"
+dificuldade = "media"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Richarlison"
+aceita = ["pombo"]
+dificuldade = "media"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Quarto árbitro"
+dificuldade = "media"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Líbero"
+dificuldade = "dificil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Ponta de lança"
+dificuldade = "dificil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Dadá Maravilha"
+aceita = ["dadá"]
+dificuldade = "dificil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Leônidas da Silva"
+aceita = ["diamante negro"]
+dificuldade = "dificil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Didi"
+dificuldade = "dificil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Nilton Santos"
+aceita = ["enciclopédia"]
+dificuldade = "dificil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Gérson"
+aceita = ["canhotinha de ouro"]
+dificuldade = "dificil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Rivellino"
+dificuldade = "dificil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Jairzinho"
+aceita = ["furacão"]
+dificuldade = "dificil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Carlos Alberto Torres"
+aceita = ["capita"]
+dificuldade = "dificil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Tostão"
+dificuldade = "dificil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Falcão"
+dificuldade = "dificil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Formiga"
+dificuldade = "dificil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Zidane"
+dificuldade = "dificil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Cabeça de área"
+dificuldade = "dificil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Careca"
+dificuldade = "dificil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Categoria de base"
+dificuldade = "dificil"
+tipo = "jogador"
+
+# ============================================================
+# tecnico: Técnicos e comissão técnica.
+# ============================================================
+
+[[palavra]]
+texto = "Técnico"
+aceita = ["treinador"]
+dificuldade = "facil"
+tipo = "tecnico"
+
+[[palavra]]
+texto = "Massagista"
+dificuldade = "media"
+tipo = "tecnico"
+
+[[palavra]]
+texto = "Felipão"
+aceita = ["felipe scolari", "luiz felipe scolari"]
+dificuldade = "media"
+tipo = "tecnico"
+
+[[palavra]]
+texto = "Auxiliar técnico"
+dificuldade = "media"
+tipo = "tecnico"
+
+[[palavra]]
+texto = "Ancelotti"
+aceita = ["carlo ancelotti"]
+dificuldade = "media"
+tipo = "tecnico"
+
+[[palavra]]
+texto = "Zagallo"
+aceita = ["velho lobo"]
+dificuldade = "dificil"
+tipo = "tecnico"
+
+[[palavra]]
+texto = "Telê Santana"
+dificuldade = "dificil"
+tipo = "tecnico"
+
+[[palavra]]
+texto = "Parreira"
+dificuldade = "dificil"
+tipo = "tecnico"
+
+[[palavra]]
+texto = "Guardiola"
+dificuldade = "dificil"
+tipo = "tecnico"
+
+[[palavra]]
+texto = "Preparador físico"
+dificuldade = "dificil"
+tipo = "tecnico"
+
+[[palavra]]
+texto = "Roupeiro"
+dificuldade = "dificil"
+tipo = "tecnico"
+
+# ============================================================
+# apelido: Gírias e apelidos que todo torcedor usa.
+# ============================================================
+
+[[palavra]]
+texto = "Perna de pau"
+dificuldade = "facil"
+tipo = "apelido"
+
+[[palavra]]
+texto = "Paredão"
+aceita = ["muralha"]
+dificuldade = "facil"
+tipo = "apelido"
+
+[[palavra]]
+texto = "Dono da bola"
+dificuldade = "facil"
+tipo = "apelido"
+
+[[palavra]]
+texto = "Zebra"
+dificuldade = "facil"
+tipo = "apelido"
+
+[[palavra]]
+texto = "Lanterna"
+aceita = ["lanterninha"]
+dificuldade = "media"
+tipo = "apelido"
+
+[[palavra]]
+texto = "Chocolate"
+dificuldade = "media"
+tipo = "apelido"
+
+[[palavra]]
+texto = "Garçom"
+dificuldade = "media"
+tipo = "apelido"
+
+[[palavra]]
+texto = "Matador"
+dificuldade = "media"
+tipo = "apelido"
+
+[[palavra]]
+texto = "Xerife"
+dificuldade = "media"
+tipo = "apelido"
+
+[[palavra]]
+texto = "Maestro"
+dificuldade = "media"
+tipo = "apelido"
+
+[[palavra]]
+texto = "Canhoto"
+dificuldade = "media"
+tipo = "apelido"
+
+[[palavra]]
+texto = "Cabeça de bagre"
+dificuldade = "dificil"
+tipo = "apelido"
+
+[[palavra]]
+texto = "Freguês"
+dificuldade = "dificil"
+tipo = "apelido"
+
+[[palavra]]
+texto = "Mão de alface"
+dificuldade = "dificil"
+tipo = "apelido"
+
+[[palavra]]
+texto = "Tapetão"
+dificuldade = "dificil"
+tipo = "apelido"
+
+[[palavra]]
+texto = "Virada de mesa"
+dificuldade = "dificil"
+tipo = "apelido"
+
+[[palavra]]
+texto = "Barbante"
+dificuldade = "dificil"
+tipo = "apelido"
+
+[[palavra]]
+texto = "Gorduchinha"
+dificuldade = "dificil"
+tipo = "apelido"
+
+[[palavra]]
+texto = "Cartola"
+dificuldade = "dificil"
+tipo = "apelido"
+
+[[palavra]]
+texto = "Boleiro"
+dificuldade = "dificil"
+tipo = "apelido"
+
+[[palavra]]
+texto = "Fominha"
+dificuldade = "dificil"
+tipo = "apelido"
+
+[[palavra]]
+texto = "Coringa"
+dificuldade = "media"
+tipo = "apelido"
+
+# ============================================================
+# clube: Seleções: o time de todo mundo.
+# ============================================================
+
+[[palavra]]
+texto = "Seleção Brasileira"
+aceita = ["seleção"]
+dificuldade = "media"
+tipo = "clube"
+
+[[palavra]]
+texto = "Argentina"
+dificuldade = "media"
+tipo = "clube"
