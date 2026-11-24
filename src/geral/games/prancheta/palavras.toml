@@ -1,0 +1,17 @@
+# Palavras da Prancheta: banco único de futebol, curado à mão (docs/features/prancheta.md).
+# Toda palavra tem de ser desenhável ou mimável em 80 s e reconhecida por qualquer torcedor.
+
+[[palavra]]
+texto = "Bicicleta"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Gol olímpico"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Folha seca"
+dificuldade = "dificil"
+tipo = "lance"
