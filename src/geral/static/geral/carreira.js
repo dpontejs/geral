@@ -163,6 +163,8 @@
 
   const pedido = () => ({
     semente_draft: estado.oferta.semente_draft,
+    versao: estado.oferta.versao, // the data the career started with: a deploy mid-career is told
+
     semente: estado.semente,
     craque: estado.craque,
     modo: estado.modo,
@@ -171,18 +173,51 @@
     escolhas: estado.escolhas,
   });
 
+  // While the site restarts on a deploy (or the phone loses signal for a moment) the request is
+  // tried again by itself for ~20 s before the fan sees an error.
+  const REINICIANDO = new Set([502, 503, 504]);
+  const ESPERAS = [500, 1000, 2000, 3000, 4000, 5000, 5000];
+
   async function post(url, body) {
-    const resposta = await fetch(url, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(body),
-    });
-    const dados = await resposta.json().catch(() => ({}));
-    if (!resposta.ok) {
-      const detalhe = typeof dados.detail === "string" ? dados.detail : "Algo deu errado. Tente de novo.";
-      throw new Error(detalhe);
+    for (let tentativa = 0; ; tentativa += 1) {
+      let resposta = null;
+      try {
+        resposta = await fetch(url, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(body),
+        });
+      } catch {
+        resposta = null; // no connection: same as a restart
+      }
+      if ((resposta === null || REINICIANDO.has(resposta.status)) && tentativa < ESPERAS.length) {
+        aguardando(true);
+        await new Promise((ok) => setTimeout(ok, ESPERAS[tentativa]));
+        continue;
+      }
+      aguardando(false);
+      if (resposta === null) throw new Error("Sem conexão. Tente de novo.");
+      const dados = await resposta.json().catch(() => ({}));
+      if (!resposta.ok) {
+        const detalhe = typeof dados.detail === "string" ? dados.detail : "Algo deu errado. Tente de novo.";
+        const erro = new Error(detalhe);
+        erro.atualizado = Boolean(dados.atualizado);
+        throw erro;
+      }
+      return dados;
     }
-    return dados;
+  }
+
+  function aguardando(sim) {
+    const aviso = $("cr-error");
+    if (!aviso) return;
+    if (sim) {
+      aviso.textContent = "Atualizando o jogo, só um instante…";
+      aviso.hidden = false;
+      $("cr-retry").hidden = true;
+    } else if (aviso.textContent === "Atualizando o jogo, só um instante…") {
+      aviso.hidden = true;
+    }
   }
 
   const quem = (c) => `${c.nome} · #${c.camisa} · ${c.posicao}`;
@@ -211,6 +246,9 @@
     } catch (erro) {
       $("cr-error").textContent = erro.message || "Sem conexão. Tente de novo.";
       $("cr-error").hidden = $("cr-retry").hidden = false;
+      // the game changed mid-career: the same answers would tell another story, so start over
+      $("cr-retry").textContent = erro.atualizado ? "Nova carreira com o mesmo craque" : "Tentar de novo";
+      $("cr-retry").dataset.atualizado = erro.atualizado ? "1" : "";
     }
   }
 
@@ -231,7 +269,10 @@
   }
 
   $("cr-next").addEventListener("click", avancar);
-  $("cr-retry").addEventListener("click", () => simular());
+  $("cr-retry").addEventListener("click", () => {
+    if ($("cr-retry").dataset.atualizado) return form.requestSubmit(); // the form keeps his craque
+    simular();
+  });
 
   const chip = (texto, cls = "cr-chip") => el("span", cls, texto);
 

@@ -16,6 +16,7 @@ def isolated_settings(monkeypatch: pytest.MonkeyPatch, tmp_path) -> None:
     for name in Settings.model_fields:
         monkeypatch.delenv(name, raising=False)
     monkeypatch.setenv("CENTRAL_REFRESH", "0")  # no thread calling ge from the web tests
+    monkeypatch.setenv("PRANCHETA_LACO", "false")  # the tests step the Prancheta by hand
     get_settings.cache_clear()
     yield
     get_settings.cache_clear()
