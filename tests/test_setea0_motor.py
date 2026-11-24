@@ -23,45 +23,71 @@ def escolhas_validas(semente="s", esquema="4-4-2", modo="classico", trocas=None)
     return gulosas(DADOS, "abc", semente, esquema, modo, trocas)
 
 
-def test_decadas_com_ao_menos_8_jogadores():
-    assert motor.decadas(DADOS, "abc") == [1970, 1980, 2000, 2010]
+def test_epocas_do_clube():
+    rotulos = [e.rotulo for e in motor.epocas_do_clube(DADOS, "abc")]
+    assert rotulos == ["anos 40 a 70", "anos 80", "anos 90 a 2000", "anos 2010"]
 
 
-def test_oferta_so_tem_jogadores_do_clube_na_decada():
+def test_oferta_so_tem_jogadores_do_clube_na_epoca():
     ids_abc = {j.id for j in DADOS.clubes["abc"].jogadores}
     for i in range(50):
         r = motor.oferta(DADOS, "abc", f"o{i}", i % 11, 0)
-        assert r.decada in motor.decadas(DADOS, "abc")
+        assert r.epoca in motor.epocas_do_clube(DADOS, "abc")
         assert 1 <= len(r.jogadores) <= motor.TAMANHO_OFERTA
         assert len({j.id for j in r.jogadores}) == len(r.jogadores)
         for j in r.jogadores:
-            assert j.id in ids_abc and r.decada in j.decadas()
+            assert j.id in ids_abc and r.epoca.contem(j)
         assert {LINHA[p] for j in r.jogadores for p in j.posicoes} == {"GOL", "DEF", "MEI", "ATA"}
         forcas = [j.forca for j in r.jogadores]
         assert forcas == sorted(forcas, reverse=True)
         assert r.trocas_restantes == 3
 
 
-def test_decadas_ralas_nao_saem():
-    assert all(motor.oferta(DADOS, "abc", f"r{i}", 0, 0).decada != 1940 for i in range(500))
+def test_decadas_ralas_viram_epoca():
+    epocas = motor.epocas_do_clube(DADOS, "abc")
+    juntas = next(e for e in epocas if e.rotulo == "anos 40 a 70")
+    assert (juntas.inicio, juntas.fim) == (1940, 1970)
+    for epoca in epocas:
+        assert sum(epoca.contem(j) for j in DADOS.clubes["abc"].jogadores) >= 8
+    sorteadas = {motor.oferta(DADOS, "abc", f"r{i}", 0, 0).epoca.rotulo for i in range(200)}
+    assert "anos 40 a 70" in sorteadas and "anos 40" not in sorteadas
 
 
 def test_mesma_semente_mesma_oferta():
     assert motor.oferta(DADOS, "abc", "x", 3, 1) == motor.oferta(DADOS, "abc", "x", 3, 1)
 
 
-def test_troca_muda_a_decada_ou_os_nomes():
-    for i in range(20):
-        a = motor.oferta(DADOS, "abc", f"t{i}", 2, 0)
-        b = motor.oferta(DADOS, "abc", f"t{i}", 2, 1)
-        assert (a.decada, [j.id for j in a.jogadores]) != (b.decada, [j.id for j in b.jogadores])
+def test_troca_nunca_repete_epoca_da_rodada():
+    for i in range(100):
+        vistas = [motor.oferta(DADOS, "abc", f"t{i}", 2, t).epoca for t in range(4)]
+        assert len({e.rotulo for e in vistas}) == 4, vistas  # the fake ABC has exactly 4 eras
 
 
-def test_escalacao_valida_tem_11_com_a_decada_da_oferta():
+def test_troca_com_poucas_epocas_nao_repete_a_anterior():
+    from geral.games.setea0.modelos import Clube, Dados
+
+    dois = [j for j in DADOS.clubes["abc"].jogadores if j.decadas() & {2000, 2010}]
+    dados = Dados(versao="t", clubes={**DADOS.clubes, "abc": Clube(nome="ABC", jogadores=dois)})
+    assert len(motor.epocas_do_clube(dados, "abc")) == 2
+    for i in range(50):
+        vistas = [motor.oferta(dados, "abc", f"t{i}", 0, t).epoca for t in range(4)]
+        assert all(a != b for a, b in zip(vistas, vistas[1:], strict=False)), vistas
+
+
+def test_clube_sem_epoca_da_jogada_invalida():
+    from geral.games.setea0.modelos import Clube, Dados
+
+    sem_anos = [j.model_copy(update={"passagens": []}) for j in DADOS.clubes["abc"].jogadores]
+    dados = Dados(versao="t", clubes={"abc": Clube(nome="ABC", jogadores=sem_anos)})
+    with pytest.raises(JogadaInvalida):
+        motor.oferta(dados, "abc", "s", 0, 0)
+
+
+def test_escalacao_valida_tem_11_com_a_epoca_da_oferta():
     escalados = motor.escalar(DADOS, "abc", "s", "classico", "4-4-2", escolhas_validas())
     assert [e.vaga for e in escalados] == list(range(11))
     for e in escalados:
-        assert e.decada in e.jogador.decadas()
+        assert e.epoca.contem(e.jogador)
 
 
 def _trapaca(regra: str) -> tuple[str, str, str, list[Escolha]]:

@@ -19,6 +19,7 @@ from geral.games.setea0.modelos import (
     Cobranca,
     Dados,
     Disputa,
+    Epoca,
     Escalado,
     Escolha,
     Gol,
@@ -28,11 +29,12 @@ from geral.games.setea0.modelos import (
     PedidoDePenalti,
     Posicao,
     Rodada,
+    epocas,
 )
 
-MIN_DECADA = 8  # a decade needs this many players at the club to be drawn
 TAMANHO_OFERTA = 10
 RODADAS = 11
+TODOS_OS_TEMPOS = Epoca(inicio=0, fim=0, rotulo="todos os tempos")  # all-time opponents
 
 LINHA: dict[Posicao, str] = {"GOL": "GOL", "ZAG": "DEF", "LAT": "DEF", "MEI": "MEI", "ATA": "ATA"}
 VIZINHAS = {frozenset(("LAT", "ZAG")), frozenset(("LAT", "MEI")), frozenset(("MEI", "ATA"))}
@@ -53,53 +55,58 @@ def _memo[T](dados: Dados, chave: tuple, fazer: Callable[[], T]) -> T:
     return guardado[1][chave]
 
 
-def _por_decada(dados: Dados, edicao: str) -> dict[int, list[Jogador]]:
+def epocas_do_clube(dados: Dados, edicao: str) -> list[Epoca]:
+    """The eras the die can draw for the club, oldest first."""
+    return [e for e, _ in _por_epoca(dados, edicao)]
+
+
+def _por_epoca(dados: Dados, edicao: str) -> list[tuple[Epoca, list[Jogador]]]:
     if edicao not in dados.clubes:
         raise JogadaInvalida(f"edição sem 7a0: {edicao}")
 
-    def fazer() -> dict[int, list[Jogador]]:
-        grupos: dict[int, list[Jogador]] = {}
-        for jogador in dados.clubes[edicao].jogadores:
-            for decada in sorted(jogador.decadas()):
-                grupos.setdefault(decada, []).append(jogador)
-        return grupos
+    def fazer() -> list[tuple[Epoca, list[Jogador]]]:
+        jogadores = dados.clubes[edicao].jogadores
+        return [(e, [j for j in jogadores if e.contem(j)]) for e in epocas(jogadores)]
 
-    return _memo(dados, ("decadas", edicao), fazer)
+    return _memo(dados, ("epocas", edicao), fazer)
 
 
-def decadas(dados: Dados, edicao: str) -> list[int]:
-    """The club's decades with at least `MIN_DECADA` players, in order."""
-    grupos = _por_decada(dados, edicao)
-    return list(
-        _memo(
-            dados,
-            ("lista", edicao),
-            lambda: sorted(d for d, js in grupos.items() if len(js) >= MIN_DECADA),
-        )
-    )
+def _epoca_sorteada(eras: list[Epoca], semente: str, rodada: int, troca: int) -> tuple[int, Random]:
+    """The index of the era of `(rodada, troca)` and the rng that drew it. A reroll never brings
+    back an era shown in this round; with fewer eras than rerolls, only the last one is left out."""
+    vistas: list[int] = []
+    for t in range(troca + 1):
+        rng = Random(f"{semente}:{rodada}:{t}")
+        novas = [i for i in range(len(eras)) if i not in vistas]
+        if not novas:
+            novas = [i for i in range(len(eras)) if i != vistas[-1]] or list(range(len(eras)))
+        vistas.append(rng.choice(novas))
+    return vistas[-1], rng
 
 
 def oferta(
     dados: Dados, edicao: str, semente: str, rodada: int, troca: int, modo: str = "classico"
 ) -> Rodada:
-    """The decade drawn for this round and reroll, with up to 10 of its players."""
+    """The era drawn for this round and reroll, with up to 10 of its players."""
     if modo not in MODOS:
         raise JogadaInvalida(f"modo desconhecido: {modo}")
     if not 0 <= rodada < RODADAS or not 0 <= troca <= MODOS[modo]:
         raise JogadaInvalida(f"rodada {rodada} ou troca {troca} fora do jogo")
-    rng = Random(f"{semente}:{rodada}:{troca}")
-    decada = rng.choice(decadas(dados, edicao))
-    da_decada = list(_por_decada(dados, edicao)[decada])
-    rng.shuffle(da_decada)
+    por_epoca = _por_epoca(dados, edicao)
+    if not por_epoca:
+        raise JogadaInvalida(f"{edicao} não tem jogadores com época")
+    i, rng = _epoca_sorteada([e for e, _ in por_epoca], semente, rodada, troca)
+    epoca, da_epoca = por_epoca[i][0], list(por_epoca[i][1])
+    rng.shuffle(da_epoca)
     escolhidos: list[Jogador] = []
     ids: set[str] = set()
-    for linha in ("GOL", "DEF", "MEI", "ATA"):  # one of each line when the decade has one
-        for j in da_decada:
+    for linha in ("GOL", "DEF", "MEI", "ATA"):  # one of each line when the era has one
+        for j in da_epoca:
             if j.id not in ids and any(LINHA[p] == linha for p in j.posicoes):
                 escolhidos.append(j)
                 ids.add(j.id)
                 break
-    for jogador in da_decada:
+    for jogador in da_epoca:
         if len(escolhidos) >= TAMANHO_OFERTA:
             break
         if jogador.id not in ids:
@@ -109,7 +116,7 @@ def oferta(
     return Rodada.model_construct(  # built from validated parts; mass tests draw thousands
         rodada=rodada,
         troca=troca,
-        decada=decada,
+        epoca=epoca,
         jogadores=escolhidos,
         trocas_restantes=MODOS[modo] - troca,
     )
@@ -162,7 +169,7 @@ def escalar(
         if jogador.id in usados:
             raise JogadaInvalida(f"{jogador.nome} já está no time")
         usados.add(jogador.id)
-        escalados.append(Escalado(jogador=jogador, decada=rodada.decada, vaga=escolha.vaga))
+        escalados.append(Escalado(jogador=jogador, epoca=rodada.epoca, vaga=escolha.vaga))
     return sorted(escalados, key=lambda e: e.vaga)
 
 
@@ -218,7 +225,7 @@ def _montar_adversario(dados: Dados, slug: str) -> list[Jogador]:
 
 
 def _escalados_do_adversario(time: list[Jogador]) -> list[Escalado]:
-    return [Escalado(jogador=j, decada=0, vaga=i) for i, j in enumerate(time)]
+    return [Escalado(jogador=j, epoca=TODOS_OS_TEMPOS, vaga=i) for i, j in enumerate(time)]
 
 
 def adversarios(dados: Dados, edicao: str) -> list[str]:
