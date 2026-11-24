@@ -11,7 +11,7 @@ from geral.games.setea0 import dados as setea0_dados
 from geral.games.setea0 import motor
 
 API = "/api/jogos/7a0/abc"
-SEMENTE = "s17"  # the greedy XI wins it all, with two shootouts (games 2 and 6)
+SEMENTE = "s48"  # the greedy XI wins it all, with two shootouts (games 2 and 4)
 DADOS = dados_de_teste()
 
 
@@ -254,3 +254,13 @@ def test_escolha_do_clube_tem_um_cartao_por_clube(game) -> None:
     assert len(cartoes) == len(publicados)
     abc = next(c for c in cartoes if 'href="/jogos/7a0/abc"' in c)
     assert "América-RN" in abc and "Nordeste" in abc
+
+
+def test_pagina_do_jogo_tem_a_barra_dos_clubes(game) -> None:
+    html = game.get("/jogos/7a0/abc").text
+    barra = re.search(r'<nav class="editions"[^>]*>(.*?)</nav>', html, re.S)
+    assert barra, "no editions bar"
+    publicados = [s for s, e in setea0_dados.chaves()["edicao"].items() if e["publicado"]]
+    for slug in publicados:
+        assert f'href="/jogos/7a0/{slug}"' in barra.group(1)
+    assert re.search(r'href="/jogos/7a0/abc" aria-current="page"', barra.group(1))

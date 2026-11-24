@@ -3,9 +3,11 @@
 // (`finalizacao`) sets how wide the good power band is and how fast the aim moves. Click, touch or
 // space: aim, then power.
 //
-// window.jogarPenalti(el, {finalizacao, clube, adversario, tipo, minuto, competicao, copa, camisa})
-//   -> Promise<"gol" | "defesa" | "fora" | "trave" | "motor">
-// `tipo` is "jogo", "classico" or "final" (the default, with `copa` as its competition).
+// window.jogarPenalti(el, {finalizacao, clube, adversario, tipo, minuto, competicao, copa, camisa,
+//   placar, seguir}) -> Promise<"gol" | "defesa" | "fora" | "trave" | "motor">
+// `tipo` is "jogo", "classico", "final" (the default, with `copa` as its competition) or
+// "disputa" (the 7a0's shootouts: a short line, no clipping). `placar` overrides the score shown
+// before and after a goal; `seguir` the label of the button that ends it.
 // The result comes from the browser: a game to share, not a ranking.
 (() => {
   const W = 360, H = 470;
@@ -70,6 +72,12 @@
         trave: [["Na trave! O grito ficou preso", "O barulho do poste ecoou no estádio."]],
       },
     },
+    // 7a0: one kick of a shootout. A short line, no newspaper clipping, the next kick waits.
+    disputa: {
+      placar: ["0 × 0", "1 × 0"],
+      dicas: { gol: "Gol!", defesa: "Defendeu!", fora: "Pra fora!", trave: "Na trave!" },
+      textos: { gol: [["", ""]], defesa: [["", ""]], fora: [["", ""]], trave: [["", ""]] },
+    },
   };
 
   // The ad board behind the goal: made-up betting brands (never a real one), as in any Brazilian
@@ -129,6 +137,7 @@
     const { finalizacao, clube, adversario, copa, camisa = 9 } = opcoes;
     const tipo = PARTIDAS[opcoes.tipo] ? opcoes.tipo : "final";
     const partida = PARTIDAS[tipo];
+    const marcador = opcoes.placar || partida.placar;
     const competicao = opcoes.competicao || copa;
     const minuto = opcoes.minuto || "90+4'";
     const numero = camisa;
@@ -139,7 +148,7 @@
     // -- the markup: scoreboard, pitch, the hint strip, the clipping and the engine's button ---
     const palco = el("div", "pn-palco");
     const placar = el("div", "pn-placar");
-    const gols = el("div", "pn-gols lamp", partida.placar[0]);
+    const gols = el("div", "pn-gols lamp", marcador[0]);
     const relogio = el("span", "", minuto);
     const linha2 = el("div", "pn-linha2 lamp");
     linha2.append(relogio, el("span", "pn-copa", competicao));
@@ -147,7 +156,7 @@
     placar.append(times[0], gols, times[1], linha2);
     const cv = el("canvas", "pn-campo");
     cv.setAttribute("role", "img");
-    const onde = tipo === "final" ? `na final da ${competicao}` : tipo === "classico" ? `no ${competicao}` : `pelo ${competicao}, contra ${adversario}`;
+    const onde = tipo === "final" ? `na final da ${competicao}` : tipo === "classico" ? `no ${competicao}` : tipo === "disputa" ? `na disputa de pênaltis contra ${adversario}` : `pelo ${competicao}, contra ${adversario}`;
     cv.setAttribute("aria-label", `Pênalti ${onde}: toque ou aperte espaço para travar a mira e depois a força`);
     const dica = el("div", "pn-faixa", "Toque para travar a mira");
     dica.setAttribute("aria-live", "polite");
@@ -163,7 +172,7 @@
     const controles = el("div", "pn-controles");
     const motor = el("button", "btn secondary pn-motor", "Deixar o motor bater");
     motor.type = "button";
-    const seguir = el("button", "btn pn-seguir", "Seguir a carreira →");
+    const seguir = el("button", "btn pn-seguir", opcoes.seguir || "Seguir a carreira →");
     seguir.type = "button";
     seguir.hidden = true;
     controles.append(motor, seguir);
@@ -234,7 +243,7 @@
     function terminar() {
       resultado = julgar(); fase = "fim"; t0 = performance.now();
       if (resultado === "gol") {
-        festa = 1; flash = 1; gols.textContent = partida.placar[1];
+        festa = 1; flash = 1; gols.textContent = marcador[1];
         rede = { x: chute.para.x, y: chute.para.y, t: performance.now() };
       }
       if (tipo === "final") relogio.textContent = "Fim de jogo"; // the last kick; a league game goes on
@@ -243,7 +252,7 @@
       manchete.textContent = titulo; sub.textContent = linha;
       dica.textContent = partida.dicas[resultado];
       setTimeout(() => {
-        recorte.classList.add("on");
+        if (tipo !== "disputa") recorte.classList.add("on"); // a shootout kick needs no clipping
         seguir.hidden = false;
         seguir.focus({ preventScroll: true });
       }, 700);

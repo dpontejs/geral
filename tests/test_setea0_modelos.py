@@ -3,7 +3,7 @@ from setea0_fake import dados_de_teste
 
 from geral.games.setea0 import dados
 from geral.games.setea0.dados import chaves
-from geral.games.setea0.modelos import ESQUEMAS, Dados, Epoca, Jogador, epocas
+from geral.games.setea0.modelos import ESQUEMAS, PRIMEIRA_DECADA, Dados, Epoca, Jogador, epocas
 
 ORDEM = ["GOL", "LAT", "ZAG", "MEI", "ATA"]
 
@@ -88,9 +88,19 @@ def test_dados_de_teste_com_outra_semente_e_escala():
     assert all(j.forca <= 99 for j in forte.clubes["abc"].jogadores)
 
 
-def _com_decadas(contagem: dict[int, int]) -> list[Jogador]:
+POSICOES = ["GOL", "LAT", "ZAG", "MEI", "ATA"]
+
+
+def _com_decadas(contagem: dict[int, int], posicoes: list[str] = POSICOES) -> list[Jogador]:
+    """`n` players per decade, positions cycled: 5 or more cover every position."""
     return [
-        Jogador(id=f"Q{d}{i}", nome="X", posicoes=["MEI"], passagens=[(d + 1, d + 2)], forca=50)
+        Jogador(
+            id=f"Q{d}{i}",
+            nome="X",
+            posicoes=[posicoes[i % len(posicoes)]],
+            passagens=[(d + 1, d + 2)],
+            forca=50,
+        )
         for d, n in contagem.items()
         for i in range(n)
     ]
@@ -98,12 +108,45 @@ def _com_decadas(contagem: dict[int, int]) -> list[Jogador]:
 
 def test_epocas_juntam_decadas_ralas():
     abc = _com_decadas({1920: 1, 1940: 1, 1960: 3, 1970: 3, 1980: 7, 1990: 9, 2000: 32, 2010: 110})
+    # dev decision 2026-11-24: eras from 1970; the 20s-60s no longer open "anos 20 a 70"
     assert [(e.inicio, e.fim, e.rotulo) for e in epocas(abc)] == [
-        (1920, 1970, "anos 20 a 70"),
-        (1980, 1990, "anos 80 a 90"),
+        (1970, 1980, "anos 70 a 80"),
+        (1990, 1990, "anos 90"),
         (2000, 2000, "anos 2000"),
         (2010, 2010, "anos 2010"),
     ]
+
+
+def test_epocas_comecam_em_1970():
+    antes = _com_decadas({1950: 20, 1960: 20})
+    virada = Jogador(id="Qv", nome="V", posicoes=["MEI"], passagens=[(1965, 1971)], forca=50)
+    depois = _com_decadas({1970: 7, 1980: 8})
+    eras = epocas([*antes, virada, *depois])
+    assert PRIMEIRA_DECADA == 1970
+    assert [(e.inicio, e.fim) for e in eras] == [(1970, 1970), (1980, 1980)]
+    assert eras[0].contem(virada)  # played in the 70s too: counts there
+    assert not any(e.contem(j) for e in eras for j in antes)
+    assert epocas(antes) == []
+    assert [e.inicio for e in epocas(antes, desde=1950)] == [1950, 1960]
+
+
+def test_epoca_so_fecha_com_as_5_posicoes():
+    linha = ["LAT", "ZAG", "MEI", "ATA"]
+    elenco = [
+        *_com_decadas({1970: 12, 1980: 10}, linha),  # plenty of players, no keeper
+        *_com_decadas({1990: 1}, ["GOL"]),
+        *_com_decadas({2000: 10}),
+        *_com_decadas({2010: 3}, linha),  # a keeper-less tail joins the last era
+    ]
+    eras = epocas(elenco)
+    assert [(e.inicio, e.fim) for e in eras] == [(1970, 1990), (2000, 2010)]
+    for era in eras:
+        assert {p for j in elenco if era.contem(j) for p in j.posicoes} == set(POSICOES)
+
+
+def test_clube_que_nunca_tem_goleiro_fica_com_uma_epoca():
+    elenco = _com_decadas({1970: 20, 1980: 20, 1990: 20}, ["LAT", "ZAG", "MEI", "ATA"])
+    assert [(e.inicio, e.fim) for e in epocas(elenco)] == [(1970, 1990)]
 
 
 def test_sobra_rala_no_fim_entra_na_ultima_epoca():

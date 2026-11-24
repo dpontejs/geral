@@ -45,3 +45,15 @@ def aleatorias(dados: Dados, edicao: str, semente: str) -> list[Escolha]:
         usados.add(jogador.id)
         escolhas.append(Escolha(rodada=rodada, troca=0, jogador=jogador.id, vaga=vaga))
     return escolhas
+
+
+def zagueiro_no_gol(dados: Dados, edicao: str, semente: str) -> list[Escolha]:
+    """The dev's case: the greedy XI with the keeper's slot swapped with a centre-back's."""
+    vagas = ESQUEMAS["4-4-2"]
+    escolhas = gulosas(dados, edicao, semente)
+    g = next(i for i, e in enumerate(escolhas) if vagas[e.vaga] == "GOL")
+    z = next(i for i, e in enumerate(escolhas) if vagas[e.vaga] == "ZAG")
+    vaga_g, vaga_z = escolhas[g].vaga, escolhas[z].vaga
+    escolhas[g] = escolhas[g].model_copy(update={"vaga": vaga_z})
+    escolhas[z] = escolhas[z].model_copy(update={"vaga": vaga_g})
+    return escolhas

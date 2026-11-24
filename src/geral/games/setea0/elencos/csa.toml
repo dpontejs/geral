@@ -746,3 +746,35 @@ incluir = true
 pagina = "Willian Rocha"
 nome = "Willian"
 incluir = true
+
+# Goleiros e subcategorias (2026-11-24)
+
+[[jogador]]
+pagina = "Ernani Sales"
+nome = "Ernani"
+incluir = true
+
+[[jogador]]
+pagina = "Felipe Garcia dos Prazeres"
+nome = "Felipe Garcia"
+incluir = true
+
+[[jogador]]
+pagina = "Gilberto Félix de Melo"
+nome = "Gilberto Félix de Melo"
+incluir = false  # sem anos no clube
+
+[[jogador]]
+pagina = "Pantera (futebolista, 1970)"
+nome = "Pantera"
+incluir = true
+
+[[jogador]]
+pagina = "Paulo Sérgio de Oliveira Lima"
+nome = "Paulo Sérgio"
+incluir = true
+
+[[jogador]]
+pagina = "Thiago Rodrigues (futebolista)"
+nome = "Thiago Rodrigues"
+incluir = true

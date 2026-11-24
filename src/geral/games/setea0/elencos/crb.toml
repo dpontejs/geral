@@ -856,3 +856,35 @@ incluir = true
 pagina = "Zé do Carmo (futebolista)"
 nome = "Zé do Carmo"
 incluir = true
+
+# Goleiros e subcategorias (2026-11-24)
+
+[[jogador]]
+pagina = "Reverson Paiva"
+nome = "Reverson Paiva"
+incluir = true
+
+[[jogador]]
+pagina = "Deola"
+nome = "Deola"
+incluir = false  # sem anos no clube
+
+[[jogador]]
+pagina = "Diogo Silva (futebolista)"
+nome = "Diogo Silva"
+incluir = true
+
+[[jogador]]
+pagina = "Fernando Henrique (goleiro)"
+nome = "Fernando Henrique"
+incluir = true
+
+[[jogador]]
+pagina = "Júlio César Jacobi"
+nome = "Júlio César"
+incluir = true
+
+[[jogador]]
+pagina = "Vinicius Silvestre"
+nome = "Vinicius Silvestre"
+incluir = true

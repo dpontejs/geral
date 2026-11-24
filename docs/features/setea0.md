@@ -24,7 +24,10 @@ ABC, Náutico e CSA têm o seu, com os rivais do Nordeste e o clássico local na
 2. 11 rodadas: o dado sorteia uma **década do clube** ("ABC · anos 70") e mostra quem jogou nele
    nela; o torcedor põe um jogador numa vaga livre. Uma troca sorteia outra década. Quem entra não
    sai, só troca de vaga. Décadas com menos de 8 jogadores no clube se juntam às seguintes
-   numa **época** ("ABC · anos 60 a 80"), decidido pelo dev em 2026-11-23.
+   numa **época** ("ABC · anos 70 a 90"), decidido pelo dev em 2026-11-23. Só contam as décadas
+   de 1970 em diante, em todo clube (dev, 2026-11-24): quem só jogou antes nunca é oferecido.
+   Uma época também só fecha quando tem ao menos um goleiro, lateral, zagueiro, meia e atacante,
+   e a oferta traz sempre um de cada posição (dev, 2026-11-24).
 3. Campanha, jogada partida a partida: os jogos 1–6 em ordem crescente de força; o 7º é sempre o
    clássico, com **bônus de clássico** que o deixa ao menos tão forte quanto o 6º. Perdeu, caiu.
 4. Empate vai à disputa de pênaltis (5 + alternadas): o torcedor bate as cobranças do seu time no
@@ -83,12 +86,17 @@ class Cobranca(BaseModel): resultado: Literal["gol", "defesa", "fora", "trave", 
 - [ ] `test_mesma_entrada_mesma_campanha`: semente + escalação iguais → campanha idêntica.
 - [ ] `test_oferta_so_tem_jogadores_do_clube_na_decada`.
 - [ ] `test_decadas_ralas_viram_epoca` (< 8 jogadores se juntam às seguintes).
+- [ ] `test_epocas_comecam_em_1970` e `test_quem_so_jogou_antes_de_1970_nunca_aparece`.
+- [ ] `test_epoca_so_fecha_com_as_5_posicoes` e `test_oferta_tem_as_5_posicoes_mesmo_com_uma_rara`.
 - [ ] `test_escalacao_trapaceada_da_422`: jogador fora da oferta, repetido ou troca a mais.
-- [ ] `test_fora_de_posicao_perde_forca`.
+- [ ] `test_fora_de_posicao_perde_forca`: vizinha 0,85; outra posição 0,45; linha no gol ou
+  goleiro na linha 0,1; e `test_time_sem_goleiro_desaba` (sem goleiro de verdade o time todo cai:
+  vezes o encaixe do gol elevado a 0,2), decidido pelo dev em 2026-11-24.
 - [ ] `test_final_e_o_classico_e_ao_menos_tao_forte_quanto_o_6o` e
   `test_jogos_1_a_6_em_ordem_crescente`.
 - [ ] `test_calibragem` (1000 campanhas numa passada, por clube): time por escolha gulosa fecha
-  7 a 0 em 10–30%; time aleatório em < 3%; ABC e Flamengo com taxas a ±50% uma da outra.
+  7 a 0 em 10–30%; time aleatório em < 3%; ABC e Flamengo com taxas a ±50% uma da outra; o
+  guloso com o goleiro trocado de vaga com um zagueiro fecha em < 1% e chega ao jogo 5 em < 3%.
 - [ ] `test_empate_pede_cobranca_do_torcedor`: o motor devolve `PedidoDePenalti` até a disputa
   se decidir; o adversário cobra sozinho.
 - [ ] `test_motor_bate_os_penaltis`: `motor` dá o mesmo resultado em toda chamada (determinístico).

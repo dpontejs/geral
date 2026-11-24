@@ -841,3 +841,30 @@ incluir = true
 pagina = "Zé Antônio"
 nome = "Zé Antônio"
 incluir = true
+
+# Goleiros e subcategorias (2026-11-24)
+
+[[jogador]]
+pagina = "Azul (futebolista)"
+nome = "Azul"
+incluir = true
+
+[[jogador]]
+pagina = "Fabiano Bolla Lora"
+nome = "Fabiano"
+incluir = true
+
+[[jogador]]
+pagina = "Fernando Henrique (goleiro)"
+nome = "Fernando Henrique"
+incluir = true
+
+[[jogador]]
+pagina = "Frederico Luís Ladeira Campos"
+nome = "Fred"
+incluir = true
+
+[[jogador]]
+pagina = "Gléguer Zorzin"
+nome = "Gléguer"
+incluir = true

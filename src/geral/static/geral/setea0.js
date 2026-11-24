@@ -26,9 +26,12 @@
   const LINHAS = ["ATA", "MEI", "DEF", "GOL"]; // pitch rows, top to bottom
   const PAUSA_GOL = 400; // ms between goals lighting up
   const espera = (ms) => new Promise((r) => setTimeout(r, ms));
-  const rolar = (node) => {
-    const alvo = node.getBoundingClientRect().top - 16;
-    window.scrollTo({ top: scrollY + alvo, behavior: "smooth" });
+  // The page stays put while things change; it only scrolls when what changed is out of view
+  // above (the Central's rule), or with `abaixo`, also when it sits below the screen.
+  const rolar = (node, abaixo = false) => {
+    const r = node.getBoundingClientRect();
+    if (r.top >= 0 && !(abaixo && r.top > innerHeight - 80)) return;
+    window.scrollTo({ top: scrollY + r.top - 16, behavior: "smooth" });
   };
   const tela = (id) =>
     ["s7-inicio", "s7-escalar", "s7-jogos", "s7-fim"].forEach((t) => ($(t).hidden = t !== id));
@@ -115,7 +118,6 @@
     try {
       await pedirOferta();
       tela("s7-escalar");
-      rolar($("s7-escalar"));
     } catch (erro) {
       falhar(erro);
     }
@@ -247,7 +249,6 @@
     try {
       if (estado.rodada < RODADAS) {
         await pedirOferta();
-        rolar($("s7-escalar"));
       } else {
         comecarJogos();
       }
@@ -374,15 +375,18 @@
       `${feitos(pedido.disputa.deles)} ${adversario} · bate ${pedido.cobrador}`;
     const palco = $("s7-penalti");
     palco.hidden = false;
-    rolar(palco);
+    rolar(palco, true);
+    const [nossos, deles] = [feitos(pedido.disputa.nossas), feitos(pedido.disputa.deles)];
     const resultado = await window.jogarPenalti(palco, {
       finalizacao: pedido.chance,
       clube: jogo.nome,
       adversario,
-      tipo: pedido.n === JOGOS ? "final" : "jogo",
+      tipo: "disputa",
       minuto: "Pênaltis",
-      competicao: "7a0",
+      competicao: pedido.n === JOGOS ? "Final" : `Jogo ${pedido.n}`,
       copa: "7a0",
+      placar: [`${nossos} × ${deles}`, `${nossos + 1} × ${deles}`],
+      seguir: "Próxima cobrança →",
     });
     palco.hidden = true;
     palco.replaceChildren();
@@ -401,11 +405,6 @@
   function desenharCard(campanha) {
     const ps = campanha.partidas;
     const ultima = ps[ps.length - 1];
-    const placar = (p) =>
-      `${jogo.nome} ${p.nosso} × ${p.deles} ${nomeDe(p.adversario)}` +
-      (p.disputa
-        ? ` (pên. ${p.disputa.nossas.filter(Boolean).length}–${p.disputa.deles.filter(Boolean).length})`
-        : "");
     $("s7-kicker").textContent = `O 7a0 do ${jogo.nome}`;
     $("s7-titulo").textContent = campanha.campeao
       ? "Campeão invicto"
@@ -413,8 +412,15 @@
         ? "Caiu na final"
         : `Caiu no jogo ${ultima.n}`;
     lampadas($("s7-card-campanha"), ps, 0);
-    $("s7-placar-final").textContent =
-      `${ultima.n === JOGOS ? "Final" : `Jogo ${ultima.n}`}: ${placar(ultima)}`;
+    const final = $("s7-placar-final");
+    final.replaceChildren(
+      el("span", "rotulo", ultima.n === JOGOS ? "Final" : `Jogo ${ultima.n}`),
+      el("span", "", `${jogo.nome} ${ultima.nosso} × ${ultima.deles} ${nomeDe(ultima.adversario)}`),
+    );
+    if (ultima.disputa) {
+      const [a, b] = [ultima.disputa.nossas, ultima.disputa.deles].map((l) => l.filter(Boolean).length);
+      final.append(el("span", "rotulo", `Pênaltis: ${a} × ${b}`));
+    }
 
     const pro = ps.reduce((s, p) => s + p.nosso, 0);
     const contra = ps.reduce((s, p) => s + p.deles, 0);
@@ -474,7 +480,7 @@
       };
     }
     tela("s7-fim");
-    rolar($("s7-fim"));
+    rolar($("s7-fim"), true);
   }
 
   // --- start ---------------------------------------------------------------------------------
