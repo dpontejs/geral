@@ -1,12 +1,9 @@
-"""Lineups for the 7a0 tests: a greedy fan and a random one, plus a synthetic Flamengo."""
+"""Lineups for the 7a0 tests: a greedy fan and a random one."""
 
 import random
 
 from geral.games.setea0 import motor
-from geral.games.setea0.dados import chaves
-from geral.games.setea0.modelos import ESQUEMAS, Clube, Dados, Escolha, Jogador
-
-LINHAS = ["GOL", "LAT", "ZAG", "ZAG", "MEI", "MEI", "MEI", "ATA", "ATA"]
+from geral.games.setea0.modelos import ESQUEMAS, Dados, Escolha
 
 
 def gulosas(
@@ -48,37 +45,3 @@ def aleatorias(dados: Dados, edicao: str, semente: str) -> list[Escolha]:
         usados.add(jogador.id)
         escolhas.append(Escolha(rodada=rodada, troca=0, jogador=jogador.id, vaga=vaga))
     return escolhas
-
-
-def flamengo_sintetico() -> Dados:
-    """`setea0_fake`'s generator with another seed and strengths 20% higher, for Flamengo."""
-    rng = random.Random(77)
-    fla = []
-    for decada in (1970, 1980, 2000, 2010):
-        for i in range(15):
-            inicio = decada + rng.randint(0, 7)
-            fla.append(
-                Jogador(
-                    id=f"Qfla{decada}{i}",
-                    nome=f"Flamengo {decada} {i}",
-                    posicoes=[LINHAS[i % len(LINHAS)]],
-                    passagens=[(inicio, min(inicio + rng.randint(0, 2), decada + 9))],
-                    forca=min(99, round(rng.randint(30, 95) * 1.2)),
-                )
-            )
-    clubes = {"flamengo": Clube(nome="Flamengo", jogadores=fla)}
-    edicao = chaves()["edicao"]["flamengo"]
-    for slug in [*edicao["adversarios"], edicao["final"]]:
-        clubes[slug] = Clube(
-            nome=chaves()["clube"][slug]["nome"],
-            jogadores=[
-                Jogador(
-                    id=f"Q{slug}{i}",
-                    nome=f"{slug} {i}",
-                    posicoes=[LINHAS[i % len(LINHAS)]],
-                    forca=min(99, round((40 + i * 55 // 17) * 1.2)),
-                )
-                for i in range(18)
-            ],
-        )
-    return Dados(versao="teste", clubes=clubes)

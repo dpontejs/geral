@@ -7,9 +7,7 @@ from setea0_times import gulosas
 from geral.games.setea0 import motor
 from geral.games.setea0.modelos import (
     Campanha,
-    Clube,
     Cobranca,
-    Dados,
     Escolha,
     JogadaInvalida,
     Jogador,
@@ -66,8 +64,8 @@ def test_escalacao_valida_tem_11_com_a_decada_da_oferta():
         assert e.decada in e.jogador.decadas()
 
 
-def _trapaca(regra: str) -> tuple[str, str, list[Escolha]]:
-    modo, esquema = "classico", "4-4-2"
+def _trapaca(regra: str) -> tuple[str, str, str, list[Escolha]]:
+    modo, esquema, semente = "classico", "4-4-2", "s"
     es = escolhas_validas()
     if regra == "menos de 11":
         es = es[:10]
@@ -83,7 +81,7 @@ def _trapaca(regra: str) -> tuple[str, str, list[Escolha]]:
         es[4] = es[4].model_copy(update={"jogador": fora})
     elif regra == "jogador repetido":
         # the same player offered in two rounds (he played in two decades)
-        es = _escolhas_com_repetido()
+        es, semente = _escolhas_com_repetido(), _semente_do_repetido()
     elif regra == "troca decrescente":
         es = escolhas_validas(trocas=[1] * 5 + [0] * 6)
     elif regra == "trocas a mais":
@@ -93,13 +91,34 @@ def _trapaca(regra: str) -> tuple[str, str, list[Escolha]]:
         esquema = "2-3-5"
     elif regra == "modo inexistente":
         modo = "turbo"
-    return modo, esquema, es
+    return modo, esquema, semente, es
 
 
-def _escolhas_com_repetido() -> list[Escolha]:
-    es = escolhas_validas()
-    primeiro = es[0].jogador
-    return [es[0], es[1].model_copy(update={"jogador": primeiro}), *es[2:]]
+def _semente_do_repetido() -> str:
+    """A seed whose 11 offers show twice a player whose spell crosses two decades."""
+    for semente in (f"p{i}" for i in range(400)):
+        ids = [j.id for r in range(11) for j in motor.oferta(DADOS, "abc", semente, r, 0).jogadores]
+        if len(ids) != len(set(ids)):
+            return semente
+    raise AssertionError("no seed offers a two-decade player twice")
+
+
+def _escolhas_com_repetido(trocar_o_repetido: bool = False) -> list[Escolha]:
+    """Picks him in both rounds (or, with `trocar_o_repetido`, someone else the second time)."""
+    ofertas = [motor.oferta(DADOS, "abc", _semente_do_repetido(), r, 0) for r in range(11)]
+    ids = [j.id for r in ofertas for j in r.jogadores]
+    repetido = next(i for i in ids if ids.count(i) > 1)
+    rodadas = [r.rodada for r in ofertas if any(j.id == repetido for j in r.jogadores)]
+    usados: set[str] = set()
+    es = []
+    for r in ofertas:
+        if r.rodada in rodadas and not (trocar_o_repetido and r.rodada == rodadas[1]):
+            jogador = repetido
+        else:
+            jogador = next(j.id for j in r.jogadores if j.id not in usados | {repetido})
+        usados.add(jogador)
+        es.append(Escolha(rodada=r.rodada, troca=0, jogador=jogador, vaga=r.rodada))
+    return es
 
 
 REGRAS = [
@@ -118,40 +137,18 @@ REGRAS = [
 
 @pytest.mark.parametrize("regra", REGRAS)
 def test_escalacao_trapaceada_da_jogada_invalida(regra):
-    modo, esquema, es = _trapaca(regra)
+    modo, esquema, semente, es = _trapaca(regra)
     with pytest.raises(JogadaInvalida):
-        motor.escalar(DADOS, "abc", "s", modo, esquema, es)
+        motor.escalar(DADOS, "abc", semente, modo, esquema, es)
 
 
 def test_mesmo_jogador_em_duas_decadas_nao_entra_duas_vezes():
-    # a player whose spell crosses two decades shows up in both offers
-    abc = list(DADOS.clubes["abc"].jogadores)
-    ponte = Jogador(id="Qponte", nome="Ponte", posicoes=["MEI"], passagens=[(1979, 1980)], forca=99)
-    dados = Dados(
-        versao="t", clubes={**DADOS.clubes, "abc": Clube(nome="ABC", jogadores=[ponte, *abc])}
-    )
-    rodadas = {}
-    for semente in (f"p{i}" for i in range(400)):
-        rs = [motor.oferta(dados, "abc", semente, r, 0) for r in range(11)]
-        com = [r.rodada for r in rs if any(j.id == "Qponte" for j in r.jogadores)]
-        if len(com) >= 2:
-            rodadas = {"semente": semente, "rodadas": com[:2]}
-            break
-    assert rodadas, "no seed offers the bridging player twice"
-    semente = rodadas["semente"]
-    livres = list(range(11))
-    es = []
-    usados: set[str] = set()
-    for rodada in range(11):
-        r = motor.oferta(dados, "abc", semente, rodada, 0)
-        if rodada in rodadas["rodadas"]:
-            jogador = "Qponte"
-        else:
-            jogador = next(j.id for j in r.jogadores if j.id not in usados and j.id != "Qponte")
-        usados.add(jogador)
-        es.append(Escolha(rodada=rodada, troca=0, jogador=jogador, vaga=livres.pop(0)))
-    with pytest.raises(JogadaInvalida):
-        motor.escalar(dados, "abc", semente, "classico", "4-4-2", es)
+    # the fake ABC's last player of each decade stays into the next one
+    semente = _semente_do_repetido()
+    with pytest.raises(JogadaInvalida, match="já está no time"):
+        motor.escalar(DADOS, "abc", semente, "classico", "4-4-2", _escolhas_com_repetido())
+    valida = _escolhas_com_repetido(trocar_o_repetido=True)
+    assert len(motor.escalar(DADOS, "abc", semente, "classico", "4-4-2", valida)) == 11
 
 
 # --- partida, disputa e campanha ---

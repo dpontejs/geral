@@ -170,13 +170,13 @@ def escalar(
 
 # Opponent strength relative to the club's own all-time XI, games 1-6; the final adds the derby
 # bonus. Relative, so a club of stars and a club of 60s face the same climb.
-FATORES = (0.74, 0.755, 0.77, 0.785, 0.80, 0.815)
+FATORES = (0.63, 0.65, 0.67, 0.69, 0.71, 0.73)
 BONUS_CLASSICO = 0.03
 LAMBDA = 1.35  # goals per side when the teams are level
-K = 3.0  # how hard the strength ratio bends the scoring
+K = 1.5  # how hard the strength ratio bends the scoring
 PESO_GOL: dict[Posicao, int] = {"ATA": 5, "MEI": 3, "LAT": 1, "ZAG": 1, "GOL": 0}
-# Shootout strengths are rescaled so every club's all-time XI averages this: a club of 99s
-# and one of 85s take penalties alike, as they play alike (relative strength).
+# Shootout strengths are rescaled so every club's all-time XI (and, for our keeper, the club's
+# keepers) average this: a club of 99s and one of 85s take penalties alike (relative strength).
 PADRAO_PENALTI = 85.0
 COBRANCAS_REGULARES = 5
 MAX_COBRANCAS = 20
@@ -334,6 +334,16 @@ def _goleiro(escalados: list[Escalado], esquema: str) -> float:
     return e.jogador.forca * encaixe(e.jogador, "GOL")
 
 
+def _media_dos_goleiros(dados: Dados, edicao: str, reserva: float) -> float:
+    """The club's keepers' mean strength: a keeper is judged against the club's other keepers."""
+
+    def fazer() -> float:
+        forcas = [j.forca for j in dados.clubes[edicao].jogadores if "GOL" in j.posicoes]
+        return sum(forcas) / len(forcas) if forcas else reserva
+
+    return _memo(dados, ("goleiros", edicao), fazer)
+
+
 class _Contexto:
     """What every match of one campaign shares, computed once."""
 
@@ -343,6 +353,7 @@ class _Contexto:
         self.slugs = adversarios(dados, edicao)
         self.ref = referencia(dados, edicao)
         self.escala = PADRAO_PENALTI / self.ref
+        self.escala_goleiro = PADRAO_PENALTI / _media_dos_goleiros(dados, edicao, self.ref)
         self.nossa = forca_do_time(self.escalados, esquema) / self.ref
         self.cobradores = _cobradores(self.escalados, esquema)
         self.goleiro = _goleiro(self.escalados, esquema)
@@ -377,7 +388,7 @@ class _Contexto:
                 rng,
                 self.cobradores,
                 cobrancas,
-                chance_deles(self.goleiro * self.escala),
+                chance_deles(self.goleiro * self.escala_goleiro),
                 (self.goleiro / self.ref, goleiro_deles / referencia(self.dados, slug)),
                 self.escala,
             )
