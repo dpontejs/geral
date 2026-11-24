@@ -210,3 +210,32 @@ def test_infobox_com_campos_numerados():
     jogador, motivo = jogador_ptwiki(numerada, ABC, 1)
     assert motivo is None
     assert jogador["passagens"] == [(1990, 1991)]
+
+
+def test_passagem_em_aberto_que_nao_e_a_ultima_fecha_na_seguinte():
+    aberta = pagina(
+        "2006– <br /> 2009–2010",
+        "[[ABC Futebol Clube|ABC]] <br /> [[América Futebol Clube (Rio Grande do Norte)|América]]",
+    )
+    assert jogador_ptwiki(aberta, ABC, 1)[0]["passagens"] == [(2006, 2009)]
+
+
+def test_anos_com_link_valem_inteiros():
+    ligada = pagina("[[1990]]–[[1992]]", "[[ABC Futebol Clube|ABC]]")
+    assert jogador_ptwiki(ligada, ABC, 1)[0]["passagens"] == [(1990, 1992)]
+
+
+@pytest.mark.parametrize(
+    ("bruto_", "limpo"),
+    [
+        ("{{center|Júnior}}", "Júnior"),
+        ("Dejan Petković<br>Дејан Петковић", "Dejan Petković"),
+        ("Tostão<br />{{small|OMC}}", "Tostão"),
+        ("Jorginho <small>Cavalieri OMRI</small>", "Jorginho"),
+        ("[[Zico]]", "Zico"),
+    ],
+)
+def test_nome_sem_marcacao(bruto_, limpo):
+    from geral.games.setea0.importacao import nome_limpo
+
+    assert nome_limpo(bruto_) == limpo

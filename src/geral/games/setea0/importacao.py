@@ -111,6 +111,26 @@ def colunas(params: dict[str, str]) -> tuple[str, str] | None:
     return anos, "<br />".join(params[f"clube{n}"] for n in numeros)
 
 
+def nome_limpo(texto: str) -> str:
+    """The name an infobox `nome` shows on screen: first line, no templates, tags or links."""
+    texto = ptwiki.LINE.split(texto)[0]
+    texto = re.sub(r"<small>.*?</small>", "", texto, flags=re.IGNORECASE | re.DOTALL)
+    texto = re.sub(r"\{\{[^{}|]*\|([^{}|]*)\}\}", r"\1", texto)  # "{{center|Júnior}}"
+    texto = re.sub(r"\{\{[^{}]*\}\}|<[^>]*>", "", texto)
+    return ptwiki.plain(texto)
+
+
+def _fechadas(stints: list[Stint]) -> list[Stint]:
+    """An open stint ("2006–") that is not the last one ended when the next one began."""
+    seguintes = [s.start for s in stints[1:]] + [None]
+    return [
+        Stint(s.start, seguinte, s.target)
+        if s.end is None and s.start is not None and seguinte is not None and seguinte >= s.start
+        else s
+        for s, seguinte in zip(stints, seguintes, strict=True)
+    ]
+
+
 def jogador_ptwiki(pagina: dict, clube_qid: str, fama: int) -> tuple[dict | None, str | None]:
     """The raw player of a page, or why it is left out (for the report).
 
@@ -122,9 +142,11 @@ def jogador_ptwiki(pagina: dict, clube_qid: str, fama: int) -> tuple[dict | None
     if carreira is None:
         return None, "sem infobox"
     clubes = ARQUIVO.sub("", pagina["clubes"])  # a flag before the club would be read as it
-    stints = ptwiki.parse_career(carreira[0], clubes)
+    anos_ = re.sub(r"\[\[([^\]|]*)(?:\|[^\]]*)?\]\]", r"\1", carreira[0])  # "[[1990]]–[[1992]]"
+    stints = ptwiki.parse_career(anos_, clubes)
     if stints is None:
         return None, "anos e clubes não batem"
+    stints = _fechadas(stints)
     ids = pagina["ids"]
     resolvidos = [Stint(s.start, s.end, ids[s.target]) for s in stints if s.target in ids]
     anos = passagens(resolvidos, clube_qid)
@@ -133,7 +155,7 @@ def jogador_ptwiki(pagina: dict, clube_qid: str, fama: int) -> tuple[dict | None
     achadas = posicoes(ptwiki.position(params.get("posição", "")))
     if not achadas:
         return None, "sem posição"
-    nome = ptwiki.plain(params.get("nome", "")) or re.sub(r"\s*\(.*\)$", "", pagina["titulo"])
+    nome = nome_limpo(params.get("nome", "")) or re.sub(r"\s*\(.*\)$", "", pagina["titulo"])
     return {
         "id": pagina["qid"],
         "nome": nome,

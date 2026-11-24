@@ -419,7 +419,7 @@ incluir = true
 
 [[jogador]]
 pagina = "Mehmet Aurélio"
-nome = "Marco Aurélio<br />Mehmet Aurélio"
+nome = "Marco Aurélio"
 incluir = true
 
 [[jogador]]
@@ -1799,7 +1799,7 @@ incluir = false  # sem posição
 
 [[jogador]]
 pagina = "Jorge Luiz Frello Filho"
-nome = "Jorginho<br><small>Cavalieri OMRI</small>"
+nome = "Jorginho"
 incluir = true
 
 [[jogador]]
@@ -1969,7 +1969,7 @@ incluir = true
 
 [[jogador]]
 pagina = "Júnior (futebolista, 1954)"
-nome = "{{center|Júnior}}"
+nome = "Júnior"
 incluir = true
 
 [[jogador]]
@@ -2894,7 +2894,7 @@ incluir = true
 
 [[jogador]]
 pagina = "Dejan Petković"
-nome = "Dejan Petković<br>Дејан Петковић"
+nome = "Dejan Petković"
 incluir = true
 
 [[jogador]]

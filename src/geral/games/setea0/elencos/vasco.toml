@@ -2544,7 +2544,7 @@ incluir = false  # sem posição
 
 [[jogador]]
 pagina = "Dejan Petković"
-nome = "Dejan Petković<br>Дејан Петковић"
+nome = "Dejan Petković"
 incluir = true
 
 [[jogador]]
@@ -3124,7 +3124,7 @@ incluir = true
 
 [[jogador]]
 pagina = "Tostão"
-nome = "Tostão<br />{{small|OMC}}"
+nome = "Tostão"
 incluir = true
 
 [[jogador]]
