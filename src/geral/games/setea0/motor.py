@@ -4,8 +4,11 @@ Every function takes `dados` and recomputes from `semente`, like `carreira/motor
 """
 
 import math
+import tomllib
 import weakref
 from collections.abc import Callable
+from functools import cache
+from pathlib import Path
 from random import Random
 
 from geral.games.setea0.dados import chaves
@@ -450,7 +453,7 @@ def _campanha(ctx: _Contexto, modo: str, feitas: list) -> Campanha:
         escalacao=ctx.escalados,
         partidas=feitas,
         campeao=campeao,
-        marcas=[],
+        marcas=marcas(feitas),
         versao=ctx.dados.versao,
     )
 
@@ -474,3 +477,47 @@ def campanha_motor(
     """The engine takes every penalty; what the mass tests run."""
     ctx = _Contexto(dados, edicao, semente, modo, esquema, escolhas)
     return _campanha(ctx, modo, ctx.jogar([], JOGOS, True))
+
+
+# --- marks ---------------------------------------------------------------------------------
+
+MARCAS = Path(__file__).parent / "marcas.toml"
+GOLS_DO_ARTILHEIRO = 7
+GOLS_DO_PAREDAO = 2
+
+
+@cache
+def textos_das_marcas() -> dict[str, dict[str, str]]:
+    """`{id: {nome, texto}}`, in the card's order."""
+    return tomllib.loads(MARCAS.read_text(encoding="utf-8"))
+
+
+def _esteve_atras(partida: Partida) -> bool:
+    saldo = 0
+    for gol in partida.gols:
+        saldo += 1 if gol.nosso else -1
+        if saldo < 0:
+            return True
+    return False
+
+
+def marcas(partidas: list[Partida]) -> list[str]:
+    """The marks a (possibly unfinished) campaign earned, in `marcas.toml` order."""
+    campeao = len(partidas) == JOGOS and all(p.venceu for p in partidas)
+    final = partidas[-1] if partidas and partidas[-1].n == JOGOS else None
+    artilharia: dict[str, int] = {}
+    for p in partidas:
+        for gol in p.gols:
+            if gol.nosso:
+                artilharia[gol.autor] = artilharia.get(gol.autor, 0) + 1
+    regras = {
+        "sete-a-zero": any(p.nosso >= 7 and p.deles == 0 for p in partidas),
+        "campeao": campeao,
+        "artilheiro": max(artilharia.values(), default=0) >= GOLS_DO_ARTILHEIRO,
+        "nos-penaltis": campeao and final is not None and final.disputa is not None,
+        "virada-na-final": campeao and final is not None and _esteve_atras(final),
+        "paredao": campeao and sum(p.deles for p in partidas) <= GOLS_DO_PAREDAO,
+        "caiu-na-final": final is not None and not final.venceu,
+        "estreia-amarga": bool(partidas) and partidas[0].n == 1 and not partidas[0].venceu,
+    }
+    return [m for m in textos_das_marcas() if regras[m]]

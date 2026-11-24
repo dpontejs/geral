@@ -313,3 +313,84 @@ def test_campanha_com_disputa_pendente_e_invalida():
     semente, es = _semente_com_empate()
     with pytest.raises(JogadaInvalida):
         motor.campanha(DADOS, "abc", semente, "classico", "4-4-2", es, [])
+
+
+# --- marcas ---
+
+
+def _partida(n, nosso, deles, gols=None, disputa=None, venceu=None):
+    from geral.games.setea0.modelos import Gol
+
+    if gols is None:
+        gols = [Gol(minuto=i + 1, autor=f"Meia {n}.{i}", nosso=True) for i in range(nosso)] + [
+            Gol(minuto=50 + i, autor="Rival", nosso=False) for i in range(deles)
+        ]
+    if venceu is None:
+        venceu = nosso > deles
+    return Partida(
+        n=n,
+        adversario="x",
+        gols=gols,
+        nosso=nosso,
+        deles=deles,
+        disputa=disputa,
+        venceu=venceu,
+    )
+
+
+def test_placar_7_a_0_vira_marca_rara():
+    com = 0
+    for i in range(1000):
+        semente = f"cal{i}"
+        es = gulosas(DADOS, "abc", semente)
+        c = motor.campanha_motor(DADOS, "abc", semente, "classico", "4-4-2", es)
+        com += "sete-a-zero" in c.marcas
+    assert 1 <= com <= 50, com
+
+
+def test_cada_marca_tem_texto():
+    marcas = motor.textos_das_marcas()
+    assert list(marcas) == [
+        "sete-a-zero",
+        "campeao",
+        "artilheiro",
+        "nos-penaltis",
+        "virada-na-final",
+        "paredao",
+        "caiu-na-final",
+        "estreia-amarga",
+    ]
+    for marca in marcas.values():
+        assert marca["nome"].strip() and marca["texto"].strip()
+        assert "\n" not in marca["texto"]
+
+
+def test_marcas_por_caso():
+    from geral.games.setea0.modelos import Disputa, Gol
+
+    vitorias = [_partida(n, 2, 1) for n in range(1, 7)]
+    assert motor.marcas([_partida(1, 7, 0)]) == ["sete-a-zero"]
+    assert motor.marcas([_partida(1, 8, 1)]) == []
+    assert motor.marcas([*vitorias, _partida(7, 1, 0)]) == ["campeao"]
+    assert motor.marcas([_partida(1, 0, 1)]) == ["estreia-amarga"]
+    assert motor.marcas([*vitorias, _partida(7, 0, 2)]) == ["caiu-na-final"]
+    paredao = [_partida(n, 1, 0) for n in range(1, 7)]
+    assert motor.marcas([*paredao, _partida(7, 2, 1)]) == ["campeao", "paredao"]
+    assert motor.marcas([*paredao[:3], _partida(4, 0, 1)]) == []  # few goals, but not champion
+    quatro = [Gol(minuto=i + 1, autor="Alberi", nosso=True) for i in range(4)]
+    artilheiro = [_partida(n, 4, 0, gols=quatro) for n in range(1, 3)]  # Alberi has 8
+    assert motor.marcas([*artilheiro, _partida(3, 0, 1)]) == ["artilheiro"]
+    penaltis = Disputa(nossas=[True] * 5, deles=[True, True, False, True])
+    final_nos_penaltis = _partida(7, 1, 1, disputa=penaltis, venceu=True)
+    assert motor.marcas([*vitorias, final_nos_penaltis]) == ["campeao", "nos-penaltis"]
+    virada = [
+        Gol(minuto=10, autor="Rival", nosso=False),
+        Gol(minuto=60, autor="Alberi", nosso=True),
+        Gol(minuto=80, autor="Alberi", nosso=True),
+    ]
+    assert motor.marcas([*vitorias, _partida(7, 2, 1, gols=virada)]) == [
+        "campeao",
+        "virada-na-final",
+    ]
+    perdeu_nos_penaltis = _partida(7, 0, 0, disputa=penaltis, venceu=False)
+    assert motor.marcas([*vitorias, perdeu_nos_penaltis]) == ["caiu-na-final"]
