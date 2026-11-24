@@ -7,6 +7,7 @@ events stream is read straight from the ASGI app (httpx's ASGITransport buffers 
 import asyncio
 import functools
 import json
+import logging
 import random
 import re
 import sqlite3
@@ -726,3 +727,24 @@ def test_app_liga_a_prancheta(store, mailer, clock):
         sala = resposta.json()["id"]
         entrou = cliente.post(f"{API}/salas/{sala}/entrar", json={"apelido": "Bia"})
         assert entrou.json()["jogador"] == 2
+
+
+def test_token_some_do_access_log(tmp_path):
+    Mesa(tmp_path)  # creating the hub puts the filter on uvicorn's access log
+    acesso = logging.getLogger("uvicorn.access")
+    caminho = f"{API}/salas/abc234/eventos?token=Segredo-_123&x=1"
+    registro = logging.LogRecord(
+        "uvicorn.access",
+        logging.INFO,
+        __file__,
+        1,
+        '%s - "%s %s HTTP/%s" %d',
+        ("10.0.0.1:5000", "GET", caminho, "1.1", 200),
+        None,
+    )
+    assert all(filtro.filter(registro) for filtro in acesso.filters)
+    mensagem = registro.getMessage()
+    assert "Segredo" not in mensagem
+    assert f"{API}/salas/abc234/eventos?token=***&x=1" in mensagem
+    Mesa(tmp_path)
+    assert len([f for f in acesso.filters if isinstance(f, hub.SemToken)]) == 1  # added once

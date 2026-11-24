@@ -11,6 +11,7 @@ import asyncio
 import json
 import logging
 import random
+import re
 import sqlite3
 from collections.abc import AsyncIterator, Awaitable, Callable
 from contextlib import closing
@@ -154,6 +155,24 @@ class _Fluxo(StreamingResponse):
             self._ao_fechar()
 
 
+class SemToken(logging.Filter):
+    """Hides `token=` values in uvicorn's access log: the events URL carries the player's token."""
+
+    PADRAO = re.compile(r"(token=)[^&\s\"]*")
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        if isinstance(record.args, tuple):
+            record.args = tuple(
+                self.PADRAO.sub(r"\1***", a) if isinstance(a, str) else a for a in record.args
+            )
+        if isinstance(record.msg, str):
+            record.msg = self.PADRAO.sub(r"\1***", record.msg)
+        return True
+
+
+_SEM_TOKEN = SemToken()
+
+
 def _erro(status: int, motivo: str) -> JSONResponse:
     return JSONResponse({"erro": motivo}, status_code=status)
 
@@ -182,6 +201,7 @@ class Prancheta:
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         with closing(sqlite3.connect(self.db_path, timeout=ESPERA_DB)) as db, db:
             db.executescript(SCHEMA)
+        logging.getLogger("uvicorn.access").addFilter(_SEM_TOKEN)  # the same one: added once
         self.router = APIRouter(prefix="/api/jogos/prancheta")
         self._rotas()
 
