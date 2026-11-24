@@ -469,3 +469,267 @@ def test_palavra_nunca_vaza():
             continue
         texto = normalizar(json.dumps(dados, ensure_ascii=False))
         assert "frasqueira" not in texto and "torcida do abc" not in texto, dados
+
+
+# --- Task 4: ausência, saída, cartão vermelho e súmula ---
+
+SAIR = {"tipo": "sair"}
+
+
+def ids(sala, quem: int = 1, t: float = 0) -> list[int]:
+    """Players in the room, as `quem` sees them."""
+    return [j["id"] for j in sala.foto(quem, em(t))["jogadores"]]
+
+
+def cartao(alvo: int) -> dict:
+    return {"tipo": "cartao", "alvo": alvo}
+
+
+def tirar(alvo: int) -> dict:
+    return {"tipo": "tirar", "alvo": alvo}
+
+
+def test_ausente_depois_de_30_s_sem_conexao():
+    sala, _ = sala_com(3)
+    sala.desconectou(2, em(0))
+    assert sala.avancar(em(29.9)) == []
+    eventos = sala.avancar(em(30))
+    assert {e.para for e in eventos if e.tipo == "estado"} == {1, 2, 3}
+    assert [j["presente"] for j in sala.foto(1, em(30))["jogadores"]] == [True, False, True]
+    eventos = sala.conectou(2, em(31))
+    assert {e.para for e in eventos if e.tipo == "estado"} == {1, 2, 3}
+    assert sala.foto(1, em(31))["jogadores"][1]["presente"]
+
+
+def test_reconectar_antes_de_30_s_nao_fica_ausente():
+    sala, _ = sala_com(2)
+    sala.desconectou(2, em(0))
+    sala.conectou(2, em(20))
+    assert sala.avancar(em(60)) == []
+
+
+def test_vez_de_ausente_e_pulada():
+    sala, _ = sala_com(3)
+    sala.agir(1, COMECAR, em(0))
+    sala.desconectou(2, em(0))
+    sala.avancar(em(15))  # choice timed out: drawing until 95 s
+    sala.avancar(em(30))
+    assert not sala.foto(1, em(30))["jogadores"][1]["presente"]
+    sala.avancar(em(95))
+    assert sala.foto(1, em(95))["fase"] == "intervalo"
+    sala.avancar(em(101))
+    assert sala.foto(1, em(101))["desenhista"] == 3
+
+
+def test_quem_desenha_sai_lance_vai_ao_intervalo():
+    sala, _ = em_desenho(3)
+    sala.agir(2, chute("Bicicleta"), em(2))
+    eventos = sala.agir(1, SAIR, em(3))
+    assert {e.para for e in eventos if e.tipo == "estado"} >= {2, 3}
+    foto = sala.foto(2, em(3))
+    assert (foto["fase"], foto["palavra"], foto["prazo"]) == (
+        "intervalo",
+        "Bicicleta",
+        em(9).isoformat(),
+    )
+    assert foto["jogadores"][0]["pontos"] == 5
+    sala.avancar(em(9))
+    assert sala.foto(2, em(9))["desenhista"] == 2
+
+
+def test_quem_desenha_fica_ausente_lance_vai_ao_intervalo():
+    sala, _ = em_desenho(3)
+    sala.desconectou(1, em(2))
+    sala.avancar(em(32))
+    assert sala.foto(2, em(32))["fase"] == "intervalo"
+
+
+def test_quem_desenha_expulso_lance_vai_ao_intervalo():
+    sala, _ = em_desenho(3)
+    sala.agir(2, cartao(1), em(2))
+    sala.agir(3, cartao(1), em(2))
+    assert sala.foto(2, em(2))["fase"] == "intervalo"
+    assert ids(sala, 2) == [2, 3]
+
+
+def test_desenhista_sai_na_escolha():
+    sala, _ = sala_com(3)
+    sala.agir(1, COMECAR, em(0))
+    sala.agir(1, SAIR, em(1))
+    foto = sala.foto(2, em(1))
+    assert (foto["fase"], foto["palavra"], foto["opcoes"]) == ("intervalo", None, None)
+    sala.avancar(em(7))
+    assert sala.foto(2, em(7))["desenhista"] == 2
+    assert sala.foto(2, em(7))["fase"] == "escolha"
+
+
+def test_anfitriao_passa_ao_mais_antigo():
+    sala, _ = sala_com(4)
+    sala.desconectou(2, em(0))
+    sala.avancar(em(30))
+    sala.agir(1, SAIR, em(31))
+    anfitriao = [j["id"] for j in sala.foto(3, em(31))["jogadores"] if j["anfitriao"]]
+    assert anfitriao == [3]  # 2 is away
+    sala.conectou(2, em(32))
+    sala.desconectou(3, em(32))
+    sala.avancar(em(62))
+    anfitriao = [j["id"] for j in sala.foto(2, em(62))["jogadores"] if j["anfitriao"]]
+    assert anfitriao == [2]
+    sala.agir(2, tirar(4), em(63))
+    assert ids(sala, 2, 63) == [2, 3]
+
+
+def test_cartao_vermelho_por_maioria():
+    sala, tokens = sala_com(5)
+    assert sala.agir(1, cartao(5), em(1)) == []
+    sala.agir(2, cartao(5), em(1))
+    sala.agir(2, cartao(5), em(1))  # voting twice counts once
+    assert 5 in ids(sala, 1, 1)
+    eventos = sala.agir(3, cartao(5), em(1))
+    assert {e.para for e in eventos if e.tipo == "estado"} == {1, 2, 3, 4, 5}
+    assert ids(sala, 1, 1) == [1, 2, 3, 4]
+    with pytest.raises(ErroSala) as excinfo:
+        sala.jogador(tokens[5])
+    assert _status(excinfo) == 403
+
+
+def test_ausente_nao_conta_na_maioria():
+    sala, _ = sala_com(5)
+    sala.desconectou(3, em(0))
+    sala.desconectou(4, em(0))
+    sala.avancar(em(30))
+    sala.agir(1, cartao(5), em(31))
+    assert 5 in ids(sala, 1, 31)
+    sala.agir(2, cartao(5), em(31))
+    assert 5 not in ids(sala, 1, 31)
+
+
+def test_cartao_invalido_422():
+    sala, _ = sala_com(3)
+    for acao in (cartao(1), cartao(9), cartao("2"), {"tipo": "cartao"}):
+        with pytest.raises(ErroSala) as excinfo:
+            sala.agir(1, acao, em(1))
+        assert _status(excinfo) == 422
+
+
+def test_voto_cai_quando_votante_sai():
+    sala, _ = sala_com(5)
+    sala.agir(1, cartao(5), em(1))
+    sala.agir(2, cartao(5), em(1))
+    sala.agir(1, SAIR, em(2))
+    assert 5 in ids(sala, 2, 2)
+    sala.agir(3, cartao(5), em(3))
+    assert 5 not in ids(sala, 2, 3)
+
+
+def test_expulso_nao_age():
+    sala, tokens = sala_com(3)
+    eventos = sala.agir(1, tirar(3), em(1))
+    estado_do_expulso = next(e.dados for e in eventos if e.para == 3)
+    assert 3 not in [j["id"] for j in estado_do_expulso["jogadores"]]
+    with pytest.raises(ErroSala) as excinfo:
+        sala.jogador(tokens[3])
+    assert _status(excinfo) == 403
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(3, chute("bola"), em(2))
+    assert _status(excinfo) == 403
+    novo, _, _ = sala.entrar("Caio", em(3))  # the nickname is free again
+    assert novo == 4
+
+
+def test_so_anfitriao_tira_409():
+    sala, _ = sala_com(3)
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(2, tirar(3), em(1))
+    assert _status(excinfo) == 409
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(1, tirar(1), em(1))
+    assert _status(excinfo) == 422
+
+
+def test_sair_invalida_o_token():
+    sala, tokens = sala_com(3)
+    sala.agir(2, SAIR, em(1))
+    with pytest.raises(ErroSala) as excinfo:
+        sala.jogador(tokens[2])
+    assert _status(excinfo) == 403
+
+
+def test_reconectar_recebe_tracos_do_desenho_atual():
+    sala, _ = em_desenho()
+    sala.agir(1, traco(1, [[1, 1]], fim=False), em(2))
+    sala.agir(1, traco(1, [[2, 2]]), em(2.1))
+    sala.agir(1, traco(2, [[3, 3]], cor=0, esp=3), em(2.2))
+    sala.desconectou(2, em(3))
+    sala.conectou(2, em(4))
+    assert sala.foto(2, em(4))["tracos"] == [
+        {"id": 1, "cor": 1, "esp": 2, "pts": [[1, 1], [2, 2]], "fim": True},
+        {"id": 2, "cor": 0, "esp": 3, "pts": [[3, 3]], "fim": True},
+    ]
+
+
+def test_menos_de_dois_presentes_vai_ao_fim():
+    sala, _ = em_desenho(2)
+    sala.desconectou(2, em(2))
+    eventos = sala.avancar(em(32))
+    assert [e.tipo for e in eventos].count("fim") == 1
+    assert sala.encerrada
+
+
+def test_espera_nao_acaba_quando_sai_gente():
+    sala, _ = sala_com(2)
+    sala.agir(1, SAIR, em(1))
+    assert not sala.encerrada
+    assert sala.foto(2, em(1))["jogadores"][0]["anfitriao"]
+
+
+def test_fim_uma_vez_so():
+    sala, _ = em_desenho(2)
+    eventos = sala.agir(2, SAIR, em(2))
+    fins = [e for e in eventos if e.tipo == "fim"]
+    assert len(fins) == 1 and fins[0].para is None
+    assert sala.encerrada
+    assert sala.foto(1, em(2))["fase"] == "fim"
+    assert sala.avancar(em(500)) == []
+    assert sala.desconectou(1, em(500)) == []
+    assert sala.avancar(em(600)) == []
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(1, SAIR, em(601))
+    assert _status(excinfo) == 409
+    with pytest.raises(ErroSala) as excinfo:
+        sala.entrar("Novo", em(601))
+    assert _status(excinfo) == 409
+
+
+def test_sumula_ordenada_por_pontos():
+    sala, _ = sala_com(3)
+    sala.agir(1, COMECAR, em(0))
+    sala.agir(1, {"tipo": "escolher", "indice": 2}, em(1))  # Frasqueira
+    sala.agir(3, chute("frasqueira"), em(2))
+    sala.agir(2, chute("Torcida do ABC"), em(3))  # everyone scored: interval until 9 s
+    sala.avancar(em(9))
+    sala.agir(2, {"tipo": "escolher", "indice": 0}, em(10))  # Escanteio
+    sala.agir(1, chute("escanteio"), em(11))
+    sala.agir(2, SAIR, em(12))  # drawer leaves: interval; 3 draws next
+    sala.avancar(em(18))
+    sala.agir(3, {"tipo": "escolher", "indice": 1}, em(19))  # Impedimento, nobody scores
+    sala.avancar(em(99))
+    eventos = sala.avancar(em(105))
+    fim = [e.dados for e in eventos if e.tipo == "fim"]
+    assert len(fim) == 1
+    sumula = sala.sumula()
+    assert fim[0]["sumula"] == sumula
+    assert sumula == {
+        "id": "abc234",
+        "jogadores": [
+            {"apelido": "Bia", "pontos": 11, "gols": 1, "assist": 1},
+            {"apelido": "Caio", "pontos": 10, "gols": 1, "assist": 0},
+            {"apelido": "Ana", "pontos": 9, "gols": 1, "assist": 2},
+        ],
+        "lances": [
+            {"desenhista": "Ana", "palavra": "Frasqueira", "acertaram": ["Caio", "Bia"]},
+            {"desenhista": "Bia", "palavra": "Escanteio", "acertaram": ["Ana"]},
+            {"desenhista": "Caio", "palavra": "Impedimento", "acertaram": []},
+        ],
+    }
+    assert sala.foto(1, em(105))["palavra"] == "Impedimento"

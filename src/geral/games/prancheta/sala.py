@@ -96,6 +96,11 @@ class Sala:
         self._dica: list[str | None] | None = None
         self._dicas_dadas = 0
         self._acertaram: list[int] = []
+        self._todos: dict[int, _Jogador] = {}  # everyone who ever joined, for the súmula
+        self._expulsos: set[int] = set()
+        self._votos: dict[int, set[int]] = {}  # target -> who voted against them
+        self._lances: list[dict] = []
+        self._lance_registrado = True
 
     # --- entrada e identidade ---
 
@@ -114,6 +119,7 @@ class Sala:
         jogador = _Jogador(self._proximo_id, apelido, secrets.token_urlsafe(16), desde=agora)
         self._proximo_id += 1
         self._jogadores[jogador.id] = jogador
+        self._todos[jogador.id] = jogador
         self._tokens[jogador.token] = jogador.id
         if self._anfitriao is None:
             self._anfitriao = jogador.id
@@ -141,6 +147,9 @@ class Sala:
             "desfazer": self._desfazer,
             "limpar": self._limpar,
             "chute": self._chute,
+            "cartao": self._cartao,
+            "tirar": self._tirar,
+            "sair": self._sair,
         }.get(acao.get("tipo"))
         if tratar is None:
             raise ErroSala(422, "unknown action")
@@ -258,6 +267,67 @@ class Sala:
         quem_chuta = [j for j in self._presentes() if j != self._desenhista]
         return all(self._jogadores[j].acertou for j in quem_chuta)
 
+    def _cartao(self, jogador: _Jogador, acao: dict, agora: datetime) -> list[Evento]:
+        alvo = self._alvo(jogador, acao)
+        self._votos.setdefault(alvo, set()).add(jogador.id)
+        return self._checar_votos(agora)
+
+    def _tirar(self, jogador: _Jogador, acao: dict, agora: datetime) -> list[Evento]:
+        if jogador.id != self._anfitriao:
+            raise ErroSala(409, "only the host sends someone off")
+        alvo = self._alvo(jogador, acao)
+        return self._remover(self._jogadores[alvo], agora, expulso=True)
+
+    def _sair(self, jogador: _Jogador, acao: dict, agora: datetime) -> list[Evento]:
+        return self._remover(jogador, agora, expulso=False)
+
+    def _alvo(self, jogador: _Jogador, acao: dict) -> int:
+        alvo = acao.get("alvo")
+        if not _eh_int(alvo) or alvo not in self._jogadores or alvo == jogador.id:
+            raise ErroSala(422, "invalid target")
+        return alvo
+
+    def _remover(self, jogador: _Jogador, agora: datetime, expulso: bool) -> list[Evento]:
+        """Takes a player out (left or sent off); their token stops working and their votes fall."""
+        del self._jogadores[jogador.id]
+        del self._tokens[jogador.token]
+        if expulso:
+            self._expulsos.add(jogador.id)
+        self._votos.pop(jogador.id, None)
+        for votantes in self._votos.values():
+            votantes.discard(jogador.id)
+        if jogador.id in self._fila:
+            self._fila.remove(jogador.id)
+        return self._depois_de_mudar(agora, tambem=(jogador.id,))
+
+    def _checar_votos(self, agora: datetime) -> list[Evento]:
+        """A strict majority of the present players (target not counted) sends the target off."""
+        if self.encerrada:
+            return []
+        presentes = set(self._presentes())
+        for alvo, votantes in self._votos.items():
+            outros = presentes - {alvo}
+            if 2 * len(votantes & outros) > len(outros):
+                return self._remover(self._jogadores[alvo], agora, expulso=True)
+        return []
+
+    def _depois_de_mudar(self, agora: datetime, tambem: tuple[int, ...] = ()) -> list[Evento]:
+        """Reacts to a change in who is in the room or present, and tells everyone."""
+        presentes = self._presentes()
+        if self._anfitriao not in presentes:
+            candidatos = presentes or list(self._jogadores)
+            self._anfitriao = candidatos[0] if candidatos else None
+        if self._fase in ("escolha", "desenho", "intervalo") and len(presentes) < 2:
+            return self._encerrar(agora, tambem)
+        em_lance = self._fase in ("escolha", "desenho")
+        if (em_lance and self._desenhista not in presentes) or (
+            self._fase == "desenho" and self._todos_acertaram()
+        ):
+            eventos = self._ir_ao_intervalo(agora, tambem)
+        else:
+            eventos = self._estados(agora, tambem)
+        return eventos + self._checar_votos(agora)
+
     def _exigir_desenhista(self, jogador: _Jogador, fase: str) -> None:
         if self._fase != fase or jogador.id != self._desenhista:
             raise ErroSala(409, "not your turn")
@@ -269,7 +339,10 @@ class Sala:
         if j is None:
             return []
         j.conexoes += 1
-        return []
+        if j.presente or self.encerrada:
+            return []
+        j.presente = True
+        return self._depois_de_mudar(agora)
 
     def desconectou(self, jogador: int, agora: datetime) -> list[Evento]:
         j = self._jogadores.get(jogador)
@@ -282,6 +355,17 @@ class Sala:
 
     def avancar(self, agora: datetime) -> list[Evento]:
         eventos: list[Evento] = []
+        if self.encerrada:
+            return eventos
+        ausentes = [
+            j
+            for j in self._jogadores.values()
+            if j.presente and j.conexoes == 0 and agora - j.desde >= AUSENCIA
+        ]
+        for j in ausentes:
+            j.presente = False
+        if ausentes:
+            eventos += self._depois_de_mudar(agora)
         if self._fase == "desenho":
             eventos += self._dicas(agora)
         while not self.encerrada and self._prazo is not None and agora >= self._prazo:
@@ -337,6 +421,7 @@ class Sala:
         self._dica = None
         self._dicas_dadas = 0
         self._acertaram = []
+        self._lance_registrado = False
         self._tracos = {}
         self._total_pontos = 0
         self._prazo = agora + TEMPO_ESCOLHA
@@ -352,18 +437,52 @@ class Sala:
         self._prazo = agora + TEMPO_DESENHO
         return self._estados(agora)
 
-    def _ir_ao_intervalo(self, agora: datetime) -> list[Evento]:
+    def _ir_ao_intervalo(self, agora: datetime, tambem: tuple[int, ...] = ()) -> list[Evento]:
+        self._registrar_lance()
         self._fase = "intervalo"
         self._opcoes = None
         self._prazo = agora + TEMPO_INTERVALO
-        return self._estados(agora)
+        return self._estados(agora, tambem)
 
-    def _encerrar(self, agora: datetime) -> list[Evento]:
+    def _encerrar(self, agora: datetime, tambem: tuple[int, ...] = ()) -> list[Evento]:
+        if self.encerrada:
+            return []
+        self._registrar_lance()
         self._fase = "fim"
         self._prazo = None
         self._opcoes = None
         self.encerrada = True
-        return self._estados(agora)
+        return [
+            *self._estados(agora, tambem),
+            self._evento("fim", {"sumula": self.sumula()}),
+        ]
+
+    def _registrar_lance(self) -> None:
+        if self._lance_registrado or self._palavra is None:
+            return
+        self._lance_registrado = True
+        self._lances.append(
+            {
+                "desenhista": self._todos[self._desenhista or 0].apelido,
+                "palavra": self._palavra.texto,
+                "acertaram": [self._todos[j].apelido for j in self._acertaram],
+            }
+        )
+
+    def sumula(self) -> dict:
+        """Players by points (then joining order) and the plays in order; nobody sent off."""
+        jogadores = sorted(
+            (j for j in self._todos.values() if j.id not in self._expulsos),
+            key=lambda j: -j.pontos,
+        )
+        return {
+            "id": self.id,
+            "jogadores": [
+                {"apelido": j.apelido, "pontos": j.pontos, "gols": j.gols, "assist": j.assist}
+                for j in jogadores
+            ],
+            "lances": [dict(lance, acertaram=list(lance["acertaram"])) for lance in self._lances],
+        }
 
     # --- leitura ---
 
@@ -405,10 +524,13 @@ class Sala:
             "tracos": [{**t, "pts": [list(p) for p in t["pts"]]} for t in self._tracos.values()],
         }
 
-    def _estados(self, agora: datetime) -> list[Evento]:
-        """One `estado` per active player (each sees their own view), all with the same seq."""
+    def _estados(self, agora: datetime, tambem: tuple[int, ...] = ()) -> list[Evento]:
+        """One `estado` per player in the room (each sees their own view), all with one seq.
+
+        `tambem` adds who just left or was sent off: their view no longer lists them.
+        """
         self._seq += 1
-        return [Evento("estado", self.foto(j, agora), para=j) for j in self._jogadores]
+        return [Evento("estado", self.foto(j, agora), para=j) for j in (*self._jogadores, *tambem)]
 
     def _evento(self, tipo: str, dados: dict, **destino) -> Evento:
         self._seq += 1
