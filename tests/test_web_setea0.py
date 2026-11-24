@@ -245,3 +245,12 @@ def test_almanaque_nao_entrega_a_forca_pela_ordem(game) -> None:
     classico, almanaque = nomes("classico"), nomes("almanaque")
     assert sorted(classico) == sorted(almanaque)  # the same draw
     assert almanaque == sorted(almanaque)  # but in name order, not by strength
+
+
+def test_escolha_do_clube_tem_um_cartao_por_clube(game) -> None:
+    html = game.get("/jogos/7a0").text
+    cartoes = re.findall(r'<article class="board hub-card s7-clube">(.*?)</article>', html, re.S)
+    publicados = [s for s, e in setea0_dados.chaves()["edicao"].items() if e["publicado"]]
+    assert len(cartoes) == len(publicados)
+    abc = next(c for c in cartoes if 'href="/jogos/7a0/abc"' in c)
+    assert "América-RN" in abc and "Nordeste" in abc

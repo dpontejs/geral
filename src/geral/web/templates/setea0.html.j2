@@ -8,10 +8,20 @@
   <div class="wrap" data-edition="{{ edition }}">
     {% include "_game_tabs.html.j2" %}
     <div class="game-title"><h1>7a0{% if jogo.edicao != "geral" %} do {{ jogo.nome }}{% endif %}</h1></div>
-    {% if jogo.clubes %}
-    <ul class="s7-clubes">
-      {% for c in jogo.clubes %}<li><a href="{{ c.url }}">{{ c.nome }}</a></li>{% endfor %}
-    </ul>
+    {% if jogo.edicao == "geral" %}
+    <p class="lead s7-lead">Escolha o seu clube. O dado sorteia uma época por rodada, você escala um jogador de cada uma e monta o time dos sonhos com quem já vestiu a camisa. Depois vem o mata-mata: 7 jogos, 7 vitórias, e a final é sempre o clássico.</p>
+    <div class="hub-grid">
+      {% for c in jogo.clubes %}
+      <article class="board hub-card s7-clube">
+        <a class="hub-main" href="{{ c.url }}">
+          <span class="lamp tag">{{ c.chave }}</span>
+          <h2 class="lamp title">{{ c.nome }}</h2>
+          <p>Final: o clássico contra o {{ c.final }}.</p>
+          <span class="go">Montar o time →</span>
+        </a>
+      </article>
+      {% endfor %}
+    </div>
     {% endif %}
     <script type="application/json" id="s7-data">{{ jogo | tojson }}</script>
     {% if jogo.edicao != "geral" %}
