@@ -324,7 +324,7 @@
         return;
       }
       botao.disabled = false;
-      mostrarErro(e.target, status === 429 ? "Muitas salas criadas daqui agora há pouco. Tente daqui a um tempo." : erroApelido(status, dados));
+      mostrarErro(e.target, status === 429 ? "Muitas salas criadas daqui agora há pouco. Tente daqui a um tempo." : erroApelido(status));
     });
   }
   function telaEntrar(nota = "") {
@@ -353,19 +353,15 @@
       }
       botao.disabled = false;
       if (status === 404) return aviso("A sala acabou", "A sala acabou ou o servidor reiniciou. Crie outra e mande o link de novo.");
-      if (status === 409) {
-        const motivo = (dados && dados.erro) || "";
-        return /full/.test(motivo) ? mostrarErro(e.target, "A sala está cheia: são 10 jogadores no máximo.") : aviso("A partida acabou", "Essa sala já encerrou.", true);
-      }
-      mostrarErro(e.target, erroApelido(status, dados));
+      if (status === 409) return mostrarErro(e.target, "A sala está cheia (são 10 no máximo) ou a partida já acabou.");
+      mostrarErro(e.target, erroApelido(status));
     });
   }
-  function erroApelido(status, dados) {
-    const motivo = (dados && (dados.erro || JSON.stringify(dados.detail || ""))) || "";
+  // By the HTTP status and the action only: the server's reason is for logs, not for screens.
+  function erroApelido(status) {
     if (status === 0) return "Sem conexão. Tente de novo.";
-    if (/already/.test(motivo)) return "Já tem alguém com esse apelido na sala.";
-    if (/not allowed/.test(motivo)) return "Esse apelido não vale. Escolha outro.";
-    if (status === 422) return "O apelido precisa ter de 2 a 16 caracteres.";
+    if (status === 422) return "Esse apelido não vale: de 2 a 16 caracteres, sem palavrão e diferente dos outros na sala.";
+    if (status === 429) return "Calma: muitas tentativas seguidas. Espere um pouco e tente de novo.";
     return "Não deu certo agora. Tente de novo.";
   }
   function mostrarErro(form, texto) {
