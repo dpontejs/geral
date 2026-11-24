@@ -18,6 +18,8 @@ TIPOS = frozenset(
 )
 TRAVE = 80  # fuzz.ratio from which a wrong guess is "na trave"
 CURTA = 4  # words up to this many letters only hit the post one edit away
+PARTE = 88  # fuzz.ratio for one word of the guess to count as a word of a longer answer
+LIGACOES = frozenset({"a", "o", "as", "os", "e", "de", "da", "do", "das", "dos", "na", "no", "em"})
 
 
 def _palavra(entrada: dict) -> Palavra:
@@ -39,6 +41,24 @@ def _palavra(entrada: dict) -> Palavra:
 def _contem(chute: str, alvo: str) -> bool:
     """Whole-word containment, so "o var" contains "var" but "variante" does not."""
     return f" {alvo} " in f" {chute} "
+
+
+def _parte(chute: str, alvo: str) -> bool:
+    """The guess is part of a longer answer: "escanteio" for "bandeira de escanteio".
+
+    Every word of the guess that matters (connectors aside) must be one of the answer's words
+    (a typo allowed in words of 5+ letters), and at least one of them must have 4+ letters, so
+    "de" or "gol" give nothing away.
+    """
+    palavras = [p for p in chute.split() if p not in LIGACOES]
+    do_alvo = alvo.split()
+    if len(do_alvo) < 2 or not any(len(p) > CURTA - 1 for p in palavras):
+        return False
+
+    def casa(p: str) -> bool:
+        return any(p == a or (len(p) >= 5 and fuzz.ratio(p, a) >= PARTE) for a in do_alvo)
+
+    return all(casa(p) for p in palavras)
 
 
 class BancoToml:
@@ -67,7 +87,7 @@ class BancoToml:
         if c in alvos:
             return "certo"
         for alvo in alvos:
-            if _contem(c, alvo):
+            if _contem(c, alvo) or _parte(c, alvo):
                 return "trave"
             if len(alvo.replace(" ", "")) <= CURTA:
                 if Levenshtein.distance(c, alvo) == 1:

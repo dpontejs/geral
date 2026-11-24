@@ -1809,3 +1809,213 @@ tipo = "clube"
 texto = "Argentina"
 dificuldade = "media"
 tipo = "clube"
+
+# Clubes (pedido do dev em 2026-11-24): os grandes e os do Nordeste; desenhados pelo
+# escudo, pelas cores ou pelo mascote. `aceita` traz o nome completo e o apelido de uso geral.
+
+[[palavra]]
+texto = "Flamengo"
+aceita = ["mengão", "mengo", "urubu"]
+dificuldade = "media"
+tipo = "clube"
+
+[[palavra]]
+texto = "Corinthians"
+aceita = ["timão", "coringão"]
+dificuldade = "media"
+tipo = "clube"
+
+[[palavra]]
+texto = "Palmeiras"
+aceita = ["verdão", "porco"]
+dificuldade = "media"
+tipo = "clube"
+
+[[palavra]]
+texto = "São Paulo"
+aceita = ["tricolor paulista"]
+dificuldade = "media"
+tipo = "clube"
+
+[[palavra]]
+texto = "Vasco"
+aceita = ["vasco da gama", "vascão"]
+dificuldade = "media"
+tipo = "clube"
+
+[[palavra]]
+texto = "Santos"
+aceita = ["peixe"]
+dificuldade = "media"
+tipo = "clube"
+
+[[palavra]]
+texto = "Botafogo"
+aceita = ["fogão"]
+dificuldade = "media"
+tipo = "clube"
+
+[[palavra]]
+texto = "Fluminense"
+aceita = ["flu", "tricolor carioca"]
+dificuldade = "media"
+tipo = "clube"
+
+[[palavra]]
+texto = "Grêmio"
+aceita = ["imortal tricolor"]
+dificuldade = "media"
+tipo = "clube"
+
+[[palavra]]
+texto = "Internacional"
+aceita = ["inter", "colorado"]
+dificuldade = "media"
+tipo = "clube"
+
+[[palavra]]
+texto = "Cruzeiro"
+aceita = ["raposa"]
+dificuldade = "media"
+tipo = "clube"
+
+[[palavra]]
+texto = "Atlético-MG"
+aceita = ["atlético mineiro", "galo"]
+dificuldade = "media"
+tipo = "clube"
+
+[[palavra]]
+texto = "Athletico-PR"
+aceita = ["athletico paranaense", "atlético paranaense"]
+dificuldade = "dificil"
+tipo = "clube"
+
+[[palavra]]
+texto = "Bahia"
+aceita = ["esquadrão"]
+dificuldade = "media"
+tipo = "clube"
+
+[[palavra]]
+texto = "Vitória"
+aceita = ["leão da barra"]
+dificuldade = "dificil"
+tipo = "clube"
+
+[[palavra]]
+texto = "Sport"
+aceita = ["sport recife", "leão da ilha"]
+dificuldade = "media"
+tipo = "clube"
+
+[[palavra]]
+texto = "Náutico"
+aceita = ["timbu"]
+dificuldade = "dificil"
+tipo = "clube"
+
+[[palavra]]
+texto = "Santa Cruz"
+aceita = ["cobra coral"]
+dificuldade = "dificil"
+tipo = "clube"
+
+[[palavra]]
+texto = "Ceará"
+aceita = ["vovô"]
+dificuldade = "dificil"
+tipo = "clube"
+
+[[palavra]]
+texto = "Fortaleza"
+aceita = ["leão do pici"]
+dificuldade = "dificil"
+tipo = "clube"
+
+[[palavra]]
+texto = "ABC"
+aceita = ["abc de natal", "elefante"]
+dificuldade = "dificil"
+tipo = "clube"
+
+[[palavra]]
+texto = "CSA"
+aceita = ["azulão"]
+dificuldade = "dificil"
+tipo = "clube"
+
+[[palavra]]
+texto = "CRB"
+dificuldade = "dificil"
+tipo = "clube"
+
+[[palavra]]
+texto = "Paysandu"
+aceita = ["papão"]
+dificuldade = "dificil"
+tipo = "clube"
+
+[[palavra]]
+texto = "Remo"
+aceita = ["clube do remo"]
+dificuldade = "dificil"
+tipo = "clube"
+
+[[palavra]]
+texto = "Goiás"
+aceita = ["esmeraldino"]
+dificuldade = "dificil"
+tipo = "clube"
+
+[[palavra]]
+texto = "Coritiba"
+aceita = ["coxa"]
+dificuldade = "dificil"
+tipo = "clube"
+
+[[palavra]]
+texto = "Chapecoense"
+aceita = ["chape"]
+dificuldade = "dificil"
+tipo = "clube"
+
+[[palavra]]
+texto = "Bragantino"
+aceita = ["red bull bragantino", "massa bruta"]
+dificuldade = "dificil"
+tipo = "clube"
+
+[[palavra]]
+texto = "Ponte Preta"
+aceita = ["macaca"]
+dificuldade = "dificil"
+tipo = "clube"
+
+[[palavra]]
+texto = "Guarani"
+aceita = ["bugre"]
+dificuldade = "dificil"
+tipo = "clube"
+
+[[palavra]]
+texto = "Portuguesa"
+aceita = ["lusa"]
+dificuldade = "dificil"
+tipo = "clube"
+
+[[palavra]]
+texto = "Juventude"
+dificuldade = "dificil"
+tipo = "clube"
+
+[[palavra]]
+texto = "América-MG"
+aceita = ["américa mineiro", "coelho"]
+dificuldade = "dificil"
+tipo = "clube"
+
+[[palavra]]
+texto = "Mirassol"
+dificuldade = "dificil"
+tipo = "clube"

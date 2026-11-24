@@ -33,3 +33,11 @@ def test_aceita_nao_repete_o_texto():
         formas = [normalizar(a) for a in palavra.aceita]
         assert normalizar(palavra.texto) not in formas, palavra.texto
         assert all(formas), palavra.texto
+
+
+def test_clubes_no_banco():
+    """The dev asked for clubs as words (2026-11-24): the big ones and the Nordeste's."""
+    clubes = {p.texto for p in carregar().palavras if p.tipo == "clube"}
+    assert len(clubes) >= 30
+    for nome in ("Flamengo", "Corinthians", "Bahia", "Sport", "Fortaleza", "ABC", "Náutico", "CSA"):
+        assert nome in clubes
