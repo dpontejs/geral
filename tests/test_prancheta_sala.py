@@ -581,7 +581,7 @@ def test_anfitriao_passa_ao_mais_antigo():
 
 def test_cartao_vermelho_por_maioria():
     sala, tokens = sala_com(5)
-    assert sala.agir(1, cartao(5), em(1)) == []
+    assert {e.para for e in sala.agir(1, cartao(5), em(1))} == {1, 2, 3, 4, 5}
     sala.agir(2, cartao(5), em(1))
     sala.agir(2, cartao(5), em(1))  # voting twice counts once
     assert 5 in ids(sala, 1, 1)
@@ -591,6 +591,21 @@ def test_cartao_vermelho_por_maioria():
     with pytest.raises(ErroSala) as excinfo:
         sala.jogador(tokens[5])
     assert _status(excinfo) == 403
+
+
+def test_estado_traz_cartoes_por_jogador():
+    sala, _ = sala_com(5)
+    eventos = sala.agir(1, cartao(3), em(1))
+    assert {e.para for e in eventos if e.tipo == "estado"} == {1, 2, 3, 4, 5}
+    for evento in eventos:
+        jogadores = {j["id"]: j for j in evento.dados["jogadores"]}
+        assert {i: j["cartoes"] for i, j in jogadores.items()} == {1: 0, 2: 0, 3: 1, 4: 0, 5: 0}
+        # a strict majority of the 4 present players besides the target
+        assert {j["cartoes_para_sair"] for j in jogadores.values()} == {3}
+    sala.desconectou(4, em(1))
+    sala.avancar(em(31))  # 4 is absent: 3 others besides any target
+    jogadores = sala.foto(1, em(31))["jogadores"]
+    assert {j["id"]: j["cartoes_para_sair"] for j in jogadores} == {1: 2, 2: 2, 3: 2, 4: 3, 5: 2}
 
 
 def test_ausente_nao_conta_na_maioria():
