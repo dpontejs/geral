@@ -434,6 +434,7 @@
   }
 
   // ---- the live stage --------------------------------------------------------------------------
+  let observadores = [];
   function montarAoVivo() {
     tela = "ao-vivo";
     palco.className = "palco ao-vivo";
@@ -447,8 +448,10 @@
         <div class="entrada" id="nota"><span class="nota" id="nota-texto"></span></div>
       </div>`;
     lousa = $("#lousa"); cv = $("canvas", lousa); ctx = cv.getContext("2d"); padroes = {};
-    new ResizeObserver(ajustarCanvas).observe(lousa);
-    new ResizeObserver(encaixar).observe($("#quadro"));
+    observadores.forEach((o) => o.disconnect()); // the last stage's, if any
+    observadores = [new ResizeObserver(ajustarCanvas), new ResizeObserver(encaixar)];
+    observadores[0].observe(lousa);
+    observadores[1].observe($("#quadro"));
     ligarDesenho();
     $("#bandeja").addEventListener("click", (e) => {
       const b = e.target.closest("button");
