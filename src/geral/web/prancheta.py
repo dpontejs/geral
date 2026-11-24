@@ -11,9 +11,11 @@ import asyncio
 import json
 import logging
 import random
+import sqlite3
 from collections.abc import AsyncIterator, Awaitable, Callable
+from contextlib import closing
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import TYPE_CHECKING, Annotated, Literal
 
@@ -36,6 +38,16 @@ TAMANHO_ID = 6
 FILA_MAX = 500  # events waiting for one connection; past that the client is gone: drop it
 PING = 15.0  # seconds between keep-alive comments on an idle events stream
 INTERVALO = 0.5  # seconds between two steps of the loop
+ABANDONO = timedelta(minutes=10)  # a room with no events connection for this long is closed
+DURACAO_MAX = timedelta(hours=3)  # and any room this old
+SCHEMA = """
+CREATE TABLE IF NOT EXISTS prancheta_sumulas (
+    id TEXT PRIMARY KEY,
+    criada_em TEXT NOT NULL,
+    encerrada_em TEXT NOT NULL,
+    dados TEXT NOT NULL
+);
+"""
 
 
 # --- corpos ---
@@ -118,6 +130,7 @@ class _Conexao:
 @dataclass(eq=False)
 class _SalaViva:
     sala: Sala
+    vazia_desde: datetime  # since when nobody is connected (counts only while that is so)
     conexoes: list[_Conexao] = field(default_factory=list)
 
 
@@ -164,6 +177,9 @@ class Prancheta:
         self._banco = banco
         self._rng = rng
         self._salas: dict[str, _SalaViva] = {}
+        self.db_path.parent.mkdir(parents=True, exist_ok=True)
+        with closing(sqlite3.connect(self.db_path)) as db, db:
+            db.executescript(SCHEMA)
         self.router = APIRouter(prefix="/api/jogos/prancheta")
         self._rotas()
 
@@ -172,6 +188,27 @@ class Prancheta:
     def viva(self, sala_id: str) -> bool:
         viva = self._salas.get(sala_id)
         return viva is not None and not viva.sala.encerrada
+
+    def sumula(self, sala_id: str) -> dict | None:
+        """The súmula of a finished room (from the table); None while playing or never played."""
+        with closing(sqlite3.connect(self.db_path)) as db:
+            linha = db.execute(
+                "SELECT dados FROM prancheta_sumulas WHERE id = ?", (sala_id,)
+            ).fetchone()
+        return json.loads(linha[0]) if linha else None
+
+    def _gravar(self, sala_id: str, criada_em: datetime, encerrada_em: datetime, dados: dict):
+        """Keeps a súmula; the first copy stays (the end is written once, whatever calls it)."""
+        with closing(sqlite3.connect(self.db_path)) as db, db:
+            db.execute(
+                "INSERT OR IGNORE INTO prancheta_sumulas VALUES (?, ?, ?, ?)",
+                (
+                    sala_id,
+                    criada_em.isoformat(),
+                    encerrada_em.isoformat(),
+                    json.dumps(dados, ensure_ascii=False),
+                ),
+            )
 
     # --- laço ---
 
@@ -185,10 +222,29 @@ class Prancheta:
             await self._sleep(INTERVALO)
 
     def passo(self) -> None:
-        """Moves every room's clock (deadlines, hints, absences) and delivers what changed."""
+        """Moves every room's clock (deadlines, hints, absences) and delivers what changed.
+
+        A room nobody has been connected to for 10 minutes, or 3 hours old, is closed: a game in
+        progress goes to `fim` (and its súmula is kept), and the room leaves the memory.
+        """
         agora = self._now()
         for viva in list(self._salas.values()):
-            self._entregar(viva, viva.sala.avancar(agora))
+            abandonada = not viva.conexoes and agora - viva.vazia_desde >= ABANDONO
+            if abandonada or agora - viva.sala.criada_em >= DURACAO_MAX:
+                self._entregar(viva, viva.sala.encerrar(agora))
+                self._retirar(viva)
+            else:
+                self._entregar(viva, viva.sala.avancar(agora))
+
+    def _retirar(self, viva: _SalaViva) -> None:
+        """Out of memory; its events streams end after what is already queued."""
+        if self._salas.pop(viva.sala.id, None) is None:
+            return  # already out (the end and the cleanup in the same step)
+        for conexao in list(viva.conexoes):
+            try:
+                conexao.fila.put_nowait(None)
+            except asyncio.QueueFull:
+                self._desligar(viva, conexao)
 
     # --- entrega ---
 
@@ -209,6 +265,11 @@ class Prancheta:
         for conexao in caidas:
             logger.info("Prancheta %s: dropping a stalled events connection", viva.sala.id)
             self._desligar(viva, conexao)
+        for evento in eventos:
+            if evento.tipo == "fim":
+                sala = viva.sala
+                self._gravar(sala.id, sala.criada_em, self._now(), evento.dados["sumula"])
+                self._retirar(viva)
 
     def _desligar(self, viva: _SalaViva, conexao: _Conexao) -> None:
         """Takes a connection out of the room once (closed, or dropped for a full queue)."""
@@ -216,6 +277,8 @@ class Prancheta:
             return
         conexao.fechada = True
         viva.conexoes.remove(conexao)
+        if not viva.conexoes:
+            viva.vazia_desde = self._now()
         self._entregar(viva, viva.sala.desconectou(conexao.jogador, self._now()))
 
     def _ligar(self, viva: _SalaViva, jogador: int) -> _Conexao:
@@ -244,7 +307,7 @@ class Prancheta:
     def _novo_id(self) -> str:
         while True:
             sala_id = "".join(self._rng.choice(ALFABETO) for _ in range(TAMANHO_ID))
-            if sala_id not in self._salas:
+            if sala_id not in self._salas and self.sumula(sala_id) is None:
                 return sala_id
 
     def _rotas(self) -> None:
@@ -261,7 +324,7 @@ class Prancheta:
                 jogador, token, _ = sala.entrar(corpo.apelido, agora)
             except ErroSala as erro:
                 return _erro(erro.status, erro.motivo)
-            self._salas[sala.id] = _SalaViva(sala)
+            self._salas[sala.id] = _SalaViva(sala, vazia_desde=agora)
             return {"id": sala.id, "jogador": jogador, "token": token}
 
         @router.post("/salas/{sala_id}/entrar")

@@ -716,6 +716,23 @@ def test_fim_uma_vez_so():
     assert _status(excinfo) == 409
 
 
+def test_encerrar_em_jogo_vai_ao_fim_com_o_lance_atual():
+    sala, _ = em_desenho(3)
+    eventos = sala.encerrar(em(5))
+    assert [e.tipo for e in eventos].count("fim") == 1 and sala.encerrada
+    fim = next(e for e in eventos if e.tipo == "fim")
+    assert fim.dados["sumula"]["lances"] == [
+        {"desenhista": "Ana", "palavra": "Bicicleta", "acertaram": []}
+    ]
+    assert sala.encerrar(em(6)) == []
+
+
+def test_encerrar_na_espera_so_fecha():
+    sala, _ = sala_com(3)
+    assert sala.encerrar(em(5)) == []
+    assert sala.encerrada
+
+
 def test_sumula_ordenada_por_pontos():
     sala, _ = sala_com(3)
     sala.agir(1, COMECAR, em(0))

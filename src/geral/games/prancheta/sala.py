@@ -444,6 +444,13 @@ class Sala:
         self._prazo = agora + TEMPO_INTERVALO
         return self._estados(agora, tambem)
 
+    def encerrar(self, agora: datetime) -> list[Evento]:
+        """The hub's cleanup: a game in progress goes to `fim`; a room still waiting just closes."""
+        if self._fase == "espera":
+            self.encerrada = True
+            return []
+        return self._encerrar(agora)
+
     def _encerrar(self, agora: datetime, tambem: tuple[int, ...] = ()) -> list[Evento]:
         if self.encerrada:
             return []

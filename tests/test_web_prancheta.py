@@ -9,10 +9,12 @@ import functools
 import json
 import random
 import re
-from contextlib import asynccontextmanager
+import sqlite3
+from contextlib import asynccontextmanager, closing
 from datetime import timedelta
 
 import httpx
+import pytest
 from fastapi import FastAPI
 from prancheta_fakes import T0, BancoFalso
 from webkit import make_client
@@ -482,6 +484,166 @@ async def test_acoes_concorrentes_nao_quebram_seq(tmp_path):
         seqs = [d["seq"] for _, d in lidos]
         assert seqs == sorted(set(seqs))
         assert sum(t == "traco" for t, _ in lidos) == 30
+
+
+# --- laço, súmula e limpeza ---
+
+
+def _linhas(m: Mesa) -> list[tuple]:
+    with closing(sqlite3.connect(m.prancheta.db_path)) as db:
+        return db.execute(
+            "SELECT id, criada_em, encerrada_em, dados FROM prancheta_sumulas"
+        ).fetchall()
+
+
+def _ate_o_fim(m: Mesa, segundos: float) -> None:
+    """Steps the loop every half second for `segundos`, as `rodar()` would."""
+    for _ in range(int(segundos * 2)):
+        m.relogio.andar(0.5)
+        m.prancheta.passo()
+
+
+@assincrono
+async def test_fim_grava_sumula(tmp_path):
+    async with mesa(tmp_path) as m:
+        sala, tokens = await m.sala_com(2)
+        ouvinte = await m.ouvir(sala, tokens[2])
+        await m.ouvir(sala, tokens[1])
+        await m.em_desenho(sala, tokens)  # Ana draws Bicicleta
+        m.relogio.andar(1)
+        await m.agir(sala, tokens[2], "chute", texto="Bicicleta")  # Bia scores, intervalo
+        _ate_o_fim(m, 6 + 15 + 80 + 6)  # Bia's turn: no choice, no guess, then the end
+
+        *_, (tipo, fim) = await ouvinte.ate(lambda t, d: t == "fim")
+        assert await ouvinte.proximo() is None  # the stream closes after the end
+        assert m.prancheta.sumula(sala) == fim["sumula"]
+        assert fim["sumula"]["jogadores"] == [
+            {"apelido": "Bia", "pontos": 5, "gols": 1, "assist": 0},
+            {"apelido": "Ana", "pontos": 2, "gols": 0, "assist": 1},
+        ]
+        assert [lance["desenhista"] for lance in fim["sumula"]["lances"]] == ["Ana", "Bia"]
+        [(id_, criada_em, encerrada_em, _)] = _linhas(m)
+        assert id_ == sala and criada_em == T0.isoformat()
+        assert encerrada_em == m.relogio().isoformat()
+
+
+@assincrono
+async def test_sumula_gravada_uma_vez(tmp_path):
+    async with mesa(tmp_path) as m:
+        sala, tokens = await m.sala_com(2)
+        await m.em_desenho(sala, tokens)
+        assert (await m.agir(sala, tokens[2], "sair")).status_code == 204  # alone: the end
+        primeira = _linhas(m)
+        assert len(primeira) == 1
+        assert (await m.agir(sala, tokens[1], "sair")).status_code == 404  # out of memory
+        _ate_o_fim(m, 3)
+        m.relogio.andar(3 * 3600)
+        m.prancheta.passo()
+        m.prancheta._gravar(sala, T0, m.relogio(), {"outra": "versao"})  # a second write
+        assert _linhas(m) == primeira
+
+
+@assincrono
+async def test_sala_abandonada_sai_da_memoria(tmp_path):
+    async with mesa(tmp_path) as m:
+        sala, tokens = await m.sala_com(2)
+        sozinha, _ = await m.sala_com(2)
+        aba = await m.ouvir(
+            sozinha, tokens[1].replace(tokens[1], (await m.entrar(sozinha, "Gil"))["token"])
+        )
+        aba_da_sala = await m.ouvir(sala, tokens[1])
+        m.relogio.andar(300)
+        await aba_da_sala.fechar()  # the 10 minutes count from the last tab closing
+        m.relogio.andar(599)
+        m.prancheta.passo()
+        assert m.prancheta.viva(sala)
+        m.relogio.andar(1)
+        m.prancheta.passo()
+        assert not m.prancheta.viva(sala) and m.prancheta.sumula(sala) is None  # never played
+        async with m.cliente() as c:
+            resposta = await c.post(f"{API}/salas/{sala}/entrar", json={"apelido": "Hugo"})
+        assert resposta.status_code == 404
+        assert m.prancheta.viva(sozinha)  # a tab still open keeps the room
+        await aba.fechar()
+
+
+@assincrono
+async def test_sala_de_tres_horas_encerra(tmp_path):
+    async with mesa(tmp_path) as m:
+        sala, tokens = await m.sala_com(2)
+        esperando, outros = await m.sala_com(2)
+        ouvintes = [await m.ouvir(sala, t) for t in tokens.values()]
+        parada = await m.ouvir(esperando, outros[1])
+        await m.em_desenho(sala, tokens)
+        m.relogio.andar(3 * 3600 - 1)
+        m.prancheta.passo()  # a jump: the deadlines would end the game by themselves
+        assert m.prancheta.viva(sala)
+        m.relogio.andar(1)
+        m.prancheta.passo()
+        assert not m.prancheta.viva(sala) and not m.prancheta.viva(esperando)
+        sumula = m.prancheta.sumula(sala)
+        assert sumula is not None and m.prancheta.sumula(esperando) is None
+        for ouvinte in ouvintes:
+            *_, (_, fim) = await ouvinte.ate(lambda t, d: t == "fim")
+            assert fim["sumula"] == sumula
+            assert await ouvinte.proximo() is None
+        tipos = []  # the waiting room just closes: no game, no fim
+        while (evento := await parada.proximo()) is not None:
+            tipos.append(evento[0])
+        assert set(tipos) == {"estado"}
+
+
+@assincrono
+async def test_viva_e_sumula(tmp_path):
+    async with mesa(tmp_path) as m:
+        assert not m.prancheta.viva("abcdef") and m.prancheta.sumula("abcdef") is None
+        sala, tokens = await m.sala_com(3)
+        assert m.prancheta.viva(sala) and m.prancheta.sumula(sala) is None
+        await m.em_desenho(sala, tokens)
+        await m.agir(sala, tokens[1], "tirar", alvo=3)
+        await m.agir(sala, tokens[2], "sair")
+        assert not m.prancheta.viva(sala)
+        sumula = m.prancheta.sumula(sala)
+        assert sumula["id"] == sala
+        assert [j["apelido"] for j in sumula["jogadores"]] == ["Ana", "Bia"]  # 3 was sent off
+
+
+@assincrono
+async def test_id_de_sala_nao_repete_sumula(tmp_path):
+    async with mesa(tmp_path) as m:
+        sala, tokens = await m.sala_com(2)
+        await m.em_desenho(sala, tokens)
+        await m.agir(sala, tokens[2], "sair")
+    async with mesa(tmp_path) as m:  # same SQLite, same draws: the first id is taken
+        nova = await m.criar()
+        assert nova["id"] != sala and m.prancheta.sumula(sala) is not None
+
+
+def test_rodar_avanca_as_salas_a_cada_meio_segundo(tmp_path):
+    async def jogo():
+        m = Mesa(tmp_path)
+        dormidas = []
+
+        async def sleep(segundos):
+            dormidas.append(segundos)
+            m.relogio.andar(segundos)
+            if len(dormidas) == 40:  # 20 s: the choice ran out and a word was drawn
+                raise asyncio.CancelledError
+
+        m.prancheta._sleep = sleep
+        sala, tokens = await m.sala_com(2)
+        await m.ouvir(sala, tokens[1])
+        await m.ouvir(sala, tokens[2])
+        await m.agir(sala, tokens[1], "comecar")
+        with pytest.raises(asyncio.CancelledError):
+            await m.prancheta.rodar()
+        assert set(dormidas) == {0.5}
+        foto = await m.foto(sala, tokens[1])
+        await m.fechar()
+        return foto
+
+    foto = asyncio.run(jogo())
+    assert foto["fase"] == "desenho" and foto["palavra"]
 
 
 # --- no app ---
