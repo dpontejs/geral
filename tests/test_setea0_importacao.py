@@ -21,6 +21,9 @@ ABC = "Q338285"
         ("Lateral-esquerdo, Volante e MeiaAtacante", ["LAT", "MEI"]),
         ("Ponta-de-lança", ["MEI"]),
         ("Coordenador de futebol e volante", ["MEI"]),
+        ("[[Meio-campo#Meia-atacante|meio-campista]]", ["MEI"]),
+        ("Defensor", ["ZAG"]),
+        ("<small>volante< e small>", ["MEI"]),
         ("", []),
     ],
 )
@@ -35,8 +38,15 @@ def test_so_passagens_no_clube_e_funde_consecutivas():
         Stint(1988, 1990, ABC),
         Stint(1991, 1992, ABC),  # consecutive: one stay
         Stint(None, None, ABC),  # years unreadable
+        Stint(1999, 1997, ABC),  # a typo in the infobox
     ]
     assert passagens(stints, ABC) == [(1983, 1985), (1988, 1992)]
+
+
+def test_passagem_em_aberto_vai_ate_o_ano_corrente():
+    from datetime import date
+
+    assert passagens([Stint(2024, None, ABC)], ABC) == [(2024, date.today().year)]
 
 
 def pagina(ano: str, clubes: str, posicao: str = "Atacante", extra: str = "") -> dict:
@@ -154,3 +164,49 @@ def test_jogadores_velha_mapeia_posicoes_e_nao_tem_passagens():
             "selecao": True,
         },
     ]
+
+
+def test_idolo_inexistente_e_erro():
+    with pytest.raises(ValueError, match="Q404"):
+        montar({"abc": [bruto("Q1", 1)]}, {"abc": {"Q404": 95}})
+
+
+def test_dados_reais_cobrem_as_edicoes():
+    from geral.games.setea0.dados import DADOS, carregar, chaves
+    from geral.games.setea0.modelos import epocas
+
+    reais = carregar(DADOS)
+    for slug, edicao in chaves()["edicao"].items():
+        assert len(epocas(reais.clubes[slug].jogadores)) >= 4, slug
+        for rival in [*edicao["adversarios"], edicao["final"]]:
+            jogadores = reais.clubes[rival].jogadores
+            assert len(jogadores) >= 11, rival
+            assert any("GOL" in j.posicoes for j in jogadores), rival
+
+
+def test_bandeira_antes_do_clube_nao_esconde_o_clube():
+    flag = "[[Ficheiro:Flag of Brazil.svg|border|22x20px|link=Brasil|alt=Brasil]] "
+    com_bandeira = pagina("1990–1992", flag + "[[ABC Futebol Clube|ABC]]")
+    jogador, motivo = jogador_ptwiki(com_bandeira, ABC, 1)
+    assert motivo is None
+    assert jogador["passagens"] == [(1990, 1992)]
+
+
+def test_infobox_com_campos_numerados():
+    from geral.games.setea0.importacao import colunas
+
+    params = {"ano1": "1985", "clube1": "[[A]]", "ano2": "1986–1988", "clube2": "{{Futebol ABC}}"}
+    params["ano10"], params["clube10"] = "1999", "[[Z]]"
+    assert colunas(params) == (
+        "1985<br />1986–1988<br />1999",
+        "[[A]]<br />{{Futebol ABC}}<br />[[Z]]",
+    )
+    assert colunas({"ano": "1990", "clubes": "[[ABC]]"}) == ("1990", "[[ABC]]")
+    assert colunas({"nome": "X"}) is None
+    numerada = pagina("", "[[ABC Futebol Clube|ABC]]")
+    numerada["text"] = (
+        "{{Info/Futebol\n|posição = Goleiro\n|ano1 = 1990–1991\n|clube1 = {{Futebol ABC}}\n}}"
+    )
+    jogador, motivo = jogador_ptwiki(numerada, ABC, 1)
+    assert motivo is None
+    assert jogador["passagens"] == [(1990, 1991)]

@@ -26,6 +26,7 @@ PALAVRAS: list[tuple[str, Posicao]] = [
     ("zagueiro", "ZAG"),
     ("libero", "ZAG"),
     ("beque", "ZAG"),
+    ("defensor", "ZAG"),
     ("defesa", "ZAG"),
     ("lateral", "LAT"),
     ("ala", "LAT"),
@@ -42,6 +43,7 @@ PALAVRAS: list[tuple[str, Posicao]] = [
 ]
 PARTES = re.compile(r",|;|/|\s+e\s+|\s+ou\s+")
 SELECAO = "Seleção Brasileira de Futebol"
+ARQUIVO = re.compile(r"\[\[(?:Ficheiro|Arquivo|Imagem|File|Image):[^\]]*\]\]", re.IGNORECASE)
 BASE_OU_OLIMPICA = re.compile(r"sub[- ]?\d|ol[ií]mpic", re.IGNORECASE)
 VELHA: dict[str, Posicao] = {
     "goleiro": "GOL",
@@ -60,6 +62,8 @@ def _sem_acento(texto: str) -> str:
 def posicoes(texto: str) -> list[Posicao]:
     """The positions an infobox `posição` names, in order and without repeats."""
     achadas: list[Posicao] = []
+    texto = re.sub(r"\[\[[^\]|]*\|([^\]]*)\]\]", r"\1", texto)  # "[[Meio-campo#Meia|meia]]"
+    texto = re.sub(r"<[^>]*>?", " ", texto)  # "<small>volante< e small>"
     for parte in PARTES.split(_sem_acento(ptwiki.plain(texto))):
         parte = parte.strip()  # "meiaatacante", "lateral-direito": the first word decides
         for palavra, posicao in PALAVRAS:
@@ -72,11 +76,12 @@ def posicoes(texto: str) -> list[Posicao]:
 
 def passagens(stints: list[Stint], clube_qid: str) -> list[tuple[int, int]]:
     """The stays at the club (stint targets already Wikidata ids), consecutive ones merged."""
-    anos = sorted(
-        (s.start, s.end if s.end is not None else date.today().year)
+    lidas = [
+        (s.start, s.end if s.end is not None else date.today().year)  # still there: this year
         for s in stints
         if s.target == clube_qid and s.start is not None
-    )
+    ]
+    anos = sorted((inicio, fim) for inicio, fim in lidas if inicio <= fim)  # "1999–1997": a typo
     fundidas: list[tuple[int, int]] = []
     for inicio, fim in anos:
         if fundidas and inicio <= fundidas[-1][1] + 1:
@@ -94,16 +99,30 @@ def _selecao(campo: str) -> bool:
     return False
 
 
+def colunas(params: dict[str, str]) -> tuple[str, str] | None:
+    """The years and clubs columns of an infobox: `ano`/`clubes`, or numbered `anoN`/`clubeN`
+    ({{Info/Futebol}}) joined line by line; None when the infobox has no career."""
+    if "clubes" in params:
+        return params.get("ano", ""), params["clubes"]
+    numeros = sorted(int(k[5:]) for k in params if re.fullmatch(r"clube\d+", k))
+    if not numeros:
+        return None
+    anos = "<br />".join(params.get(f"ano{n}", "") for n in numeros)
+    return anos, "<br />".join(params[f"clube{n}"] for n in numeros)
+
+
 def jogador_ptwiki(pagina: dict, clube_qid: str, fama: int) -> tuple[dict | None, str | None]:
     """The raw player of a page, or why it is left out (for the report).
 
-    `pagina`: {"titulo", "qid", "text", "clubes" (the expanded clubs column), "ids" (club page
+    `pagina`: {"titulo", "qid", "text", "clubes" (the expanded `colunas` clubs), "ids" (club page
     title -> Wikidata id)}.
     """
     params = ptwiki.infobox(pagina["text"])
-    if "clubes" not in params:
+    carreira = colunas(params)
+    if carreira is None:
         return None, "sem infobox"
-    stints = ptwiki.parse_career(params.get("ano", ""), pagina["clubes"])
+    clubes = ARQUIVO.sub("", pagina["clubes"])  # a flag before the club would be read as it
+    stints = ptwiki.parse_career(carreira[0], clubes)
     if stints is None:
         return None, "anos e clubes não batem"
     ids = pagina["ids"]
@@ -150,6 +169,10 @@ def _anos(passagens_: list) -> int | None:
 
 def montar(brutos: dict[str, list[dict]], idolos: dict[str, dict[str, int]]) -> Dados:
     """The 7a0 data: each raw squad with its strengths; idols keep their hand-set strength."""
+    for slug, fixas in idolos.items():
+        ids = {j["id"] for j in brutos.get(slug, [])}
+        if faltando := sorted(set(fixas) - ids):
+            raise ValueError(f"ídolos de {slug} fora do elenco: {', '.join(faltando)}")
     clubes = {}
     for slug, jogadores in brutos.items():
         fixas = idolos.get(slug, {})

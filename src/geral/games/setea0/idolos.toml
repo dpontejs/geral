@@ -1,0 +1,128 @@
+# 7a0 do clube: a força fixada dos ídolos de cada edição (1 a 99), por id da Wikidata.
+# Semeado de craques/{flamengo,vasco,palmeiras}.toml (casando pelo nome, 92 por padrão) e de
+# carreira/lendas.toml (pelo id). Um id fora do elenco do clube faz o import falhar.
+
+[flamengo]
+"Q311739" = 92  # Leônidas
+"Q717927" = 92  # Domingos da Guia
+"Q207085" = 92  # Zizinho
+"Q553061" = 92  # Evaristo de Macedo
+"Q47526" = 92  # Zico
+"Q311424" = 92  # {{center|Júnior}}
+"Q2520149" = 92  # Andrade
+"Q969872" = 92  # Leandro
+"Q927507" = 92  # Mozer
+"Q297721" = 92  # Aldair
+"Q372451" = 92  # Sávio
+"Q2015351" = 92  # Dejan Petković<br>Дејан Петковић
+"Q170452" = 92  # Adriano
+"Q181942" = 92  # Hernane
+"Q156802" = 92  # Paolo Guerrero
+"Q174926" = 92  # Rafinha
+"Q13578003" = 92  # Giorgian de Arrascaeta
+"Q13646572" = 92  # Gabigol
+"Q47491410" = 92  # Pedro
+"Q180642" = 92  # Garrincha
+"Q39444" = 92  # Ronaldinho
+"Q28973866" = 92  # Vinícius Júnior
+"Q102331" = 92  # Sócrates
+"Q280306" = 92  # Gérson
+"Q295262" = 92  # Carlos Alberto Torres
+"Q445541" = 92  # Edmundo
+"Q204825" = 92  # Bebeto
+"Q204555" = 92  # Zinho
+"Q47489" = 92  # Djalminha
+"Q1982869" = 92  # Vampeta
+"Q535429" = 92  # Edílson Capetinha
+"Q428431" = 92  # Ricardo Rocha
+"Q2294362" = 92  # Dida
+
+[vasco]
+"Q927470" = 92  # Chico
+"Q1354227" = 92  # Maneca
+"Q720548" = 92  # Friaça
+"Q630223" = 92  # Fausto
+"Q262826" = 92  # Bellini
+"Q311445" = 92  # Vavá
+"Q1509622" = 92  # Geovani
+"Q204825" = 92  # Bebeto
+"Q3965019" = 92  # Sorato
+"Q445541" = 92  # Edmundo
+"Q2579383" = 92  # Felipe
+"Q316836" = 92  # Nenê
+"Q725010" = 92  # Riascos
+"Q10394490" = 92  # Yago Pikachu
+"Q39079181" = 92  # Paulinho
+"Q65718359" = 92  # Talles Magno
+"Q3761170" = 92  # Germán Cano
+"Q106171073" = 92  # Andrey Santos
+"Q15146754" = 92  # Pablo Vegetti
+"Q376247" = 92  # Dimitri Payet
+"Q311407" = 92  # Tostão
+"Q203451" = 92  # Juninho Pernambucano
+"Q332012" = 92  # Ademir de Menezes
+"Q311872" = 92  # Philippe Coutinho
+"Q311739" = 92  # Leônidas da Silva
+"Q195426" = 92  # Evair
+"Q350761" = 92  # Mazinho
+"Q535429" = 92  # Edílson Capetinha
+
+[palmeiras]
+"Q355742" = 92  # Ademir da Guia
+"Q2303017" = 92  # César
+"Q2306110" = 92  # Leivinha
+"Q195426" = 92  # Evair
+"Q445541" = 92  # Edmundo
+"Q204555" = 92  # Zinho
+"Q316436" = 92  # César Sampaio
+"Q178683" = 92  # Cafu<br>{{pequeno|ORB}}
+"Q47489" = 92  # Djalminha
+"Q342474" = 92  # Marcos
+"Q264228" = 92  # Francisco Arce
+"Q507815" = 92  # Alex
+"Q197578" = 92  # Oséas
+"Q360782" = 92  # Jorge Valdivia
+"Q19708656" = 92  # Gabriel Jesus
+"Q1033783" = 92  # Gustavo Gómez
+"Q10552615" = 92  # Deyverson
+"Q101230488" = 92  # Breno Lopes
+"Q27443365" = 92  # Raphael Veiga
+"Q28748046" = 92  # Rony
+"Q35066458" = 92  # Joaquín Piquerez
+"Q110644260" = 92  # Endrick
+"Q115332579" = 92  # Estêvão
+"Q429039" = 92  # Roberto Carlos
+"Q299693" = 92  # Djalma Santos
+"Q156822" = 92  # Lúcio
+"Q483577" = 92  # Rivaldo
+"Q311445" = 92  # Vavá
+"Q350761" = 92  # Mazinho
+"Q1341709" = 92  # Dudu
+"Q535429" = 92  # Edílson Capetinha
+"Q47660" = 92  # Mirandinha
+"Q50622134" = 92  # Arthur Cabral
+
+# RASCUNHO: revisar nomes e notas (abc; só ídolos de que há certeza, faltam nomes)
+[abc]
+"Q9594032" = 92  # Alberi
+"Q929290" = 90  # Marinho Chagas
+"Q2005429" = 88  # Wallyson
+"Q2712917" = 88  # Dequinha
+
+# RASCUNHO: revisar nomes e notas (nautico; só ídolos de que há certeza, faltam nomes)
+[nautico]
+"Q3640481" = 92  # Bita
+"Q10310413" = 90  # Nado
+"Q11764396" = 88  # Lula Monstrinho
+"Q6095981" = 88  # Ivan Brondi
+"Q10288671" = 86  # Gena
+"Q4336518" = 88  # Orlando Pingo de Ouro
+"Q3960898" = 90  # Kuki
+"Q2056485" = 88  # Kieza
+"Q2351727" = 88  # Alberto Acosta
+
+# RASCUNHO: revisar nomes e notas (csa; só ídolos de que há certeza, faltam nomes)
+[csa]
+"Q2294362" = 90  # Dida
+"Q10313501" = 88  # Peu
+"Q10304797" = 88  # Jacozinho

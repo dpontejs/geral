@@ -411,3 +411,34 @@ def test_build_lets_the_club_with_more_players_keep_a_shared_short_name() -> Non
     careers, _ = ptwiki.build(players, pages, clubs, info, fixes={})
     assert careers["clubes"]["Q1"]["nome"] == "Peñarol"
     assert careers["clubes"]["Q2"]["nome"] == "Penarol Atlético Clube"
+
+
+@respx.mock
+def test_sitelinks_counts_only_the_wikipedias() -> None:
+    respx.get(ptwiki.WIKIDATA, params={"props": "sitelinks"}).respond(
+        json={
+            "entities": {
+                "Q1": {
+                    "sitelinks": {"ptwiki": {}, "enwiki": {}, "commonswiki": {}, "ptwikiquote": {}}
+                },
+                "Q2": {"sitelinks": {}},
+                "Q3": {"missing": ""},
+            }
+        }
+    )
+    with httpx.Client() as client:
+        assert ptwiki.sitelinks(client, ["Q1", "Q2", "Q3"], pause=0) == {"Q1": 2, "Q2": 0, "Q3": 0}
+
+
+@respx.mock
+def test_page_ids_survive_a_batch_with_only_interwiki_links() -> None:
+    respx.get(ptwiki.API).respond(
+        json={"query": {"interwiki": [{"title": "en:Some Club", "iw": "en"}]}}
+    )
+    with httpx.Client() as client:
+        assert ptwiki.page_ids(client, ["en:Some Club"], pause=0) == {}
+
+
+def test_parse_career_splits_a_line_break_written_with_a_space_before_the_bracket() -> None:
+    stints = ptwiki.parse_career("2020<br/ >2021", "[[ABC Futebol Clube|ABC]]<br/ >[[Sport]]")
+    assert [s.target for s in stints] == ["ABC Futebol Clube", "Sport"]
