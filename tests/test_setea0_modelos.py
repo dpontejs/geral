@@ -3,7 +3,7 @@ from setea0_fake import dados_de_teste
 
 from geral.games.setea0 import dados
 from geral.games.setea0.dados import chaves
-from geral.games.setea0.modelos import ESQUEMAS, Dados, Jogador
+from geral.games.setea0.modelos import ESQUEMAS, Dados, Epoca, Jogador, epocas
 
 ORDEM = ["GOL", "LAT", "ZAG", "MEI", "ATA"]
 
@@ -86,3 +86,42 @@ def test_dados_de_teste_com_outra_semente_e_escala():
     media = lambda d: sum(j.forca for j in d.clubes["abc"].jogadores) / 63  # noqa: E731
     assert media(forte) > media(base) * 1.1
     assert all(j.forca <= 99 for j in forte.clubes["abc"].jogadores)
+
+
+def _com_decadas(contagem: dict[int, int]) -> list[Jogador]:
+    return [
+        Jogador(id=f"Q{d}{i}", nome="X", posicoes=["MEI"], passagens=[(d + 1, d + 2)], forca=50)
+        for d, n in contagem.items()
+        for i in range(n)
+    ]
+
+
+def test_epocas_juntam_decadas_ralas():
+    abc = _com_decadas({1920: 1, 1940: 1, 1960: 3, 1970: 3, 1980: 7, 1990: 9, 2000: 32, 2010: 110})
+    assert [(e.inicio, e.fim, e.rotulo) for e in epocas(abc)] == [
+        (1920, 1970, "anos 20 a 70"),
+        (1980, 1990, "anos 80 a 90"),
+        (2000, 2000, "anos 2000"),
+        (2010, 2010, "anos 2010"),
+    ]
+
+
+def test_sobra_rala_no_fim_entra_na_ultima_epoca():
+    assert [(e.inicio, e.fim) for e in epocas(_com_decadas({1990: 12, 2000: 9, 2010: 2}))] == [
+        (1990, 1990),
+        (2000, 2010),
+    ]
+
+
+def test_epoca_contem_o_jogador_de_qualquer_decada_dela():
+    epoca = Epoca(inicio=1960, fim=1980, rotulo="anos 60 a 80")
+    assert epoca.contem(_com_decadas({1970: 1})[0])
+    assert not epoca.contem(_com_decadas({1990: 1})[0])
+
+
+def test_escala_vale_para_todos_os_clubes():
+    base, forte = dados_de_teste(), dados_de_teste(escala=1.2)
+    for slug in base.clubes:
+        antes = sum(j.forca for j in base.clubes[slug].jogadores)
+        depois = sum(j.forca for j in forte.clubes[slug].jogadores)
+        assert depois > antes, slug
