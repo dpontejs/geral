@@ -1,0 +1,141 @@
+# 7a0 do clube: os adversários de cada edição (docs/features/setea0.md).
+# `adversarios`: os 6 jogos antes da final, do mais fraco ao mais forte; `final`: o clássico.
+# `publicado`: o dev liga depois de revisar a lista e os ídolos do clube (elencos/, idolos.toml).
+# `[clube.*]`: de onde vem o elenco; `velha` = base do jogo da velha (todos os tempos, sem
+# décadas), `ptwiki` = categoria da Wikipédia em português (com os anos no clube).
+
+[edicao.abc]
+nome = "ABC"
+adversarios = ["ceara", "fortaleza", "santa-cruz", "vitoria", "sport", "bahia"]
+final = "america-rn"
+publicado = false
+
+[edicao.nautico]
+nome = "Náutico"
+adversarios = ["abc", "ceara", "fortaleza", "santa-cruz", "vitoria", "bahia"]
+final = "sport"
+publicado = false
+
+[edicao.csa]
+nome = "CSA"
+adversarios = ["ceara", "fortaleza", "santa-cruz", "vitoria", "sport", "bahia"]
+final = "crb"
+publicado = false
+
+[edicao.flamengo]
+nome = "Flamengo"
+adversarios = ["atletico-mg", "gremio", "cruzeiro", "internacional", "sao-paulo", "palmeiras"]
+final = "vasco"
+publicado = false
+
+[edicao.vasco]
+nome = "Vasco"
+adversarios = ["atletico-mg", "gremio", "cruzeiro", "internacional", "sao-paulo", "palmeiras"]
+final = "flamengo"
+publicado = false
+
+[edicao.palmeiras]
+nome = "Palmeiras"
+adversarios = ["atletico-mg", "gremio", "cruzeiro", "internacional", "sao-paulo", "flamengo"]
+final = "corinthians"
+publicado = false
+
+[clube.abc]
+nome = "ABC"
+origem = "ptwiki"
+categoria = "Futebolistas do ABC Futebol Clube"
+
+[clube.nautico]
+nome = "Náutico"
+origem = "ptwiki"
+categoria = "Futebolistas do Clube Náutico Capibaribe"
+
+[clube.csa]
+nome = "CSA"
+origem = "ptwiki"
+categoria = "Futebolistas do Centro Sportivo Alagoano"
+
+[clube.flamengo]
+nome = "Flamengo"
+origem = "ptwiki"
+categoria = "Futebolistas do Clube de Regatas do Flamengo"
+
+[clube.vasco]
+nome = "Vasco"
+origem = "ptwiki"
+categoria = "Futebolistas do Club de Regatas Vasco da Gama"
+
+[clube.palmeiras]
+nome = "Palmeiras"
+origem = "ptwiki"
+categoria = "Futebolistas da Sociedade Esportiva Palmeiras"
+
+[clube.america-rn]
+nome = "América-RN"
+origem = "ptwiki"
+categoria = "Futebolistas do América Futebol Clube (Rio Grande do Norte)"
+
+[clube.crb]
+nome = "CRB"
+origem = "ptwiki"
+categoria = "Futebolistas do Clube de Regatas Brasil"
+
+[clube.ceara]
+nome = "Ceará"
+origem = "velha"
+wikidata = "Q1052219"
+
+[clube.fortaleza]
+nome = "Fortaleza"
+origem = "velha"
+wikidata = "Q188841"
+
+[clube.santa-cruz]
+nome = "Santa Cruz"
+origem = "velha"
+wikidata = "Q508440"
+
+[clube.vitoria]
+nome = "Vitória"
+origem = "velha"
+wikidata = "Q274465"
+
+[clube.sport]
+nome = "Sport"
+origem = "velha"
+wikidata = "Q219098"
+
+[clube.bahia]
+nome = "Bahia"
+origem = "velha"
+wikidata = "Q198032"
+
+[clube.atletico-mg]
+nome = "Atlético-MG"
+origem = "velha"
+wikidata = "Q270995"
+
+[clube.gremio]
+nome = "Grêmio"
+origem = "velha"
+wikidata = "Q221695"
+
+[clube.cruzeiro]
+nome = "Cruzeiro"
+origem = "velha"
+wikidata = "Q188277"
+
+[clube.internacional]
+nome = "Internacional"
+origem = "velha"
+wikidata = "Q80845"
+
+[clube.sao-paulo]
+nome = "São Paulo"
+origem = "velha"
+wikidata = "Q38568"
+
+[clube.corinthians]
+nome = "Corinthians"
+origem = "velha"
+wikidata = "Q35933"
