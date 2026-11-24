@@ -215,3 +215,22 @@ def test_limite_por_rede_nao_guarda(publicado, store, mailer, clock, monkeypatch
     assert _guardadas(store) == 2
     repetida = game.post(f"{API}/jogo", json=_terminada(SEMENTE)).json()
     assert repetida["codigo"] == codigos[0]  # a campaign already kept keeps its link
+
+
+def test_pagina_tem_o_js_e_os_dados(game) -> None:
+    html = game.get("/jogos/7a0/abc").text
+    assert "/static/geral/setea0.js" in html and "/static/geral/penalti.js" in html
+    assert 'id="s7-escalar"' in html  # the screens are on the page
+    jogo = _dados_da_pagina(html)
+    assert jogo["edicao"] == "abc" and jogo["nome"] == "ABC"
+    assert jogo["esquemas"]["4-3-3"][0] == "GOL" and len(jogo["esquemas"]["4-3-3"]) == 11
+    chave = setea0_dados.chaves()["edicao"]["abc"]
+    assert jogo["chave"] == [*chave["adversarios"], chave["final"]]
+    assert jogo["adversarios"]["america-rn"] == "América-RN"
+
+
+def test_card_compartilhado_traz_os_nomes_dos_adversarios(game) -> None:
+    codigo = game.post(f"{API}/jogo", json=_terminada()).json()["codigo"]
+    jogo = _dados_da_pagina(game.get(f"/jogos/7a0/c/{codigo}").text)
+    adversarios = {p["adversario"] for p in jogo["compartilhada"]["campanha"]["partidas"]}
+    assert adversarios <= set(jogo["compartilhada"]["adversarios"])

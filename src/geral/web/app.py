@@ -1746,15 +1746,27 @@ def create_app(
         clube = chaves["edicao"].get(slug) or chaves["clube"].get(slug) or {}
         return clube.get("nome", slug)
 
+    def setea0_chave(edicao: str) -> dict:
+        """The bracket in order (6 games, then the derby) and every name the screen shows."""
+        do_clube = setea0_dados.chaves()["edicao"].get(edicao)
+        if not do_clube:
+            return {}
+        chave = [*do_clube["adversarios"], do_clube["final"]]
+        return {"chave": chave, "adversarios": {slug: setea0_nome(slug) for slug in chave}}
+
     def setea0_pagina(request: Request, edicao: str, status: int = 200, **jogo) -> HTMLResponse:
-        dados = {
-            "edicao": edicao,
-            "nome": setea0_nome(edicao),
-            "esquemas": list(SETEA0_ESQUEMAS),
-            "modos": {modo: {"trocas": trocas} for modo, trocas in SETEA0_MODOS.items()},
-            "marcas": setea0_motor.textos_das_marcas(),
-            "url": public_url,
-        } | jogo
+        dados = (
+            {
+                "edicao": edicao,
+                "nome": setea0_nome(edicao),
+                "esquemas": {nome: list(vagas) for nome, vagas in SETEA0_ESQUEMAS.items()},
+                "modos": {modo: {"trocas": trocas} for modo, trocas in SETEA0_MODOS.items()},
+                "marcas": setea0_motor.textos_das_marcas(),
+                "url": public_url,
+            }
+            | setea0_chave(edicao)
+            | jogo
+        )
         return page(
             request,
             "setea0.html.j2",
