@@ -93,6 +93,9 @@ class Sala:
         self._palavra: Palavra | None = None
         self._tracos: dict[int, dict] = {}
         self._total_pontos = 0
+        self._dica: list[str | None] | None = None
+        self._dicas_dadas = 0
+        self._acertaram: list[int] = []
 
     # --- entrada e identidade ---
 
@@ -137,6 +140,7 @@ class Sala:
             "traco": self._traco,
             "desfazer": self._desfazer,
             "limpar": self._limpar,
+            "chute": self._chute,
         }.get(acao.get("tipo"))
         if tratar is None:
             raise ErroSala(422, "unknown action")
@@ -211,6 +215,49 @@ class Sala:
         self._total_pontos = 0
         return [self._evento("limpar", {}, exceto=jogador.id)]
 
+    def _chute(self, jogador: _Jogador, acao: dict, agora: datetime) -> list[Evento]:
+        if self._fase != "desenho" or jogador.id == self._desenhista or jogador.acertou:
+            raise ErroSala(409, "cannot guess now")
+        cru = acao.get("texto")
+        if not isinstance(cru, str) or not cru.strip() or len(cru.strip()) > CHUTE_MAX:
+            raise ErroSala(422, "guess must have 1 to 40 characters")
+        if jogador.ultimo_chute and agora - jogador.ultimo_chute < CHUTE_INTERVALO:
+            raise ErroSala(429, "guessing too fast")
+        jogador.ultimo_chute = agora
+        assert self._palavra is not None
+        veredito = self._banco.julgar(cru, self._palavra)
+        texto = cru.strip()
+        if veredito == "certo":
+            return self._acerto(jogador, agora)
+        if veredito == "trave":
+            return [self._evento("trave", {"texto": texto}, para=jogador.id)]
+        dados = {"jogador": jogador.id, "texto": texto}
+        normal = normalizar(texto)
+        entrega = tem_palavrao(texto) or any(
+            normalizar(alvo) in normal for alvo in (self._palavra.texto, *self._palavra.aceita)
+        )
+        return [self._evento("chute", dados, para=jogador.id if entrega else None)]
+
+    def _acerto(self, jogador: _Jogador, agora: datetime) -> list[Evento]:
+        assert self._palavra is not None
+        self._acertaram.append(jogador.id)
+        pontos = max(BASE[self._palavra.dificuldade] - (len(self._acertaram) - 1), PISO)
+        jogador.acertou = True
+        jogador.pontos += pontos
+        jogador.gols += 1
+        desenhista = self._jogadores.get(self._desenhista or 0)
+        if desenhista is not None:
+            desenhista.pontos += ASSISTENCIA
+            desenhista.assist += 1
+        eventos = [self._evento("acerto", {"jogador": jogador.id, "pontos": pontos})]
+        if self._todos_acertaram():
+            eventos += self._ir_ao_intervalo(agora)
+        return eventos
+
+    def _todos_acertaram(self) -> bool:
+        quem_chuta = [j for j in self._presentes() if j != self._desenhista]
+        return all(self._jogadores[j].acertou for j in quem_chuta)
+
     def _exigir_desenhista(self, jogador: _Jogador, fase: str) -> None:
         if self._fase != fase or jogador.id != self._desenhista:
             raise ErroSala(409, "not your turn")
@@ -235,6 +282,8 @@ class Sala:
 
     def avancar(self, agora: datetime) -> list[Evento]:
         eventos: list[Evento] = []
+        if self._fase == "desenho":
+            eventos += self._dicas(agora)
         while not self.encerrada and self._prazo is not None and agora >= self._prazo:
             if self._fase == "escolha":
                 assert self._opcoes is not None
@@ -258,12 +307,36 @@ class Sala:
             self._rodada += 1
             self._fila = list(self._presentes())
 
+    def _dicas(self, agora: datetime) -> list[Evento]:
+        """Lights one random unlit letter at 50% and at 75% of the drawing time."""
+        assert self._prazo is not None and self._dica is not None
+        inicio = self._prazo - TEMPO_DESENHO
+        eventos = []
+        for numero, marco in enumerate((0.5, 0.75), start=1):
+            if self._dicas_dadas >= numero or agora < inicio + TEMPO_DESENHO * marco:
+                continue
+            self._dicas_dadas = numero
+            assert self._palavra is not None
+            letras = [i for i, c in enumerate(self._palavra.texto) if c.isalpha()]
+            apagadas = [i for i in letras if self._dica[i] is None]
+            if len(letras) - len(apagadas) >= len(letras) // 3:
+                continue
+            i = self._rng.choice(apagadas)
+            self._dica[i] = self._palavra.texto[i]
+            eventos.append(
+                self._evento("dica", {"dica": list(self._dica)}, exceto=self._desenhista)
+            )
+        return eventos
+
     def _iniciar_lance(self, desenhista: int, agora: datetime) -> list[Evento]:
         self._fase = "escolha"
         self._desenhista = desenhista
         self._opcoes = self._banco.opcoes(self._rng, self._usadas)
         self._usadas.update(p.texto for p in self._opcoes)
         self._palavra = None
+        self._dica = None
+        self._dicas_dadas = 0
+        self._acertaram = []
         self._tracos = {}
         self._total_pontos = 0
         self._prazo = agora + TEMPO_ESCOLHA
@@ -274,6 +347,7 @@ class Sala:
     def _comecar_desenho(self, palavra: Palavra, agora: datetime) -> list[Evento]:
         self._fase = "desenho"
         self._palavra = palavra
+        self._dica = [None if c.isalpha() else c for c in palavra.texto]
         self._opcoes = None
         self._prazo = agora + TEMPO_DESENHO
         return self._estados(agora)
@@ -321,7 +395,7 @@ class Sala:
                 }
                 for j in self._jogadores.values()
             ],
-            "dica": None,
+            "dica": list(self._dica) if self._dica is not None else None,
             "opcoes": (
                 [{"texto": p.texto, "dificuldade": p.dificuldade} for p in self._opcoes]
                 if desenha and self._fase == "escolha" and self._opcoes

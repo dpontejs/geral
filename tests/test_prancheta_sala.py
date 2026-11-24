@@ -1,7 +1,10 @@
+import json
+
 import pytest
-from prancheta_fakes import em, sala_com, traco
+from prancheta_fakes import BancoFalso, em, sala_com, traco
 
 from geral.games.prancheta.sala import ErroSala, Evento
+from geral.games.prancheta.tipos import Palavra, normalizar
 
 COMECAR = {"tipo": "comecar"}
 
@@ -250,3 +253,219 @@ def test_acao_desconhecida_422():
     with pytest.raises(ErroSala) as excinfo:
         sala.agir(1, {"tipo": "voar"}, em(0))
     assert _status(excinfo) == 422
+
+
+# --- Task 3: chutes, dicas, pontos e fim do lance ---
+
+
+def chute(texto: str) -> dict:
+    return {"tipo": "chute", "texto": texto}
+
+
+class BancoDe(BancoFalso):
+    """Always offers the same given word in every difficulty slot."""
+
+    def __init__(self, texto: str) -> None:
+        super().__init__()
+        self.palavra = Palavra(texto, (), "media", "lance")
+
+    def opcoes(self, rng, usadas):
+        return [self.palavra] * 3
+
+
+@pytest.mark.parametrize(
+    ("indice", "esperado"),
+    [(2, [10, 9, 8, 7, 6, 5, 4, 3, 2]), (0, [5, 4, 3, 2, 2, 2, 2, 2, 2])],
+)
+def test_pontos_por_ordem_e_dificuldade(indice, esperado):
+    sala, _ = em_desenho(10, indice=indice)
+    palavra = sala.foto(1, em(2))["palavra"]
+    ganhos = []
+    for jogador in range(2, 11):
+        eventos = sala.agir(jogador, chute(palavra), em(2))
+        ganhos.append(next(e.dados["pontos"] for e in eventos if e.tipo == "acerto"))
+    assert ganhos == esperado
+
+
+def test_assistencia_de_quem_desenha():
+    sala, _ = em_desenho(4, indice=1)
+    sala.agir(2, chute("gol olimpico"), em(2))
+    sala.agir(3, chute("Gol de escanteio"), em(3))
+    jogadores = {j["id"]: j for j in sala.foto(1, em(3))["jogadores"]}
+    assert (jogadores[1]["pontos"], jogadores[1]["assist"], jogadores[1]["gols"]) == (4, 2, 0)
+    assert (jogadores[2]["pontos"], jogadores[2]["gols"], jogadores[2]["acertou"]) == (7, 1, True)
+    assert (jogadores[3]["pontos"], jogadores[3]["gols"]) == (6, 1)
+    assert (jogadores[4]["pontos"], jogadores[4]["acertou"]) == (0, False)
+
+
+def test_chute_certo_nao_aparece():
+    sala, _ = em_desenho()
+    eventos = sala.agir(2, chute("Bicicleta"), em(2))
+    assert [(e.tipo, e.para, e.exceto) for e in eventos] == [("acerto", None, None)]
+    assert eventos[0].dados == {"jogador": 2, "pontos": 5, "seq": eventos[0].dados["seq"]}
+
+
+def test_chute_errado_vai_para_todos():
+    sala, _ = em_desenho()
+    eventos = sala.agir(2, chute("  Pênalti "), em(2))
+    assert [(e.tipo, e.dados["jogador"], e.dados["texto"], e.para) for e in eventos] == [
+        ("chute", 2, "Pênalti", None)
+    ]
+
+
+def test_trave_e_palavrao_nao_sao_transmitidos():
+    sala, _ = em_desenho()
+    eventos = sala.agir(2, chute("bicicletinha"), em(2))
+    assert [(e.tipo, e.dados["texto"], e.para) for e in eventos] == [("trave", "bicicletinha", 2)]
+    eventos = sala.agir(2, chute("que merda de desenho"), em(3))
+    assert [(e.tipo, e.para) for e in eventos] == [("chute", 2)]
+    eventos = sala.agir(2, chute("linda bicicleta"), em(4))
+    assert [(e.tipo, e.para) for e in eventos] == [("chute", 2)]
+
+
+def test_trave_so_para_quem_chutou():
+    sala, _ = em_desenho(4)
+    eventos = sala.agir(3, chute("Bicicl"), em(2))
+    assert [(e.tipo, e.para) for e in eventos] == [("trave", 3)]
+
+
+def test_julgar_recebe_o_texto_cru():
+    banco = BancoFalso()
+    sala, _ = em_desenho(banco=banco)
+    sala.agir(2, chute("  BICICLETA!! "), em(2))
+    assert banco.julgados == ["  BICICLETA!! "]
+
+
+def test_chute_invalido_ou_fora_da_vez():
+    sala, _ = sala_com(3)
+    sala.agir(1, COMECAR, em(0))
+    for jogador, acao, status in [
+        (2, chute("bola"), 409),  # still choosing
+    ]:
+        with pytest.raises(ErroSala) as excinfo:
+            sala.agir(jogador, acao, em(0.5))
+        assert _status(excinfo) == status
+    sala.agir(1, {"tipo": "escolher", "indice": 0}, em(1))
+    sala.agir(2, chute("bicicleta"), em(2))
+    for jogador, acao, status in [
+        (1, chute("bola"), 409),  # who draws
+        (2, chute("bola"), 409),  # already scored
+        (3, chute("x" * 41), 422),
+        (3, chute("   "), 422),
+        (3, {"tipo": "chute"}, 422),
+    ]:
+        with pytest.raises(ErroSala) as excinfo:
+            sala.agir(jogador, acao, em(3))
+        assert _status(excinfo) == status
+    sala.agir(3, chute("x" * 40), em(3))
+
+
+def test_chute_rapido_demais_429():
+    sala, _ = em_desenho()
+    sala.agir(2, chute("bola"), em(2))
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(2, chute("rede"), em(2.4))
+    assert _status(excinfo) == 429
+    sala.agir(3, chute("rede"), em(2.4))
+    sala.agir(2, chute("rede"), em(2.5))
+
+
+def test_dicas_aos_50_e_75_porcento():
+    sala, _ = em_desenho(indice=2)  # Frasqueira, drawing from 1 s to 81 s
+    assert sala.foto(2, em(1))["dica"] == [None] * 10
+    assert sala.avancar(em(40.9)) == []
+    eventos = sala.avancar(em(41))
+    assert [(e.tipo, e.exceto) for e in eventos] == [("dica", 1)]
+    acesas = [c for c in eventos[0].dados["dica"] if c]
+    assert len(acesas) == 1 and acesas[0] in "Frasqueira"
+    assert sala.avancar(em(60.9)) == []
+    eventos = sala.avancar(em(61))
+    dica = eventos[0].dados["dica"]
+    assert sum(1 for c in dica if c) == 2
+    assert all(c is None or c == "Frasqueira"[i] for i, c in enumerate(dica))
+    assert sala.foto(2, em(61))["dica"] == dica
+    assert [e.tipo for e in sala.avancar(em(80.9))] == []
+
+
+def test_dica_nunca_passa_de_um_terco():
+    sala, _ = em_desenho(banco=BancoDe("Gol"))
+    assert len(sala.avancar(em(41))) == 1
+    assert sala.avancar(em(61)) == []
+    assert sum(1 for c in sala.foto(2, em(61))["dica"] if c) == 1
+
+
+def test_dica_mostra_o_que_nao_e_letra():
+    sala, _ = em_desenho(banco=BancoDe("7 a 1-0."))
+    assert sala.foto(2, em(1))["dica"] == ["7", " ", None, " ", "1", "-", "0", "."]
+    assert sala.avancar(em(41)) == [] and sala.avancar(em(61)) == []
+
+
+def test_ultimo_acerto_encerra_o_lance():
+    sala, _ = em_desenho()
+    sala.agir(2, chute("Bicicleta"), em(2))
+    eventos = sala.agir(3, chute("bicicleta de costas"), em(2))
+    assert [e.tipo for e in eventos] == ["acerto", "estado", "estado", "estado"]
+    for jogador in (1, 2, 3):
+        foto = sala.foto(jogador, em(2))
+        assert (foto["fase"], foto["palavra"]) == ("intervalo", "Bicicleta")
+    assert sala.foto(1, em(2))["prazo"] == em(8).isoformat()
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(3, chute("bola"), em(3))
+    assert _status(excinfo) == 409
+
+
+def test_lance_acaba_quando_todos_acertam():
+    sala, _ = em_desenho(4)
+    sala.agir(2, chute("Bicicleta"), em(2))
+    sala.agir(3, chute("Bicicleta"), em(3))
+    assert sala.foto(1, em(3))["fase"] == "desenho"
+    sala.agir(4, chute("Bicicleta"), em(4))
+    assert sala.foto(1, em(4))["fase"] == "intervalo"
+
+
+def test_lance_acaba_no_prazo():
+    sala, _ = em_desenho()
+    sala.avancar(em(80.9))
+    assert sala.foto(2, em(80.9))["fase"] == "desenho"
+    sala.avancar(em(81))
+    assert sala.foto(2, em(81))["fase"] == "intervalo"
+    assert sala.foto(2, em(81))["palavra"] == "Bicicleta"
+    sala.avancar(em(87))
+    foto = sala.foto(2, em(87))
+    assert (foto["fase"], foto["desenhista"], foto["palavra"], foto["tracos"]) == (
+        "escolha",
+        2,
+        None,
+        [],
+    )
+    assert all(not j["acertou"] for j in foto["jogadores"])
+
+
+def test_palavra_nunca_vaza():
+    sala, _ = sala_com(4)
+    vistos: list = []
+
+    def guarda(eventos, t):
+        vistos.extend(e.dados for e in eventos if e.para in (None, 3, 4) and e.exceto not in (3, 4))
+        vistos.extend(sala.foto(j, em(t)) for j in (3, 4))
+
+    guarda(sala.agir(1, COMECAR, em(0)), 0)
+    guarda(sala.agir(1, {"tipo": "escolher", "indice": 2}, em(1)), 1)
+    guarda(sala.agir(1, traco(1, [[1, 1], [2, 2]]), em(2)), 2)
+    guarda(sala.agir(2, chute("frasq"), em(3)), 3)
+    guarda(sala.agir(2, chute("a frasqueira!"), em(4)), 4)
+    guarda(sala.agir(2, chute("torcida do ABC lá"), em(5)), 5)
+    guarda(sala.agir(3, chute("arquibancada"), em(6)), 6)
+    guarda(sala.agir(2, chute("Frasqueira"), em(7)), 7)
+    t = 7.0
+    while sala.foto(1, em(t))["fase"] == "desenho":
+        t += 0.5
+        guarda(sala.avancar(em(t)), t)
+    assert sala.foto(3, em(t))["fase"] == "intervalo"
+    assert any(e.get("dica") for e in vistos)
+    assert any("jogador" in e and e.get("texto") == "arquibancada" for e in vistos)
+    for dados in vistos:
+        if dados.get("fase") == "intervalo":
+            continue
+        texto = normalizar(json.dumps(dados, ensure_ascii=False))
+        assert "frasqueira" not in texto and "torcida do abc" not in texto, dados
