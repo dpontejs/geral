@@ -234,3 +234,13 @@ def test_card_compartilhado_traz_os_nomes_dos_adversarios(game) -> None:
     jogo = _dados_da_pagina(game.get(f"/jogos/7a0/c/{codigo}").text)
     adversarios = {p["adversario"] for p in jogo["compartilhada"]["campanha"]["partidas"]}
     assert adversarios <= set(jogo["compartilhada"]["adversarios"])
+
+
+def test_almanaque_nao_entrega_a_forca_pela_ordem(game) -> None:
+    def nomes(modo):
+        corpo = {"semente": "fixa", "rodada": 0, "troca": 0, "modo": modo}
+        return [j["nome"] for j in game.post(f"{API}/oferta", json=corpo).json()["jogadores"]]
+
+    classico, almanaque = nomes("classico"), nomes("almanaque")
+    assert sorted(classico) == sorted(almanaque)  # the same draw
+    assert almanaque == sorted(almanaque)  # but in name order, not by strength

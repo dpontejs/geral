@@ -49,6 +49,7 @@
     disputaDoJogo: {}, // game n -> index in cobrancas
     n: 1,
     simulando: false,
+    ocupado: false, // a request is on its way: taps on the offer, slots and reroll wait for it
   });
 
   async function chamar(caminho, corpo) {
@@ -123,13 +124,22 @@
   // --- 1. pick -------------------------------------------------------------------------------
 
   async function pedirOferta() {
-    const r = await chamar("oferta", {
-      semente: estado.semente,
-      versao: estado.versao,
-      modo: estado.modo,
-      rodada: estado.rodada,
-      troca: estado.troca,
-    });
+    estado.ocupado = true;
+    root.classList.add("s7-ocupado");
+    $("s7-trocar").disabled = true;
+    let r;
+    try {
+      r = await chamar("oferta", {
+        semente: estado.semente,
+        versao: estado.versao,
+        modo: estado.modo,
+        rodada: estado.rodada,
+        troca: estado.troca,
+      });
+    } finally {
+      estado.ocupado = false;
+      root.classList.remove("s7-ocupado");
+    }
     estado.semente = r.semente;
     estado.versao = r.versao;
     estado.oferta = r;
@@ -215,7 +225,7 @@
 
   $("s7-lista").addEventListener("click", (e) => {
     const op = e.target.closest(".s7-op");
-    if (!op || op.disabled) return;
+    if (!op || op.disabled || estado.ocupado) return;
     estado.escolhido = estado.oferta.jogadores.find((j) => j.id === op.dataset.id);
     desenharEscalar();
     if (innerWidth <= 760) rolar($("s7-campo"));
@@ -223,7 +233,7 @@
 
   $("s7-campo").addEventListener("click", async (e) => {
     const vaga = e.target.closest(".s7-vaga.livre:not(.ocupada)");
-    if (!vaga || !estado.escolhido) return;
+    if (!vaga || !estado.escolhido || estado.ocupado) return;
     const i = Number(vaga.dataset.vaga);
     estado.escolhas.push({
       rodada: estado.rodada,
@@ -247,11 +257,13 @@
   });
 
   $("s7-trocar").addEventListener("click", async () => {
+    if (estado.ocupado || estado.oferta.trocas_restantes <= 0) return;
     estado.troca += 1;
     try {
       await pedirOferta();
     } catch (erro) {
       estado.troca -= 1;
+      $("s7-trocar").disabled = estado.oferta.trocas_restantes <= 0;
       falhar(erro);
     }
   });

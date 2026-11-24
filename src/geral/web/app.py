@@ -1845,6 +1845,10 @@ def create_app(
             return JSONResponse({"detail": str(invalida)}, status_code=422)
         idolos = setea0_idolos().get(edicao, set())
         estrelas = body.modo != "almanaque"
+
+        def nome_em_ordem(j) -> tuple[str, str]:
+            return (j.nome, j.id)
+
         return {
             "semente": semente,
             "versao": dados.versao,
@@ -1858,7 +1862,10 @@ def create_app(
                     "estrelas": 1 + (j.forca - 1) * 5 // 99 if estrelas else None,
                     "idolo": j.id in idolos,
                 }
-                for j in rodada.jogadores
+                # Almanaque: name order, or the strongest-first list would give the stars away
+                for j in (
+                    rodada.jogadores if estrelas else sorted(rodada.jogadores, key=nome_em_ordem)
+                )
             ],
             "trocas_restantes": rodada.trocas_restantes,
         }

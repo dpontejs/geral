@@ -75,3 +75,4 @@
 .s7-inicio .chip[aria-pressed="true"] { background: var(--lamp); color: var(--ink); }
 .s7-inicio .btn { background: var(--lamp); color: var(--ink); }
 .s7 .btn.secondary { background: var(--paper); color: var(--ink); border-color: var(--ink); }
+.s7-ocupado .s7-oferta, .s7-ocupado .s7-escalar-campo { opacity: .6; pointer-events: none; }
