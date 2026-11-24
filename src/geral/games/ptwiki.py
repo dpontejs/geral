@@ -197,6 +197,42 @@ def category_members(client: httpx.Client, category: str, pause: float = 1) -> l
         params = {**params, **answer["continue"]}
 
 
+def category_tree(
+    client: httpx.Client, category: str, skip: re.Pattern[str], pause: float = 1
+) -> list[str]:
+    """The articles of a category and of its subcategories, at any depth, each listed once.
+
+    A subcategory whose title matches `skip` is left out with everything under it
+    ("Futebolistas do Vasco (feminino)").
+    """
+    titles: dict[str, None] = {}
+    todo, seen = [f"Categoria:{category}"], set()
+    while todo:
+        current = todo.pop(0)
+        if current in seen:
+            continue
+        seen.add(current)
+        params = {
+            "action": "query",
+            "list": "categorymembers",
+            "cmtitle": current,
+            "cmnamespace": "0|14",
+            "cmlimit": 500,
+        }
+        while True:
+            answer = _get(client, API, params, pause)
+            for member in answer["query"]["categorymembers"]:
+                if member.get("ns") == 14:
+                    if not skip.search(member["title"]):
+                        todo.append(member["title"])
+                else:
+                    titles.setdefault(member["title"], None)
+            if "continue" not in answer:
+                break
+            params = {**params, **answer["continue"]}
+    return list(titles)
+
+
 def fetch_pages(client: httpx.Client, titles: list[str], pause: float = 1) -> dict[str, dict]:
     """Asked title -> {"qid", "text"} (missing pages left out)."""
     pages: dict[str, dict] = {}

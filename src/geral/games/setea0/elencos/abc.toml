@@ -902,3 +902,55 @@ incluir = false  # sem posição
 pagina = "Zé Love"
 nome = "Zé Love"
 incluir = true
+
+# Goleiros e subcategorias (2026-11-24)
+
+[[jogador]]
+pagina = "Adriano Paredão"
+nome = "Adriano Paredão"
+incluir = true
+
+[[jogador]]
+pagina = "Carlos Vitor da Costa Ressurreição"
+nome = "Carlos Vitor da Costa Ressurreição"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Fábio Noronha"
+nome = "Fábio Noronha"
+incluir = true
+
+[[jogador]]
+pagina = "Felipe Garcia dos Prazeres"
+nome = "Felipe Garcia"
+incluir = true
+
+[[jogador]]
+pagina = "Fernando Yamada"
+nome = "Yamada"
+incluir = true
+
+[[jogador]]
+pagina = "Getúlio Vargas (futebolista)"
+nome = "Getúlio Vargas"
+incluir = true
+
+[[jogador]]
+pagina = "Matheus Nogueira"
+nome = "Matheus Nogueira"
+incluir = true
+
+[[jogador]]
+pagina = "País José de Oliveira"
+nome = "País"
+incluir = true
+
+[[jogador]]
+pagina = "Palmieri"
+nome = "Palmieri"
+incluir = true
+
+[[jogador]]
+pagina = "Tiago Cardoso"
+nome = "Tiago Cardoso"
+incluir = false  # sem anos no clube

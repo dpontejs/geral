@@ -1,3 +1,5 @@
+import re
+
 import httpx
 import pytest
 import respx
@@ -442,3 +444,37 @@ def test_page_ids_survive_a_batch_with_only_interwiki_links() -> None:
 def test_parse_career_splits_a_line_break_written_with_a_space_before_the_bracket() -> None:
     stints = ptwiki.parse_career("2020<br/ >2021", "[[ABC Futebol Clube|ABC]]<br/ >[[Sport]]")
     assert [s.target for s in stints] == ["ABC Futebol Clube", "Sport"]
+
+
+@respx.mock
+def test_category_tree_walks_subcategories_but_skips_the_unwanted_ones() -> None:
+    arvore = {
+        "Categoria:Futebolistas do Vasco": [
+            {"title": "Roberto Dinamite", "ns": 0},
+            {"title": "Categoria:Goleiros do Vasco", "ns": 14},
+            {"title": "Categoria:Futebolistas do Vasco (feminino)", "ns": 14},
+            {"title": "Categoria:Jogadores do Expresso da Vitória", "ns": 14},
+        ],
+        "Categoria:Goleiros do Vasco": [
+            {"title": "Carlos Germano", "ns": 0},
+            {"title": "Categoria:Goleiros do Vasco de futebol de areia", "ns": 14},
+        ],
+        "Categoria:Jogadores do Expresso da Vitória": [
+            {"title": "Barbosa (futebolista)", "ns": 0},
+            {"title": "Roberto Dinamite", "ns": 0},  # in two categories: listed once
+            {"title": "Categoria:Goleiros do Vasco", "ns": 14},  # a loop: walked once
+        ],
+    }
+    pedidas = []
+
+    def responder(request):
+        titulo = request.url.params["cmtitle"]
+        pedidas.append(titulo)
+        return httpx.Response(200, json={"query": {"categorymembers": arvore[titulo]}})
+
+    respx.get(ptwiki.API).mock(side_effect=responder)
+    pular = re.compile(r"\(feminino\)|futebol de areia|showbol", re.IGNORECASE)
+    with httpx.Client() as client:
+        titulos = ptwiki.category_tree(client, "Futebolistas do Vasco", pular, pause=0)
+    assert titulos == ["Roberto Dinamite", "Carlos Germano", "Barbosa (futebolista)"]
+    assert sorted(pedidas) == sorted(arvore)
