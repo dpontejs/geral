@@ -11,7 +11,7 @@ from geral.games.setea0 import dados as setea0_dados
 from geral.games.setea0 import motor
 
 API = "/api/jogos/7a0/abc"
-SEMENTE = "s17"  # the greedy XI wins it all, with two shootouts (games 2 and 6)
+SEMENTE = "s48"  # the greedy XI wins it all, with two shootouts (games 2 and 4)
 DADOS = dados_de_teste()
 
 

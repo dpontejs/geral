@@ -25,7 +25,8 @@ def escolhas_validas(semente="s", esquema="4-4-2", modo="classico", trocas=None)
 
 def test_epocas_do_clube():
     rotulos = [e.rotulo for e in motor.epocas_do_clube(DADOS, "abc")]
-    assert rotulos == ["anos 40 a 70", "anos 80", "anos 90 a 2000", "anos 2010"]
+    # dev decision 2026-11-24: eras from 1970; the 1940 trio no longer opens "anos 40 a 70"
+    assert rotulos == ["anos 70", "anos 80", "anos 90 a 2000", "anos 2010"]
 
 
 def test_oferta_so_tem_jogadores_do_clube_na_epoca():
@@ -44,13 +45,25 @@ def test_oferta_so_tem_jogadores_do_clube_na_epoca():
 
 
 def test_decadas_ralas_viram_epoca():
+    # dev decision 2026-11-24: eras from 1970; the thin decade joined now is the 90s (one
+    # player who stayed on from the 80s), no longer the 1940 trio
     epocas = motor.epocas_do_clube(DADOS, "abc")
-    juntas = next(e for e in epocas if e.rotulo == "anos 40 a 70")
-    assert (juntas.inicio, juntas.fim) == (1940, 1970)
+    juntas = next(e for e in epocas if e.rotulo == "anos 90 a 2000")
+    assert (juntas.inicio, juntas.fim) == (1990, 2000)
     for epoca in epocas:
         assert sum(epoca.contem(j) for j in DADOS.clubes["abc"].jogadores) >= 8
     sorteadas = {motor.oferta(DADOS, "abc", f"r{i}", 0, 0).epoca.rotulo for i in range(200)}
-    assert "anos 40 a 70" in sorteadas and "anos 40" not in sorteadas
+    assert "anos 90 a 2000" in sorteadas and "anos 90" not in sorteadas
+
+
+def test_quem_so_jogou_antes_de_1970_nunca_aparece():
+    antigos = {j.id for j in DADOS.clubes["abc"].jogadores if max(j.decadas()) < 1970}
+    assert len(antigos) == 3  # the fake ABC's 1940 trio
+    for i in range(200):
+        for t in range(2):
+            r = motor.oferta(DADOS, "abc", f"a{i}", i % 11, t)
+            assert r.epoca.inicio >= 1970
+            assert not antigos & {j.id for j in r.jogadores}
 
 
 def test_mesma_semente_mesma_oferta():

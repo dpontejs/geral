@@ -16,6 +16,7 @@ ESQUEMAS: dict[str, tuple[Posicao, ...]] = {
 }
 MODOS: dict[str, int] = {"classico": 3, "almanaque": 1}  # era rerolls per game
 MIN_EPOCA = 8  # players an era needs; thin decades join the next ones until it has them
+PRIMEIRA_DECADA = 1970  # older decades never draw (dev, 2026-11-24)
 
 
 class Jogador(BaseModel):
@@ -60,16 +61,20 @@ def _epoca(inicio: int, fim: int) -> Epoca:
     return Epoca(inicio=inicio, fim=fim, rotulo=rotulo)
 
 
-def epocas(jogadores: list[Jogador], minimo: int = MIN_EPOCA) -> list[Epoca]:
-    """A club's eras, oldest first: decades in order, joined until an era has `minimo` players.
+def epocas(
+    jogadores: list[Jogador], minimo: int = MIN_EPOCA, desde: int = PRIMEIRA_DECADA
+) -> list[Epoca]:
+    """A club's eras, oldest first: decades from `desde` in order, joined until an era has
+    `minimo` players.
 
     A thin run left at the end joins the last era; a club with fewer than `minimo` players in all
-    has a single era.
+    has a single era. Eras never start before `desde`, so whoever only played earlier is in none.
     """
     por_decada: dict[int, set[str]] = {}
     for jogador in jogadores:
         for decada in jogador.decadas():
-            por_decada.setdefault(decada, set()).add(jogador.id)
+            if decada >= desde:
+                por_decada.setdefault(decada, set()).add(jogador.id)
     grupos: list[tuple[int, int, set[str]]] = []
     aberto: tuple[int, set[str]] | None = None
     for decada in sorted(por_decada):

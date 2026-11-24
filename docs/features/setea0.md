@@ -24,7 +24,8 @@ ABC, Náutico e CSA têm o seu, com os rivais do Nordeste e o clássico local na
 2. 11 rodadas: o dado sorteia uma **década do clube** ("ABC · anos 70") e mostra quem jogou nele
    nela; o torcedor põe um jogador numa vaga livre. Uma troca sorteia outra década. Quem entra não
    sai, só troca de vaga. Décadas com menos de 8 jogadores no clube se juntam às seguintes
-   numa **época** ("ABC · anos 60 a 80"), decidido pelo dev em 2026-11-23.
+   numa **época** ("ABC · anos 70 a 90"), decidido pelo dev em 2026-11-23. Só contam as décadas
+   de 1970 em diante, em todo clube (dev, 2026-11-24): quem só jogou antes nunca é oferecido.
 3. Campanha, jogada partida a partida: os jogos 1–6 em ordem crescente de força; o 7º é sempre o
    clássico, com **bônus de clássico** que o deixa ao menos tão forte quanto o 6º. Perdeu, caiu.
 4. Empate vai à disputa de pênaltis (5 + alternadas): o torcedor bate as cobranças do seu time no
@@ -83,6 +84,7 @@ class Cobranca(BaseModel): resultado: Literal["gol", "defesa", "fora", "trave", 
 - [ ] `test_mesma_entrada_mesma_campanha`: semente + escalação iguais → campanha idêntica.
 - [ ] `test_oferta_so_tem_jogadores_do_clube_na_decada`.
 - [ ] `test_decadas_ralas_viram_epoca` (< 8 jogadores se juntam às seguintes).
+- [ ] `test_epocas_comecam_em_1970` e `test_quem_so_jogou_antes_de_1970_nunca_aparece`.
 - [ ] `test_escalacao_trapaceada_da_422`: jogador fora da oferta, repetido ou troca a mais.
 - [ ] `test_fora_de_posicao_perde_forca`.
 - [ ] `test_final_e_o_classico_e_ao_menos_tao_forte_quanto_o_6o` e
