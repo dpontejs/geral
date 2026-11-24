@@ -79,3 +79,4 @@ Gemini (`google-genai`), ESPN (API pública), Jinja2 + `premailer`, Resend, Fast
 | 2026-11-10 | A Geral assume a Urubu News: Flamengo no catálogo, inscritos, envio e bolão migram | `docs/adr/0001-geral-assume-a-urubu-news.md` |
 | 2026-11-10 | Gemini com chave paga, modelo Flash padrão (`GEMINI_MODEL`) | cota gratuita não comporta várias torcidas; orçamento aprovado pelo dono |
 | 2026-11-10 | Fóruns por último | login, moderação e spam custam mais que todo o resto junto |
+| 2026-11-23 | Prancheta (desenhar e adivinhar ao vivo): sala só em memória, num processo só do uvicorn, com SSE + POST; o SQLite guarda só a súmula | salas privadas de até 10 pessoas não pedem broker nem WebSocket; o custo é um deploy derrubar as salas abertas e não poder subir mais de um processo sem trocar o hub (`docs/features/prancheta.md`) |
