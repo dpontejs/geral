@@ -27,17 +27,23 @@ PALAVRAS: list[tuple[str, Posicao]] = [
     ("libero", "ZAG"),
     ("beque", "ZAG"),
     ("defensor", "ZAG"),
+    ("defesa-esquerdo", "LAT"),  # Brazilian usage: a full-back
+    ("defesa-direito", "LAT"),
     ("defesa", "ZAG"),
     ("lateral", "LAT"),
     ("ala", "LAT"),
     ("ponta-de-lanca", "MEI"),
     ("volante", "MEI"),
+    ("segundo volante", "MEI"),
+    ("centromedio", "MEI"),
+    ("centro-medio", "MEI"),
     ("meia", "MEI"),
     ("meio", "MEI"),
     ("medio", "MEI"),
     ("atacante", "ATA"),
     ("centroavante", "ATA"),
     ("centro-avante", "ATA"),
+    ("ponteiro", "ATA"),
     ("ponta", "ATA"),
     ("avancado", "ATA"),
 ]
@@ -74,10 +80,14 @@ def posicoes(texto: str) -> list[Posicao]:
     return achadas
 
 
-def passagens(stints: list[Stint], clube_qid: str) -> list[tuple[int, int]]:
-    """The stays at the club (stint targets already Wikidata ids), consecutive ones merged."""
+def passagens(stints: list[Stint], clube_qid: str, ano: int | None = None) -> list[tuple[int, int]]:
+    """The stays at the club (stint targets already Wikidata ids), consecutive ones merged.
+
+    A stay still open ends in `ano`, the year of the download (default: this year).
+    """
+    ano = ano or date.today().year
     lidas = [
-        (s.start, s.end if s.end is not None else date.today().year)  # still there: this year
+        (s.start, s.end if s.end is not None else ano)
         for s in stints
         if s.target == clube_qid and s.start is not None
     ]
@@ -131,7 +141,9 @@ def _fechadas(stints: list[Stint]) -> list[Stint]:
     ]
 
 
-def jogador_ptwiki(pagina: dict, clube_qid: str, fama: int) -> tuple[dict | None, str | None]:
+def jogador_ptwiki(
+    pagina: dict, clube_qid: str, fama: int, ano: int | None = None
+) -> tuple[dict | None, str | None]:
     """The raw player of a page, or why it is left out (for the report).
 
     `pagina`: {"titulo", "qid", "text", "clubes" (the expanded `colunas` clubs), "ids" (club page
@@ -142,14 +154,13 @@ def jogador_ptwiki(pagina: dict, clube_qid: str, fama: int) -> tuple[dict | None
     if carreira is None:
         return None, "sem infobox"
     clubes = ARQUIVO.sub("", pagina["clubes"])  # a flag before the club would be read as it
-    anos_ = re.sub(r"\[\[([^\]|]*)(?:\|[^\]]*)?\]\]", r"\1", carreira[0])  # "[[1990]]–[[1992]]"
-    stints = ptwiki.parse_career(anos_, clubes)
+    stints = ptwiki.parse_career(carreira[0], clubes)
     if stints is None:
         return None, "anos e clubes não batem"
     stints = _fechadas(stints)
     ids = pagina["ids"]
     resolvidos = [Stint(s.start, s.end, ids[s.target]) for s in stints if s.target in ids]
-    anos = passagens(resolvidos, clube_qid)
+    anos = passagens(resolvidos, clube_qid, ano)
     if not anos:
         return None, "sem anos no clube"
     achadas = posicoes(ptwiki.position(params.get("posição", "")))

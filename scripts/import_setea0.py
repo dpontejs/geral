@@ -15,6 +15,7 @@ import re
 import sys
 import tomllib
 from collections import Counter
+from datetime import date
 from pathlib import Path
 
 import httpx
@@ -60,7 +61,8 @@ def download() -> dict:
         nomes = {t for page in pages.values() for t in ptwiki.shown_names(page["clubes"])}
         ids = ptwiki.page_ids(client, sorted(nomes))
         fama = ptwiki.sitelinks(client, sorted({page["qid"] for page in pages.values()}))
-    return {"titulos": titulos, "pages": pages, "ids": ids, "fama": fama}
+    ano = date.today().year  # a stay still open ends here: the same download, the same json
+    return {"titulos": titulos, "pages": pages, "ids": ids, "fama": fama, "ano": ano}
 
 
 def baixar_paginas(client: httpx.Client, clubes: dict) -> tuple[dict, dict]:
@@ -86,7 +88,7 @@ def avaliar(raw: dict, slug: str, titulo: str) -> tuple[dict | None, str | None]
         return None, "página não encontrada"
     pagina = {**page, "titulo": titulo, "ids": raw["ids"]}
     clube_qid = dados.chaves()["clube"][slug]["wikidata"]
-    return jogador_ptwiki(pagina, clube_qid, raw["fama"].get(page["qid"], 0))
+    return jogador_ptwiki(pagina, clube_qid, raw["fama"].get(page["qid"], 0), raw["ano"])
 
 
 def _toml(texto: str) -> str:

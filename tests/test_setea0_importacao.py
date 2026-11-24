@@ -231,6 +231,7 @@ def test_anos_com_link_valem_inteiros():
         ("{{center|Júnior}}", "Júnior"),
         ("Dejan Petković<br>Дејан Петковић", "Dejan Petković"),
         ("Tostão<br />{{small|OMC}}", "Tostão"),
+        ("Cafu<br>{{pequeno|ORB}}", "Cafu"),
         ("Jorginho <small>Cavalieri OMRI</small>", "Jorginho"),
         ("[[Zico]]", "Zico"),
     ],
@@ -239,3 +240,25 @@ def test_nome_sem_marcacao(bruto_, limpo):
     from geral.games.setea0.importacao import nome_limpo
 
     assert nome_limpo(bruto_) == limpo
+
+
+@pytest.mark.parametrize(
+    ("texto", "esperado"),
+    [
+        ("Defesa-esquerdo", ["LAT"]),
+        ("Defesa-direito", ["LAT"]),
+        ("Defesa central", ["ZAG"]),
+        ("Segundo volante", ["MEI"]),
+        ("Centromédio", ["MEI"]),
+        ("Ponteiro", ["ATA"]),
+        ("Ponta-de-lança", ["MEI"]),
+    ],
+)
+def test_posicoes_do_portugues_do_brasil(texto, esperado):
+    assert posicoes(texto) == esperado
+
+
+def test_passagem_em_aberto_vai_ate_o_ano_do_download():
+    assert passagens([Stint(2024, None, ABC)], ABC, ano=2026) == [(2024, 2026)]
+    aberta = pagina("2020–", "[[ABC Futebol Clube|ABC]]")
+    assert jogador_ptwiki(aberta, ABC, 1, ano=2030)[0]["passagens"] == [(2020, 2030)]
