@@ -673,6 +673,7 @@
     const antes = est;
     est = novo;
     seq = novo.seq;
+    tentativas = 0;
     diferenca = Date.parse(novo.agora) - Date.now();
     if (!novo.jogadores.some((j) => souEu(j.id))) {
       // I am no longer in the room: I left, or got the red card
@@ -739,9 +740,22 @@
   function pararFonte() {
     if (fonte) { fonte.close(); fonte = null; }
   }
-  // The events stream refused me (the browser retries by itself on a dropped connection): the
-  // room is gone, it is over, or my seat is.
+  // The events stream gave up (the browser retries by itself only on a dropped connection): the
+  // room is gone, it is over, my seat is gone, or something in the way failed (a proxy's 502).
+  // The seat is forgotten only when the server itself says 403 to my token.
   let checando = false;
+  let tentativas = 0; // reconnections in a row without an `estado`, for the growing wait
+  function reconectar() {
+    const espera = Math.min(30000, 1000 * 2 ** tentativas);
+    tentativas++;
+    setTimeout(() => { checando = false; if (tela !== "fim" && tela !== "aviso") conectar(); }, espera);
+  }
+  // A cheap authenticated call with no effect: a red card for myself is always refused (422)
+  // when my token is good, 403 when it is not, 404 when the room is gone.
+  async function meuToken() {
+    const { status } = await postar(`/salas/${SALA}/acao`, { token: eu.token, tipo: "cartao", alvo: eu.jogador });
+    return status;
+  }
   async function caiu() {
     if (checando || tela === "fim" || tela === "aviso") return;
     checando = true;
@@ -751,11 +765,12 @@
       const html = await r.text();
       if (r.status === 404) aviso("A sala acabou", "A sala acabou ou o servidor reiniciou. Crie outra e mande o link de novo.");
       else if (html.includes('id="pr-sumula"')) location.reload();
-      else if (r.ok) { esquecer(); eu = null; est = null; telaEntrar("Seu lugar na sala caiu. Entre de novo com um apelido."); }
-      else setTimeout(() => { checando = false; conectar(); }, 3000);
+      else if (r.ok && (await meuToken()) === 403) {
+        esquecer(); eu = null; est = null; tela = "";
+        telaEntrar("Seu lugar na sala caiu. Entre de novo com um apelido.");
+      } else return reconectar();
     } catch {
-      setTimeout(() => { checando = false; conectar(); }, 3000);
-      return;
+      return reconectar();
     }
     checando = false;
   }
