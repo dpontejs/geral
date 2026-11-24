@@ -2,7 +2,7 @@
 
 from typing import Literal
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 type Posicao = Literal["GOL", "ZAG", "LAT", "MEI", "ATA"]
 
@@ -39,7 +39,9 @@ class Jogador(BaseModel):
 
 
 class Epoca(BaseModel):
-    """What the die draws: one decade, or a run of thin ones ("anos 60 a 80")."""
+    """What the die draws: one decade, or a run of thin ones ("anos 60 a 80"). Frozen: a key."""
+
+    model_config = ConfigDict(frozen=True)
 
     inicio: int  # first decade, 1960
     fim: int  # last decade, inclusive

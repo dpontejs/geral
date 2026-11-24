@@ -125,3 +125,11 @@ def test_escala_vale_para_todos_os_clubes():
         antes = sum(j.forca for j in base.clubes[slug].jogadores)
         depois = sum(j.forca for j in forte.clubes[slug].jogadores)
         assert depois > antes, slug
+
+
+def test_epoca_e_imutavel_e_serve_de_chave():
+    a = Epoca(inicio=1960, fim=1980, rotulo="anos 60 a 80")
+    b = Epoca(inicio=1960, fim=1980, rotulo="anos 60 a 80")
+    assert {a: 1}[b] == 1
+    with pytest.raises(ValueError):
+        a.inicio = 1970
