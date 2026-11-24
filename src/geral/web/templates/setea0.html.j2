@@ -1,0 +1,19 @@
+{% extends "base.html.j2" %}
+{% set label = jogo.nome if jogo.edicao != "geral" else "Geral" %}
+{% block title %}7a0 · {{ label }} · Geral{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/geral/jogos.css?v={{ asset_version }}">{% endblock %}
+{% block content %}
+<section class="jogo wall">
+  <div class="wrap" id="s7" data-edition="{{ edition }}">
+    {% include "_game_tabs.html.j2" %}
+    <div class="game-title"><h1>7a0</h1></div>
+    {% if jogo.clubes %}
+    <ul class="s7-clubes">
+      {% for c in jogo.clubes %}<li><a href="{{ c.url }}">{{ c.nome }}</a></li>{% endfor %}
+    </ul>
+    {% endif %}
+    <div class="stage"></div>
+    <script type="application/json" id="s7-data">{{ jogo | tojson }}</script>
+  </div>
+</section>
+{% endblock %}
