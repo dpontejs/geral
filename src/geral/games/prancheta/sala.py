@@ -127,6 +127,10 @@ class Sala:
             self._fila.append(jogador.id)
         return jogador.id, jogador.token, self._estados(agora)
 
+    def esta(self, jogador: int) -> bool:
+        """The player is still in the room (not left, not sent off)."""
+        return jogador in self._jogadores
+
     def jogador(self, token: str) -> int:
         try:
             return self._tokens[token]

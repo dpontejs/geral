@@ -486,6 +486,31 @@ async def test_acoes_concorrentes_nao_quebram_seq(tmp_path):
         assert sum(t == "traco" for t, _ in lidos) == 30
 
 
+@assincrono
+async def test_expulso_tem_a_conexao_fechada(tmp_path):
+    async with mesa(tmp_path) as m:
+        sala, tokens = await m.sala_com(4)
+        await m.ouvir(sala, tokens[1])
+        expulso, saiu = await m.ouvir(sala, tokens[3]), await m.ouvir(sala, tokens[4])
+        await m.em_desenho(sala, tokens)
+        assert (await m.agir(sala, tokens[1], "tirar", alvo=3)).status_code == 204
+        assert (await m.agir(sala, tokens[4], "sair")).status_code == 204
+        for ouvinte, quem in ((expulso, 3), (saiu, 4)):
+            lidos = []
+            while (evento := await ouvinte.proximo()) is not None:
+                lidos.append(evento)
+            tipo, ultimo = lidos[-1]  # their last view, without them, and then the stream ends
+            assert tipo == "estado" and quem not in [j["id"] for j in ultimo["jogadores"]]
+        await m.agir(sala, tokens[1], "traco", **traco(1, [[1, 1]]))  # nothing to deliver there
+
+        aba = await m.ouvir(sala, tokens[2])  # the last tab of who is left
+        await aba.fechar()
+        await m.ouvintes[0].fechar()
+        m.relogio.andar(600)
+        m.prancheta.passo()  # no spectator keeps the room alive
+        assert not m.prancheta.viva(sala)
+
+
 # --- laço, súmula e limpeza ---
 
 

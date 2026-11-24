@@ -124,7 +124,8 @@ Acao = Annotated[
 class _Conexao:
     jogador: int
     fila: asyncio.Queue = field(default_factory=lambda: asyncio.Queue(maxsize=FILA_MAX))
-    fechada: bool = False
+    fechada: bool = False  # no longer counts as a connection of the room
+    derrubada: bool = False  # its client stopped reading: send it nothing more
 
 
 @dataclass(eq=False)
@@ -241,10 +242,15 @@ class Prancheta:
         if self._salas.pop(viva.sala.id, None) is None:
             return  # already out (the end and the cleanup in the same step)
         for conexao in list(viva.conexoes):
-            try:
-                conexao.fila.put_nowait(None)
-            except asyncio.QueueFull:
-                self._desligar(viva, conexao)
+            self._encerrar_fluxo(viva, conexao)
+
+    def _encerrar_fluxo(self, viva: _SalaViva, conexao: _Conexao) -> None:
+        """Ends a stream after what is already queued; it stops counting as a connection now."""
+        try:
+            conexao.fila.put_nowait(None)
+        except asyncio.QueueFull:
+            conexao.derrubada = True  # a stalled client: nothing more reaches it anyway
+        self._desligar(viva, conexao)
 
     # --- entrega ---
 
@@ -261,10 +267,13 @@ class Prancheta:
                 try:
                     conexao.fila.put_nowait((evento.tipo, evento.dados))
                 except asyncio.QueueFull:  # a client that vanished without closing
+                    conexao.derrubada = True
                     caidas.append(conexao)
         for conexao in caidas:
             logger.info("Prancheta %s: dropping a stalled events connection", viva.sala.id)
             self._desligar(viva, conexao)
+        for conexao in [c for c in viva.conexoes if not viva.sala.esta(c.jogador)]:
+            self._encerrar_fluxo(viva, conexao)  # left or sent off: their last view was sent
         for evento in eventos:
             if evento.tipo == "fim":
                 sala = viva.sala
@@ -292,13 +301,13 @@ class Prancheta:
         return conexao
 
     async def _fluxo(self, conexao: _Conexao) -> AsyncIterator[str]:
-        while not conexao.fechada:
+        while not conexao.derrubada:
             try:
                 item = await asyncio.wait_for(conexao.fila.get(), PING)
             except TimeoutError:
                 yield ": ping\n\n"
                 continue
-            if item is None or conexao.fechada:
+            if item is None:
                 return
             yield _sse(*item)
 
