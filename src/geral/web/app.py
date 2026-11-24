@@ -64,6 +64,7 @@ from geral.web.carreira_placar import PlacarStore
 from geral.web.mailer import Mailer, MailError, mailer_from_settings
 from geral.web.notes import NoteStore
 from geral.web.palette import club_palette
+from geral.web.prancheta import criar_prancheta
 from geral.web.scoreboard import animation_svg
 from geral.web.store import RequestResult, SubscriberStore, normalize
 from geral.web.team_requests import PUBLIC_MIN_VOTES, TeamRequestStore, network, team_key
@@ -107,6 +108,7 @@ NICKNAME_RE = re.compile(r"^[\w' -]+$")
 STATIC = Path(__file__).resolve().parents[1] / "static"
 # The scoreboard clock: Brasília time, no daylight saving since 2019 (no tzdata in the image).
 DUELS_PER_NETWORK = 20  # jogo da velha duels created per network per hour
+SALAS_POR_REDE = 20  # Prancheta rooms created per network per hour
 CARREIRAS_POR_REDE = 60  # Carreira careers counted in the Fábrica de craques per network per hour
 PAST_LISTED = 30  # past puzzles linked on a game page; older ones stay playable by address
 BRASILIA = timezone(timedelta(hours=-3))
@@ -307,6 +309,8 @@ def create_app(
     notes = NoteStore(store.path)  # `geral novidade`: on top of each team's next edition
     placar = PlacarStore(store.path)  # Carreira's Fábrica de craques: its own table, same SQLite
     placar_limiter = RateLimiter(CARREIRAS_POR_REDE, timedelta(hours=1))
+    # Prancheta: live rooms in memory (one process), the súmulas in the same SQLite.
+    prancheta = criar_prancheta(store.path, now, RateLimiter(SALAS_POR_REDE, timedelta(hours=1)))
     catalog = teams if teams is not None else load_teams()
     # Teams people can see and join; unlisted ones (moving in) still work for links and the API.
     listed = {slug: team for slug, team in catalog.items() if team.listed}
@@ -557,11 +561,15 @@ def create_app(
         if settings.CENTRAL_REFRESH > 0:  # the Central's snapshot, rebuilt in a thread
             refresher = Refresher(central_file, settings.CENTRAL_REFRESH)
             refresher.start()
+        laco = asyncio.create_task(prancheta.rodar()) if settings.PRANCHETA_LACO else None
         yield
+        if laco:
+            laco.cancel()
         if refresher:
             refresher.stop()
 
     app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
+    app.include_router(prancheta.router)
     if legacy_team:
         # Old e-mails load the moved-in app's brand from the root of /static.
         for name in ("logo-email.png", "icon-512.png", "og-image.png"):
