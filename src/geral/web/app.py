@@ -241,6 +241,9 @@ class CarreiraIn(BaseModel):
     # Only Completa is offered; "rapida" still comes from pages opened before it was removed.
     modo: Literal["rapida", "completa"] = "completa"
     minijogos: bool = False  # the cup final's penalty on screen; the form sends it
+    # The data version the career started with (sent by the page): a deploy that changes the data
+    # mid-career would replay it differently, so the page is told instead. Absent: no check.
+    versao: str | None = Field(default=None, max_length=40)
 
 
 class VelhaIn(BaseModel):
@@ -1549,8 +1552,10 @@ def create_app(
         if edition not in carreira_edicoes():
             return JSONResponse({"detail": "edition not found"}, status_code=404)
         semente = secrets.token_urlsafe(8)
-        lendas = carreira_draft.oferta(carreira_dados.carregar(), edition, semente, body.clube)
+        dados = carreira_dados.carregar()
+        lendas = carreira_draft.oferta(dados, edition, semente, body.clube)
         return {
+            "versao": dados.versao,
             "semente_draft": semente,
             "lendas": [
                 {
@@ -1569,8 +1574,18 @@ def create_app(
         if edition not in carreira_edicoes():
             return JSONResponse({"detail": "edition not found"}, status_code=404)
         dados = carreira_dados.carregar()
+        if body.versao and body.versao != dados.versao:
+            return JSONResponse(
+                {
+                    "detail": "A Carreira foi atualizada enquanto você jogava. Para não mudar o "
+                    "que já aconteceu, comece uma carreira nova com o seu craque.",
+                    "atualizado": True,
+                },
+                status_code=409,
+            )
         entrada = carreira_motor.Entrada(
-            **body.model_dump(exclude={"semente"}), semente=body.semente or secrets.token_urlsafe(8)
+            **body.model_dump(exclude={"semente", "versao"}),
+            semente=body.semente or secrets.token_urlsafe(8),
         )
         try:
             carreira = carreira_motor.simular(dados, edition, entrada)
