@@ -14,11 +14,13 @@ import random
 import re
 import secrets
 import sqlite3
+import tomllib
 import unicodedata
 from collections import defaultdict, deque
 from collections.abc import Callable
 from contextlib import asynccontextmanager
 from datetime import UTC, date, datetime, timedelta, timezone
+from functools import cache
 from pathlib import Path
 from typing import Annotated, Literal
 from urllib.parse import urlencode
@@ -47,6 +49,15 @@ from geral.games.carreira import dados as carreira_dados
 from geral.games.carreira import draft as carreira_draft
 from geral.games.carreira import motor as carreira_motor
 from geral.games.carreira import regras as carreira_regras
+from geral.games.setea0 import dados as setea0_dados
+from geral.games.setea0 import motor as setea0_motor
+from geral.games.setea0.modelos import ESQUEMAS as SETEA0_ESQUEMAS
+from geral.games.setea0.modelos import MODOS as SETEA0_MODOS
+from geral.games.setea0.modelos import Campanha as Setea0Campanha
+from geral.games.setea0.modelos import Cobranca as Setea0Cobranca
+from geral.games.setea0.modelos import Escolha as Setea0Escolha
+from geral.games.setea0.modelos import JogadaInvalida as Setea0Invalida
+from geral.games.setea0.modelos import PedidoDePenalti as Setea0Pedido
 from geral.games.velha import base as velha_base
 from geral.games.velha import board as velha_tabuleiro
 from geral.games.velha import busca as velha_busca
@@ -67,6 +78,8 @@ from geral.web.palette import club_palette
 from geral.web.prancheta import criar_prancheta
 from geral.web.prancheta_paginas import paginas_prancheta
 from geral.web.scoreboard import animation_svg
+from geral.web.setea0_guardado import GuardadoStore as Setea0Store
+from geral.web.setea0_guardado import codigo as setea0_codigo
 from geral.web.store import RequestResult, SubscriberStore, normalize
 from geral.web.team_requests import PUBLIC_MIN_VOTES, TeamRequestStore, network, team_key
 from geral.web.tokens import make_token, read_token
@@ -111,6 +124,9 @@ STATIC = Path(__file__).resolve().parents[1] / "static"
 DUELS_PER_NETWORK = 20  # jogo da velha duels created per network per hour
 SALAS_POR_REDE = 20  # Prancheta rooms created per network per hour
 CARREIRAS_POR_REDE = 60  # Carreira careers counted in the Fábrica de craques per network per hour
+SETEA0_POR_REDE = 30  # 7a0 campaigns kept for a share link per network per hour
+SETEA0_ATUALIZADO = "O 7a0 foi atualizado enquanto você jogava. Comece um time novo."
+SETEA0_IDOLOS = Path(setea0_dados.__file__).parent / "idolos.toml"
 PAST_LISTED = 30  # past puzzles linked on a game page; older ones stay playable by address
 BRASILIA = timezone(timedelta(hours=-3))
 
@@ -287,6 +303,45 @@ class WordGuessesIn(BaseModel):
     )
 
 
+type Setea0Modo = Literal["classico", "almanaque"]
+
+
+class Setea0OfertaIn(BaseModel):
+    semente: str | None = Field(default=None, min_length=1, max_length=40)  # drawn when absent
+    versao: str | None = Field(default=None, max_length=40)  # absent: no check
+    modo: Setea0Modo = "classico"
+    rodada: int = Field(ge=0, le=setea0_motor.RODADAS - 1)
+    troca: int = Field(default=0, ge=0)
+
+
+class Setea0JogoIn(BaseModel):
+    semente: str = Field(min_length=1, max_length=40)
+    versao: str | None = Field(default=None, max_length=40)
+    modo: Setea0Modo = "classico"
+    esquema: str = Field(max_length=10)
+    escolhas: list[Setea0Escolha] = Field(max_length=setea0_motor.RODADAS)
+    # one list per shootout, in order; the fan's kicks ("motor" lets the engine take one)
+    cobrancas: list[
+        Annotated[list[Setea0Cobranca], Field(max_length=setea0_motor.MAX_COBRANCAS)]
+    ] = Field(default=[], max_length=setea0_motor.JOGOS)
+    n: int = Field(ge=1, le=setea0_motor.JOGOS)
+
+
+@cache
+def setea0_idolos() -> dict[str, set[str]]:
+    """The idols of each 7a0 edition (`idolos.toml`), by Wikidata id."""
+    data = tomllib.loads(SETEA0_IDOLOS.read_text(encoding="utf-8"))
+    return {slug: set(fixas) for slug, fixas in data.items()}
+
+
+def setea0_anos(passagens: list[tuple[int, int]]) -> str:
+    """A player's years at the club, first to last ("1967–1981")."""
+    if not passagens:
+        return ""
+    inicio, fim = min(i for i, _ in passagens), max(f for _, f in passagens)
+    return str(inicio) if inicio == fim else f"{inicio}–{fim}"
+
+
 def create_app(
     settings: Settings | None = None,
     store: SubscriberStore | None = None,
@@ -310,6 +365,8 @@ def create_app(
     notes = NoteStore(store.path)  # `geral novidade`: on top of each team's next edition
     placar = PlacarStore(store.path)  # Carreira's Fábrica de craques: its own table, same SQLite
     placar_limiter = RateLimiter(CARREIRAS_POR_REDE, timedelta(hours=1))
+    setea0_store = Setea0Store(store.path)  # 7a0 campaigns kept for their links, same SQLite
+    setea0_limiter = RateLimiter(SETEA0_POR_REDE, timedelta(hours=1))
     # Prancheta: live rooms in memory (one process), the súmulas in the same SQLite.
     prancheta = criar_prancheta(store.path, now, RateLimiter(SALAS_POR_REDE, timedelta(hours=1)))
     catalog = teams if teams is not None else load_teams()
@@ -529,6 +586,20 @@ def create_app(
                 "editions": dict.fromkeys(carreira_edicoes(), True),
                 "number": None,  # free play: no game of the day
             },
+            *(
+                [
+                    {
+                        "path": "7a0",
+                        "name": "7a0",
+                        "desc": "Monte o time dos sonhos do seu clube, uma época por rodada, e "
+                        "tente a campanha perfeita: 7 jogos, 7 vitórias.",
+                        "editions": {"geral": True} | dict.fromkeys(setea0_edicoes(), True),
+                        "number": None,  # free play
+                    }
+                ]
+                if setea0_edicoes()
+                else []  # not on the site until the dev publishes a club
+            ),
             {
                 "path": "velha",
                 "name": "Jogo da velha",
@@ -1668,6 +1739,201 @@ def create_app(
         except (sqlite3.Error, ValueError):
             logger.exception("carreira guardada: could not read a kept career")
             return None
+
+    def setea0_edicoes() -> list[str]:
+        """The editions open to the public; all of them with SETEA0_PREVIA=1 (the dev's preview)."""
+        previa = os.environ.get("SETEA0_PREVIA") == "1"
+        return [
+            slug
+            for slug, edicao in setea0_dados.chaves()["edicao"].items()
+            if edicao.get("publicado") or previa
+        ]
+
+    def setea0_nome(slug: str) -> str:
+        chaves = setea0_dados.chaves()
+        clube = chaves["edicao"].get(slug) or chaves["clube"].get(slug) or {}
+        return clube.get("nome", slug)
+
+    def setea0_chave(edicao: str) -> dict:
+        """The bracket in order (6 games, then the derby) and every name the screen shows."""
+        do_clube = setea0_dados.chaves()["edicao"].get(edicao)
+        if not do_clube:
+            return {}
+        chave = [*do_clube["adversarios"], do_clube["final"]]
+        return {"chave": chave, "adversarios": {slug: setea0_nome(slug) for slug in chave}}
+
+    def setea0_pagina(request: Request, edicao: str, status: int = 200, **jogo) -> HTMLResponse:
+        dados = (
+            {
+                "edicao": edicao,
+                "nome": setea0_nome(edicao),
+                "esquemas": {nome: list(vagas) for nome, vagas in SETEA0_ESQUEMAS.items()},
+                "modos": {modo: {"trocas": trocas} for modo, trocas in SETEA0_MODOS.items()},
+                "marcas": setea0_motor.textos_das_marcas(),
+                "url": public_url,
+            }
+            | setea0_chave(edicao)
+            | jogo
+        )
+        return page(
+            request,
+            "setea0.html.j2",
+            status,
+            edition=edicao,
+            tabs=game_tabs("7a0", edicao if edicao in setea0_edicoes() else "geral"),
+            team=listed.get(edicao),
+            club=club_palette(listed.get(edicao)),
+            compartilhada=jogo.get("compartilhada"),
+            jogo=dados,
+        )
+
+    def setea0_nao_achado(request: Request) -> HTMLResponse:
+        return message(
+            request,
+            "7a0 não encontrado",
+            "Esse link do 7a0 não abre. Que tal montar o seu time?",
+            status=404,
+            link_url="/jogos/7a0",
+            link_label="Jogar o 7a0",
+        )
+
+    @app.get("/jogos/7a0", response_class=HTMLResponse)
+    def setea0_escolha(request: Request):
+        edicoes = setea0_edicoes()
+        if not edicoes:
+            return setea0_nao_achado(request)
+        clubes = [{"slug": s, "nome": setea0_nome(s), "url": game_url("7a0", s)} for s in edicoes]
+        return setea0_pagina(request, "geral", clubes=clubes)
+
+    @app.get("/jogos/7a0/c/{codigo}", response_class=HTMLResponse)
+    def setea0_compartilhada(request: Request, codigo: str):
+        try:
+            texto = setea0_store.guardada(codigo)
+            campanha = Setea0Campanha.model_validate_json(texto) if texto else None
+        except (sqlite3.Error, ValueError):
+            logger.exception("7a0 guardado: could not read a kept campaign")
+            campanha = None
+        if campanha is None:
+            return setea0_nao_achado(request)
+        compartilhada = {
+            "codigo": codigo,
+            "campanha": campanha.model_dump(mode="json"),
+            "adversarios": {p.adversario: setea0_nome(p.adversario) for p in campanha.partidas},
+        }
+        return setea0_pagina(request, campanha.edicao, compartilhada=compartilhada)
+
+    @app.get("/jogos/7a0/{edicao}", response_class=HTMLResponse)
+    def setea0_jogo(request: Request, edicao: str):
+        if edicao not in setea0_edicoes():
+            return setea0_nao_achado(request)
+        return setea0_pagina(request, edicao)
+
+    def setea0_conferir(edicao: str, versao: str | None):
+        """The data, or the response that ends the call (404 edition, 409 data changed)."""
+        if edicao not in setea0_edicoes():
+            return None, JSONResponse({"detail": "edition not found"}, status_code=404)
+        dados = setea0_dados.carregar()
+        if edicao not in dados.clubes:
+            return None, JSONResponse({"detail": "edition not found"}, status_code=404)
+        if versao and versao != dados.versao:
+            return None, JSONResponse(
+                {"detail": SETEA0_ATUALIZADO, "atualizado": True}, status_code=409
+            )
+        return dados, None
+
+    @app.post("/api/jogos/7a0/{edicao}/oferta")
+    def setea0_oferta(edicao: str, body: Setea0OfertaIn):
+        dados, erro = setea0_conferir(edicao, body.versao)
+        if erro:
+            return erro
+        semente = body.semente or secrets.token_urlsafe(8)
+        try:
+            rodada = setea0_motor.oferta(dados, edicao, semente, body.rodada, body.troca, body.modo)
+        except Setea0Invalida as invalida:
+            return JSONResponse({"detail": str(invalida)}, status_code=422)
+        idolos = setea0_idolos().get(edicao, set())
+        estrelas = body.modo != "almanaque"
+
+        def nome_em_ordem(j) -> tuple[str, str]:
+            return (j.nome, j.id)
+
+        return {
+            "semente": semente,
+            "versao": dados.versao,
+            "epoca": {"rotulo": rodada.epoca.rotulo},
+            "jogadores": [
+                {
+                    "id": j.id,
+                    "nome": j.nome,
+                    "posicoes": j.posicoes,
+                    "anos": setea0_anos(j.passagens),
+                    "estrelas": 1 + (j.forca - 1) * 5 // 99 if estrelas else None,
+                    "idolo": j.id in idolos,
+                }
+                # Almanaque: name order, or the strongest-first list would give the stars away
+                for j in (
+                    rodada.jogadores if estrelas else sorted(rodada.jogadores, key=nome_em_ordem)
+                )
+            ],
+            "trocas_restantes": rodada.trocas_restantes,
+        }
+
+    @app.post("/api/jogos/7a0/{edicao}/jogo")
+    def setea0_partida(request: Request, edicao: str, body: Setea0JogoIn):
+        dados, erro = setea0_conferir(edicao, body.versao)
+        if erro:
+            return erro
+        args = (dados, edicao, body.semente, body.modo, body.esquema, body.escolhas)
+        try:
+            jogado = setea0_motor.jogo(*args, body.cobrancas, body.n)
+            adversario = {"nome": setea0_nome(jogado.adversario)}
+            if isinstance(jogado, Setea0Pedido):
+                return {"pedido": jogado.model_dump(mode="json"), "adversario": adversario}
+            fim = body.n == setea0_motor.JOGOS or not jogado.venceu
+            campanha = setea0_motor.campanha(*args, body.cobrancas) if fim else None
+            if campanha:
+                setea0_sem_sobras(campanha, body.cobrancas)
+        except Setea0Invalida as invalida:
+            return JSONResponse({"detail": str(invalida)}, status_code=422)
+        codigo = setea0_guardar(request, body, campanha) if campanha else None
+        return {
+            "partida": jogado.model_dump(mode="json"),
+            "adversario": adversario,
+            "fim": fim,
+            "campanha": campanha.model_dump(mode="json") if campanha else None,
+            "codigo": codigo,
+        }
+
+    def setea0_sem_sobras(campanha, cobrancas: list[list]) -> None:
+        """A finished campaign's kicks are exactly the ones its shootouts took: a kick or a
+        shootout more is a forged campaign (and would be another link for the same one)."""
+        tomadas = [len(p.disputa.nossas) for p in campanha.partidas if p.disputa]
+        if [len(c) for c in cobrancas] != tomadas:
+            raise Setea0Invalida("cobranças que a campanha não teve")
+
+    def setea0_guardar(request: Request, body: Setea0JogoIn, campanha) -> str | None:
+        """Keep the finished campaign for its link (a cap per network; a campaign already kept
+        keeps its link); never lets the storage break the game."""
+        codigo = setea0_codigo(
+            campanha.edicao,
+            body.semente,
+            body.modo,
+            body.esquema,
+            [e.model_dump() for e in body.escolhas],
+            [[c.model_dump() for c in lista] for lista in body.cobrancas],
+            campanha.versao,
+        )
+        rede = network(request.client.host if request.client else "unknown")
+        try:
+            if setea0_store.guardada(codigo) is not None:
+                return codigo
+            if not setea0_limiter.allow(rede, now()):
+                return None  # the campaign still ends; it just has no link
+            setea0_store.guardar(codigo, campanha.model_dump_json(), now())
+        except sqlite3.Error:
+            logger.exception("7a0 guardado: could not keep a campaign")
+            return None
+        return codigo
 
     @app.get("/api/jogos/carreira/placar")
     def carreira_placar():

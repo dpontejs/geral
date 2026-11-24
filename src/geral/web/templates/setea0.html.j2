@@ -1,0 +1,24 @@
+{% extends "base.html.j2" %}
+{% set label = jogo.nome if jogo.edicao != "geral" else "Geral" %}
+{% block title %}7a0 · {{ label }} · Geral{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/geral/jogos.css?v={{ asset_version }}">
+<link rel="stylesheet" href="/static/geral/setea0.css?v={{ asset_version }}">{% endblock %}
+{% block content %}
+<section class="jogo wall">
+  <div class="wrap" data-edition="{{ edition }}">
+    {% include "_game_tabs.html.j2" %}
+    <div class="game-title"><h1>7a0{% if jogo.edicao != "geral" %} do {{ jogo.nome }}{% endif %}</h1></div>
+    {% if jogo.clubes %}
+    <ul class="s7-clubes">
+      {% for c in jogo.clubes %}<li><a href="{{ c.url }}">{{ c.nome }}</a></li>{% endfor %}
+    </ul>
+    {% endif %}
+    <script type="application/json" id="s7-data">{{ jogo | tojson }}</script>
+    {% if jogo.edicao != "geral" %}
+    {% with nome = jogo.nome, edicao = jogo.edicao %}{% include "_setea0_tela.html.j2" %}{% endwith %}
+    {% endif %}
+  </div>
+</section>
+<script src="/static/geral/penalti.js?v={{ asset_version }}" defer></script>
+<script src="/static/geral/setea0.js?v={{ asset_version }}" defer></script>
+{% endblock %}

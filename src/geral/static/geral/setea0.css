@@ -1,0 +1,78 @@
+/* 7a0 do clube: pitch, offer, scoreboard and card (approved draft: docs/features/setea0-rascunho.html). */
+.s7 { display: flex; flex-direction: column; gap: 22px; }
+.s7-tela { display: flex; flex-direction: column; gap: 22px; }
+.s7-tela[hidden] { display: none; }
+.s7-dado .s7-sorteio { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 14px; }
+.s7-decada { font: 900 clamp(30px, 6.5vw, 64px)/1 var(--dots); color: var(--lamp); text-transform: uppercase; white-space: nowrap; }
+.s7-die { display: inline-grid; place-items: center; width: 1.15em; height: 1.15em; margin-right: .3em; border: 3px solid var(--lamp); font-size: .8em; }
+.s7-trocar { background: transparent; border: 3px solid var(--lamp); color: var(--lamp); font: 800 18px/1 var(--display); text-transform: uppercase; padding: 10px 14px; cursor: pointer; }
+.s7-trocar:hover { background: var(--lamp); color: var(--ink); }
+@media (max-width: 760px) { .s7-escalar-campo { aspect-ratio: 68 / 62; } .s7-vaga { min-height: 44px; } }
+.s7-campo-e-oferta { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 22px; align-items: start; }
+@media (max-width: 760px) { .s7-trocar { background: transparent; border: 3px solid var(--lamp); color: var(--lamp); font: 800 18px/1 var(--display); text-transform: uppercase; padding: 10px 14px; cursor: pointer; }
+.s7-trocar:hover { background: var(--lamp); color: var(--ink); }
+@media (max-width: 760px) { .s7-escalar-campo { aspect-ratio: 68 / 62; } .s7-vaga { min-height: 44px; } }
+.s7-campo-e-oferta { grid-template-columns: 1fr; } }
+.s7-campo { position: relative; aspect-ratio: 68 / 80; background: repeating-linear-gradient(0deg, #3E8E3A 0 10%, #378232 10% 20%); border: 6px solid #fff; outline: 6px solid var(--turf); display: grid; grid-template-rows: repeat(4, 1fr); padding: 10px 4px; }
+.s7-campo::before { content: ""; position: absolute; left: 50%; top: 0; width: 34%; height: 13%; transform: translateX(-50%); border: 3px solid rgba(255,255,255,.8); border-top: 0; }
+.s7-campo::after { content: ""; position: absolute; left: 50%; bottom: 0; width: 34%; height: 13%; transform: translateX(-50%); border: 3px solid rgba(255,255,255,.8); border-bottom: 0; }
+.s7-linha { display: flex; justify-content: space-evenly; align-items: center; z-index: 1; }
+.s7-vaga { width: clamp(64px, 18%, 104px); min-height: 52px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; padding: 4px; background: var(--paper); border: 3px solid var(--ink); text-align: center; }
+.s7-vaga b { font: 800 clamp(12px, 1.6vw, 16px)/1.05 var(--display); text-transform: uppercase; }
+.s7-vaga small { font: 600 11px/1 var(--body); color: #555; }
+.s7-vaga.livre { background: rgba(0,0,0,.28); border: 3px dashed rgba(255,255,255,.85); color: #fff; }
+.s7-vaga.livre b { color: #fff; }
+.s7-vaga.alvo { outline: 4px solid var(--lamp); }
+.s7-oferta { display: flex; flex-direction: column; gap: 8px; }
+.s7-oferta h3 { font: 800 20px/1 var(--display); text-transform: uppercase; color: #fff; text-shadow: var(--on-grass); }
+.s7-op { display: grid; grid-template-columns: 52px minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 10px 12px; background: var(--paper); border: 3px solid var(--ink); cursor: pointer; text-align: left; font: inherit; }
+.s7-op:hover, .s7-op[aria-pressed="true"] { background: var(--lamp); }
+.s7-op .pos { font: 800 14px/1 var(--display); background: var(--ink); color: var(--lamp); padding: 6px 0; text-align: center; }
+.s7-op .nome { font: 800 22px/1 var(--display); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.s7-op .anos { display: block; font: 500 13px/1.2 var(--body); color: #555; }
+.s7-op .estrelas { font-size: 18px; letter-spacing: 1px; color: var(--ink); }
+.s7-op.usado { opacity: .45; cursor: default; }
+.s7-op.idolo .nome::after { content: " ★ ídolo"; font: 700 11px/1 var(--body); color: #8a5a00; vertical-align: middle; }
+.s7-campanha { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.s7-campanha .j { width: 34px; height: 34px; border-radius: 50%; border: 3px solid #3A3833; background: #1b1a17; display: grid; place-items: center; font: 900 14px/1 var(--display); color: #555; }
+.s7-campanha .j.v { background: var(--lamp); border-color: var(--lamp); color: var(--ink); box-shadow: 0 0 12px rgba(255,194,26,.7); }
+.s7-campanha .j.agora { border-color: var(--lamp); color: var(--lamp); }
+.s7-gols { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 4px 16px; font: 900 clamp(14px, 2.6vw, 22px)/1.2 var(--dots); color: var(--lamp); text-transform: uppercase; }
+.s7-gols .deles { grid-column: 2; text-align: right; }
+.s7-gols .nosso { grid-column: 1; }
+.s7-acoes { display: flex; gap: 12px; flex-wrap: wrap; }
+.s7-card { background: var(--paper); border: 4px solid var(--ink); box-shadow: 8px 8px 0 rgba(0,0,0,.35); padding: 22px; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 20px; }
+@media (max-width: 760px) { .s7-card { grid-template-columns: 1fr; } }
+.s7-card .kicker { font: 700 14px/1 var(--body); text-transform: uppercase; letter-spacing: .1em; }
+.s7-card h2 { font: 900 clamp(40px, 7vw, 72px)/.95 var(--display); text-transform: uppercase; margin: 6px 0 10px; }
+.s7-card .placar-final { background: #111; padding: 12px 14px; font: 900 clamp(15px, 3vw, 26px)/1.25 var(--dots); white-space: nowrap; color: var(--lamp); text-transform: uppercase; }
+.s7-card .trilha { list-style: none; margin: 12px 0 0; padding: 0; font: 600 15px/1.6 var(--body); }
+.s7-card .trilha b { font-family: var(--display); }
+.s7-marcas { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.s7-marcas span { background: var(--ink); color: var(--lamp); padding: 6px 10px; font: 800 14px/1 var(--display); text-transform: uppercase; }
+
+/* The start: mode cards and formation chips. */
+.s7-inicio { display: flex; flex-direction: column; gap: 18px; }
+.s7-inicio fieldset { border: 0; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 10px; }
+.s7-inicio legend { font: 800 18px/1 var(--display); text-transform: uppercase; color: var(--lamp); margin-bottom: 10px; }
+.s7-modo { flex: 1 1 220px; display: flex; flex-direction: column; gap: 6px; text-align: left; padding: 14px 16px; background: var(--paper); border: 3px solid var(--ink); cursor: pointer; font: inherit; }
+.s7-modo b { font: 800 22px/1 var(--display); text-transform: uppercase; }
+.s7-modo span { font: 500 14px/1.35 var(--body); }
+.s7-modo[aria-pressed="true"] { background: var(--lamp); }
+/* Picking: the free slots the chosen player fits light up. */
+.s7-vaga { font: inherit; cursor: default; }
+.s7-vaga.livre { cursor: pointer; }
+.s7-escolhendo .s7-vaga.livre { border-color: var(--lamp); }
+.s7-vaga.livre.encaixa { background: rgba(255, 194, 26, .35); }
+.s7-op[disabled] { cursor: default; }
+.s7-campanha .j.d { background: #5a1d1d; border-color: #a33; color: #fff; }
+.s7-penalti { display: flex; flex-direction: column; gap: 12px; }
+.s7-erro { background: var(--paper); border: 3px solid #a33; padding: 12px 14px; font-weight: 600; }
+.s7-vaga.ocupada { color: var(--ink); }
+.s7-acoes .btn.secondary { background: var(--paper); color: var(--ink); border-color: var(--ink); }
+@media (max-width: 760px) { .s7-vaga b { font-size: 12px; } .s7-vaga small { font-size: 10px; } }
+.s7-inicio .chip { background: var(--paper); color: var(--ink); border-color: var(--ink); }
+.s7-inicio .chip[aria-pressed="true"] { background: var(--lamp); color: var(--ink); }
+.s7-inicio .btn { background: var(--lamp); color: var(--ink); }
+.s7 .btn.secondary { background: var(--paper); color: var(--ink); border-color: var(--ink); }
+.s7-ocupado .s7-oferta, .s7-ocupado .s7-escalar-campo { opacity: .6; pointer-events: none; }

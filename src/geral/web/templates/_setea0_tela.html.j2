@@ -1,0 +1,72 @@
+{# 7a0 do clube: the screens (start → pick → games → card); setea0.js drives them. #}
+<div class="s7" id="s7">
+
+  <p class="s7-erro" id="s7-erro" role="alert" hidden></p>
+
+  {# 0. Start: mode and formation. #}
+  <div class="s7-tela board match s7-inicio" id="s7-inicio"{% if compartilhada %} hidden{% endif %}>
+    <span class="lamp meta">Monte o time dos sonhos do {{ nome }}</span>
+    <fieldset id="s7-modos"><legend>Modo</legend>
+      <button type="button" class="s7-modo" data-modo="classico" aria-pressed="true"><b>Clássico</b><span>As estrelas de cada jogador à vista e 3 trocas de época.</span></button>
+      <button type="button" class="s7-modo" data-modo="almanaque" aria-pressed="false"><b>Almanaque</b><span>Sem estrelas e 1 troca: só ajuda quem conhece a história.</span></button>
+    </fieldset>
+    <fieldset id="s7-esquemas"><legend>Esquema</legend></fieldset>
+    <button class="btn" type="button" id="s7-comecar">Jogar o dado</button>
+  </div>
+
+  {# 1. Pick: one player per round, from the era the die drew. #}
+  <div class="s7-tela" id="s7-escalar" hidden>
+    <div class="board match s7-dado">
+      <span class="lamp meta" id="s7-rodada"></span>
+      <div class="s7-sorteio">
+        <span class="s7-decada"><span class="s7-die" aria-hidden="true">⚄</span><span id="s7-epoca"></span></span>
+        <button class="s7-trocar" type="button" id="s7-trocar"></button>
+      </div>
+    </div>
+    <div class="s7-campo-e-oferta">
+      <div class="s7-campo s7-escalar-campo" id="s7-campo" aria-label="Seu time"></div>
+      <div class="s7-oferta">
+        <h3 id="s7-oferta-titulo"></h3>
+        <div class="s7-oferta" id="s7-lista"></div>
+        <p class="lamp meta" id="s7-dica" hidden>Agora toque numa vaga livre do campo.</p>
+      </div>
+    </div>
+  </div>
+
+  {# 2. Games: the old board, one game at a time. #}
+  <div class="s7-tela" id="s7-jogos" hidden>
+    <div class="board match">
+      <div class="s7-campanha" id="s7-campanha"></div>
+      <div class="teams">
+        <div class="row"><span class="lamp team" id="s7-nos"></span><span class="lamp goals" id="s7-gols-nos"></span></div>
+        <div class="row"><span class="lamp team" id="s7-eles"></span><span class="lamp goals" id="s7-gols-eles"></span></div>
+      </div>
+      <ul class="s7-gols" id="s7-gols"></ul>
+      <span class="lamp meta" id="s7-situacao"></span>
+    </div>
+    <div class="s7-penalti" id="s7-penalti" hidden></div>
+    <div class="s7-acoes" id="s7-acoes">
+      <button class="btn" type="button" id="s7-proximo">Próximo jogo</button>
+      <button class="btn secondary" type="button" id="s7-simular">Simular o resto</button>
+    </div>
+  </div>
+
+  {# 3. Card: what goes to the group chat. #}
+  <div class="s7-tela" id="s7-fim" hidden>
+    <div class="s7-card">
+      <div>
+        <span class="kicker" id="s7-kicker"></span>
+        <h2 id="s7-titulo"></h2>
+        <div class="s7-campanha" id="s7-card-campanha"></div>
+        <div class="placar-final" id="s7-placar-final" style="margin-top:12px"></div>
+        <ul class="trilha" id="s7-trilha"></ul>
+        <div class="s7-marcas" id="s7-marcas"></div>
+      </div>
+      <div class="s7-campo" id="s7-card-campo"></div>
+    </div>
+    <div class="s7-acoes">
+      <button class="btn" type="button" id="s7-compartilhar" hidden>Compartilhar</button>
+      <a class="btn secondary" id="s7-de-novo" href="/jogos/7a0/{{ edicao }}">{% if compartilhada %}Jogar o seu{% else %}Jogar de novo{% endif %}</a>
+    </div>
+  </div>
+</div>
