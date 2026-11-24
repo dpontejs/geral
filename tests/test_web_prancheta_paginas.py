@@ -129,3 +129,13 @@ def test_prancheta_aparece_em_jogos_e_nas_abas(store, mailer, clock):
     assert 'href="/jogos/prancheta"' in aba
     propria = app.get("/jogos/prancheta").text
     assert 'href="/jogos/prancheta" aria-current="page">Prancheta' in propria
+
+
+def test_quadro_sem_marcacoes_do_campo():
+    """The board is plain: pitch lines would hand out words like "meia-lua" or "escanteio"."""
+    from pathlib import Path
+
+    import geral
+
+    js = (Path(geral.__file__).parent / "static/geral/prancheta.js").read_text()
+    assert 'class="campo"' not in js
