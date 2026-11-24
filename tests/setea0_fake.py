@@ -9,7 +9,8 @@ LINHAS = ["GOL", "LAT", "ZAG", "ZAG", "MEI", "MEI", "MEI", "ATA", "ATA"]  # cycl
 
 
 def dados_de_teste(semente: int = 7, escala: float = 1.0) -> Dados:
-    """`escala` multiplies the ABC's strengths (capped at 99), for a stronger synthetic club."""
+    """`escala` multiplies every club's strengths (capped at 99): strength is relative to the
+    club, so a stronger club meets stronger opponents too."""
     rng = random.Random(semente)
     abc = []
     for decada in (1970, 1980, 2000, 2010):
@@ -32,7 +33,7 @@ def dados_de_teste(semente: int = 7, escala: float = 1.0) -> Dados:
                 nome=f"ABC 1940 {i}",
                 posicoes=[posicao],
                 passagens=[(1942, 1945)],
-                forca=60,
+                forca=min(99, round(60 * escala)),
             )
         )
     clubes = {"abc": Clube(nome="ABC", jogadores=abc)}
@@ -44,7 +45,7 @@ def dados_de_teste(semente: int = 7, escala: float = 1.0) -> Dados:
                     id=f"Q{slug}{i}",
                     nome=f"{slug} {i}",
                     posicoes=[LINHAS[i % len(LINHAS)]],
-                    forca=40 + i * 55 // 17,
+                    forca=min(99, round((40 + i * 55 // 17) * escala)),
                 )
                 for i in range(18)
             ],

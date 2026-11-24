@@ -14,7 +14,8 @@ ESQUEMAS: dict[str, tuple[Posicao, ...]] = {
     "3-5-2": ("GOL", "ZAG", "ZAG", "ZAG", "MEI", "MEI", "MEI", "MEI", "MEI", "ATA", "ATA"),
     "5-3-2": ("GOL", "LAT", "LAT", "ZAG", "ZAG", "ZAG", "MEI", "MEI", "MEI", "ATA", "ATA"),
 }
-MODOS: dict[str, int] = {"classico": 3, "almanaque": 1}  # decade rerolls per game
+MODOS: dict[str, int] = {"classico": 3, "almanaque": 1}  # era rerolls per game
+MIN_EPOCA = 8  # players an era needs; thin decades join the next ones until it has them
 
 
 class Jogador(BaseModel):
@@ -37,6 +38,55 @@ class Jogador(BaseModel):
         return {ano // 10 * 10 for inicio, fim in self.passagens for ano in range(inicio, fim + 1)}
 
 
+class Epoca(BaseModel):
+    """What the die draws: one decade, or a run of thin ones ("anos 60 a 80")."""
+
+    inicio: int  # first decade, 1960
+    fim: int  # last decade, inclusive
+    rotulo: str
+
+    def contem(self, jogador: Jogador) -> bool:
+        return any(self.inicio <= d <= self.fim for d in jogador.decadas())
+
+
+def _curta(decada: int) -> str:
+    return str(decada) if decada >= 2000 else f"{decada % 100:02d}"
+
+
+def _epoca(inicio: int, fim: int) -> Epoca:
+    rotulo = f"anos {_curta(inicio)}" + (f" a {_curta(fim)}" if fim != inicio else "")
+    return Epoca(inicio=inicio, fim=fim, rotulo=rotulo)
+
+
+def epocas(jogadores: list[Jogador], minimo: int = MIN_EPOCA) -> list[Epoca]:
+    """A club's eras, oldest first: decades in order, joined until an era has `minimo` players.
+
+    A thin run left at the end joins the last era; a club with fewer than `minimo` players in all
+    has a single era.
+    """
+    por_decada: dict[int, set[str]] = {}
+    for jogador in jogadores:
+        for decada in jogador.decadas():
+            por_decada.setdefault(decada, set()).add(jogador.id)
+    grupos: list[tuple[int, int, set[str]]] = []
+    aberto: tuple[int, set[str]] | None = None
+    for decada in sorted(por_decada):
+        inicio, ids = aberto or (decada, set())
+        ids = ids | por_decada[decada]
+        if len(ids) >= minimo:
+            grupos.append((inicio, decada, ids))
+            aberto = None
+        else:
+            aberto = (inicio, ids)
+    if aberto:
+        if grupos:
+            inicio, _, ids = grupos.pop()
+            grupos.append((inicio, max(por_decada), ids | aberto[1]))
+        else:
+            grupos.append((aberto[0], max(por_decada), aberto[1]))
+    return [_epoca(inicio, fim) for inicio, fim, _ in grupos]
+
+
 class Clube(BaseModel):
     nome: str
     jogadores: list[Jogador]
@@ -50,7 +100,7 @@ class Dados(BaseModel):
 class Rodada(BaseModel):
     rodada: int  # 0-10
     troca: int  # rerolls already used
-    decada: int
+    epoca: Epoca
     jogadores: list[Jogador]
     trocas_restantes: int
 
@@ -64,7 +114,7 @@ class Escolha(BaseModel):
 
 class Escalado(BaseModel):
     jogador: Jogador
-    decada: int
+    epoca: Epoca
     vaga: int
 
 
