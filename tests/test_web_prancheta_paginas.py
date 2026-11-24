@@ -101,3 +101,17 @@ def test_apelidos_da_sumula_escapados(cliente):
     html = cliente(PranchetaFalsa(sumulas={"AAAAAA": sumula})).get("/jogos/prancheta/s/AAAAAA")
     assert "<b>x</b>" not in html.text
     assert "&lt;b&gt;x&lt;/b&gt;" in html.text
+
+
+def test_app_liga_as_paginas_ao_servidor(store, mailer, clock):
+    """In the real app: a room created by the API opens the game at its short link."""
+    from webkit import make_client
+
+    app = make_client(store, mailer, clock)
+    sala = app.post("/api/jogos/prancheta/salas", json={"apelido": "Marquinho", "rodadas": 1})
+    assert sala.status_code == 201
+    pagina = app.get(f"/jogos/prancheta/s/{sala.json()['id']}")
+    assert pagina.status_code == 200
+    assert f'data-sala="{sala.json()["id"]}"' in pagina.text
+    assert app.get("/jogos/prancheta").status_code == 200
+    assert app.get("/jogos/prancheta/s/zzzzzz").status_code == 404
