@@ -1,31 +1,28 @@
+import random
+
 import pytest
 from setea0_fake import dados_de_teste
+from setea0_times import gulosas
 
 from geral.games.setea0 import motor
-from geral.games.setea0.modelos import ESQUEMAS, Escolha, JogadaInvalida
+from geral.games.setea0.modelos import (
+    Campanha,
+    Clube,
+    Cobranca,
+    Dados,
+    Escolha,
+    JogadaInvalida,
+    Jogador,
+    Partida,
+    PedidoDePenalti,
+)
 
 DADOS = dados_de_teste()
 LINHA = {"GOL": "GOL", "ZAG": "DEF", "LAT": "DEF", "MEI": "MEI", "ATA": "ATA"}
 
 
 def escolhas_validas(semente="s", esquema="4-4-2", modo="classico", trocas=None):
-    """A legal lineup: per round, the strongest offered player that fits a free slot."""
-    trocas = trocas or [0] * 11
-    livres = list(range(11))
-    usados: set[str] = set()
-    escolhas = []
-    for rodada in range(11):
-        r = motor.oferta(DADOS, "abc", semente, rodada, trocas[rodada], modo)
-        candidatos = [j for j in r.jogadores if j.id not in usados]
-        melhor = max(
-            ((j, v) for j in candidatos for v in livres),
-            key=lambda jv: (motor.encaixe(jv[0], ESQUEMAS[esquema][jv[1]]), jv[0].forca),
-        )
-        jogador, vaga = melhor
-        livres.remove(vaga)
-        usados.add(jogador.id)
-        escolhas.append(Escolha(rodada=rodada, troca=trocas[rodada], jogador=jogador.id, vaga=vaga))
-    return escolhas
+    return gulosas(DADOS, "abc", semente, esquema, modo, trocas)
 
 
 def test_decadas_com_ao_menos_8_jogadores():
@@ -128,8 +125,6 @@ def test_escalacao_trapaceada_da_jogada_invalida(regra):
 
 def test_mesmo_jogador_em_duas_decadas_nao_entra_duas_vezes():
     # a player whose spell crosses two decades shows up in both offers
-    from geral.games.setea0.modelos import Clube, Dados, Jogador
-
     abc = list(DADOS.clubes["abc"].jogadores)
     ponte = Jogador(id="Qponte", nome="Ponte", posicoes=["MEI"], passagens=[(1979, 1980)], forca=99)
     dados = Dados(
@@ -157,3 +152,164 @@ def test_mesmo_jogador_em_duas_decadas_nao_entra_duas_vezes():
         es.append(Escolha(rodada=rodada, troca=0, jogador=jogador, vaga=livres.pop(0)))
     with pytest.raises(JogadaInvalida):
         motor.escalar(dados, "abc", semente, "classico", "4-4-2", es)
+
+
+# --- partida, disputa e campanha ---
+
+MOTOR = Cobranca(resultado="motor")
+GOL = Cobranca(resultado="gol")
+FORA = Cobranca(resultado="fora")
+
+
+def _jogador(posicao, forca=80):
+    return Jogador(id=f"Q{posicao}{forca}", nome=posicao, posicoes=[posicao], forca=forca)
+
+
+def test_mesma_entrada_mesma_campanha():
+    es = escolhas_validas("igual")
+    a = motor.campanha_motor(DADOS, "abc", "igual", "classico", "4-4-2", es)
+    b = motor.campanha_motor(DADOS, "abc", "igual", "classico", "4-4-2", es)
+    assert a == b and isinstance(a, Campanha) and a.versao == "teste"
+    assert 1 <= len(a.partidas) <= 7
+    for p in a.partidas:
+        minutos = [g.minuto for g in p.gols]
+        assert minutos == sorted(minutos) and len(set(minutos)) == len(minutos)
+        assert all(1 <= m <= 90 for m in minutos)
+        assert p.nosso == sum(g.nosso for g in p.gols)
+        assert p.deles == sum(not g.nosso for g in p.gols)
+
+
+@pytest.mark.parametrize(
+    ("posicao", "vaga", "esperado"),
+    [
+        ("ATA", "ATA", 1.0),
+        ("LAT", "ZAG", 0.85),
+        ("ZAG", "LAT", 0.85),
+        ("LAT", "MEI", 0.85),
+        ("MEI", "ATA", 0.85),
+        ("ATA", "MEI", 0.85),
+        ("GOL", "ATA", 0.3),
+        ("ZAG", "GOL", 0.3),
+        ("ZAG", "ATA", 0.6),
+        ("LAT", "ATA", 0.6),
+    ],
+)
+def test_fora_de_posicao_perde_forca(posicao, vaga, esperado):
+    assert motor.encaixe(_jogador(posicao), vaga) == esperado
+
+
+def test_time_fora_de_posicao_e_mais_fraco():
+    escalados = motor.escalar(DADOS, "abc", "s", "classico", "4-4-2", escolhas_validas())
+    certo = motor.forca_do_time(escalados, "4-4-2")
+    trocado = [e.model_copy(update={"vaga": 10 - e.vaga}) for e in escalados]
+    assert motor.forca_do_time(trocado, "4-4-2") < certo
+
+
+def test_adversario_tem_11_no_4_4_2():
+    time = motor.adversario(DADOS, "bahia")
+    assert len(time) == 11 and len({j.id for j in time}) == 11
+    assert [j.posicoes[0] for j in time][:1] == ["GOL"]
+
+
+def test_jogos_1_a_6_em_ordem_crescente():
+    forcas = [motor.forca_do_adversario(DADOS, "abc", n) for n in range(1, 7)]
+    assert forcas == sorted(forcas) and len(set(forcas)) == 6
+
+
+def test_final_e_o_classico_e_ao_menos_tao_forte_quanto_o_6o():
+    assert motor.forca_do_adversario(DADOS, "abc", 7) >= motor.forca_do_adversario(DADOS, "abc", 6)
+    final = motor.adversarios(DADOS, "abc")
+    assert final[-1] == "america-rn" and len(final) == 7
+
+
+def _semente_com_empate(n=1):
+    for i in range(400):
+        semente = f"e{i}"
+        es = escolhas_validas(semente)
+        p = motor.jogo(DADOS, "abc", semente, "classico", "4-4-2", es, [], n)
+        if isinstance(p, PedidoDePenalti):
+            return semente, es
+    raise AssertionError("no draw in 400 seeds")
+
+
+def test_empate_pede_cobranca_do_torcedor():
+    semente, es = _semente_com_empate()
+    cobrancas: list[Cobranca] = []
+    pedidos = 0
+    while True:
+        r = motor.jogo(DADOS, "abc", semente, "classico", "4-4-2", es, [cobrancas], 1)
+        if isinstance(r, Partida):
+            break
+        pedidos += 1
+        assert r.nosso == r.deles and r.n == 1 and r.adversario == "ceara"
+        assert len(r.disputa.nossas) == len(cobrancas) == len(r.disputa.deles)
+        assert r.cobrador and 1 <= r.chance <= 99
+        cobrancas = [*cobrancas, GOL]
+        assert pedidos < 50
+    assert r.disputa is not None and r.disputa.nossas == [True] * len(r.disputa.nossas)
+    assert len(r.disputa.deles) >= 1  # the opponent kicked on his own
+    assert pedidos == len(r.disputa.nossas) >= 3
+
+
+def test_motor_bate_os_penaltis():
+    semente, es = _semente_com_empate()
+    a = motor.jogo(DADOS, "abc", semente, "classico", "4-4-2", es, [[MOTOR] * 40], 1)
+    b = motor.jogo(DADOS, "abc", semente, "classico", "4-4-2", es, [[MOTOR] * 40], 1)
+    assert isinstance(a, Partida) and a == b and a.disputa is not None
+    todas = [[MOTOR] * 40 for _ in range(7)]
+    com_motor = motor.campanha(DADOS, "abc", semente, "classico", "4-4-2", es, todas)
+    assert com_motor == motor.campanha_motor(DADOS, "abc", semente, "classico", "4-4-2", es)
+
+
+def test_disputa_termina():
+    ruins = [_jogador("ATA", 50)] * 5
+    disputa, venceu = motor.disputa(
+        random.Random(1), ruins, [FORA] * 100, chance_deles=0.0, goleiros=(70.0, 70.0)
+    )
+    assert venceu in (True, False)
+    assert len(disputa.nossas) == len(disputa.deles) == 20
+    assert not any(disputa.nossas) and not any(disputa.deles)
+    _, mais_forte = motor.disputa(
+        random.Random(1), ruins, [FORA] * 100, chance_deles=0.0, goleiros=(80.0, 70.0)
+    )
+    assert mais_forte is True
+
+
+def test_disputa_pendente_quando_faltam_cobrancas():
+    disputa, venceu = motor.disputa(
+        random.Random(1), [_jogador("ATA")] * 5, [GOL, GOL], chance_deles=1.0, goleiros=(70, 70)
+    )
+    assert venceu is None and disputa.nossas == [True, True] and disputa.deles == [True, True]
+
+
+def test_disputa_acaba_quando_nao_da_mais_para_alcancar():
+    disputa, venceu = motor.disputa(
+        random.Random(1), [_jogador("ATA")] * 5, [GOL] * 5, chance_deles=0.0, goleiros=(70, 70)
+    )
+    assert venceu is True and len(disputa.nossas) == 3 and len(disputa.deles) == 3
+
+
+def test_jogo_depois_da_eliminacao_e_invalido():
+    for i in range(200):
+        semente = f"x{i}"
+        es = escolhas_validas(semente)
+        c = motor.campanha_motor(DADOS, "abc", semente, "classico", "4-4-2", es)
+        if not c.campeao:
+            caiu = len(c.partidas)
+            assert not c.partidas[-1].venceu
+            todas = [[MOTOR] * 40 for _ in range(7)]
+            if caiu < 7:
+                with pytest.raises(JogadaInvalida):
+                    motor.jogo(DADOS, "abc", semente, "classico", "4-4-2", es, todas, caiu + 1)
+            with pytest.raises(JogadaInvalida):
+                motor.jogo(DADOS, "abc", semente, "classico", "4-4-2", es, todas, 8)
+            with pytest.raises(JogadaInvalida):
+                motor.jogo(DADOS, "abc", semente, "classico", "4-4-2", es, todas, 0)
+            return
+    raise AssertionError("no elimination in 200 seeds")
+
+
+def test_campanha_com_disputa_pendente_e_invalida():
+    semente, es = _semente_com_empate()
+    with pytest.raises(JogadaInvalida):
+        motor.campanha(DADOS, "abc", semente, "classico", "4-4-2", es, [])
