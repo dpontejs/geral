@@ -1,0 +1,665 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Prancheta (rascunho)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Big+Shoulders+Stencil+Display:wght@800&family=Doto:wght@900&family=Barlow:wght@400;500;600;700&display=swap">
+<style>
+/* Rascunho da Prancheta (fatia C): eventos falsos, nada de servidor. A prancheta do técnico
+   (quadro verde, giz) é só a superfície de desenho; em volta é a Geral: placar de lâmpadas para a
+   palavra e o relógio, papel para chutes e súmula, gramado marcado de fundo. */
+:root {
+  --paper: #EFE4CC; --paper-2: #E6D8BA; --concrete: #8E8B84; --concrete-lt: #B9B5AC;
+  --ink: #14231A; --ink-soft: #3F3C36; --ticket: #E3B23C; --board: #0B0B0A; --lamp: #FFC21A;
+  --lamp-off: #1D1C18; --turf: #0E3320; --pitch: #1F7A3D; --pitch-2: #248A46;
+  --chalk: rgba(255, 255, 255, .7); --on-grass: 0 1px 2px var(--turf), 0 0 6px rgba(14, 51, 32, .6);
+  --wash: #D3E2C6; --certo: #2F7D3A; --cartao: #C8342B;
+  --lousa: #2C4536; /* the coach's board: a slate green, darker and greyer than the grass */
+  --display: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+  --stencil: "Big Shoulders Stencil Display", "Big Shoulders Display", Impact, sans-serif;
+  --dots: "Doto", ui-monospace, monospace;
+  --body: "Barlow", "Helvetica Neue", Arial, sans-serif;
+  color-scheme: light;
+}
+* { box-sizing: border-box; }
+html { background: var(--turf); }
+body { margin: 0; background: var(--wash); color: var(--ink); font: 17px/1.5 var(--body); }
+.wrap { max-width: 1180px; margin: 0 auto; padding-inline: 16px; }
+h1, h2, h3 { font-family: var(--display); font-weight: 900; text-transform: uppercase; line-height: .92; margin: 0; text-wrap: balance; }
+button { font: inherit; color: inherit; }
+:focus-visible { outline: 3px solid var(--ticket); outline-offset: 2px; }
+[hidden] { display: none !important; }
+.board { background-color: var(--board); background-image: radial-gradient(circle, var(--lamp-off) 1.6px, transparent 2.1px); background-size: 7px 7px; color: var(--lamp); }
+.lamp { font-family: var(--dots); font-weight: 900; text-transform: uppercase; color: var(--lamp); letter-spacing: .1em; line-height: 1; text-shadow: 0 0 6px rgba(255, 194, 26, .55), 0 0 18px rgba(255, 170, 0, .25); }
+.btn { display: inline-block; font: 900 22px/1 var(--display); text-transform: uppercase; letter-spacing: .06em; background: var(--turf); color: var(--paper); border: 0; padding: 14px 22px; min-height: 50px; cursor: pointer; text-decoration: none; }
+.btn:hover { background: #000; color: var(--lamp); }
+.btn.secondary { background: var(--paper); color: var(--ink); border: 3px solid var(--ink); }
+.btn.lamp-btn { background: var(--lamp); color: var(--ink); }
+.btn:disabled { opacity: .45; cursor: default; }
+
+/* dev toolbar (only in the draft) */
+.dev { background: #000; color: #9a968c; font: 600 12px/1 var(--body); display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; padding: 6px 12px; }
+.dev a { color: #ddd; text-decoration: none; padding: 4px 6px; border: 1px solid #333; }
+.dev a.on { color: #000; background: var(--lamp); border-color: var(--lamp); }
+.dev span { margin-left: auto; }
+
+header { background: var(--turf); color: var(--paper); }
+header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 12px; flex-wrap: wrap; }
+.brand { font: 800 34px/1 var(--stencil); letter-spacing: .04em; }
+header nav { display: flex; gap: 4px; font: 800 17px/1 var(--display); text-transform: uppercase; letter-spacing: .06em; }
+header nav a { text-decoration: none; padding: 10px; color: inherit; }
+header nav a.on { color: var(--lamp); box-shadow: inset 0 -4px 0 var(--lamp); }
+
+.wall { position: relative; overflow: clip; background-color: var(--pitch); background-image: repeating-linear-gradient(90deg, var(--pitch) 0 90px, var(--pitch-2) 90px 180px); }
+.wall::before { content: ""; position: absolute; right: -160px; top: -160px; width: 420px; height: 420px; border: 5px solid var(--chalk); border-radius: 50%; pointer-events: none; }
+.wall::after { content: ""; position: absolute; left: 0; right: 0; bottom: 0; border-top: 5px solid #fff; pointer-events: none; }
+.jogo .wrap { position: relative; display: flex; flex-direction: column; gap: 22px; padding-block: 28px 48px; }
+.game-tabs { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.game-tabs a { font: 800 17px/1 var(--display); text-transform: uppercase; letter-spacing: .05em; text-decoration: none; padding: 11px 14px; min-height: 44px; display: inline-flex; align-items: center; background: var(--turf); color: var(--paper); border: 3px solid var(--turf); }
+.game-tabs a.on { background: var(--board); color: var(--lamp); border-color: var(--board); }
+.game-tabs a.all { margin-left: auto; background: transparent; border-color: transparent; color: #fff; text-shadow: var(--on-grass); }
+.game-title { display: flex; justify-content: center; align-items: center; gap: 14px; margin: 24px 0 0; }
+.game-title h1 { font-size: clamp(52px, 8vw, 104px); color: #fff; text-shadow: 5px 5px 0 var(--turf); }
+.rules-open { flex: none; width: 44px; height: 44px; border-radius: 50%; border: 3px solid var(--ink); background: var(--paper); color: var(--ink); font: 900 24px/1 var(--display); cursor: pointer; box-shadow: 3px 3px 0 rgba(0, 0, 0, .35); }
+.credit { font-size: 13px; color: var(--paper); margin: 0; text-shadow: var(--on-grass); }
+
+/* ---- the live stage: fits the screen's height, scrolled to it --------------------------- */
+.stage { display: flex; flex-direction: column; gap: 12px; }
+.stage.ao-vivo { display: grid; gap: 10px; height: calc(100svh - 16px); min-height: 540px;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto auto auto minmax(0, 1fr) auto;
+  grid-template-areas: "placar" "quadro" "bandeja" "jog" "feed" "entrada"; }
+.ao-vivo .placar { grid-area: placar; } .ao-vivo .slot { grid-area: quadro; }
+.ao-vivo .bandeja { grid-area: bandeja; } .ao-vivo .jogadores { grid-area: jog; }
+.ao-vivo .feed { grid-area: feed; } .ao-vivo .entrada { grid-area: entrada; }
+.lado { display: contents; }
+
+/* The scoreboard: what's going on, the clock, and the word as lamps. */
+.placar { border: 3px solid #000; box-shadow: 0 0 0 6px var(--turf), 6px 6px 0 6px rgba(0, 0, 0, .3); margin: 6px; padding: 9px 12px 11px; display: flex; flex-direction: column; gap: 8px; }
+.placar-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.placar .meta { font-size: 12px; letter-spacing: .08em; opacity: .9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.placar .relogio { font-size: 30px; letter-spacing: .02em; }
+.relogio .dp { display: inline-block; width: .16em; height: .56em; margin: 0 .08em; vertical-align: .1em; filter: drop-shadow(0 0 4px rgba(255, 194, 26, .7));
+  background: radial-gradient(circle, var(--lamp) 60%, transparent 66%) top / .16em .16em no-repeat, radial-gradient(circle, var(--lamp) 60%, transparent 66%) bottom / .16em .16em no-repeat; }
+.placar .relogio.fim { animation: blink 1s steps(1) infinite; }
+@keyframes blink { 50% { opacity: .25; } }
+.palavra { container-type: inline-size; display: flex; justify-content: center; gap: 4px; min-height: 36px; align-items: center; }
+.palavra .l { --c: min(34px, calc((100cqw - (var(--n) - 1) * 4px) / var(--n))); width: var(--c); height: calc(var(--c) * 1.2); display: grid; place-items: center;
+  border: 2px solid #2C2A24; background: rgba(0, 0, 0, .55); font: 900 calc(var(--c) * .78)/1 var(--dots); color: var(--lamp); }
+.palavra .l.acesa { border-color: #5a4a12; text-shadow: 0 0 6px rgba(255, 194, 26, .75), 0 0 16px rgba(255, 170, 0, .35); }
+.palavra .l.apagada::after { content: ""; width: 34%; height: 3px; background: #3A3730; margin-top: 50%; }
+.palavra .l.vao { border: 0; background: transparent; }
+.palavra .l.sinal { border: 0; background: transparent; }
+.palavra .aviso { font-size: 15px; letter-spacing: .08em; text-align: center; line-height: 1.3; }
+
+/* The coach's board: slate green, a concrete-grey frame, the pitch marked in faint chalk. */
+.slot { min-width: 0; min-height: 0; display: grid; place-items: center; }
+.prancheta { position: relative; padding: 9px; background: var(--concrete-lt); border: 3px solid var(--ink); box-shadow: 6px 6px 0 rgba(0, 0, 0, .35); }
+.lousa { position: relative; overflow: hidden; background: var(--lousa);
+  background-image: radial-gradient(ellipse 60% 45% at 30% 35%, rgba(255, 255, 255, .06), transparent 70%), radial-gradient(ellipse 50% 40% at 75% 70%, rgba(255, 255, 255, .045), transparent 70%); }
+.lousa svg.campo { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .14; pointer-events: none; }
+.lousa canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
+.lousa.pode canvas { cursor: crosshair; }
+.sobre { position: absolute; inset: 0; display: grid; place-items: center; padding: 12px; }
+.sobre.escuro { background: rgba(10, 22, 15, .55); }
+.giz-texto { font: 800 clamp(20px, 4vw, 34px)/1.1 var(--display); text-transform: uppercase; letter-spacing: .04em; color: rgba(243, 241, 234, .85); text-align: center; }
+.giz-texto small { display: block; font: 600 15px/1.4 var(--body); text-transform: none; letter-spacing: 0; opacity: .8; margin-top: 6px; }
+
+/* Choosing the word: three tickets of the same size. */
+.opcoes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; width: 100%; max-width: 640px; }
+.opcoes h3 { grid-column: 1 / -1; color: #fff; font-size: 22px; text-align: center; text-shadow: 2px 2px 0 rgba(0, 0, 0, .4); }
+.opcao { height: 132px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; text-align: left; padding: 10px 12px; background: var(--paper); border: 3px solid var(--ink); box-shadow: 4px 4px 0 rgba(0, 0, 0, .4); cursor: pointer; }
+.opcao:hover { background: var(--ticket); }
+.opcao .nivel { font: 700 12px/1 var(--body); text-transform: uppercase; letter-spacing: .12em; }
+.opcao b { font: 900 26px/1 var(--display); text-transform: uppercase; }
+.opcao .vale { font: 600 14px/1.2 var(--body); color: var(--ink-soft); }
+
+/* Between turns: the word revealed, a newspaper clipping on the board. */
+.recorte { background: var(--paper); border: 3px solid var(--ink); box-shadow: 6px 6px 0 rgba(0, 0, 0, .4); padding: 12px 16px 14px; transform: rotate(-1.2deg); width: min(100%, 420px); }
+.recorte .kicker { display: flex; justify-content: space-between; font: 700 12px/1 var(--body); text-transform: uppercase; letter-spacing: .12em; border-bottom: 2px solid var(--ink); padding-bottom: 5px; }
+.recorte h2 { font-size: clamp(30px, 6vw, 46px); margin: 8px 0 8px; }
+.recorte ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 2px 14px; font-size: 15px; }
+.recorte li { display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px dotted rgba(20, 35, 26, .35); }
+.recorte li b { font: 900 18px/1.3 var(--display); }
+.recorte .proximo { margin: 8px 0 0; font-size: 14px; color: var(--ink-soft); }
+
+/* The tray under the board: chalk, eraser, widths, undo, clear. */
+.bandeja { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; align-items: center; background: var(--concrete-lt); border: 3px solid var(--ink); padding: 6px; box-shadow: 4px 4px 0 rgba(0, 0, 0, .3); }
+.bandeja .grupo { display: flex; gap: 5px; }
+.ferr { width: 38px; height: 38px; display: grid; place-items: center; padding: 0; border: 2px solid var(--ink); background: var(--lousa); cursor: pointer; }
+.ferr[aria-pressed="true"] { outline: 3px solid var(--lamp); outline-offset: -1px; box-shadow: 0 0 0 2px var(--ink); }
+.ferr .giz { width: 20px; height: 20px; border-radius: 50%; background: var(--c); box-shadow: inset -2px -3px 0 rgba(0, 0, 0, .18); }
+.ferr .esp { border-radius: 50%; background: #F3F1EA; }
+.ferr svg { display: block; }
+.ferr.txt { width: auto; padding: 0 12px; background: var(--paper); color: var(--ink); font: 800 16px/1 var(--display); text-transform: uppercase; letter-spacing: .04em; }
+.ferr.txt:active, .ferr:active { transform: translate(1px, 1px); }
+
+/* Players: cards of one size; the drawer on the board, who guessed in green. */
+.jogadores { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+.jog { flex: 0 0 132px; height: 58px; position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto; align-content: center; align-items: baseline; gap: 4px 6px; padding: 5px 8px; background: var(--paper); border: 2px solid var(--ink); cursor: pointer; text-align: left; }
+.jog .nome { grid-column: 1 / -1; font: 800 18px/1.25 var(--display); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.jog .nome i { font-style: normal; font: 600 11px/1 var(--body); text-transform: lowercase; color: var(--ink-soft); }
+.jog .pts { grid-row: 2; grid-column: 2; font: 900 19px/1 var(--display); text-align: right; white-space: nowrap; }
+.jog .pts small { display: none; }
+.jog .st { grid-row: 2; grid-column: 1; font: 700 11px/1 var(--body); text-transform: uppercase; letter-spacing: .06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink-soft); }
+.jog .st .selo { background: var(--ticket); color: var(--ink); padding: 1px 4px; }
+.jog .st .longo { display: none; }
+.jog .st .vermelho { display: inline-block; width: 7px; height: 10px; background: var(--cartao); vertical-align: -1px; margin-right: 2px; }
+.jog.desenha { background: var(--board); color: var(--lamp); border-color: var(--board); }
+.jog.desenha .st, .jog.desenha .nome i { color: var(--lamp); }
+.jog.acertou { background: var(--certo); color: #fff; border-color: var(--ink); }
+.jog.acertou .st, .jog.acertou .nome i { color: #E6F4E8; }
+.jog.ausente { border-style: dashed; background: var(--paper-2); color: #7d786c; }
+.jog.voce { box-shadow: inset 0 -4px 0 var(--ticket); }
+.jog .card-btn { display: none; }
+
+/* Guesses: newspaper paper, newest at the bottom, the guess box under it. */
+.feed { min-height: 0; display: flex; flex-direction: column; background: var(--paper); border: 3px solid var(--ink); box-shadow: 4px 4px 0 rgba(0, 0, 0, .3); }
+.feed h3 { font-size: 15px; letter-spacing: .1em; padding: 6px 10px 5px; border-bottom: 2px solid var(--ink); display: flex; justify-content: space-between; }
+.feed h3 span { font: 600 12px/1 var(--body); text-transform: none; letter-spacing: 0; color: var(--ink-soft); align-self: center; }
+.feed ol { list-style: none; margin: 0; padding: 6px 10px 8px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 3px; font-size: 15px; line-height: 1.3; }
+.feed ol::before { content: ""; margin-top: auto; } /* newest at the bottom */
+.feed li b { font-weight: 700; }
+.feed li.gol { font-weight: 700; display: flex; gap: 6px; align-items: baseline; }
+.feed li.gol .tag { font: 900 13px/1 var(--display); letter-spacing: .08em; background: var(--certo); color: #fff; padding: 3px 5px 2px; }
+.feed li.gol .p { margin-left: auto; font: 900 16px/1 var(--display); }
+.feed li.trave { border: 2px dashed var(--ink); background: var(--ticket); padding: 4px 8px; }
+.feed li.trave small { display: block; font-size: 12px; color: var(--ink-soft); }
+.feed li.sis { color: var(--ink-soft); font-style: italic; font-size: 14px; }
+.entrada { display: flex; gap: 6px; }
+.entrada input { flex: 1; min-width: 0; font: 600 18px var(--body); padding: 10px 12px; border: 3px solid var(--ink); background: #fff; color: var(--ink); border-radius: 0; }
+.entrada .btn { font-size: 20px; padding: 10px 16px; min-height: 50px; background: var(--ink); color: var(--lamp); }
+.entrada .nota { flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; min-height: 50px; background: var(--board); color: var(--lamp); border: 3px solid var(--ink); font: 700 15px/1.2 var(--body); padding: 6px 10px; }
+
+/* ---- waiting room ------------------------------------------------------------------------ */
+.espera { display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr); }
+.ticket { background: var(--paper); border: 3px solid var(--ink); box-shadow: 6px 6px 0 rgba(0, 0, 0, .3); padding: 16px; display: flex; flex-direction: column; gap: 14px; }
+.ticket h2 { font-size: 30px; }
+.ticket p { margin: 0; }
+.link { display: flex; gap: 0; }
+.link code { flex: 1; min-width: 0; font: 700 17px/1 var(--body); padding: 14px 12px; background: #fff; border: 3px solid var(--ink); border-right: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.link .btn { font-size: 18px; padding: 10px 14px; min-height: 0; background: var(--ink); color: var(--lamp); }
+.acoes { display: flex; flex-wrap: wrap; gap: 10px; }
+.campo-f { display: flex; flex-direction: column; gap: 8px; border: 0; margin: 0; padding: 0; }
+.campo-f legend, .campo-f > span { font: 700 13px/1 var(--body); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { font: 800 18px/1 var(--display); text-transform: uppercase; padding: 9px 12px; min-height: 44px; min-width: 52px; border: 2px solid var(--ink); background: transparent; color: var(--ink); cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--ink); color: var(--lamp); }
+.fine { font-size: 14px; color: var(--ink-soft); }
+.vagas { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.vagas .jog { width: auto; cursor: default; }
+.vagas .vazia { height: 56px; border: 2px dashed rgba(20, 35, 26, .4); display: grid; place-items: center; font: 600 13px/1 var(--body); color: rgba(20, 35, 26, .55); text-transform: uppercase; letter-spacing: .08em; }
+.entrando { animation: entra .5s ease-out; }
+@keyframes entra { from { transform: translateY(-8px); opacity: 0; } }
+
+/* ---- the end: the match report on paper --------------------------------------------------- */
+.sumula { background: var(--paper); border: 3px solid var(--ink); box-shadow: 6px 6px 0 rgba(0, 0, 0, .3); padding: 16px 16px 18px; width: 100%; max-width: 780px; align-self: center; display: flex; flex-direction: column; gap: 14px;
+  background-image: repeating-linear-gradient(0deg, transparent 0 27px, rgba(20, 35, 26, .07) 27px 28px); }
+.sumula .cab { display: flex; justify-content: space-between; align-items: end; gap: 8px; border-bottom: 3px double var(--ink); padding-bottom: 8px; flex-wrap: wrap; }
+.sumula .cab h2 { font-size: clamp(34px, 6vw, 52px); }
+.sumula .cab p { margin: 0; font-size: 14px; color: var(--ink-soft); }
+.sumula h3 { font-size: 20px; letter-spacing: .06em; }
+.campeao { width: calc(100% - 12px); max-width: 768px; align-self: center; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.campeao .lamp { font-size: clamp(18px, 4.6vw, 28px); }
+.campeao .lamp.n { font-size: clamp(24px, 6vw, 36px); }
+table { border-collapse: collapse; width: 100%; font-size: 15px; }
+th { font: 700 11px/1 var(--body); text-transform: uppercase; letter-spacing: .08em; text-align: right; padding: 6px 6px; border-bottom: 2px solid var(--ink); }
+td { padding: 6px 6px; border-bottom: 1px solid rgba(20, 35, 26, .25); text-align: right; font: 800 20px/1 var(--display); }
+th:nth-child(2), td:nth-child(2) { text-align: left; }
+td:nth-child(2) { font: 700 16px/1.2 var(--body); }
+th:first-child, td:first-child { text-align: left; width: 28px; }
+td.pts { font-size: 24px; }
+.lances { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.lances li { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 2px 8px; padding: 6px 0; border-bottom: 1px solid rgba(20, 35, 26, .25); font-size: 14px; line-height: 1.3; }
+.lances .n { font: 900 18px/1.1 var(--display); grid-row: 1 / 3; }
+.lances .pal { font: 900 19px/1.1 var(--display); text-transform: uppercase; }
+.lances .pal small { font: 600 12px/1 var(--body); text-transform: none; color: var(--ink-soft); margin-left: 6px; }
+.lances .quem { color: var(--ink-soft); }
+.lances li.pulado .pal { text-decoration: line-through; opacity: .6; }
+
+dialog { padding: 0; border: 0; background: transparent; width: min(460px, calc(100vw - 32px)); }
+dialog::backdrop { background: rgba(0, 0, 0, .55); }
+.caixa { background: var(--paper); border: 3px solid var(--ink); padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 6px 6px 0 rgba(0, 0, 0, .35); }
+.caixa h2 { font-size: 28px; display: flex; align-items: center; gap: 10px; }
+.caixa h2 .vermelho { width: 22px; height: 30px; background: var(--cartao); border: 2px solid var(--ink); transform: rotate(-8deg); flex: none; }
+.caixa p { margin: 0; }
+.caixa ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+.votos { display: flex; gap: 6px; align-items: center; font-weight: 600; font-size: 15px; }
+.votos i { width: 14px; height: 20px; border: 2px solid var(--ink); }
+.votos i.on { background: var(--cartao); }
+.btn.vermelho { background: var(--cartao); color: #fff; }
+
+/* ---- desktop: board on the left, players and guesses on the right ------------------------ */
+@media (min-width: 900px) {
+  .stage.ao-vivo { grid-template-columns: minmax(0, 1fr) 340px; gap: 12px 16px;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-areas: "placar lado" "quadro lado" "bandeja lado"; }
+  .stage.ao-vivo.sem-bandeja { grid-template-areas: "placar lado" "quadro lado" "quadro lado"; }
+  .lado { grid-area: lado; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+  .lado .feed { flex: 1; }
+  .placar { padding: 10px 16px 12px; }
+  .placar .meta { font-size: 14px; }
+  .placar .relogio { font-size: 38px; }
+  .palavra { min-height: 46px; }
+  .palavra .l { --c: min(42px, calc((100cqw - (var(--n) - 1) * 4px) / var(--n))); }
+  .jogadores { flex-direction: column; overflow: visible; gap: 5px; }
+  .jog { flex: none; width: auto; height: 52px; grid-template-columns: minmax(0, 1fr) 60px 36px; align-items: center; gap: 3px 6px; }
+  .jog .nome { grid-column: 1; grid-row: 1; }
+  .jog .st { grid-row: 2; }
+  .jog .pts { grid-row: 1 / 3; font-size: 24px; }
+  .jog .pts small { display: block; margin: 2px 0 0; font: 600 10px/1 var(--body); text-transform: uppercase; letter-spacing: .08em; }
+  .jog .st .longo { display: inline; } .jog .st .curto { display: none; }
+  .vagas .jog { grid-template-columns: minmax(0, 1fr); height: 56px; }
+  .jog .card-btn { display: grid; grid-row: 1 / 3; grid-column: 3; place-items: center; width: 34px; height: 40px; border: 2px solid transparent; background: transparent; cursor: pointer; padding: 0; }
+  .jog .card-btn i { width: 14px; height: 20px; background: transparent; border: 2px solid currentColor; transform: rotate(-8deg); opacity: .45; }
+  .jog .card-btn:hover { border-color: var(--ink); }
+  .jog .card-btn:hover i { opacity: 1; background: var(--cartao); border-color: var(--ink); }
+  .jog .card-btn.vazio { visibility: hidden; }
+  .bandeja { justify-content: space-between; }
+  .bandeja .grupo { gap: 6px; }
+  .espera { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+  .espera .placar { grid-column: 1 / -1; }
+  .vagas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .sumula { padding: 22px 26px 24px; }
+  .sumula .colunas { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
+}
+@media (max-width: 899px) {
+  .jogo .wrap { gap: 16px; }
+  .game-tabs a { font-size: 15px; padding: 9px 10px; min-height: 40px; }
+  .opcoes { grid-template-columns: minmax(0, 1fr); gap: 7px; max-width: 320px; }
+  .opcoes h3 { font-size: 18px; }
+  .opcao { height: 62px; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto; align-items: center; padding: 6px 10px; gap: 2px 8px; }
+  .opcao b { font-size: 22px; grid-row: 2; }
+  .opcao .vale { grid-row: 1 / 3; grid-column: 2; text-align: right; font-size: 13px; }
+  .recorte { padding: 8px 12px 10px; }
+  .recorte h2 { margin: 4px 0; font-size: 30px; }
+  .recorte ul { font-size: 13px; }
+  .recorte li b { font-size: 15px; }
+  .recorte .proximo { font-size: 12px; margin-top: 4px; }
+  .bandeja { gap: 6px 10px; }
+  .bandeja .cores { flex-basis: 100%; justify-content: center; }
+  .ferr { width: 36px; height: 36px; }
+}
+</style>
+</head>
+<body>
+<div class="dev" id="dev">
+  <b style="color:#fff">Rascunho</b>
+  <a href="#espera">espera</a><a href="#escolha">escolha</a><a href="#desenhando">desenhando</a><a href="#chutando">chutando</a><a href="#cartao">cartão</a><a href="#intervalo">intervalo</a><a href="#fim">fim</a>
+  <span id="dev-info"></span>
+</div>
+<header><div class="wrap"><span class="brand">GERAL</span><nav><a href="#">Edições</a><a href="#">Central</a><a class="on" href="#">Joguinhos</a></nav></div></header>
+
+<section class="jogo wall">
+  <div class="wrap">
+    <nav class="game-tabs" aria-label="Joguinhos"><a href="#">Craque do dia</a><a href="#">Onde jogou?</a><a href="#">Quem é?</a><a href="#">Jogo da velha</a><a href="#">Carreira</a><a class="on" href="#">Prancheta</a><a class="all" href="#">Todos os joguinhos</a></nav>
+    <div class="game-title"><h1>Prancheta</h1><button type="button" class="rules-open" aria-label="Como jogar" id="abre-regras">?</button></div>
+    <div class="stage" id="stage"></div>
+    <p class="credit">Sala privada: só entra quem tem o link. Desenhos não são guardados. Reiniciar o servidor encerra as salas abertas.</p>
+  </div>
+</section>
+
+<dialog id="regras"><div class="caixa">
+  <h2>Como jogar</h2>
+  <ul>
+    <li>Crie a sala, escolha quantas rodadas e mande o link no grupo. De 2 a 10 jogadores.</li>
+    <li>Na sua vez, escolha uma de 3 palavras e desenhe na prancheta. Nada de escrever a palavra.</li>
+    <li>Os outros chutam. Quanto mais cedo e mais difícil a palavra, mais pontos; quem desenha ganha 2 por acerto.</li>
+    <li>"Na trave" quer dizer que você chegou perto: só você vê. Aos 40 e aos 20 segundos acende uma letra.</li>
+  </ul>
+  <button class="btn" type="button" data-fecha>Entendi</button>
+</div></dialog>
+
+<dialog id="cartao"><div class="caixa">
+  <h2><span class="vermelho"></span>Cartão vermelho?</h2>
+  <p>Dar cartão para <b>Cabeção</b>. Ele sai da sala quando a maioria dos presentes concordar.</p>
+  <div class="votos"><i class="on"></i><i></i><i></i> 1 de 3 cartões</div>
+  <p class="fine">Seu voto vale até ele sair. O anfitrião pode tirar direto.</p>
+  <div class="acoes"><button class="btn vermelho" type="button" data-fecha>Dar cartão</button><button class="btn secondary" type="button" data-fecha>Cancelar</button></div>
+</div></dialog>
+
+<script>
+const $ = (s, el = document) => el.querySelector(s);
+const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+// ---- fake room ---------------------------------------------------------------------------
+const SALA = "K7M2QX";
+const LINK = `geral.app.br/jogos/prancheta/s/${SALA}`;
+const VOCE = 2; // Zé da Geral, except in the waiting room (the host's view)
+const JOG = [
+  { id: 1, apelido: "Marquinho", pontos: 31, anfitriao: true, presente: true },
+  { id: 2, apelido: "Zé da Geral", pontos: 24, presente: true },
+  { id: 3, apelido: "Tonhão", pontos: 22, presente: true },
+  { id: 4, apelido: "Bia", pontos: 19, presente: true },
+  { id: 5, apelido: "Lu do ABC", pontos: 12, presente: true },
+  { id: 6, apelido: "Cabeção", pontos: 4, presente: false, cartoes: 1 },
+];
+const nome = (id) => JOG.find((j) => j.id === id).apelido;
+
+// Chalk: 0 is the eraser (the board's colour), 1–7 the sticks in the tray.
+const CORES = [null, "#F3F1EA", "#F6D55C", "#F29E4C", "#E5604D", "#F2A7C3", "#8CC5EE", "#B5E08A"];
+const NOMES_COR = ["apagador", "giz branco", "giz amarelo", "giz laranja", "giz vermelho", "giz rosa", "giz azul", "giz verde"];
+const ESP = [0, 0.006, 0.013, 0.026]; // stroke width as a share of the board's width
+
+// ---- the board: strokes in 0–1000 on both axes of a 4:3 board ------------------------------
+let tracos = [], lousa = null, cv = null, ctx = null, sujo = false, padroes = {};
+function padrao(cor) {
+  // a little grain so the line looks like chalk, not marker
+  if (padroes[cor]) return padroes[cor];
+  const c = document.createElement("canvas"); c.width = c.height = 64;
+  const g = c.getContext("2d"); g.fillStyle = cor; g.fillRect(0, 0, 64, 64);
+  const r = mulberry(cor.length * 97 + cor.charCodeAt(1));
+  for (let i = 0; i < 420; i++) { g.clearRect(Math.floor(r() * 64), Math.floor(r() * 64), 1, 1); }
+  g.globalAlpha = .25; g.fillStyle = "#000";
+  for (let i = 0; i < 160; i++) g.fillRect(Math.floor(r() * 64), Math.floor(r() * 64), 1, 1);
+  return (padroes[cor] = ctx.createPattern(c, "repeat"));
+}
+function mulberry(a) { return () => { a |= 0; a = (a + 0x6D2B79F5) | 0; let t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+
+function montarLousa(el) {
+  lousa = el; cv = $("canvas", el); ctx = cv.getContext("2d"); padroes = {};
+  new ResizeObserver(() => { ajustarCanvas(); }).observe(el);
+}
+function ajustarCanvas() {
+  const r = devicePixelRatio || 1, w = lousa.clientWidth, h = lousa.clientHeight;
+  cv.width = Math.round(w * r); cv.height = Math.round(h * r); ctx.setTransform(r, 0, 0, r, 0, 0); padroes = {}; desenhar();
+}
+function pedirDesenho() { if (!sujo) { sujo = true; requestAnimationFrame(() => { sujo = false; desenhar(); }); } }
+function desenhar() {
+  if (!ctx) return;
+  const w = lousa.clientWidth, h = lousa.clientHeight;
+  ctx.clearRect(0, 0, w, h);
+  ctx.lineCap = ctx.lineJoin = "round";
+  for (const t of tracos) {
+    const p = t.pts.map(([x, y]) => [x / 1000 * w, y / 1000 * h]);
+    if (!p.length) continue;
+    ctx.globalCompositeOperation = t.cor === 0 ? "destination-out" : "source-over";
+    ctx.strokeStyle = ctx.fillStyle = t.cor === 0 ? "#000" : padrao(CORES[t.cor]);
+    ctx.lineWidth = Math.max(2, ESP[t.esp] * w * (t.cor === 0 ? 2.4 : 1));
+    ctx.beginPath();
+    if (p.length === 1) { ctx.arc(p[0][0], p[0][1], ctx.lineWidth / 2, 0, 7); ctx.fill(); continue; }
+    ctx.moveTo(p[0][0], p[0][1]);
+    for (let i = 1; i < p.length - 1; i++) {   // through the midpoints: a smooth line from a jittery finger
+      ctx.quadraticCurveTo(p[i][0], p[i][1], (p[i][0] + p[i + 1][0]) / 2, (p[i][1] + p[i + 1][1]) / 2);
+    }
+    ctx.lineTo(p.at(-1)[0], p.at(-1)[1]);
+    ctx.stroke();
+  }
+  ctx.globalCompositeOperation = "source-over";
+}
+
+// Drawing with mouse, pen or finger. Pieces of ≤64 points go out as they fill (here: counted).
+let ferramenta = { cor: 1, esp: 2 }, atual = null, enviadoAte = 0, idTraco = 0, pedacos = 0, totalPts = 0;
+const TETO = 20000;
+function ligarDesenho() {
+  lousa.classList.add("pode");
+  const pt = (e) => { const r = cv.getBoundingClientRect();
+    return [Math.round(Math.min(1000, Math.max(0, (e.clientX - r.left) / r.width * 1000))), Math.round(Math.min(1000, Math.max(0, (e.clientY - r.top) / r.height * 1000)))]; };
+  cv.addEventListener("pointerdown", (e) => {
+    if (totalPts >= TETO) return;
+    cv.setPointerCapture(e.pointerId);
+    atual = { id: ++idTraco, cor: ferramenta.cor, esp: ferramenta.esp, pts: [pt(e)], fim: false };
+    tracos.push(atual); enviadoAte = 0; totalPts++; pedirDesenho();
+  });
+  cv.addEventListener("pointermove", (e) => {
+    if (!atual) return;
+    for (const ev of e.getCoalescedEvents ? e.getCoalescedEvents() : [e]) {
+      const p = pt(ev), u = atual.pts.at(-1);
+      if (Math.abs(p[0] - u[0]) + Math.abs(p[1] - u[1]) >= 3 && totalPts < TETO) { atual.pts.push(p); totalPts++; }
+    }
+    if (atual.pts.length - enviadoAte >= 64) enviar(false);
+    pedirDesenho();
+  });
+  const solta = () => { if (atual) { enviar(true); atual = null; } };
+  cv.addEventListener("pointerup", solta); cv.addEventListener("pointercancel", solta);
+}
+function enviar(fim) {
+  // the real screen POSTs {tipo: "traco", id, cor, esp, pts, fim}; the draft only counts
+  const pts = atual.pts.slice(enviadoAte, enviadoAte + 64);
+  enviadoAte += pts.length; pedacos++;
+  if (!fim && enviadoAte < atual.pts.length) return enviar(false);
+  infoDev();
+}
+
+// Fake strokes from another player, arriving in pieces of ≤64 points.
+function linha(a, b, n = 30) { return Array.from({ length: n + 1 }, (_, i) => [Math.round(a[0] + (b[0] - a[0]) * i / n), Math.round(a[1] + (b[1] - a[1]) * i / n)]); }
+function treme(pts, k = 4, s = 3) { const r = mulberry(s); return pts.map(([x, y]) => [Math.round(x + (r() - .5) * k), Math.round(y + (r() - .5) * k)]); }
+function elipse(cx, cy, rx, ry, a0 = 0, a1 = 6.4, n = 50) { return Array.from({ length: n + 1 }, (_, i) => { const a = a0 + (a1 - a0) * i / n; return [Math.round(cx + Math.cos(a) * rx), Math.round(cy + Math.sin(a) * ry)]; }); }
+function bezier(p0, c, p1, n = 60) { return Array.from({ length: n + 1 }, (_, i) => { const t = i / n, u = 1 - t; return [Math.round(u * u * p0[0] + 2 * u * t * c[0] + t * t * p1[0]), Math.round(u * u * p0[1] + 2 * u * t * c[1] + t * t * p1[1])]; }); }
+function desenhoFalso() {
+  // a gol olímpico: the corner flag, the ball's curve straight into the far post
+  const T = []; let id = 0; const add = (cor, esp, pts) => T.push({ id: ++id, cor, esp, pts: treme(pts, 5, id) });
+  add(1, 2, [...linha([60, 820], [940, 820], 40)]);                                  // goal line
+  add(1, 2, [...linha([560, 820], [560, 300]), ...linha([560, 300], [880, 300]), ...linha([880, 300], [880, 820])]); // goal
+  for (let x = 600; x < 880; x += 45) add(1, 1, linha([x, 310], [x, 815], 14));      // net
+  for (let y = 360; y < 820; y += 70) add(1, 1, linha([565, y], [875, y], 14));
+  add(1, 2, linha([110, 820], [110, 470], 20));                                        // flag pole
+  add(4, 2, [...linha([110, 470], [210, 515], 10), ...linha([210, 515], [110, 560], 10), ...linha([110, 560], [110, 470], 8)]);
+  add(4, 3, elipse(160, 515, 22, 24, 0, 6.4, 16));
+  const curva = bezier([150, 790], [330, 60], [640, 380], 90);
+  for (let i = 0; i < curva.length - 6; i += 9) add(2, 2, curva.slice(i, i + 6));     // the curve, dashed
+  add(1, 3, elipse(665, 400, 34, 45, 0, 6.6, 40));                                    // the ball
+  add(1, 1, [...linha([650, 372], [680, 372], 4), ...linha([680, 372], [690, 410], 4), ...linha([690, 410], [665, 432], 4), ...linha([665, 432], [642, 410], 4), ...linha([642, 410], [650, 372], 4)]);
+  return T;
+}
+function pedacosDe(ts) { const out = []; for (const t of ts) { for (let i = 0; i < t.pts.length; i += 64) { const pts = t.pts.slice(i, i + 64); out.push({ ...t, pts, fim: i + 64 >= t.pts.length }); } } return out; }
+function receber(p) { const t = tracos.find((x) => x.id === p.id); if (t) t.pts.push(...p.pts); else tracos.push({ ...p, pts: [...p.pts] }); pedirDesenho(); }
+let filaTimer = null;
+function tocarFila(fila, ms) { clearInterval(filaTimer); filaTimer = setInterval(() => { const p = fila.shift(); if (!p) return clearInterval(filaTimer); receber(p); }, ms); }
+
+// ---- pieces of the screen ------------------------------------------------------------------
+function placar({ meta, relogio, palavra, aviso, fim }) {
+  return `<div class="placar board">
+    <div class="placar-top"><span class="lamp meta">${meta}</span><span class="lamp relogio${fim ? " fim" : ""}" id="relogio">${relogio}</span></div>
+    <div class="palavra" ${palavra ? `style="--n:${palavra.length}" aria-label="Palavra com ${palavra.filter((c) => c && /\p{L}/u.test(c.t)).length} letras"` : ""}>${palavra ? palavra.map(lampada).join("") : `<span class="lamp aviso">${aviso}</span>`}</div>
+  </div>`;
+}
+function lampada(c) {
+  if (c.t === " ") return `<span class="l vao"></span>`;
+  if (!/\p{L}/u.test(c.t)) return `<span class="l sinal lamp">${esc(c.t)}</span>`;
+  return c.acesa ? `<span class="l acesa">${esc(c.t)}</span>` : `<span class="l apagada"></span>`;
+}
+const dica = (texto, acesas = []) => [...texto].map((t, i) => ({ t, acesa: acesas === true || acesas.includes(i) }));
+
+function prancheta(sobre = "") {
+  return `<div class="slot" id="slot"><div class="prancheta"><div class="lousa" id="lousa">
+    <svg class="campo" viewBox="0 0 400 300" preserveAspectRatio="none" aria-hidden="true" fill="none" stroke="#fff" stroke-width="2">
+      <rect x="12" y="12" width="376" height="276"/><line x1="200" y1="12" x2="200" y2="288"/><circle cx="200" cy="150" r="36"/>
+      <rect x="12" y="80" width="54" height="140"/><rect x="334" y="80" width="54" height="140"/></svg>
+    <canvas aria-label="Prancheta de desenho"></canvas>${sobre}</div></div></div>`;
+}
+function jogadores(lista, { desenha, acertaram = {}, voce = VOCE, ganhos = {} } = {}) {
+  const ord = [...lista].sort((a, b) => b.pontos + (ganhos[b.id] || 0) - (a.pontos + (ganhos[a.id] || 0)));
+  return `<ul class="jogadores" aria-label="Jogadores">${ord.map((j) => {
+    const cls = ["jog", j.id === desenha && "desenha", acertaram[j.id] && "acertou", !j.presente && "ausente", j.id === voce && "voce"].filter(Boolean).join(" ");
+    const st = !j.presente ? "ausente" : j.id === desenha ? `<span class="curto">desenha</span><span class="longo">desenhando</span>` : acertaram[j.id] ? `<span class="curto">acertou</span><span class="longo">acertou +${acertaram[j.id]}</span>` : j.anfitriao ? `<span class="selo">anfitrião</span>` : "chutando";
+    const cart = j.cartoes ? `<span class="vermelho"></span><span class="longo">${j.cartoes} de 3 · </span>` : "";
+    const btn = j.id === voce ? `<button class="card-btn vazio" tabindex="-1" aria-hidden="true"></button>` : `<button class="card-btn" type="button" aria-label="Cartão vermelho para ${esc(j.apelido)}" data-cartao="${j.id}"><i></i></button>`;
+    return `<li class="${cls}" data-jog="${j.id}"><span class="nome">${esc(j.apelido)}${j.id === voce ? " <i>você</i>" : ""}</span><span class="st">${cart}${st}</span><span class="pts">${j.pontos + (ganhos[j.id] || 0)}<small>pts</small></span>${btn}</li>`;
+  }).join("")}</ul>`;
+}
+function feed(itens, sub = "") {
+  return `<div class="feed"><h3>Chutes <span>${sub}</span></h3><ol id="feed">${itens.map(([k, a, b]) =>
+    k === "chute" ? `<li><b>${esc(nome(a))}:</b> ${esc(b)}</li>`
+    : k === "gol" ? `<li class="gol"><span class="tag">Gol</span> ${esc(nome(a))} acertou <span class="p">+${b}</span></li>`
+    : k === "trave" ? `<li class="trave"><b>Na trave!</b> “${esc(b)}” passou perto.<small>Só você vê este aviso.</small></li>`
+    : `<li class="sis">${esc(a)}</li>`).join("")}</ol></div>`;
+}
+const entradaChute = () => `<form class="entrada" id="chutar"><input id="chute" maxlength="40" autocomplete="off" spellcheck="false" enterkeyhint="send" placeholder="Seu chute" aria-label="Seu chute"><button class="btn" type="submit">Chutar</button></form>`;
+const entradaNota = (t) => `<div class="entrada"><span class="nota">${t}</span></div>`;
+function bandeja() {
+  const cores = CORES.map((c, i) => i === 0 ? "" : `<button class="ferr" type="button" data-cor="${i}" aria-label="${NOMES_COR[i]}" aria-pressed="${i === ferramenta.cor}"><span class="giz" style="--c:${c}"></span></button>`).join("");
+  const borracha = `<button class="ferr" type="button" data-cor="0" aria-label="Apagador" aria-pressed="${ferramenta.cor === 0}"><svg width="24" height="20" viewBox="0 0 24 20"><rect x="2" y="5" width="20" height="10" rx="1" fill="#E8E2D2" stroke="#14231A" stroke-width="2"/><rect x="2" y="11" width="20" height="4" fill="#7a6a52"/></svg></button>`;
+  const esps = [1, 2, 3].map((e) => `<button class="ferr" type="button" data-esp="${e}" aria-label="Traço ${["", "fino", "médio", "grosso"][e]}" aria-pressed="${e === ferramenta.esp}"><span class="esp" style="width:${[0, 5, 10, 17][e]}px;height:${[0, 5, 10, 17][e]}px"></span></button>`).join("");
+  return `<div class="bandeja" role="toolbar" aria-label="Giz e apagador"><div class="grupo cores">${cores}${borracha}</div><div class="grupo">${esps}</div><div class="grupo"><button class="ferr txt" type="button" id="desfazer">Desfazer</button><button class="ferr txt" type="button" id="limpar">Limpar</button></div></div>`;
+}
+
+// ---- states --------------------------------------------------------------------------------
+let relogioTimer = null;
+function relogio(seg, onFim, pisca = true) {
+  clearInterval(relogioTimer);
+  const mostra = () => { const el = $("#relogio"); if (!el) return; el.innerHTML = `${Math.floor(seg / 60)}<span class="dp"></span>${String(seg % 60).padStart(2, "0")}`; el.classList.toggle("fim", pisca && seg <= 10); };
+  mostra(); relogioTimer = setInterval(() => { seg = Math.max(0, seg - 1); mostra(); if (!seg) { clearInterval(relogioTimer); onFim && onFim(); } }, 1000);
+}
+
+const ESTADOS = {
+  espera() {
+    const quem = JOG.slice(0, 4);
+    stage.className = "stage";
+    stage.innerHTML = `<div class="espera">
+      ${placar({ meta: `Sala ${SALA}`, relogio: "4/10", aviso: "Esperando a turma" })}
+      <div class="ticket">
+        <h2>Chame a turma</h2>
+        <p>Mande o link no grupo. Quem abrir escolhe um apelido e já entra.</p>
+        <div class="link"><code>${LINK}</code><button class="btn" type="button" id="copiar">Copiar</button></div>
+        <div class="acoes"><button class="btn secondary" type="button">Mandar no Zap</button></div>
+        <fieldset class="campo-f"><legend>Rodadas · cada um desenha uma vez por rodada</legend><div class="chips" data-grupo="rodadas">
+          <button class="chip" type="button" aria-pressed="false">1</button><button class="chip" type="button" aria-pressed="true">2</button><button class="chip" type="button" aria-pressed="false">3</button></div></fieldset>
+        <button class="btn lamp-btn" type="button" id="comecar">Começar a partida</button>
+        <p class="fine">Só o anfitrião começa. Quem chegar depois entra na fila da rodada.</p>
+      </div>
+      <div class="ticket">
+        <h2>Na sala</h2>
+        <ul class="vagas" id="vagas">${quem.map((j) => vaga(j)).join("")}${"<li class='vazia'>vaga</li>".repeat(10 - quem.length)}</ul>
+      </div>
+    </div>`;
+    $("#copiar").onclick = (e) => { e.target.textContent = "Copiado"; };
+    stage.querySelectorAll(".chips").forEach((g) => g.addEventListener("click", (e) => { const b = e.target.closest(".chip"); if (!b) return; g.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", c === b)); }));
+    // someone arrives by the link
+    clearTimeout(window.__chega); window.__chega = setTimeout(() => { const v = $("#vagas"); if (!v || v.querySelector(".entrando")) return; v.querySelector(".vazia").outerHTML = vaga(JOG[4], true); $("#relogio").textContent = "5/10"; }, 1200);
+    return "vendo como Marquinho, o anfitrião";
+  },
+  escolha() {
+    tracos = [];
+    stage.className = "stage ao-vivo";
+    const ops = [["Fácil", "Bola na rede", 5], ["Média", "Arena das Dunas", 7], ["Difícil", "Timbu", 10]];
+    stage.innerHTML = placar({ meta: "Rodada 1 de 2 · sua vez", relogio: "0:15", aviso: "Escolha o que desenhar" })
+      + prancheta(`<div class="sobre escuro"><div class="opcoes"><h3>Sua vez de desenhar</h3>${ops.map(([n, p, v], i) =>
+        `<button class="opcao" type="button" data-i="${i}"><span class="nivel">${n}</span><b>${p}</b><span class="vale">vale até ${v} pts</span></button>`).join("")}</div></div>`)
+      + `<div class="lado">` + jogadores(JOG, { desenha: VOCE })
+      + feed([["sis", "Lance 4 de 12. Zé da Geral desenha."]], "")
+      + entradaNota("Escolha uma palavra. Sem escolher, sai no sorteio.") + `</div>`;
+    stage.classList.add("sem-bandeja");
+    relogio(15);
+    stage.querySelectorAll(".opcao").forEach((b) => b.onclick = () => { location.hash = "desenhando"; });
+    return "vendo como Zé da Geral, que vai desenhar";
+  },
+  desenhando() {
+    tracos = []; idTraco = 0; pedacos = 0; totalPts = 0;
+    stage.className = "stage ao-vivo";
+    stage.innerHTML = placar({ meta: "Rodada 1 de 2 · você desenha", relogio: "1:20", palavra: dica("BOLA NA REDE", true) })
+      + prancheta() + bandeja()
+      + `<div class="lado">` + jogadores(JOG, { desenha: VOCE, acertaram: { 4: 5 } , ganhos: { 4: 5, 2: 2 } })
+      + feed([["sis", "Você escolheu Bola na rede (fácil)."], ["chute", 1, "trave"], ["chute", 5, "goleiro"], ["chute", 3, "pênalti"], ["gol", 4, 5]], "4 chutando")
+      + entradaNota("Na sua vez você não chuta. Desenhe!") + `</div>`;
+    relogio(80);
+    ligarBandeja(); montarLousa($("#lousa")); ligarDesenho();
+    return "vendo como Zé da Geral, desenhando";
+  },
+  chutando(cartao) {
+    tracos = [];
+    stage.className = "stage ao-vivo sem-bandeja";
+    stage.innerHTML = placar({ meta: "Rodada 1 de 2 · Tonhão desenha", relogio: "0:31", palavra: dica("GOL OLÍMPICO", [4, 9]) })
+      + prancheta()
+      + `<div class="lado">` + jogadores(JOG, { desenha: 3, acertaram: { 4: 10, 1: 9 }, ganhos: { 4: 10, 1: 9, 3: 4 } })
+      + feed([["chute", 5, "escanteio"], ["chute", 2, "gol de falta"], ["chute", 1, "curva"], ["gol", 4, 10], ["chute", 5, "folha seca"], ["gol", 1, 9], ["chute", 2, "bandeirinha"], ["trave", 0, "gol olimpio"]], "acende mais uma letra aos 0:20")
+      + entradaChute() + `</div>`;
+    relogio(31);
+    const fila = pedacosDe(desenhoFalso());
+    fila.splice(0, Math.floor(fila.length * .7)).forEach(receber);
+    tocarFila(fila, 90);
+    $("#chutar").onsubmit = (e) => { e.preventDefault(); const t = $("#chute").value.trim(); if (!t) return; const ol = $("#feed"); ol.insertAdjacentHTML("beforeend", `<li><b>Zé da Geral:</b> ${esc(t)}</li>`); ol.scrollTop = ol.scrollHeight; $("#chute").value = ""; };
+    if (cartao) setTimeout(() => $("#cartao").showModal(), 50);
+    return cartao ? "Zé da Geral tocou no Cabeção (no PC, o cartãozinho ao lado do nome)" : "vendo como Zé da Geral, chutando";
+  },
+  intervalo() {
+    tracos = []; pedacosDe(desenhoFalso()).forEach(receber);
+    stage.className = "stage ao-vivo sem-bandeja";
+    const ac = { 4: 10, 1: 9, 2: 8 };
+    stage.innerHTML = placar({ meta: "Fim do lance 4 de 12", relogio: "0:06", palavra: dica("GOL OLÍMPICO", true) })
+      + prancheta(`<div class="sobre escuro"><div class="recorte"><div class="kicker"><span>Era</span><span>difícil · 3 de 5 acertaram</span></div><h2>Gol olímpico</h2>
+        <ul><li>Bia <b>+10</b></li><li>Marquinho <b>+9</b></li><li>Zé da Geral <b>+8</b></li><li>Tonhão (assist.) <b>+6</b></li></ul>
+        <p class="proximo">Próximo lance: Bia desenha.</p></div></div>`)
+      + `<div class="lado">` + jogadores(JOG, { desenha: 3, acertaram: ac, ganhos: { 4: 10, 1: 9, 2: 8, 3: 6 } })
+      + feed([["gol", 4, 10], ["chute", 5, "folha seca"], ["gol", 1, 9], ["trave", 0, "gol olimpio"], ["gol", 2, 8], ["sis", "Acabou o tempo. Era Gol olímpico."]], "")
+      + entradaNota("Intervalo. O próximo lance começa já.") + `</div>`;
+    relogio(6, null, false);
+    return "vendo como Zé da Geral";
+  },
+  fim() {
+    stage.className = "stage";
+    const tab = [["Marquinho", 58, 7, 4], ["Zé da Geral", 51, 6, 5], ["Bia", 47, 6, 3], ["Tonhão", 40, 4, 6], ["Lu do ABC", 26, 3, 3], ["Cabeção", 4, 1, 0]];
+    const lances = [
+      ["Marquinho", "Frasqueira", "média", "Bia, Zé da Geral, Tonhão"], ["Zé da Geral", "Bola na rede", "fácil", "Bia, Marquinho, Lu do ABC, Tonhão"],
+      ["Tonhão", "Gol olímpico", "difícil", "Bia, Marquinho, Zé da Geral"], ["Bia", "Elefante", "fácil", "Marquinho, Tonhão"],
+      ["Lu do ABC", "Machadão", "média", "Zé da Geral"], ["Cabeção", "—", "", "", true],
+      ["Marquinho", "Timbu", "difícil", "Tonhão, Zé da Geral, Bia"], ["Zé da Geral", "Bandeirinha", "fácil", "Marquinho, Bia, Lu do ABC, Tonhão"],
+      ["Tonhão", "Arena das Dunas", "média", "Marquinho, Zé da Geral"], ["Bia", "Cartão vermelho", "fácil", "Marquinho, Tonhão, Lu do ABC, Zé da Geral"],
+      ["Lu do ABC", "Lei do ex", "difícil", "ninguém"],
+    ];
+    stage.innerHTML = `<div class="placar board campeao"><span class="lamp">Fim de jogo · Marquinho</span><span class="lamp n">58 pts</span></div>
+      <article class="sumula">
+        <div class="cab"><h2>Súmula</h2><p>Sala ${SALA} · 2 rodadas · 23/11/2026, 21h40</p></div>
+        <div class="colunas">
+          <section><h3>Placar</h3><table><thead><tr><th>#</th><th>Jogador</th><th>Pts</th><th>Gols</th><th>Assist.</th></tr></thead>
+            <tbody>${tab.map(([n, p, g, a], i) => `<tr><td>${i + 1}</td><td>${n}</td><td class="pts">${p}</td><td>${g}</td><td>${a}</td></tr>`).join("")}</tbody></table>
+            <p class="fine" style="margin-top:10px">Gol é acerto; assistência, acerto no seu desenho.</p></section>
+          <section><h3>Lances</h3><ol class="lances">${lances.map(([d, p, dif, q, pulado], i) => `<li class="${pulado ? "pulado" : ""}"><span class="n">${i + 1}</span><span class="pal">${pulado ? "Pulado" : p}${dif ? `<small>${dif}</small>` : ""}</span><span class="quem">${pulado ? `${d} estava ausente` : `${d} desenhou · ${q === "ninguém" ? "ninguém acertou" : q}`}</span></li>`).join("")}</ol></section>
+        </div>
+        <div class="link"><code>${LINK}</code><button class="btn" type="button">Copiar</button></div>
+        <div class="acoes"><button class="btn lamp-btn" type="button">Nova sala</button><button class="btn secondary" type="button">Mandar no Zap</button></div>
+        <p class="fine">A súmula fica neste link. Os desenhos não são guardados.</p>
+      </article>`;
+    return "qualquer um; o link curto abre esta súmula depois";
+  },
+};
+ESTADOS.cartao = () => ESTADOS.chutando(true);
+function vaga(j, novo) { return `<li class="jog${novo ? " entrando" : ""}${j.id === 1 ? " voce" : ""}"><span class="nome">${esc(j.apelido)}${j.id === 1 ? " <i>você</i>" : ""}</span><span class="st">${j.anfitriao ? `<span class="selo">anfitrião</span>` : novo ? "acabou de entrar" : "pronto"}</span><span class="pts"></span></li>`; }
+
+function ligarBandeja() {
+  stage.querySelectorAll("[data-cor]").forEach((b) => b.onclick = () => { ferramenta.cor = +b.dataset.cor; stage.querySelectorAll("[data-cor]").forEach((x) => x.setAttribute("aria-pressed", x === b)); });
+  stage.querySelectorAll("[data-esp]").forEach((b) => b.onclick = () => { ferramenta.esp = +b.dataset.esp; stage.querySelectorAll("[data-esp]").forEach((x) => x.setAttribute("aria-pressed", x === b)); });
+  $("#desfazer").onclick = () => { const t = tracos.pop(); if (t) totalPts -= t.pts.length; pedirDesenho(); infoDev(); };
+  $("#limpar").onclick = () => { tracos = []; totalPts = 0; pedirDesenho(); infoDev(); };
+}
+
+// Fit the 4:3 board in its slot: by width on a phone, by width and height on a computer.
+function encaixar() {
+  const slot = $("#slot"), l = $("#lousa"); if (!slot) return;
+  const moldura = 2 * (9 + 3);
+  let w = slot.clientWidth - moldura;
+  if (matchMedia("(min-width: 900px)").matches) w = Math.min(w, (slot.clientHeight - moldura) * 4 / 3);
+  w = Math.floor(w); l.style.width = w + "px"; l.style.height = Math.round(w * 3 / 4) + "px";
+}
+addEventListener("resize", encaixar);
+
+const stage = $("#stage");
+let atualEstado = "";
+function infoDev() { $("#dev-info").textContent = (atualEstado === "desenhando" ? `${tracos.length} traços · ${totalPts} pontos · ${pedacos} pedaços enviados · ` : "") + (window.__vendo || ""); }
+function mostrar() {
+  const nomeE = (location.hash.slice(1) || "chutando");
+  const fn = ESTADOS[nomeE] || ESTADOS.chutando; atualEstado = nomeE;
+  clearInterval(filaTimer); clearInterval(relogioTimer); ctx = null;
+  document.querySelectorAll("dialog[open]").forEach((d) => d.close());
+  window.__vendo = fn();
+  document.querySelectorAll(".dev a").forEach((a) => a.classList.toggle("on", a.getAttribute("href") === "#" + nomeE));
+  const l = $("#lousa");
+  if (l) { if (stage.classList.contains("ao-vivo") && !matchMedia("(min-width: 900px)").matches) {} encaixar(); montarLousa(l); ajustarCanvas(); }
+  stage.querySelectorAll("[data-cartao], .jogadores .jog").forEach((el) => el.addEventListener("click", (e) => {
+    const alvo = e.target.closest("[data-cartao]") || (matchMedia("(max-width: 899px)").matches && e.target.closest(".jog"));
+    if (alvo && !alvo.classList.contains("voce")) { e.stopPropagation(); $("#cartao").showModal(); }
+  }));
+  infoDev();
+  requestAnimationFrame(() => scrollTo(0, stage.getBoundingClientRect().top + scrollY - 8));
+}
+document.querySelectorAll("[data-fecha]").forEach((b) => b.onclick = () => b.closest("dialog").close());
+$("#abre-regras").onclick = () => $("#regras").showModal();
+addEventListener("hashchange", mostrar);
+mostrar();
+window.__tracos = () => tracos;
+</script>
+</body>
+</html>

@@ -65,6 +65,7 @@ from geral.web.mailer import Mailer, MailError, mailer_from_settings
 from geral.web.notes import NoteStore
 from geral.web.palette import club_palette
 from geral.web.prancheta import criar_prancheta
+from geral.web.prancheta_paginas import paginas_prancheta
 from geral.web.scoreboard import animation_svg
 from geral.web.store import RequestResult, SubscriberStore, normalize
 from geral.web.team_requests import PUBLIC_MIN_VOTES, TeamRequestStore, network, team_key
@@ -570,6 +571,12 @@ def create_app(
 
     app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
     app.include_router(prancheta.router)
+    app.include_router(
+        paginas_prancheta(
+            prancheta,
+            lambda r, n, s=200, **c: page(r, n, s, tabs=game_tabs("prancheta", "geral"), **c),
+        )
+    )
     if legacy_team:
         # Old e-mails load the moved-in app's brand from the root of /static.
         for name in ("logo-email.png", "icon-512.png", "og-image.png"):
