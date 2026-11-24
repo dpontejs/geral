@@ -1,0 +1,257 @@
+/* Prancheta: desenhar e adivinhar ao vivo (docs/features/prancheta.md). Ported from the approved
+   draft (docs/features/prancheta-rascunho.html), every rule scoped to .pr so the shared game styles
+   (jogos.css) and these never meet. The coach's board (slate green, chalk) is only the drawing
+   surface; around it is the Geral: lamps for the word and the clock, paper for guesses and súmula. */
+.pr { --concrete: #8E8B84; --wash: #D3E2C6; --certo: #2F7D3A; --cartao: #C8342B;
+  --lousa: #2C4536; /* the coach's board: a slate green, darker and greyer than the grass */ }
+.pr button { font: inherit; color: inherit; }
+.pr [hidden] { display: none !important; }
+.pr .btn { display: inline-block; font: 900 22px/1 var(--display); text-transform: uppercase; letter-spacing: .06em; background: var(--turf); color: var(--paper); border: 0; padding: 14px 22px; min-height: 50px; cursor: pointer; text-decoration: none; }
+.pr .btn:hover { background: #000; color: var(--lamp); }
+.pr .btn.secondary { background: var(--paper); color: var(--ink); border: 3px solid var(--ink); }
+.pr .btn.lamp-btn { background: var(--lamp); color: var(--ink); }
+.pr .btn:disabled { opacity: .45; cursor: default; }
+.pr .btn:disabled:hover { background: var(--turf); color: var(--paper); }
+.pr .btn.lamp-btn:disabled:hover { background: var(--lamp); color: var(--ink); }
+
+/* ---- the live stage: fits the screen's height, scrolled to it --------------------------- */
+.pr .palco { display: flex; flex-direction: column; gap: 12px; }
+.pr .palco.ao-vivo { display: grid; gap: 10px; height: calc(100svh - 16px); min-height: 540px;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-rows: auto auto auto auto minmax(0, 1fr) auto;
+  grid-template-areas: "placar" "quadro" "bandeja" "jog" "feed" "entrada"; }
+.pr .ao-vivo .placar { grid-area: placar; } .pr .ao-vivo .quadro { grid-area: quadro; }
+.pr .ao-vivo .bandeja { grid-area: bandeja; } .pr .ao-vivo .jogadores { grid-area: jog; }
+.pr .ao-vivo .feed { grid-area: feed; } .pr .ao-vivo .entrada { grid-area: entrada; }
+.pr .lado { display: contents; }
+
+/* The scoreboard: what's going on, the clock, and the word as lamps. */
+.pr .placar { border: 3px solid #000; box-shadow: 0 0 0 6px var(--turf), 6px 6px 0 6px rgba(0, 0, 0, .3); margin: 6px; padding: 9px 12px 11px; display: flex; flex-direction: column; gap: 8px; }
+.pr .placar-top { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.pr .placar .meta { font-size: 12px; letter-spacing: .08em; opacity: .9; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pr .placar .relogio { font-size: 30px; letter-spacing: .02em; }
+.pr .relogio .dp { display: inline-block; width: .16em; height: .56em; margin: 0 .08em; vertical-align: .1em; filter: drop-shadow(0 0 4px rgba(255, 194, 26, .7));
+  background: radial-gradient(circle, var(--lamp) 60%, transparent 66%) top / .16em .16em no-repeat, radial-gradient(circle, var(--lamp) 60%, transparent 66%) bottom / .16em .16em no-repeat; }
+.pr .placar .relogio.fim { animation: pr-pisca 1s steps(1) infinite; }
+@keyframes pr-pisca { 50% { opacity: .25; } }
+.pr .palavra { container-type: inline-size; display: flex; justify-content: center; gap: 4px; min-height: 36px; align-items: center; }
+.pr .palavra .l { --c: min(34px, calc((100cqw - (var(--n) - 1) * 4px) / var(--n))); width: var(--c); height: calc(var(--c) * 1.2); display: grid; place-items: center;
+  border: 2px solid #2C2A24; background: rgba(0, 0, 0, .55); font: 900 calc(var(--c) * .78)/1 var(--dots); color: var(--lamp); }
+.pr .palavra .l.acesa { border-color: #5a4a12; text-shadow: 0 0 6px rgba(255, 194, 26, .75), 0 0 16px rgba(255, 170, 0, .35); }
+.pr .palavra .l.apagada::after { content: ""; width: 34%; height: 3px; background: #3A3730; margin-top: 50%; }
+.pr .palavra .l.vao { border: 0; background: transparent; }
+.pr .palavra .l.sinal { border: 0; background: transparent; }
+.pr .palavra .aviso { font-size: 15px; letter-spacing: .08em; text-align: center; line-height: 1.3; }
+
+/* The coach's board: slate green, a concrete-grey frame, the pitch marked in faint chalk. */
+.pr .quadro { min-width: 0; min-height: 0; display: grid; place-items: center; }
+.pr .prancheta { position: relative; padding: 9px; background: var(--concrete-lt); border: 3px solid var(--ink); box-shadow: 6px 6px 0 rgba(0, 0, 0, .35); }
+.pr .lousa { position: relative; overflow: hidden; background: var(--lousa);
+  background-image: radial-gradient(ellipse 60% 45% at 30% 35%, rgba(255, 255, 255, .06), transparent 70%), radial-gradient(ellipse 50% 40% at 75% 70%, rgba(255, 255, 255, .045), transparent 70%); }
+.pr .lousa svg.campo { position: absolute; inset: 0; width: 100%; height: 100%; opacity: .14; pointer-events: none; }
+.pr .lousa canvas { position: absolute; inset: 0; width: 100%; height: 100%; touch-action: none; }
+.pr .lousa.pode canvas { cursor: crosshair; }
+.pr .sobre { position: absolute; inset: 0; display: grid; place-items: center; padding: 12px; }
+.pr .sobre.escuro { background: rgba(10, 22, 15, .55); }
+.pr .giz-texto { font: 800 clamp(20px, 4vw, 34px)/1.1 var(--display); text-transform: uppercase; letter-spacing: .04em; color: rgba(243, 241, 234, .85); text-align: center; }
+.pr .giz-texto small { display: block; font: 600 15px/1.4 var(--body); text-transform: none; letter-spacing: 0; opacity: .8; margin-top: 6px; }
+
+/* Choosing the word: three tickets of the same size. */
+.pr .opcoes { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; width: 100%; max-width: 640px; }
+.pr .opcoes h3 { grid-column: 1 / -1; color: #fff; font-size: 22px; text-align: center; text-shadow: 2px 2px 0 rgba(0, 0, 0, .4); }
+.pr .opcao { height: 132px; display: flex; flex-direction: column; justify-content: space-between; align-items: flex-start; text-align: left; padding: 10px 12px; background: var(--paper); border: 3px solid var(--ink); box-shadow: 4px 4px 0 rgba(0, 0, 0, .4); cursor: pointer; }
+.pr .opcao:hover { background: var(--ticket); }
+.pr .opcao .nivel { font: 700 12px/1 var(--body); text-transform: uppercase; letter-spacing: .12em; }
+.pr .opcao b { font: 900 26px/1 var(--display); text-transform: uppercase; }
+.pr .opcao .vale { font: 600 14px/1.2 var(--body); color: var(--ink-soft); }
+
+/* Between turns: the word revealed, a newspaper clipping on the board. */
+.pr .recorte { background: var(--paper); border: 3px solid var(--ink); box-shadow: 6px 6px 0 rgba(0, 0, 0, .4); padding: 12px 16px 14px; transform: rotate(-1.2deg); width: min(100%, 420px); }
+.pr .recorte .kicker { display: flex; justify-content: space-between; font: 700 12px/1 var(--body); text-transform: uppercase; letter-spacing: .12em; border-bottom: 2px solid var(--ink); padding-bottom: 5px; }
+.pr .recorte h2 { font-size: clamp(30px, 6vw, 46px); margin: 8px 0 8px; }
+.pr .recorte ul { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: 1fr 1fr; gap: 2px 14px; font-size: 15px; }
+.pr .recorte li { display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px dotted rgba(20, 35, 26, .35); }
+.pr .recorte li b { font: 900 18px/1.3 var(--display); }
+.pr .recorte .proximo { margin: 8px 0 0; font-size: 14px; color: var(--ink-soft); }
+
+/* The tray under the board: chalk, eraser, widths, undo, clear. */
+.pr .bandeja { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; align-items: center; background: var(--concrete-lt); border: 3px solid var(--ink); padding: 6px; box-shadow: 4px 4px 0 rgba(0, 0, 0, .3); }
+.pr .bandeja .grupo { display: flex; gap: 5px; }
+.pr .ferr { width: 38px; height: 38px; display: grid; place-items: center; padding: 0; border: 2px solid var(--ink); background: var(--lousa); cursor: pointer; }
+.pr .ferr[aria-pressed="true"] { outline: 3px solid var(--lamp); outline-offset: -1px; box-shadow: 0 0 0 2px var(--ink); }
+.pr .ferr .giz { width: 20px; height: 20px; border-radius: 50%; background: var(--c); box-shadow: inset -2px -3px 0 rgba(0, 0, 0, .18); }
+.pr .ferr .esp { border-radius: 50%; background: #F3F1EA; }
+.pr .ferr svg { display: block; }
+.pr .ferr.txt { width: auto; padding: 0 12px; background: var(--paper); color: var(--ink); font: 800 16px/1 var(--display); text-transform: uppercase; letter-spacing: .04em; }
+.pr .ferr.txt:active, .pr .ferr:active { transform: translate(1px, 1px); }
+
+/* Players: cards of one size; the drawer on the board, who guessed in green. */
+.pr .jogadores { list-style: none; margin: 0; padding: 0; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; }
+.pr .jog { flex: 0 0 132px; height: 58px; position: relative; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto; align-content: center; align-items: baseline; gap: 4px 6px; padding: 5px 8px; background: var(--paper); border: 2px solid var(--ink); cursor: pointer; text-align: left; }
+.pr .jog .nome { grid-column: 1 / -1; font: 800 18px/1.25 var(--display); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pr .jog .nome i { font-style: normal; font: 600 11px/1 var(--body); text-transform: lowercase; color: var(--ink-soft); }
+.pr .jog .pts { grid-row: 2; grid-column: 2; font: 900 19px/1 var(--display); text-align: right; white-space: nowrap; }
+.pr .jog .pts small { display: none; }
+.pr .jog .st { grid-row: 2; grid-column: 1; font: 700 11px/1 var(--body); text-transform: uppercase; letter-spacing: .06em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; color: var(--ink-soft); }
+.pr .jog .st .selo { background: var(--ticket); color: var(--ink); padding: 1px 4px; }
+.pr .jog .st .longo { display: none; }
+.pr .jog .st .vermelho { display: inline-block; width: 7px; height: 10px; background: var(--cartao); vertical-align: -1px; margin-right: 2px; }
+.pr .jog.desenha { background: var(--board); color: var(--lamp); border-color: var(--board); }
+.pr .jog.desenha .st, .pr .jog.desenha .nome i { color: var(--lamp); }
+.pr .jog.acertou { background: var(--certo); color: #fff; border-color: var(--ink); }
+.pr .jog.acertou .st, .pr .jog.acertou .nome i { color: #E6F4E8; }
+.pr .jog.ausente { border-style: dashed; background: var(--paper-2); color: #7d786c; }
+.pr .jog.voce { box-shadow: inset 0 -4px 0 var(--ticket); }
+.pr .jog .card-btn { display: none; }
+
+/* Guesses: newspaper paper, newest at the bottom, the guess box under it. */
+.pr .feed { min-height: 0; display: flex; flex-direction: column; background: var(--paper); border: 3px solid var(--ink); box-shadow: 4px 4px 0 rgba(0, 0, 0, .3); }
+.pr .feed h3 { font-size: 15px; letter-spacing: .1em; padding: 6px 10px 5px; border-bottom: 2px solid var(--ink); display: flex; justify-content: space-between; }
+.pr .feed h3 span { font: 600 12px/1 var(--body); text-transform: none; letter-spacing: 0; color: var(--ink-soft); align-self: center; }
+.pr .feed ol { list-style: none; margin: 0; padding: 6px 10px 8px; overflow-y: auto; flex: 1; display: flex; flex-direction: column; gap: 3px; font-size: 15px; line-height: 1.3; }
+.pr .feed ol::before { content: ""; margin-top: auto; } /* newest at the bottom */
+.pr .feed li b { font-weight: 700; }
+.pr .feed li.gol { font-weight: 700; display: flex; gap: 6px; align-items: baseline; }
+.pr .feed li.gol .tag { font: 900 13px/1 var(--display); letter-spacing: .08em; background: var(--certo); color: #fff; padding: 3px 5px 2px; }
+.pr .feed li.gol .p { margin-left: auto; font: 900 16px/1 var(--display); }
+.pr .feed li.trave { border: 2px dashed var(--ink); background: var(--ticket); padding: 4px 8px; }
+.pr .feed li.trave small { display: block; font-size: 12px; color: var(--ink-soft); }
+.pr .feed li.sis { color: var(--ink-soft); font-style: italic; font-size: 14px; }
+.pr .entrada { display: flex; gap: 6px; }
+.pr .entrada input { flex: 1; min-width: 0; font: 600 18px var(--body); padding: 10px 12px; border: 3px solid var(--ink); background: #fff; color: var(--ink); border-radius: 0; }
+.pr .entrada .btn { font-size: 20px; padding: 10px 16px; min-height: 50px; background: var(--ink); color: var(--lamp); }
+.pr .entrada .nota { flex: 1; display: flex; align-items: center; justify-content: center; text-align: center; min-height: 50px; background: var(--board); color: var(--lamp); border: 3px solid var(--ink); font: 700 15px/1.2 var(--body); padding: 6px 10px; }
+
+/* ---- waiting room ------------------------------------------------------------------------ */
+.pr .espera { display: grid; gap: 14px; grid-template-columns: minmax(0, 1fr); }
+.pr .ticket { background: var(--paper); border: 3px solid var(--ink); box-shadow: 6px 6px 0 rgba(0, 0, 0, .3); padding: 16px; display: flex; flex-direction: column; flex-wrap: nowrap; gap: 14px; }
+.pr .ticket h2 { font-size: 30px; }
+.pr .ticket p { margin: 0; }
+.pr .link { display: flex; gap: 0; }
+.pr .link code { flex: 1; min-width: 0; font: 700 17px/1 var(--body); padding: 14px 12px; background: #fff; border: 3px solid var(--ink); border-right: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pr .link .btn { font-size: 18px; padding: 10px 14px; min-height: 0; background: var(--ink); color: var(--lamp); }
+.pr .acoes { display: flex; flex-wrap: wrap; gap: 10px; }
+.pr .campo-f { display: flex; flex-direction: column; gap: 8px; border: 0; margin: 0; padding: 0; }
+.pr .campo-f legend, .pr .campo-f > span { font: 700 13px/1 var(--body); text-transform: uppercase; letter-spacing: .08em; margin-bottom: 8px; }
+.pr .chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.pr .chip { font: 800 18px/1 var(--display); text-transform: uppercase; padding: 9px 12px; min-height: 44px; min-width: 52px; border: 2px solid var(--ink); background: transparent; color: var(--ink); cursor: pointer; }
+.pr .chip[aria-pressed="true"] { background: var(--ink); color: var(--lamp); }
+.pr .fine { font-size: 14px; color: var(--ink-soft); }
+.pr .vagas { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; }
+.pr .vagas .jog { width: auto; cursor: default; }
+.pr .vagas .vazia { height: 56px; border: 2px dashed rgba(20, 35, 26, .4); display: grid; place-items: center; font: 600 13px/1 var(--body); color: rgba(20, 35, 26, .55); text-transform: uppercase; letter-spacing: .08em; }
+.pr .entrando { animation: pr-entra .5s ease-out; }
+@keyframes pr-entra { from { transform: translateY(-8px); opacity: 0; } }
+
+/* ---- the end: the match report on paper --------------------------------------------------- */
+.pr .sumula { background: var(--paper); border: 3px solid var(--ink); box-shadow: 6px 6px 0 rgba(0, 0, 0, .3); padding: 16px 16px 18px; width: 100%; max-width: 780px; align-self: center; display: flex; flex-direction: column; gap: 14px;
+  background-image: repeating-linear-gradient(0deg, transparent 0 27px, rgba(20, 35, 26, .07) 27px 28px); }
+.pr .sumula .cab { display: flex; justify-content: space-between; align-items: end; gap: 8px; border-bottom: 3px double var(--ink); padding-bottom: 8px; flex-wrap: wrap; }
+.pr .sumula .cab h2 { font-size: clamp(34px, 6vw, 52px); }
+.pr .sumula .cab p { margin: 0; font-size: 14px; color: var(--ink-soft); }
+.pr .sumula h3 { font-size: 20px; letter-spacing: .06em; }
+.pr .campeao { width: calc(100% - 12px); max-width: 768px; align-self: center; padding: 10px 14px; display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+.pr .campeao .lamp { font-size: clamp(18px, 4.6vw, 28px); }
+.pr .campeao .lamp.n { font-size: clamp(24px, 6vw, 36px); }
+.pr table { border-collapse: collapse; width: 100%; font-size: 15px; }
+.pr th { font: 700 11px/1 var(--body); text-transform: uppercase; letter-spacing: .08em; text-align: right; padding: 6px 6px; border-bottom: 2px solid var(--ink); }
+.pr td { padding: 6px 6px; border-bottom: 1px solid rgba(20, 35, 26, .25); text-align: right; font: 800 20px/1 var(--display); }
+.pr th:nth-child(2), .pr td:nth-child(2) { text-align: left; }
+.pr td:nth-child(2) { font: 700 16px/1.2 var(--body); }
+.pr th:first-child, .pr td:first-child { text-align: left; width: 28px; }
+.pr td.pts { font-size: 24px; }
+.pr .lances { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.pr .lances li { display: grid; grid-template-columns: 26px minmax(0, 1fr); gap: 2px 8px; padding: 6px 0; border-bottom: 1px solid rgba(20, 35, 26, .25); font-size: 14px; line-height: 1.3; }
+.pr .lances .n { font: 900 18px/1.1 var(--display); grid-row: 1 / 3; }
+.pr .lances .pal { font: 900 19px/1.1 var(--display); text-transform: uppercase; }
+.pr .lances .pal small { font: 600 12px/1 var(--body); text-transform: none; color: var(--ink-soft); margin-left: 6px; }
+.pr .lances .quem { color: var(--ink-soft); }
+.pr .lances li.pulado .pal { text-decoration: line-through; opacity: .6; }
+
+.pr dialog.pr-caixa { padding: 0; border: 0; background: transparent; width: min(460px, calc(100vw - 32px)); }
+.pr dialog.pr-caixa::backdrop { background: rgba(0, 0, 0, .55); }
+.pr .caixa { background: var(--paper); border: 3px solid var(--ink); padding: 16px; display: flex; flex-direction: column; gap: 12px; box-shadow: 6px 6px 0 rgba(0, 0, 0, .35); }
+.pr .caixa h2 { font-size: 28px; display: flex; align-items: center; gap: 10px; }
+.pr .caixa h2 .vermelho { width: 22px; height: 30px; background: var(--cartao); border: 2px solid var(--ink); transform: rotate(-8deg); flex: none; }
+.pr .caixa p { margin: 0; }
+.pr .caixa ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; }
+.pr .votos { display: flex; gap: 6px; align-items: center; font-weight: 600; font-size: 15px; }
+.pr .votos i { width: 14px; height: 20px; border: 2px solid var(--ink); }
+.pr .votos i.on { background: var(--cartao); }
+.pr .btn.vermelho { background: var(--cartao); color: #fff; }
+
+/* ---- desktop: board on the left, players and guesses on the right ------------------------ */
+@media (min-width: 900px) {
+  .pr .palco.ao-vivo { grid-template-columns: minmax(0, 1fr) 340px; gap: 12px 16px;
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    grid-template-areas: "placar lado" "quadro lado" "bandeja lado"; }
+  .pr .palco.ao-vivo.sem-bandeja { grid-template-areas: "placar lado" "quadro lado" "quadro lado"; }
+  .pr .lado { grid-area: lado; display: flex; flex-direction: column; gap: 10px; min-height: 0; }
+  .pr .lado .feed { flex: 1; }
+  .pr .placar { padding: 10px 16px 12px; }
+  .pr .placar .meta { font-size: 14px; }
+  .pr .placar .relogio { font-size: 38px; }
+  .pr .palavra { min-height: 46px; }
+  .pr .palavra .l { --c: min(42px, calc((100cqw - (var(--n) - 1) * 4px) / var(--n))); }
+  .pr .jogadores { flex-direction: column; overflow: visible; gap: 5px; }
+  .pr .jog { flex: none; width: auto; height: 52px; grid-template-columns: minmax(0, 1fr) 60px 36px; align-items: center; gap: 3px 6px; }
+  .pr .jog .nome { grid-column: 1; grid-row: 1; }
+  .pr .jog .st { grid-row: 2; }
+  .pr .jog .pts { grid-row: 1 / 3; font-size: 24px; }
+  .pr .jog .pts small { display: block; margin: 2px 0 0; font: 600 10px/1 var(--body); text-transform: uppercase; letter-spacing: .08em; }
+  .pr .jog .st .longo { display: inline; } .pr .jog .st .curto { display: none; }
+  .pr .vagas .jog { grid-template-columns: minmax(0, 1fr); height: 56px; }
+  .pr .jog .card-btn { display: grid; grid-row: 1 / 3; grid-column: 3; place-items: center; width: 34px; height: 40px; border: 2px solid transparent; background: transparent; cursor: pointer; padding: 0; }
+  .pr .jog .card-btn i { width: 14px; height: 20px; background: transparent; border: 2px solid currentColor; transform: rotate(-8deg); opacity: .45; }
+  .pr .jog .card-btn:hover { border-color: var(--ink); }
+  .pr .jog .card-btn:hover i { opacity: 1; background: var(--cartao); border-color: var(--ink); }
+  .pr .jog .card-btn.vazio { visibility: hidden; }
+  .pr .bandeja { justify-content: space-between; }
+  .pr .bandeja .grupo { gap: 6px; }
+  .pr .espera { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); align-items: start; }
+  .pr .espera .placar { grid-column: 1 / -1; }
+  .pr .vagas { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pr .sumula { padding: 22px 26px 24px; }
+  .pr .sumula .colunas { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 24px; }
+}
+@media (max-width: 899px) {
+  .pr .jogo .wrap { gap: 16px; }
+  .pr .game-tabs a { font-size: 15px; padding: 9px 10px; min-height: 40px; }
+  .pr .opcoes { grid-template-columns: minmax(0, 1fr); gap: 7px; max-width: 320px; }
+  .pr .opcoes h3 { font-size: 18px; }
+  .pr .opcao { height: 62px; display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-rows: auto auto; align-items: center; padding: 6px 10px; gap: 2px 8px; }
+  .pr .opcao b { font-size: 22px; grid-row: 2; }
+  .pr .opcao .vale { grid-row: 1 / 3; grid-column: 2; text-align: right; font-size: 13px; }
+  .pr .recorte { padding: 8px 12px 10px; }
+  .pr .recorte h2 { margin: 4px 0; font-size: 30px; }
+  .pr .recorte ul { font-size: 13px; }
+  .pr .recorte li b { font-size: 15px; }
+  .pr .recorte .proximo { font-size: 12px; margin-top: 4px; }
+  .pr .bandeja { gap: 6px 10px; }
+  .pr .bandeja .cores { flex-basis: 100%; justify-content: center; }
+  .pr .ferr { width: 36px; height: 36px; }
+}
+
+
+/* ---- what the draft left out: the live page's own needs ---------------------------------- */
+.pr .ao-vivo .placar-box { grid-area: placar; min-width: 0; }
+.pr .giz-texto { margin: 0; }
+.pr .campo-f > span { margin-bottom: 0; }
+.pr .ticket input.pr-apelido { font: 600 18px var(--body); padding: 12px; border: 3px solid var(--ink); background: #fff; color: var(--ink); border-radius: 0; width: 100%; max-width: 360px; }
+.pr .pr-erro { margin: 0; padding: 8px 10px; background: var(--cartao); color: #fff; font-weight: 600; }
+.pr .pr-rodadas { font: 700 13px/1.3 var(--body); text-transform: uppercase; letter-spacing: .08em; }
+.pr .pr-sair { font: inherit; color: inherit; background: none; border: 0; padding: 0; text-decoration: underline; cursor: pointer; }
+.pr .pr-fechando { max-width: 780px; width: 100%; align-self: center; }
+.pr .sumula .acoes .btn, .pr .ticket .acoes .btn { text-align: center; }
+/* The phone's keyboard open over the guess box: the board gives up height, the players hide. */
+.pr .palco.ao-vivo.teclado { height: calc(var(--vv-h, 100svh) - 8px); min-height: 0;
+  grid-template-rows: auto minmax(0, 1fr) auto auto minmax(56px, 96px) auto; }
+.pr .palco.ao-vivo.teclado .jogadores { display: none; }
+@media (min-width: 900px) {
+  .pr .espera .placar-box { grid-column: 1 / -1; }
+  .pr .espera.so { grid-template-columns: minmax(0, 620px); justify-content: center; }
+}
+.pr .placar .relogio { white-space: nowrap; flex: none; }
+.pr .palavra .l { text-transform: uppercase; }
+.pr .acoes .btn { display: inline-flex; align-items: center; justify-content: center; }
+@media (max-width: 899px) { .pr .pr-so-pc { display: none; } }
