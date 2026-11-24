@@ -138,3 +138,19 @@ def test_longe_e_errado(banco):
     assert banco.julgar("escanteio", _palavra(banco, "Bicicleta")) == "errado"
     assert banco.julgar("", _palavra(banco, "Apito")) == "errado"
     assert banco.julgar("!!!", _palavra(banco, "Apito")) == "errado"
+
+
+def test_parte_da_palavra_e_trave(banco):
+    """Gartic-style "quase": a guess that is part of a longer answer hits the post."""
+    from geral.games.prancheta.tipos import Palavra
+
+    bandeira = Palavra("Bandeira de escanteio", (), "media", "objeto")
+    assert banco.julgar("escanteio", bandeira) == "trave"
+    assert banco.julgar("bandeira", bandeira) == "trave"
+    assert banco.julgar("bandeira escanteio", bandeira) == "trave"
+    assert banco.julgar("escantei", bandeira) == "trave"  # typo in the part still counts
+    assert banco.julgar("de", bandeira) == "errado"  # connectors give nothing away
+    assert banco.julgar("bandeirinha", bandeira) == "errado"
+    gol = Palavra("Gol olímpico", (), "media", "lance")
+    assert banco.julgar("olimpico", gol) == "trave"
+    assert banco.julgar("gol", gol) == "errado"  # too short to be a hint
