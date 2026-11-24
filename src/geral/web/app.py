@@ -1802,7 +1802,18 @@ def create_app(
         edicoes = setea0_edicoes()
         if not edicoes:
             return setea0_nao_achado(request)
-        clubes = [{"slug": s, "nome": setea0_nome(s), "url": game_url("7a0", s)} for s in edicoes]
+        nordeste = {"ceara", "fortaleza", "bahia", "vitoria", "sport", "santa-cruz"}
+        chaves = setea0_dados.chaves()["edicao"]
+        clubes = [
+            {
+                "slug": s,
+                "nome": setea0_nome(s),
+                "url": game_url("7a0", s),
+                "chave": "Nordeste" if nordeste & set(chaves[s]["adversarios"]) else "Grandes",
+                "final": setea0_nome(chaves[s]["final"]),
+            }
+            for s in edicoes
+        ]
         return setea0_pagina(request, "geral", clubes=clubes)
 
     @app.get("/jogos/7a0/c/{codigo}", response_class=HTMLResponse)
