@@ -78,3 +78,17 @@
 .s7-ocupado .s7-oferta, .s7-ocupado .s7-escalar-campo { opacity: .6; pointer-events: none; }
 .s7-card .placar-final .rotulo { font-size: .7em; opacity: .85; }
 .s7 .editions { margin-bottom: 4px; }
+/* The shootout on the board, as on TV: green goal, red miss, dark still to come. */
+.s7-pontos { display: flex; flex-direction: column; gap: 8px; }
+.s7-fila { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 12px; align-items: center; }
+.s7-fila .quem { font-size: clamp(14px, 2.4vw, 20px); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.s7-fila .bolas { display: flex; gap: 6px; }
+.s7-fila .p { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #3A3833; background: #1b1a17; }
+.s7-fila .p.g { background: #3BB54A; border-color: #3BB54A; box-shadow: 0 0 8px rgba(59, 181, 74, .7); }
+.s7-fila .p.e { background: #D2352B; border-color: #D2352B; box-shadow: 0 0 8px rgba(210, 53, 43, .6); }
+/* In the 7a0 the minigame gets the room a shootout deserves: wider, centred, never taller
+   than the screen (the pitch is 360 × 470, plus its scoreboard and button). */
+.s7-penalti .pn { width: min(100%, 640px, calc((100svh - 310px) * 360 / 470)); margin: 0 auto; }
+.s7-pontos[hidden] { display: none; }
+.s7-pontos-pen { width: min(100%, 640px, calc((100svh - 310px) * 360 / 470)); margin: 0 auto; box-sizing: border-box; padding: 10px 14px; background: var(--board); border: 3px solid var(--ink); }
+.s7-penalti[hidden] { display: none; }

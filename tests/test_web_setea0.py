@@ -222,6 +222,7 @@ def test_pagina_tem_o_js_e_os_dados(game) -> None:
     html = game.get("/jogos/7a0/abc").text
     assert "/static/geral/setea0.js" in html and "/static/geral/penalti.js" in html
     assert 'id="s7-escalar"' in html  # the screens are on the page
+    assert 'id="s7-pontos-pen"' in html and 'id="s7-pen-jogo"' in html  # the shootout lamps
     jogo = _dados_da_pagina(html)
     assert jogo["edicao"] == "abc" and jogo["nome"] == "ABC"
     assert jogo["esquemas"]["4-3-3"][0] == "GOL" and len(jogo["esquemas"]["4-3-3"]) == 11

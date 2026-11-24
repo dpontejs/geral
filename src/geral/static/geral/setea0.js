@@ -310,6 +310,7 @@
       return falhar(erro);
     }
     if (r.pedido) return penalti(r.pedido, r.adversario.nome);
+    fecharPenalti();
     await mostrarPartida(r.partida, r.adversario.nome);
     if (r.fim) return terminar(r.campanha, r.codigo);
     estado.n += 1;
@@ -344,13 +345,44 @@
       $("s7-gols-eles").textContent = String(eles);
       gols.append(el("li", g.nosso ? "nosso" : "deles", `${g.minuto}' ${partes(g.autor).curto}`));
     }
+    $("s7-pontos").hidden = true;
     if (p.disputa) {
       const feitos = (lado) => lado.filter(Boolean).length;
       gols.append(
         el("li", "nosso", `Pênaltis: ${feitos(p.disputa.nossas)} × ${feitos(p.disputa.deles)}`),
       );
+      pontos(p.disputa, adversario);
     }
     $("s7-situacao").textContent = `${rotulo} · ${p.venceu ? "vitória" : "fim da linha"}`;
+  }
+
+  // The shootout as on TV: one row per team, a lamp per kick (green goal, red miss, dark to
+  // come). Five each, then one more a side while it goes on.
+  function pontos(disputa, adversario) {
+    // on the board, and right above the minigame, where the kicker's eyes are
+    for (const id of ["s7-pontos", "s7-pontos-pen"]) desenharPontos($(id), disputa, adversario);
+    $("s7-pontos").hidden = false;
+  }
+
+  function desenharPontos(caixa, disputa, adversario) {
+    const total = Math.max(5, disputa.nossas.length, disputa.deles.length);
+    caixa.replaceChildren();
+    for (const [nome, lado] of [
+      [jogo.nome, disputa.nossas],
+      [adversario, disputa.deles],
+    ]) {
+      const fila = el("div", "s7-fila");
+      fila.append(el("span", "lamp quem", nome));
+      const bolas = el("span", "bolas");
+      for (let i = 0; i < total; i++) {
+        const p = el("span", "p");
+        if (i < lado.length) p.classList.add(lado[i] ? "g" : "e");
+        p.setAttribute("aria-label", i < lado.length ? (lado[i] ? "gol" : "perdeu") : "a cobrar");
+        bolas.append(p);
+      }
+      fila.append(bolas);
+      caixa.append(fila);
+    }
   }
 
   async function penalti(pedido, adversario) {
@@ -370,14 +402,19 @@
     $("s7-gols-nos").textContent = String(pedido.nosso);
     $("s7-gols-eles").textContent = String(pedido.deles);
     $("s7-gols").replaceChildren();
+    pontos(pedido.disputa, adversario);
     $("s7-situacao").textContent =
       `Pênaltis: ${jogo.nome} ${feitos(pedido.disputa.nossas)} × ` +
       `${feitos(pedido.disputa.deles)} ${adversario} · bate ${pedido.cobrador}`;
     const palco = $("s7-penalti");
-    palco.hidden = false;
-    rolar(palco, true);
+    if (palco.hidden) {
+      // the first kick of the shootout; the pitch then stays up until it ends, so the page
+      // doesn't shrink and jump between kicks
+      palco.hidden = false;
+      rolar(palco, true);
+    }
     const [nossos, deles] = [feitos(pedido.disputa.nossas), feitos(pedido.disputa.deles)];
-    const resultado = await window.jogarPenalti(palco, {
+    const resultado = await window.jogarPenalti($("s7-pen-jogo"), {
       finalizacao: pedido.chance,
       clube: jogo.nome,
       adversario,
@@ -388,10 +425,15 @@
       placar: [`${nossos} × ${deles}`, `${nossos + 1} × ${deles}`],
       seguir: "Próxima cobrança →",
     });
-    palco.hidden = true;
-    palco.replaceChildren();
     lista.push({ resultado });
     jogar();
+  }
+
+  function fecharPenalti() {
+    const palco = $("s7-penalti");
+    if (palco.hidden) return;
+    palco.hidden = true;
+    $("s7-pen-jogo").replaceChildren();
   }
 
   $("s7-proximo").addEventListener("click", () => jogar());
