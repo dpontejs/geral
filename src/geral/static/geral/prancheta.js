@@ -237,15 +237,12 @@
   function lampada(c) {
     if (c.k === "vao") return `<span class="l vao"></span>`;
     if (c.k === "sinal") return `<span class="l sinal lamp">${esc(c.t)}</span>`;
-    return c.k === "acesa" ? `<span class="l acesa">${esc(c.t)}</span>` : `<span class="l apagada"></span>`;
+    return c.k === "acesa" ? `<span class="l acesa">${esc(c.t.toLocaleUpperCase("pt-BR"))}</span>` : `<span class="l apagada"></span>`;
   }
   const tipo = (c) => (c === " " ? "vao" : /\p{L}/u.test(c) ? "acesa" : "sinal");
   const acesa = (texto) => [...texto].map((t) => ({ t, k: tipo(t) }));
   const daDica = (dica) => dica.map((t) => (t === null ? { k: "apagada" } : { t, k: tipo(t) }));
 
-  const CAMPO = `<svg class="campo" viewBox="0 0 400 300" preserveAspectRatio="none" aria-hidden="true" fill="none" stroke="#fff" stroke-width="2">
-      <rect x="12" y="12" width="376" height="276"/><line x1="200" y1="12" x2="200" y2="288"/><circle cx="200" cy="150" r="36"/>
-      <rect x="12" y="80" width="54" height="140"/><rect x="334" y="80" width="54" height="140"/></svg>`;
   function bandeja() {
     const cores = CORES.map((c, i) => (i === 0 ? "" : `<button class="ferr" type="button" data-cor="${i}" aria-label="${NOMES_COR[i]}" aria-pressed="${i === ferramenta.cor}"><span class="giz" style="--c:${c}"></span></button>`)).join("");
     const borracha = `<button class="ferr" type="button" data-cor="0" aria-label="Apagador" aria-pressed="${ferramenta.cor === 0}"><svg width="24" height="20" viewBox="0 0 24 20"><rect x="2" y="5" width="20" height="10" rx="1" fill="#E8E2D2" stroke="#14231A" stroke-width="2"/><rect x="2" y="11" width="20" height="4" fill="#7a6a52"/></svg></button>`;
@@ -439,7 +436,7 @@
     tela = "ao-vivo";
     palco.className = "palco ao-vivo";
     palco.innerHTML = `<div id="pr-placar-box" class="placar-box"></div>
-      <div class="quadro" id="quadro"><div class="prancheta"><div class="lousa" id="lousa">${CAMPO}<canvas aria-label="Prancheta de desenho"></canvas><div id="sobre"></div></div></div></div>
+      <div class="quadro" id="quadro"><div class="prancheta"><div class="lousa" id="lousa"><canvas aria-label="Prancheta de desenho"></canvas><div id="sobre"></div></div></div></div>
       <div class="bandeja" id="bandeja" role="toolbar" aria-label="Giz e apagador"></div>
       <div class="lado">
         <ul class="jogadores" id="jogadores" aria-label="Jogadores"></ul>
