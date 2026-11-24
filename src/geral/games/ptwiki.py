@@ -23,7 +23,7 @@ HEADERS = {
     "Accept-Encoding": "gzip",  # Wikimedia answers 403 to the httpx default
 }
 BATCH = 50  # titles or ids per MediaWiki call
-LINE = re.compile(r"<br\s*/?>", re.IGNORECASE)
+LINE = re.compile(r"<br\s*/?\s*>", re.IGNORECASE)  # "<br/ >" too
 LINK = re.compile(r"\[\[([^\]|#]+)(?:\|([^\]]+))?\]\]")
 STAFF = re.compile(r"treinador|t[ée]cnico|auxiliar|preparador|dirigente", re.IGNORECASE)
 LOAN = re.compile(r"\(?\s*\[\[Empréstimo[^\]]*\]\]\s*\)?")  # "([[Empréstimo (esportes)|emp.]])"
@@ -284,7 +284,7 @@ def page_ids(client: httpx.Client, titles: list[str], pause: float = 1) -> dict[
         )["query"]
         found = {
             p["title"]: p["pageprops"]["wikibase_item"]
-            for p in query["pages"]
+            for p in query.get("pages", [])  # only interwiki links: no pages
             if p.get("pageprops", {}).get("wikibase_item")
             and "disambiguation" not in p["pageprops"]  # which club? the article doesn't say
         }
@@ -319,6 +319,25 @@ def _label(entity: dict) -> str:
         if lang in labels:
             return labels[lang]["value"]
     return ""
+
+
+NOT_WIKIPEDIAS = {"commonswiki", "specieswiki", "metawiki", "sourceswiki", "wikidatawiki"}
+
+
+def sitelinks(client: httpx.Client, qids: list[str], pause: float = 1) -> dict[str, int]:
+    """Wikidata id -> number of Wikipedias with an article (a player's fame)."""
+    fame: dict[str, int] = {}
+    for i in range(0, len(qids), BATCH):
+        entities = _get(
+            client,
+            WIKIDATA,
+            {"action": "wbgetentities", "props": "sitelinks", "ids": "|".join(qids[i : i + BATCH])},
+            pause,
+        )["entities"]
+        for qid, entity in entities.items():
+            sites = entity.get("sitelinks", {})
+            fame[qid] = sum(1 for s in sites if s.endswith("wiki") and s not in NOT_WIKIPEDIAS)
+    return fame
 
 
 def club_info(client: httpx.Client, qids: list[str], pause: float = 1) -> dict[str, dict]:

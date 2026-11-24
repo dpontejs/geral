@@ -1,0 +1,3598 @@
+# Palmeiras: jogadores de "Futebolistas da Sociedade Esportiva Palmeiras" (Wikipédia pt), sugeridos por
+# `scripts/import_setea0.py --sugerir palmeiras`. A revisão é humana:
+# `incluir = false` tira o jogador do 7a0; o comentário diz por que a sugestão o cortou.
+
+[[jogador]]
+pagina = "Abelardo Dutra Meireles"
+nome = "Abelardo"
+incluir = true
+
+[[jogador]]
+pagina = "Adalto (futebolista)"
+nome = "Adalto"
+incluir = true
+
+[[jogador]]
+pagina = "Ademar José Ribeiro"
+nome = "Dé"
+incluir = true
+
+[[jogador]]
+pagina = "Ademar Pantera"
+nome = "Ademar Pantera"
+incluir = true
+
+[[jogador]]
+pagina = "Ademir da Guia"
+nome = "Ademir da Guia"
+incluir = true
+
+[[jogador]]
+pagina = "Adriano Chuva"
+nome = "Adriano Chuva"
+incluir = true
+
+[[jogador]]
+pagina = "Adriano Michael Jackson"
+nome = "Adriano"
+incluir = true
+
+[[jogador]]
+pagina = "Adriano Vieira Louzada"
+nome = "Adriano Vieira Louzada"
+incluir = true
+
+[[jogador]]
+pagina = "Agnaldo Liz"
+nome = "Agnaldo Liz"
+incluir = true
+
+[[jogador]]
+pagina = "Fortes (futebolista)"
+nome = "Fortes"
+incluir = false  # sem anos no clube
+
+[[jogador]]
+pagina = "Agostinho Zeola"
+nome = "Agostinho Zeola"
+incluir = false  # sem anos no clube
+
+[[jogador]]
+pagina = "Óscar Aguirregaray"
+nome = "Óscar Aguirregaray"
+incluir = true
+
+[[jogador]]
+pagina = "Alan Empereur"
+nome = "Alan Empereur"
+incluir = true
+
+[[jogador]]
+pagina = "Alan Kardec (futebolista)"
+nome = "Alan Kardec"
+incluir = true
+
+[[jogador]]
+pagina = "Alan Patrick"
+nome = "Alan Patrick"
+incluir = true
+
+[[jogador]]
+pagina = "Albéris"
+nome = "Albéris"
+incluir = true
+
+[[jogador]]
+pagina = "Alberto Antônio de Paula"
+nome = "Beto"
+incluir = true
+
+[[jogador]]
+pagina = "Alberto Luiz de Souza"
+nome = "Alberto"
+incluir = true
+
+[[jogador]]
+pagina = "Alceu (futebolista)"
+nome = "Alceu"
+incluir = true
+
+[[jogador]]
+pagina = "Aldemar dos Santos"
+nome = "Aldemar"
+incluir = true
+
+[[jogador]]
+pagina = "Alecsandro"
+nome = "Alecsandro"
+incluir = true
+
+[[jogador]]
+pagina = "Alessandro Bressani"
+nome = "Alessandro Bressani"
+incluir = false  # sem anos no clube
+
+[[jogador]]
+pagina = "Alessandro Nunes"
+nome = "Alessandro"
+incluir = true
+
+[[jogador]]
+pagina = "Alex Afonso"
+nome = "Alex Afonso"
+incluir = true
+
+[[jogador]]
+pagina = "Alex Mineiro"
+nome = "Alex Mineiro"
+incluir = true
+
+[[jogador]]
+pagina = "Alex Sandro de Oliveira"
+nome = "Paulo Isidoro"
+incluir = true
+
+[[jogador]]
+pagina = "Alex Sandro Mendonça dos Santos"
+nome = "Cicinho"
+incluir = true
+
+[[jogador]]
+pagina = "Alex Alves (futebolista, 1974)"
+nome = "Alex Alves"
+incluir = true
+
+[[jogador]]
+pagina = "Alexsandro de Souza"
+nome = "Alex"
+incluir = true
+
+[[jogador]]
+pagina = "Alfredo Lúcio de Moura"
+nome = "Mexicano"
+incluir = true
+
+[[jogador]]
+pagina = "Alfredo Sampaio Filho"
+nome = "Alfredinho"
+incluir = true
+
+[[jogador]]
+pagina = "Allan (futebolista, 2004)"
+nome = "Allan"
+incluir = true
+
+[[jogador]]
+pagina = "Agustín Allione"
+nome = "Agustín Allione"
+incluir = true
+
+[[jogador]]
+pagina = "Almir de Souza Fraga"
+nome = "Almir"
+incluir = true
+
+[[jogador]]
+pagina = "Amaral (futebolista)"
+nome = "Amaral"
+incluir = true
+
+[[jogador]]
+pagina = "Américo Murolo"
+nome = "Américo Murolo"
+incluir = false  # sem infobox
+
+[[jogador]]
+pagina = "Amílcar Barbuy"
+nome = "Amílcar Barbuy"
+incluir = true
+
+[[jogador]]
+pagina = "Ananias (futebolista)"
+nome = "Ananias"
+incluir = true
+
+[[jogador]]
+pagina = "André Bahia"
+nome = "André Bahia"
+incluir = true
+
+[[jogador]]
+pagina = "André Emanuel Tedesco"
+nome = "Tedesco"
+incluir = true
+
+[[jogador]]
+pagina = "André Luiz Silva do Nascimento"
+nome = "André Luiz Silva do Nascimento"
+incluir = false  # sem infobox
+
+[[jogador]]
+pagina = "André Neles"
+nome = "André Neles"
+incluir = true
+
+[[jogador]]
+pagina = "André Rocha"
+nome = "André Rocha"
+incluir = true
+
+[[jogador]]
+pagina = "Andrei Frascarelli"
+nome = "Andrei"
+incluir = true
+
+[[jogador]]
+pagina = "Andrei Girotto"
+nome = "Andrei Girotto"
+incluir = true
+
+[[jogador]]
+pagina = "Anfilogino Guarisi"
+nome = "Anfilogino Guarisi"
+incluir = true
+
+[[jogador]]
+pagina = "Iván Angulo"
+nome = "Iván Angulo"
+incluir = true
+
+[[jogador]]
+pagina = "Anselmo de Moraes"
+nome = "Anselmo"
+incluir = true
+
+[[jogador]]
+pagina = "Anselmo Tadeu"
+nome = "Anselmo"
+incluir = true
+
+[[jogador]]
+pagina = "Antônio Carlos Capocasali"
+nome = "Antônio Carlos"
+incluir = true
+
+[[jogador]]
+pagina = "Antônio Carlos Zago"
+nome = "Antônio Carlos Zago"
+incluir = true
+
+[[jogador]]
+pagina = "Antônio Cavalini"
+nome = "Canhoto"
+incluir = true
+
+[[jogador]]
+pagina = "Antonio Picagli"
+nome = "Picagli"
+incluir = true
+
+[[jogador]]
+pagina = "Aquiles dos Reis"
+nome = "Aquiles"
+incluir = true
+
+[[jogador]]
+pagina = "Carlos Aragonés"
+nome = "Carlos Aragonés"
+incluir = true
+
+[[jogador]]
+pagina = "Francisco Arce"
+nome = "Francisco Arce"
+incluir = true
+
+[[jogador]]
+pagina = "Argel Fuchs"
+nome = "Argel Fuchs"
+incluir = true
+
+[[jogador]]
+pagina = "Jhon Arias"
+nome = "Jhon Arias"
+incluir = true
+
+[[jogador]]
+pagina = "Arílson"
+nome = "Arílson"
+incluir = true
+
+[[jogador]]
+pagina = "Pablo Armero"
+nome = "Pablo Armero"
+incluir = true
+
+[[jogador]]
+pagina = "Arouca (futebolista)"
+nome = "Arouca"
+incluir = true
+
+[[jogador]]
+pagina = "Arthur Cabral"
+nome = "Arthur Cabral"
+incluir = true
+
+[[jogador]]
+pagina = "Arthur Gabriel"
+nome = "Arthur"
+incluir = true
+
+[[jogador]]
+pagina = "Arthur Machado"
+nome = "Machado"
+incluir = true
+
+[[jogador]]
+pagina = "Luis Artime"
+nome = "Luis Artime"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Artur Affini"
+nome = "Túlio"
+incluir = true
+
+[[jogador]]
+pagina = "Artur Victor"
+nome = "Artur"
+incluir = true
+
+[[jogador]]
+pagina = "Faustino Asprilla"
+nome = "Faustino Asprilla"
+incluir = true
+
+[[jogador]]
+pagina = "Eduard Atuesta"
+nome = "Eduard Atuesta"
+incluir = true
+
+[[jogador]]
+pagina = "Ayrton Luis Ganino"
+nome = "Ayrton"
+incluir = true
+
+[[jogador]]
+pagina = "Baiano (futebolista, 1978)"
+nome = "Baiano"
+incluir = true
+
+[[jogador]]
+pagina = "Baldocchi"
+nome = "Baldocchi"
+incluir = true
+
+[[jogador]]
+pagina = "Baltazar (futebolista)"
+nome = "Baltazar"
+incluir = true
+
+[[jogador]]
+pagina = "Alexander Barboza"
+nome = "Alexander Barboza"
+incluir = true
+
+[[jogador]]
+pagina = "Hernán Barcos"
+nome = "Hernán Barcos"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Lucas Barrios"
+nome = "Lucas Barrios"
+incluir = true
+
+[[jogador]]
+pagina = "Basílio (futebolista)"
+nome = "Basílio"
+incluir = true
+
+[[jogador]]
+pagina = "Bececê"
+nome = "Bececê"
+incluir = true
+
+[[jogador]]
+pagina = "Begliomini"
+nome = "Begliomini"
+incluir = true
+
+[[jogador]]
+pagina = "Benítez (futebolista)"
+nome = "Benítez"
+incluir = true
+
+[[jogador]]
+pagina = "Bernardo Vieira de Souza"
+nome = "Bernardo"
+incluir = true
+
+[[jogador]]
+pagina = "Beto Fuscão"
+nome = "Beto Fuscão"
+incluir = true
+
+[[jogador]]
+pagina = "Bianco Gambini"
+nome = "Bianco Spartaco Gambini"
+incluir = true
+
+[[jogador]]
+pagina = "Bio (futebolista)"
+nome = "Bio"
+incluir = true
+
+[[jogador]]
+pagina = "Bizu"
+nome = "Bizu"
+incluir = true
+
+[[jogador]]
+pagina = "Miguel Borja"
+nome = "Miguel Borja"
+incluir = true
+
+[[jogador]]
+pagina = "Elmo Bovio"
+nome = "Bovio"
+incluir = true
+
+[[jogador]]
+pagina = "Brandãozinho II"
+nome = "Brandãozinho II"
+incluir = true
+
+[[jogador]]
+pagina = "Breno Lopes"
+nome = "Breno Lopes"
+incluir = true
+
+[[jogador]]
+pagina = "Bruno César"
+nome = "Bruno César"
+incluir = true
+
+[[jogador]]
+pagina = "Bruno Duarte"
+nome = "Bruno Duarte"
+incluir = false  # sem anos no clube
+
+[[jogador]]
+pagina = "Bruno Felipe Lima Teixeira"
+nome = "Bruninho"
+incluir = true
+
+[[jogador]]
+pagina = "Bruno Fuchs"
+nome = "Bruno Fuchs"
+incluir = true
+
+[[jogador]]
+pagina = "Bruno Henrique Corsini"
+nome = "Bruno Henrique"
+incluir = true
+
+[[jogador]]
+pagina = "Bruno Rodrigues"
+nome = "Bruno Rodrigues"
+incluir = true
+
+[[jogador]]
+pagina = "Bruno Tabata"
+nome = "Bruno Tabata"
+incluir = true
+
+[[jogador]]
+pagina = "Humberto Cabelli"
+nome = "Humberto Cabelli"
+incluir = true
+
+[[jogador]]
+pagina = "Cabralzinho"
+nome = "Cabralzinho"
+incluir = false  # sem posição
+
+[[jogador]]
+pagina = "Caçapava (futebolista)"
+nome = "Caçapava"
+incluir = true
+
+[[jogador]]
+pagina = "Caetano Izzo"
+nome = "Caetano Izzo"
+incluir = true
+
+[[jogador]]
+pagina = "Cafu"
+nome = "Cafu"
+incluir = true
+
+[[jogador]]
+pagina = "Caieira (futebolista)"
+nome = "Caieira"
+incluir = false  # sem infobox
+
+[[jogador]]
+pagina = "Caio Mancha"
+nome = "Caio Mancha"
+incluir = true
+
+[[jogador]]
+pagina = "Caio Paulista"
+nome = "Caio Paulista"
+incluir = true
+
+[[jogador]]
+pagina = "Ventura Cambón"
+nome = "Ventura Cambón"
+incluir = true
+
+[[jogador]]
+pagina = "Canhotinho (futebolista)"
+nome = "Canhotinho"
+incluir = true
+
+[[jogador]]
+pagina = "Caravetti"
+nome = "Caravetti"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Cardosinho (futebolista)"
+nome = "Cardosinho"
+incluir = true
+
+[[jogador]]
+pagina = "Cardoso (futebolista)"
+nome = "Cardoso"
+incluir = true
+
+[[jogador]]
+pagina = "Careca Bianchesi"
+nome = "Careca Bianchesi"
+incluir = true
+
+[[jogador]]
+pagina = "Carlos Adriano de Jesus Soares"
+nome = "Alemão"
+incluir = true
+
+[[jogador]]
+pagina = "Carlos Alberto Carvalho dos Anjos Junior"
+nome = "Juninho"
+incluir = true
+
+[[jogador]]
+pagina = "Carlos Alberto Santos da Silva"
+nome = "Betinho"
+incluir = true
+
+[[jogador]]
+pagina = "César Sampaio"
+nome = "César Sampaio"
+incluir = true
+
+[[jogador]]
+pagina = "Carlos Cidreira"
+nome = "Copeu"
+incluir = true
+
+[[jogador]]
+pagina = "Carlos Eduardo Ferreira de Souza"
+nome = "Carlos Eduardo"
+incluir = true
+
+[[jogador]]
+pagina = "Carlyle (futebolista)"
+nome = "Carlyle"
+incluir = true
+
+[[jogador]]
+pagina = "Célio Lúcio"
+nome = "Célio Lúcio"
+incluir = true
+
+[[jogador]]
+pagina = "César Augusto Belli Michelon"
+nome = "César"
+incluir = true
+
+[[jogador]]
+pagina = "César Maluco"
+nome = "César Maluco"
+incluir = true
+
+[[jogador]]
+pagina = "Charles (futebolista)"
+nome = "Charles"
+incluir = true
+
+[[jogador]]
+pagina = "Chico Formiga"
+nome = "Chico Formiga"
+incluir = true
+
+[[jogador]]
+pagina = "Chinesinho"
+nome = "Chinesinho"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Christian Corrêa Dionísio"
+nome = "Christian"
+incluir = true
+
+[[jogador]]
+pagina = "Vítor (futebolista)"
+nome = "Vítor"
+incluir = true
+
+[[jogador]]
+pagina = "Claudemir Marques"
+nome = "Marques"
+incluir = true
+
+[[jogador]]
+pagina = "Cláudio Guadagno"
+nome = "Cláudio"
+incluir = true
+
+[[jogador]]
+pagina = "Clebão"
+nome = "Cléber"
+incluir = true
+
+[[jogador]]
+pagina = "Cleiton Xavier"
+nome = "Cleiton Xavier"
+incluir = true
+
+[[jogador]]
+pagina = "Cléo Hickman"
+nome = "Cléo Hickman"
+incluir = true
+
+[[jogador]]
+pagina = "Bruno Cazarine"
+nome = "Bruno Cazarine"
+incluir = true
+
+[[jogador]]
+pagina = "Corrêa (futebolista)"
+nome = "Corrêa"
+incluir = true
+
+[[jogador]]
+pagina = "Jonatan Cristaldo"
+nome = "Jonatan Cristaldo"
+incluir = true
+
+[[jogador]]
+pagina = "Cristian Mendigo"
+nome = "Cristian"
+incluir = true
+
+[[jogador]]
+pagina = "Osvaldo Héctor Cruz"
+nome = "Osvaldo Cruz"
+incluir = true
+
+[[jogador]]
+pagina = "Cuca (treinador de futebol)"
+nome = "Cuca"
+incluir = true
+
+[[jogador]]
+pagina = "Daniel Carvalho (futebolista)"
+nome = "Daniel Carvalho"
+incluir = true
+
+[[jogador]]
+pagina = "Daniel de Carvalho (futebolista)"
+nome = "Daniel"
+incluir = true
+
+[[jogador]]
+pagina = "Daniel Frasson"
+nome = "Daniel Frasson"
+incluir = false  # sem posição
+
+[[jogador]]
+pagina = "Daniel Martins"
+nome = "Daniel Martins"
+incluir = true
+
+[[jogador]]
+pagina = "Daniel da Silva"
+nome = "Daniel"
+incluir = true
+
+[[jogador]]
+pagina = "Danilo (futebolista, 2001)"
+nome = "Danilo"
+incluir = true
+
+[[jogador]]
+pagina = "Danilo Barbosa"
+nome = "Danilo Barbosa"
+incluir = true
+
+[[jogador]]
+pagina = "Danilo Larangeira"
+nome = "Danilo"
+incluir = true
+
+[[jogador]]
+pagina = "Darci Luiz Simon"
+nome = "Darci"
+incluir = true
+
+[[jogador]]
+pagina = "Dario Alegria"
+nome = "Dario Alegria"
+incluir = true
+
+[[jogador]]
+pagina = "David Braz"
+nome = "David Braz"
+incluir = true
+
+[[jogador]]
+pagina = "Dedimar"
+nome = "Dedimar"
+incluir = true
+
+[[jogador]]
+pagina = "Deley"
+nome = "Deley"
+incluir = false  # sem posição
+
+[[jogador]]
+pagina = "Dema (futebolista)"
+nome = "Dema"
+incluir = true
+
+[[jogador]]
+pagina = "Demosthenes Correa de Syllos"
+nome = "Demósthenes"
+incluir = true
+
+[[jogador]]
+pagina = "Denílson"
+nome = "Denílson"
+incluir = true
+
+[[jogador]]
+pagina = "Denys"
+nome = "Denys"
+incluir = false  # sem posição
+
+[[jogador]]
+pagina = "Deyverson"
+nome = "Deyverson"
+incluir = true
+
+[[jogador]]
+pagina = "Deyvid Sacconi"
+nome = "Deyvid Sacconi"
+incluir = true
+
+[[jogador]]
+pagina = "Diego Souza"
+nome = "Diego Souza"
+incluir = true
+
+[[jogador]]
+pagina = "Diego de Souza Gama Silva"
+nome = "Diego Souza"
+incluir = true
+
+[[jogador]]
+pagina = "Dino Sani"
+nome = "Dino Sani"
+incluir = true
+
+[[jogador]]
+pagina = "Diogo Barbosa"
+nome = "Diogo Barbosa"
+incluir = true
+
+[[jogador]]
+pagina = "Diogo Luís Santo"
+nome = "Diogo"
+incluir = true
+
+[[jogador]]
+pagina = "Víctor Diogo"
+nome = "Víctor Diogo"
+incluir = true
+
+[[jogador]]
+pagina = "Dirceu Ferreira"
+nome = "Dirceu Ferreira"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Djalma Dias"
+nome = "Djalma Dias"
+incluir = true
+
+[[jogador]]
+pagina = "Djalma Santos"
+nome = "Djalma Santos"
+incluir = true
+
+[[jogador]]
+pagina = "Djalminha"
+nome = "Djalminha"
+incluir = true
+
+[[jogador]]
+pagina = "Dodô (futebolista)"
+nome = "Dodô"
+incluir = true
+
+[[jogador]]
+pagina = "Domingos Spitaletti"
+nome = "Carnera"
+incluir = true
+
+[[jogador]]
+pagina = "Donah"
+nome = "Donah"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Donizete Pantera"
+nome = "Donizete"
+incluir = true
+
+[[jogador]]
+pagina = "Dorival Júnior"
+nome = "Dorival Júnior"
+incluir = true
+
+[[jogador]]
+pagina = "Dorval (futebolista)"
+nome = "Dorval"
+incluir = true
+
+[[jogador]]
+pagina = "Dudu (futebolista, 1939)"
+nome = "Dudu"
+incluir = true
+
+[[jogador]]
+pagina = "Dudu (futebolista, 1992)"
+nome = "Dudu"
+incluir = true
+
+[[jogador]]
+pagina = "Juan Raúl Echevarrieta"
+nome = "Juan Raúl Echevarrieta"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Éder Aleixo"
+nome = "Éder Aleixo"
+incluir = true
+
+[[jogador]]
+pagina = "Ederval Luís Lourenço da Conceição"
+nome = "Tato"
+incluir = true
+
+[[jogador]]
+pagina = "Edílson Capetinha"
+nome = "Edílson Capetinha"
+incluir = true
+
+[[jogador]]
+pagina = "Baroninho"
+nome = "Baroninho"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Edinho (futebolista, 1983)"
+nome = "Edinho"
+incluir = false  # sem posição
+
+[[jogador]]
+pagina = "Edinho Baiano"
+nome = "Edinho Baiano"
+incluir = true
+
+[[jogador]]
+pagina = "Edivaldo"
+nome = "Edivaldo"
+incluir = true
+
+[[jogador]]
+pagina = "Edmar Bernardes dos Santos"
+nome = "Edmar"
+incluir = true
+
+[[jogador]]
+pagina = "Edmilson dos Santos Silva"
+nome = "Edmilson"
+incluir = true
+
+[[jogador]]
+pagina = "Edmílson"
+nome = "Edmílson"
+incluir = true
+
+[[jogador]]
+pagina = "Edmílson Matias"
+nome = "Edmílson"
+incluir = true
+
+[[jogador]]
+pagina = "Edmundo (futebolista)"
+nome = "Edmundo"
+incluir = true
+
+[[jogador]]
+pagina = "Édson Boaro"
+nome = "Édson Boaro"
+incluir = true
+
+[[jogador]]
+pagina = "Édson Cegonha"
+nome = "Édson Cegonha"
+incluir = true
+
+[[jogador]]
+pagina = "Edu Bala"
+nome = "Edu Bala"
+incluir = true
+
+[[jogador]]
+pagina = "Edu Dracena"
+nome = "Edu Dracena"
+incluir = true
+
+[[jogador]]
+pagina = "Edu Manga"
+nome = "Edu Manga"
+incluir = true
+
+[[jogador]]
+pagina = "Edu Marangon"
+nome = "Edu Marangon"
+incluir = true
+
+[[jogador]]
+pagina = "Eduardo Jorge de Lima"
+nome = "Lima"
+incluir = true
+
+[[jogador]]
+pagina = "Edwald Yurk"
+nome = "Vavá"
+incluir = true
+
+[[jogador]]
+pagina = "Egídio (futebolista)"
+nome = "Egídio"
+incluir = true
+
+[[jogador]]
+pagina = "Sebastián Eguren"
+nome = "Sebastián Eguren"
+incluir = true
+
+[[jogador]]
+pagina = "Élder Granja"
+nome = "Élder Granja"
+incluir = true
+
+[[jogador]]
+pagina = "Elias Ferreira Sobrinho"
+nome = "Nei"
+incluir = true
+
+[[jogador]]
+pagina = "Elierce Barbosa de Souza"
+nome = "Souza"
+incluir = true
+
+[[jogador]]
+pagina = "Elisio Gabardo"
+nome = "Elisio Gabardo"
+incluir = true
+
+[[jogador]]
+pagina = "Elivélton"
+nome = "Elivélton"
+incluir = true
+
+[[jogador]]
+pagina = "Elizeu (futebolista)"
+nome = "Elizeu"
+incluir = false  # sem anos no clube
+
+[[jogador]]
+pagina = "Élson Falcão da Silva"
+nome = "Élson"
+incluir = true
+
+[[jogador]]
+pagina = "Elyseo de Siqueira"
+nome = "Elyseo de Siqueira"
+incluir = false  # sem anos no clube
+
+[[jogador]]
+pagina = "Elzo Aloísio Coelho"
+nome = "Elzo"
+incluir = true
+
+[[jogador]]
+pagina = "Emerson Santos"
+nome = "Emerson Santos"
+incluir = true
+
+[[jogador]]
+pagina = "Endrick"
+nome = "Endrick"
+incluir = true
+
+[[jogador]]
+pagina = "Enéas de Camargo"
+nome = "Enéas de Camargo"
+incluir = false  # sem posição
+
+[[jogador]]
+pagina = "Enílton"
+nome = "Enílton"
+incluir = true
+
+[[jogador]]
+pagina = "Ênio Andrade"
+nome = "Ênio Andrade"
+incluir = true
+
+[[jogador]]
+pagina = "Erik Nascimento Lima"
+nome = "Erik"
+incluir = true
+
+[[jogador]]
+pagina = "Ernesto Imparato"
+nome = "Ernesto Imparato"
+incluir = true
+
+[[jogador]]
+pagina = "Estêvão Willian"
+nome = "Estêvão"
+incluir = true
+
+[[jogador]]
+pagina = "Euller"
+nome = "Euller"
+incluir = true
+
+[[jogador]]
+pagina = "Eurico (futebolista)"
+nome = "Eurico"
+incluir = true
+
+[[jogador]]
+pagina = "Evair"
+nome = "Evair"
+incluir = true
+
+[[jogador]]
+pagina = "Evandro Goebel"
+nome = "Evandro"
+incluir = true
+
+[[jogador]]
+pagina = "Ewerthon"
+nome = "Ewerthon"
+incluir = true
+
+[[jogador]]
+pagina = "Fabiano Eller"
+nome = "Fabiano Eller"
+incluir = true
+
+[[jogador]]
+pagina = "Fabiano Lima Rodrigues"
+nome = "Fabiano"
+incluir = true
+
+[[jogador]]
+pagina = "Fabiano Rodrigues Pereira"
+nome = "Fabiano"
+incluir = true
+
+[[jogador]]
+pagina = "Fabiano Leismann"
+nome = "Fabiano"
+incluir = true
+
+[[jogador]]
+pagina = "Fabinho (futebolista, 2002)"
+nome = "Fabinho"
+incluir = true
+
+[[jogador]]
+pagina = "Fabinho Capixaba"
+nome = "Fabinho Capixaba"
+incluir = true
+
+[[jogador]]
+pagina = "Fábio Ferré"
+nome = "Fábio Ferré"
+incluir = false  # sem infobox
+
+[[jogador]]
+pagina = "Fábio Gomes"
+nome = "Fábio Gomes"
+incluir = true
+
+[[jogador]]
+pagina = "Fábio Júnior Pereira"
+nome = "Fábio Júnior"
+incluir = true
+
+[[jogador]]
+pagina = "Fabrício dos Santos Silva"
+nome = "Fabrício"
+incluir = true
+
+[[jogador]]
+pagina = "Fabrício (futebolista)"
+nome = "Fabrício"
+incluir = true
+
+[[jogador]]
+pagina = "Fedato"
+nome = "Fedato"
+incluir = true
+
+[[jogador]]
+pagina = "Feitiço (futebolista)"
+nome = "Feitiço"
+incluir = true
+
+[[jogador]]
+pagina = "Felipe Anderson"
+nome = "Felipe Anderson"
+incluir = true
+
+[[jogador]]
+pagina = "Felipe Baxola"
+nome = "Felipe Silva"
+incluir = true
+
+[[jogador]]
+pagina = "Felipe Maestro"
+nome = "Felipe"
+incluir = true
+
+[[jogador]]
+pagina = "Felipe Melo"
+nome = "Felipe Melo"
+incluir = true
+
+[[jogador]]
+pagina = "Felipe Menezes"
+nome = "Felipe Menezes"
+incluir = true
+
+[[jogador]]
+pagina = "Felipe Pires"
+nome = "Felipe Pires"
+incluir = true
+
+[[jogador]]
+pagina = "Fellype Gabriel"
+nome = "Fellype Gabriel"
+incluir = true
+
+[[jogador]]
+pagina = "Fernandão (futebolista, 1987)"
+nome = "Fernandão"
+incluir = true
+
+[[jogador]]
+pagina = "Roberto Fernández"
+nome = "Roberto Fernández"
+incluir = true
+
+[[jogador]]
+pagina = "Fernando Carazo"
+nome = "Fernando Carazo"
+incluir = false  # sem infobox
+
+[[jogador]]
+pagina = "Fernando Diniz"
+nome = "Fernando Diniz"
+incluir = true
+
+[[jogador]]
+pagina = "Fernando dos Santos Pedro"
+nome = "Fernando"
+incluir = true
+
+[[jogador]]
+pagina = "Fernando Galhardo Borges"
+nome = "Fernandinho"
+incluir = true
+
+[[jogador]]
+pagina = "Fernando Mariano"
+nome = "Fernando Mariano"
+incluir = true
+
+[[jogador]]
+pagina = "Fernando Rech"
+nome = "Fernando Rech"
+incluir = true
+
+[[jogador]]
+pagina = "Ferrari (futebolista)"
+nome = "Ferrari"
+incluir = true
+
+[[jogador]]
+pagina = "Luis Pedro Figueroa"
+nome = "Luis Figueroa"
+incluir = true
+
+[[jogador]]
+pagina = "Flávio Conceição"
+nome = "Flávio Conceição"
+incluir = true
+
+[[jogador]]
+pagina = "Flávio dos Santos"
+nome = "Flávio"
+incluir = true
+
+[[jogador]]
+pagina = "Derlis Florentín"
+nome = "Derlis Florentín"
+incluir = true
+
+[[jogador]]
+pagina = "França (futebolista, 1991)"
+nome = "França"
+incluir = true
+
+[[jogador]]
+pagina = "Francisco Police"
+nome = "Francesco Police"
+incluir = true
+
+[[jogador]]
+pagina = "Francisco da Silva Júnior"
+nome = "Chiquinho"
+incluir = true
+
+[[jogador]]
+pagina = "Mirandinha (futebolista, 1959)"
+nome = "Mirandinha"
+incluir = true
+
+[[jogador]]
+pagina = "Francisco Sarno"
+nome = "Francisco Sarno"
+incluir = true
+
+[[jogador]]
+pagina = "Francisco Rodrigues (futebolista brasileiro)"
+nome = "Francisco Rodrigues"
+incluir = true
+
+[[jogador]]
+pagina = "Freddy Rincón"
+nome = "Freddy Rincón"
+incluir = true
+
+[[jogador]]
+pagina = "Nico Freire"
+nome = "Nico Freire"
+incluir = true
+
+[[jogador]]
+pagina = "Lucas Freitas"
+nome = "Lucas Freitas"
+incluir = true
+
+[[jogador]]
+pagina = "Gabriel Dias"
+nome = "Gabriel Dias"
+incluir = true
+
+[[jogador]]
+pagina = "Gabriel Girotto Franco"
+nome = "Gabriel"
+incluir = true
+
+[[jogador]]
+pagina = "Gabriel Jesus"
+nome = "Gabriel Jesus"
+incluir = true
+
+[[jogador]]
+pagina = "Gabriel Menino"
+nome = "Gabriel Menino"
+incluir = true
+
+[[jogador]]
+pagina = "Gabriel Santos (futebolista)"
+nome = "Gabriel Santos"
+incluir = true
+
+[[jogador]]
+pagina = "Gabriel Veron"
+nome = "Gabriel Veron"
+incluir = true
+
+[[jogador]]
+pagina = "Galeano"
+nome = "Galeano"
+incluir = true
+
+[[jogador]]
+pagina = "Alberto Gallardo"
+nome = "Alberto Gallardo"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Carlos Gamarra"
+nome = "Carlos Gamarra"
+incluir = true
+
+[[jogador]]
+pagina = "Gaúcho (futebolista)"
+nome = "Gaúcho"
+incluir = true
+
+[[jogador]]
+pagina = "Geraldo José"
+nome = "Geraldo José"
+incluir = true
+
+[[jogador]]
+pagina = "Geraldo Scalera"
+nome = "Geraldo Scalera"
+incluir = true
+
+[[jogador]]
+pagina = "Geraldo Scotto"
+nome = "Scotto"
+incluir = true
+
+[[jogador]]
+pagina = "Gérsio Passadore"
+nome = "Gérsio Passadore"
+incluir = true
+
+[[jogador]]
+pagina = "Gérson Caçapa"
+nome = "Gérson Caçapa"
+incluir = true
+
+[[jogador]]
+pagina = "Agustín Giay"
+nome = "Agustín Giay"
+incluir = true
+
+[[jogador]]
+pagina = "Gil Baiano"
+nome = "Gil Baiano"
+incluir = true
+
+[[jogador]]
+pagina = "Gilberto Carlos Nascimento"
+nome = "Betinho"
+incluir = true
+
+[[jogador]]
+pagina = "Gilcimar"
+nome = "Gilcimar"
+incluir = true
+
+[[jogador]]
+pagina = "Gildo Cunha do Nascimento"
+nome = "Gildo"
+incluir = true
+
+[[jogador]]
+pagina = "Gilmar Jorge dos Santos"
+nome = "Gilmar"
+incluir = true
+
+[[jogador]]
+pagina = "Gino Orlando"
+nome = "Gino Orlando"
+incluir = true
+
+[[jogador]]
+pagina = "Sergio Gioino"
+nome = "Sergio Gioino"
+incluir = true
+
+[[jogador]]
+pagina = "Giovani Henrique Amorim da Silva"
+nome = "Giovani Henrique Amorim da Silva"
+incluir = false  # sem infobox
+
+[[jogador]]
+pagina = "Giuliano Tadeu Aranda"
+nome = "Magrão"
+incluir = true
+
+[[jogador]]
+pagina = "Gladstone (futebolista)"
+nome = "Gladstone"
+incluir = true
+
+[[jogador]]
+pagina = "Gláuber Leandro Honorato Berti"
+nome = "Gláuber"
+incluir = true
+
+[[jogador]]
+pagina = "Goliardo Gelardi"
+nome = "Goliardo José Gelardi"
+incluir = true
+
+[[jogador]]
+pagina = "Gustavo Gómez"
+nome = "Gustavo Gómez"
+incluir = true
+
+[[jogador]]
+pagina = "Alfredo González"
+nome = "Alfredo González"
+incluir = true
+
+[[jogador]]
+pagina = "Alejandro Guerra"
+nome = "Alejandro Guerra"
+incluir = true
+
+[[jogador]]
+pagina = "Gustavo Scarpa"
+nome = "Gustavo Scarpa"
+incluir = true
+
+[[jogador]]
+pagina = "Gustavo Schiavolin"
+nome = "Gustavo"
+incluir = true
+
+[[jogador]]
+pagina = "Gustavo Caiche"
+nome = "Gustavo"
+incluir = true
+
+[[jogador]]
+pagina = "Haroldo (futebolista)"
+nome = "Haroldo"
+incluir = true
+
+[[jogador]]
+pagina = "Heitor Marcelino Domingues"
+nome = "Heitor Marcelino"
+incluir = true
+
+[[jogador]]
+pagina = "Hélio (futebolista)"
+nome = "Hélio"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Henrique (futebolista, 1986)"
+nome = "Henrique"
+incluir = true
+
+[[jogador]]
+pagina = "Henrique Dourado"
+nome = "Henrique Dourado"
+incluir = true
+
+[[jogador]]
+pagina = "Henrique Serafini"
+nome = "Henrique Serafini"
+incluir = false  # sem anos no clube
+
+[[jogador]]
+pagina = "Marino Hinestroza"
+nome = "Marino Hinestroza"
+incluir = false  # sem anos no clube
+
+[[jogador]]
+pagina = "Humberto da Silva Frias"
+nome = "Arouca"
+incluir = true
+
+[[jogador]]
+pagina = "Humberto Tozzi"
+nome = "Humberto Tozzi"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Hyoran"
+nome = "Hyoran"
+incluir = true
+
+[[jogador]]
+pagina = "Ilsinho"
+nome = "Ilsinho"
+incluir = true
+
+[[jogador]]
+pagina = "Índio (futebolista, 1967)"
+nome = "Índio"
+incluir = true
+
+[[jogador]]
+pagina = "Índio (futebolista, 1975)"
+nome = "Índio"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Índio Ferreira"
+nome = "Índio Ferreira"
+incluir = true
+
+[[jogador]]
+pagina = "Ismael Mafra Cabral"
+nome = "Ismael"
+incluir = true
+
+[[jogador]]
+pagina = "Itamar (futebolista)"
+nome = "Itamar"
+incluir = true
+
+[[jogador]]
+pagina = "Itamar Batista da Silva"
+nome = "Itamar"
+incluir = true
+
+[[jogador]]
+pagina = "Ivan Brondi"
+nome = "Ivan Brondi"
+incluir = true
+
+[[jogador]]
+pagina = "Ivan Palmeira"
+nome = "Ivan Palmeira"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Ivo"
+nome = "Ivo"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Ivo Wortmann"
+nome = "Ivo Wortmann"
+incluir = true
+
+[[jogador]]
+pagina = "Jackson Coelho Silva"
+nome = "Jackson"
+incluir = true
+
+[[jogador]]
+pagina = "Jackson de Souza"
+nome = "Jackson"
+incluir = true
+
+[[jogador]]
+pagina = "Jailson Marques Siqueira"
+nome = "Jailson"
+incluir = true
+
+[[jogador]]
+pagina = "Jaime Corrêa Freitas"
+nome = "Jaime Corrêa Freitas"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Jair Bala"
+nome = "Jair Bala"
+incluir = true
+
+[[jogador]]
+pagina = "Jair Picerni"
+nome = "Jair Picerni"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Jair Rosa Pinto"
+nome = "Jair"
+incluir = true
+
+[[jogador]]
+pagina = "Jandir de Freitas"
+nome = "Jandir de Freitas"
+incluir = false  # sem infobox
+
+[[jogador]]
+pagina = "Jean Carlo (futebolista)"
+nome = "Jean Carlo"
+incluir = true
+
+[[jogador]]
+pagina = "Jean Carlos"
+nome = "Jean Carlos"
+incluir = true
+
+[[jogador]]
+pagina = "Jean Raphael Vanderlei Moreira"
+nome = "Jean"
+incluir = true
+
+[[jogador]]
+pagina = "Jeci"
+nome = "Jeci"
+incluir = true
+
+[[jogador]]
+pagina = "Jefferson Nascimento"
+nome = "Jefferson"
+incluir = true
+
+[[jogador]]
+pagina = "Jefferson Vieira da Silva"
+nome = "Jefferson"
+incluir = true
+
+[[jogador]]
+pagina = "Jefté (futebolista)"
+nome = "Jefté"
+incluir = true
+
+[[jogador]]
+pagina = "Jeovânio"
+nome = "Jeovânio"
+incluir = true
+
+[[jogador]]
+pagina = "Jhon Jhon"
+nome = "Jhon Jhon"
+incluir = true
+
+[[jogador]]
+pagina = "Joacy Freitas Dutra"
+nome = "Joacy Freitas Dutra"
+incluir = true
+
+[[jogador]]
+pagina = "João Batista da Silva"
+nome = "João Batista da Silva"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "João Carlos Rodrigues"
+nome = "João Carlos"
+incluir = true
+
+[[jogador]]
+pagina = "João Daniel (futebolista)"
+nome = "João Daniel"
+incluir = true
+
+[[jogador]]
+pagina = "João Del Ministro"
+nome = "João Del Ministro"
+incluir = false  # sem infobox
+
+[[jogador]]
+pagina = "João Paulo Gomes da Costa"
+nome = "João Paulo"
+incluir = true
+
+[[jogador]]
+pagina = "João Paulo (futebolista)"
+nome = "João Paulo"
+incluir = true
+
+[[jogador]]
+pagina = "João Pedro Maturano dos Santos"
+nome = "João Pedro"
+incluir = true
+
+[[jogador]]
+pagina = "João Soares de Almeida Filho"
+nome = "Joãozinho"
+incluir = true
+
+[[jogador]]
+pagina = "João Vitor (futebolista)"
+nome = "João Vitor"
+incluir = true
+
+[[jogador]]
+pagina = "Jobson Souza Santos"
+nome = "Jobson"
+incluir = true
+
+[[jogador]]
+pagina = "Jorge Alves da Silva"
+nome = "Jorge Alves da Silva"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Jorge dos Santos"
+nome = "Jorge"
+incluir = true
+
+[[jogador]]
+pagina = "Jorge Luís Rocha de Paula"
+nome = "Jorge Luís Rocha de Paula"
+incluir = true
+
+[[jogador]]
+pagina = "Jorge Luís Sena"
+nome = "Jorge Luís Sena"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Jorge Luiz"
+nome = "Jorge Luiz"
+incluir = false  # sem posição
+
+[[jogador]]
+pagina = "Jorge Marco de Oliveira Moraes"
+nome = "Jorge"
+incluir = true
+
+[[jogador]]
+pagina = "Jorge Mendonça"
+nome = "Jorge Mendonça"
+incluir = true
+
+[[jogador]]
+pagina = "Jorginho Cantinflas"
+nome = "Jorginho"
+incluir = true
+
+[[jogador]]
+pagina = "Jorginho Putinatti"
+nome = "Jorginho Putinatti"
+incluir = true
+
+[[jogador]]
+pagina = "José Amadeu Elvino"
+nome = "Adãozinho"
+incluir = true
+
+[[jogador]]
+pagina = "José Artur Barbosa de Oliveira"
+nome = "Artur"
+incluir = true
+
+[[jogador]]
+pagina = "Zé Carlos (1947)"
+nome = "Zé Carlos"
+incluir = true
+
+[[jogador]]
+pagina = "José Carlos Ferreira Júnior"
+nome = "Juninho"
+incluir = true
+
+[[jogador]]
+pagina = "José Carlos Fescina"
+nome = "José Carlos Fescina"
+incluir = true
+
+[[jogador]]
+pagina = "José Carlos Soares (futebolista)"
+nome = "Soares"
+incluir = true
+
+[[jogador]]
+pagina = "José Dacunto"
+nome = "Dacunto"
+incluir = true
+
+[[jogador]]
+pagina = "Del Nero (futebolista)"
+nome = "Del Nero"
+incluir = true
+
+[[jogador]]
+pagina = "Germano (futebolista)"
+nome = "Germano"
+incluir = true
+
+[[jogador]]
+pagina = "Jadílson"
+nome = "Jadílson"
+incluir = false  # sem anos no clube
+
+[[jogador]]
+pagina = "José João Altafini"
+nome = "Mazzola"
+incluir = true
+
+[[jogador]]
+pagina = "José Junqueira de Oliveira"
+nome = "Junqueira"
+incluir = true
+
+[[jogador]]
+pagina = "José Luís de Oliveira"
+nome = "Zé Luiz"
+incluir = true
+
+[[jogador]]
+pagina = "José Manoel Ricardo"
+nome = "Picolé"
+incluir = true
+
+[[jogador]]
+pagina = "José Mário Crispim"
+nome = "Zé Mário"
+incluir = true
+
+[[jogador]]
+pagina = "José Pedro Santos"
+nome = "Pedrinho"
+incluir = true
+
+[[jogador]]
+pagina = "José Reinaldo de Lima"
+nome = "Reinaldo"
+incluir = true
+
+[[jogador]]
+pagina = "José Ricardo dos Santos Oliveira"
+nome = "Ricardinho"
+incluir = true
+
+[[jogador]]
+pagina = "Pepeta (fubebolista)"
+nome = "Pepeta"
+incluir = true
+
+[[jogador]]
+pagina = "José Romeiro Cardoso"
+nome = "José Romeiro Cardoso"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Joselino Martins de Jesus"
+nome = "Lino"
+incluir = true
+
+[[jogador]]
+pagina = "Josimar Rosado da Silva Tavares"
+nome = "Josimar"
+incluir = true
+
+[[jogador]]
+pagina = "Juliano Elizeu Vicentini"
+nome = "Juliano"
+incluir = true
+
+[[jogador]]
+pagina = "Julinho Botelho"
+nome = "Julinho Botelho"
+incluir = true
+
+[[jogador]]
+pagina = "Júlio César Coelho de Moraes"
+nome = "Júlio César Coelho de Moraes"
+incluir = false  # sem infobox
+
+[[jogador]]
+pagina = "Jumar"
+nome = "Jumar"
+incluir = true
+
+[[jogador]]
+pagina = "Juninho (futebolista, 1990)"
+nome = "Juninho"
+incluir = true
+
+[[jogador]]
+pagina = "Juninho Paulista"
+nome = "Juninho Paulista"
+incluir = true
+
+[[jogador]]
+pagina = "Júnior Baiano"
+nome = "Júnior Baiano"
+incluir = true
+
+[[jogador]]
+pagina = "Júnior Nagata"
+nome = "Júnior"
+incluir = true
+
+[[jogador]]
+pagina = "Juvenal Amarijo"
+nome = "Juvenal"
+incluir = true
+
+[[jogador]]
+pagina = "Keirrison"
+nome = "Keirrison"
+incluir = true
+
+[[jogador]]
+pagina = "Kelvin (futebolista)"
+nome = "Kelvin"
+incluir = true
+
+[[jogador]]
+pagina = "Keno (futebolista)"
+nome = "Keno"
+incluir = true
+
+[[jogador]]
+pagina = "Kevin"
+nome = "Kevin"
+incluir = false  # sem infobox
+
+[[jogador]]
+pagina = "Khellven"
+nome = "Khellven"
+incluir = true
+
+[[jogador]]
+pagina = "Kléber Gladiador"
+nome = "Kléber"
+incluir = true
+
+[[jogador]]
+pagina = "Kléber Laube Pinheiro"
+nome = "Kléber"
+incluir = true
+
+[[jogador]]
+pagina = "Benjamín Kuscevic"
+nome = "Benjamín Kuscevic"
+incluir = true
+
+[[jogador]]
+pagina = "Lauro (volante)"
+nome = "Lauro"
+incluir = true
+
+[[jogador]]
+pagina = "Lázaro Vinícius"
+nome = "Lázaro Vinícius"
+incluir = true
+
+[[jogador]]
+pagina = "Leandro Almeida"
+nome = "Leandro Almeida"
+incluir = true
+
+[[jogador]]
+pagina = "Leandro Amaro"
+nome = "Leandro Amaro"
+incluir = true
+
+[[jogador]]
+pagina = "Leandro Ávila"
+nome = "Leandro Ávila"
+incluir = true
+
+[[jogador]]
+pagina = "Leandro Moura"
+nome = "Leandro Moura"
+incluir = true
+
+[[jogador]]
+pagina = "Leandro Pereira"
+nome = "Leandro Pereira"
+incluir = true
+
+[[jogador]]
+pagina = "Leandro Makelele"
+nome = "Makelele"
+incluir = true
+
+[[jogador]]
+pagina = "Leandro Silva Wanderley"
+nome = "Leandro"
+incluir = true
+
+[[jogador]]
+pagina = "Leivinha"
+nome = "Leivinha"
+incluir = true
+
+[[jogador]]
+pagina = "Lenny (futebolista)"
+nome = "Lenny"
+incluir = true
+
+[[jogador]]
+pagina = "Léo Gago"
+nome = "Léo Gago"
+incluir = true
+
+[[jogador]]
+pagina = "Leo Lima"
+nome = "Leo Lima"
+incluir = true
+
+[[jogador]]
+pagina = "Léo Moura"
+nome = "Léo Moura"
+incluir = true
+
+[[jogador]]
+pagina = "Leonardo Colella"
+nome = "Nardo"
+incluir = true
+
+[[jogador]]
+pagina = "Leo (futebolista)"
+nome = "Leo"
+incluir = true
+
+[[jogador]]
+pagina = "Leonardo Pereira da Silva"
+nome = "Leonardo Pereira da Silva"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Leonardo Renan Simões de Lacerda"
+nome = "Léo"
+incluir = true
+
+[[jogador]]
+pagina = "Leonardo Silva"
+nome = "Leonardo Silva"
+incluir = true
+
+[[jogador]]
+pagina = "Leonízio Fantoni"
+nome = "Niginho"
+incluir = true
+
+[[jogador]]
+pagina = "Lima Sergipano"
+nome = "Lima Sergipano"
+incluir = false  # sem anos no clube
+
+[[jogador]]
+pagina = "Liminha (futebolista)"
+nome = "Liminha"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Lincoln Cássio de Souza Soares"
+nome = "Lincoln"
+incluir = true
+
+[[jogador]]
+pagina = "Lopes Tigrão"
+nome = "Lopes"
+incluir = true
+
+[[jogador]]
+pagina = "Flaco López"
+nome = "Flaco López"
+incluir = true
+
+[[jogador]]
+pagina = "John Harold Lozano"
+nome = "Harold Lozano"
+incluir = true
+
+[[jogador]]
+pagina = "Luan Cândido"
+nome = "Luan Cândido"
+incluir = false  # sem anos no clube
+
+[[jogador]]
+pagina = "Luan Garcia"
+nome = "Luan Garcia"
+incluir = true
+
+[[jogador]]
+pagina = "Luan Michel de Louzã"
+nome = "Luan"
+incluir = true
+
+[[jogador]]
+pagina = "Lucas Esteves"
+nome = "Lucas Esteves"
+incluir = true
+
+[[jogador]]
+pagina = "Lucas Evangelista (futebolista)"
+nome = "Lucas Evangelista"
+incluir = true
+
+[[jogador]]
+pagina = "Lucas Lima (futebolista)"
+nome = "Lucas Lima"
+incluir = true
+
+[[jogador]]
+pagina = "Lucas Marques"
+nome = "Lucas"
+incluir = true
+
+[[jogador]]
+pagina = "Luciano Siqueira de Oliveira"
+nome = "Luciano"
+incluir = true
+
+[[jogador]]
+pagina = "Lucídio Batista da Silva"
+nome = "Cabeção"
+incluir = true
+
+[[jogador]]
+pagina = "Lúcio (futebolista, 1978)"
+nome = "Lúcio"
+incluir = true
+
+[[jogador]]
+pagina = "Lúcio Alves Pompeu de Campos"
+nome = "Lúcio"
+incluir = true
+
+[[jogador]]
+pagina = "Lúcio Carlos Cajueiro Souza"
+nome = "Lúcio"
+incluir = true
+
+[[jogador]]
+pagina = "Luighi"
+nome = "Luighi"
+incluir = true
+
+[[jogador]]
+pagina = "Luigi Fabbi"
+nome = "Luigi Fabbi"
+incluir = false  # sem anos no clube
+
+[[jogador]]
+pagina = "Luís Carlos Feijão"
+nome = "Luís Carlos Feijão"
+incluir = true
+
+[[jogador]]
+pagina = "Luís Eduardo Quadros Lima"
+nome = "Luís Eduardo"
+incluir = true
+
+[[jogador]]
+pagina = "Luis Guilherme"
+nome = "Luís Guilherme"
+incluir = true
+
+[[jogador]]
+pagina = "Luís Henrique (futebolista, 1968)"
+nome = "Luís Henrique"
+incluir = true
+
+[[jogador]]
+pagina = "Luís Henrique da Silva Alves"
+nome = "Luíz Henrique"
+incluir = true
+
+[[jogador]]
+pagina = "Luis Imparato"
+nome = "Luís \"Gino\" Imparato"
+incluir = true
+
+[[jogador]]
+pagina = "Luís Mesquita (futebolista)"
+nome = "Luís Mesquita"
+incluir = false  # sem anos no clube
+
+[[jogador]]
+pagina = "Luís Pereira"
+nome = "Luís Pereira"
+incluir = true
+
+[[jogador]]
+pagina = "Luís Ribeiro Pinto Neto"
+nome = "Lula"
+incluir = true
+
+[[jogador]]
+pagina = "Luisinho Lemos"
+nome = "Luisinho Lemos"
+incluir = true
+
+[[jogador]]
+pagina = "Luiz Adriano"
+nome = "Luiz Adriano"
+incluir = true
+
+[[jogador]]
+pagina = "Luiz Benedetti"
+nome = "Luiz Benedetti"
+incluir = false  # sem anos no clube
+
+[[jogador]]
+pagina = "Luiz Gustavo (futebolista, 1994)"
+nome = "Luiz Gustavo"
+incluir = true
+
+[[jogador]]
+pagina = "Luizão (atacante)"
+nome = "Luizão"
+incluir = true
+
+[[jogador]]
+pagina = "Luís Carlos Machado"
+nome = "Escurinho"
+incluir = true
+
+[[jogador]]
+pagina = "Macula"
+nome = "Macula"
+incluir = true
+
+[[jogador]]
+pagina = "Norberto Madurga"
+nome = "Norberto Madurga"
+incluir = true
+
+[[jogador]]
+pagina = "Maicosuel"
+nome = "Maicosuel"
+incluir = true
+
+[[jogador]]
+pagina = "Maikon Leite"
+nome = "Maikon Leite"
+incluir = true
+
+[[jogador]]
+pagina = "Maílton dos Santos de Sá"
+nome = "Maílton"
+incluir = true
+
+[[jogador]]
+pagina = "Alejandro Mancuso"
+nome = "Mancuso"
+incluir = true
+
+[[jogador]]
+pagina = "Mantovani (futebolista)"
+nome = "Ary Mantovani"
+incluir = true
+
+[[jogador]]
+pagina = "Marcel Silva Andrade"
+nome = "Marcel"
+incluir = true
+
+[[jogador]]
+pagina = "Marcelo Costa (futebolista)"
+nome = "Marcelo Costa"
+incluir = true
+
+[[jogador]]
+pagina = "Marcelo José de Lima Filho"
+nome = "Marcelinho"
+incluir = true
+
+[[jogador]]
+pagina = "Marcelo Oliveira Ferreira"
+nome = "Marcelo Oliveira"
+incluir = true
+
+[[jogador]]
+pagina = "Marcelo Ramos (futebolista)"
+nome = "Marcelo Ramos"
+incluir = true
+
+[[jogador]]
+pagina = "Marcinho Guerreiro"
+nome = "Marcinho Guerreiro"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Márcio Araújo (futebolista)"
+nome = "Márcio Araújo"
+incluir = true
+
+[[jogador]]
+pagina = "Márcio Careca"
+nome = "Márcio Careca"
+incluir = true
+
+[[jogador]]
+pagina = "Marcinho (futebolista)"
+nome = "Marcinho"
+incluir = true
+
+[[jogador]]
+pagina = "Márcio Rodrigues"
+nome = "Magrão"
+incluir = true
+
+[[jogador]]
+pagina = "Dida (futebolista, 1965)"
+nome = "Dida"
+incluir = true
+
+[[jogador]]
+pagina = "Marcos Antônio da Silva Gonçalves"
+nome = "Marquinhos"
+incluir = true
+
+[[jogador]]
+pagina = "Marcos Assunção"
+nome = "Marcos Assunção"
+incluir = true
+
+[[jogador]]
+pagina = "Marcos Corrêa dos Santos"
+nome = "Marquinhos"
+incluir = true
+
+[[jogador]]
+pagina = "Marcos Roberto Silveira Reis"
+nome = "Marcos"
+incluir = true
+
+[[jogador]]
+pagina = "Marcos Rocha (futebolista)"
+nome = "Marcos Rocha"
+incluir = true
+
+[[jogador]]
+pagina = "Marcos Skavinski"
+nome = "Marcão"
+incluir = true
+
+[[jogador]]
+pagina = "Marinho Peres"
+nome = "Marinho Peres"
+incluir = true
+
+[[jogador]]
+pagina = "Mário Motta (futebolista)"
+nome = "Mário Motta"
+incluir = true
+
+[[jogador]]
+pagina = "Mário Sérgio (futebolista brasileiro)"
+nome = "Mário Sérgio"
+incluir = true
+
+[[jogador]]
+pagina = "Marlon Freitas"
+nome = "Marlon Freitas"
+incluir = true
+
+[[jogador]]
+pagina = "Marquinho (futebolista, 1986)"
+nome = "Marquinho"
+incluir = true
+
+[[jogador]]
+pagina = "Marquinhos Caruaru"
+nome = "Marquinhos Caruaru"
+incluir = true
+
+[[jogador]]
+pagina = "Marquinhos Gabriel"
+nome = "Marquinhos Gabriel"
+incluir = true
+
+[[jogador]]
+pagina = "Emiliano Martínez (futebolista)"
+nome = "Emiliano Martínez"
+incluir = true
+
+[[jogador]]
+pagina = "Matheus Fernandes (futebolista)"
+nome = "Matheus Fernandes"
+incluir = true
+
+[[jogador]]
+pagina = "Matheus Sales"
+nome = "Matheus Sales"
+incluir = true
+
+[[jogador]]
+pagina = "Matturio Fabbi"
+nome = "Matturio Fabbi"
+incluir = true
+
+[[jogador]]
+pagina = "Mauricinho (futebolista)"
+nome = "Mauricinho"
+incluir = true
+
+[[jogador]]
+pagina = "Maurício (futebolista)"
+nome = "Maurício"
+incluir = true
+
+[[jogador]]
+pagina = "Maurício Ramos"
+nome = "Mauricio Ramos"
+incluir = true
+
+[[jogador]]
+pagina = "Maurício dos Santos Nascimento"
+nome = "Maurício"
+incluir = true
+
+[[jogador]]
+pagina = "Maurílio (futebolista)"
+nome = "Maurílio"
+incluir = true
+
+[[jogador]]
+pagina = "Max Brendon"
+nome = "Max"
+incluir = true
+
+[[jogador]]
+pagina = "Mayke"
+nome = "Mayke"
+incluir = true
+
+[[jogador]]
+pagina = "Mazinho"
+nome = "Mazinho"
+incluir = true
+
+[[jogador]]
+pagina = "Mazinho (futebolista, 1987)"
+nome = "Mazinho"
+incluir = true
+
+[[jogador]]
+pagina = "Mendes (futebolista, 1912)"
+nome = "Mendes"
+incluir = false  # sem anos no clube
+
+[[jogador]]
+pagina = "William Mendieta"
+nome = "Mendieta"
+incluir = true
+
+[[jogador]]
+pagina = "Menotti"
+nome = "Menotti"
+incluir = true
+
+[[jogador]]
+pagina = "Miguel Merentiel"
+nome = "Miguel Merentiel"
+incluir = true
+
+[[jogador]]
+pagina = "Micael (futebolista)"
+nome = "Micael"
+incluir = true
+
+[[jogador]]
+pagina = "Michel Bastos"
+nome = "Michel Bastos"
+incluir = true
+
+[[jogador]]
+pagina = "Milton Buzetto"
+nome = "Milton Buzetto"
+incluir = true
+
+[[jogador]]
+pagina = "Milton da Cunha Mendonça"
+nome = "Mendonça"
+incluir = true
+
+[[jogador]]
+pagina = "Yerry Mina"
+nome = "Yerry Mina"
+incluir = true
+
+[[jogador]]
+pagina = "Ministrinho"
+nome = "Ministrinho"
+incluir = true
+
+[[jogador]]
+pagina = "Minuca"
+nome = "Minuca"
+incluir = true
+
+[[jogador]]
+pagina = "Kazuyoshi Miura"
+nome = "Kazuyoshi Miura"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Mococa (futebolista)"
+nome = "Mococa"
+incluir = true
+
+[[jogador]]
+pagina = "Moisés Lima Magalhães"
+nome = "Moisés"
+incluir = true
+
+[[jogador]]
+pagina = "Aníbal Moreno"
+nome = "Aníbal Moreno"
+incluir = true
+
+[[jogador]]
+pagina = "Pablo Mouche"
+nome = "Pablo Mouche"
+incluir = true
+
+[[jogador]]
+pagina = "Mozart Santos"
+nome = "Mozart"
+incluir = true
+
+[[jogador]]
+pagina = "Müller (futebolista)"
+nome = "Müller"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "León Darío Muñoz"
+nome = "León Darío Muñoz"
+incluir = true
+
+[[jogador]]
+pagina = "Murilo Cerqueira"
+nome = "Murilo"
+incluir = true
+
+[[jogador]]
+pagina = "Nathan Cardoso"
+nome = "Nathan"
+incluir = true
+
+[[jogador]]
+pagina = "Nedo Xavier"
+nome = "Nedo Xavier"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Nélson Coruja"
+nome = "Nélson Coruja"
+incluir = false  # sem infobox
+
+[[jogador]]
+pagina = "Nen"
+nome = "Nen"
+incluir = true
+
+[[jogador]]
+pagina = "Nenê (futebolista)"
+nome = "Nenê"
+incluir = true
+
+[[jogador]]
+pagina = "Nenê Felão"
+nome = "Nenê Felão"
+incluir = true
+
+[[jogador]]
+pagina = "Neto (futebolista)"
+nome = "Craque Neto"
+incluir = true
+
+[[jogador]]
+pagina = "Neto Baiano"
+nome = "Neto"
+incluir = true
+
+[[jogador]]
+pagina = "Ney Blanco"
+nome = "Ney Blanco"
+incluir = true
+
+[[jogador]]
+pagina = "Nílson Esídio Mora"
+nome = "Nilson"
+incluir = true
+
+[[jogador]]
+pagina = "Norival Cabral Ponce de León"
+nome = "Ponce de León"
+incluir = true
+
+[[jogador]]
+pagina = "Paulo Nunes"
+nome = "Paulo Nunes"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Obina"
+nome = "Obina"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Odair Patriarca"
+nome = "Odair Patriarca"
+incluir = true
+
+[[jogador]]
+pagina = "Odair Titica"
+nome = "Odair Titica"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Og Moreira"
+nome = "Og Moreira"
+incluir = true
+
+[[jogador]]
+pagina = "Oldair Barchi"
+nome = "Oldair Barchi"
+incluir = true
+
+[[jogador]]
+pagina = "Orlando Fantoni"
+nome = "Orlando Fantoni"
+incluir = false  # sem anos no clube
+
+[[jogador]]
+pagina = "José Ortigoza"
+nome = "José María Ortigoza"
+incluir = true
+
+[[jogador]]
+pagina = "Oséas"
+nome = "Oséas"
+incluir = true
+
+[[jogador]]
+pagina = "Marco Osio"
+nome = "Marco Osio"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Osmar Cambalhota"
+nome = "Osmar"
+incluir = true
+
+[[jogador]]
+pagina = "Elenco da Sociedade Esportiva Palmeiras"
+nome = "Elenco da Sociedade Esportiva Palmeiras"
+incluir = false  # sem infobox
+
+[[jogador]]
+pagina = "Vicente Arenari"
+nome = "Vicente Arenari"
+incluir = true
+
+[[jogador]]
+pagina = "Patrick de Paula"
+nome = "Patrick de Paula"
+incluir = true
+
+[[jogador]]
+pagina = "Patrik Camilo Cornélio da Silva"
+nome = "Patrik"
+incluir = true
+
+[[jogador]]
+pagina = "Paulinho (futebolista, 1933)"
+nome = "Paulinho"
+incluir = true
+
+[[jogador]]
+pagina = "Paulinho (futebolista, 2000)"
+nome = "Paulinho"
+incluir = true
+
+[[jogador]]
+pagina = "Paulinho Albuquerque (futebolista)"
+nome = "Paulinho Albuquerque"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Paulinho Carioca"
+nome = "Paulinho Carioca"
+incluir = true
+
+[[jogador]]
+pagina = "Paulinho Massariol"
+nome = "Paulinho Massariol"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Paulo Assunção"
+nome = "Paulo Assunção"
+incluir = true
+
+[[jogador]]
+pagina = "Paulo Baier"
+nome = "Paulo Baier"
+incluir = true
+
+[[jogador]]
+pagina = "Paulo Borges (futebolista)"
+nome = "Paulo Borges"
+incluir = true
+
+[[jogador]]
+pagina = "Paulo Henrique Carneiro Filho"
+nome = "Paulo Henrique"
+incluir = true
+
+[[jogador]]
+pagina = "Paulo Leão"
+nome = "Paulo Leão"
+incluir = true
+
+[[jogador]]
+pagina = "Paulo Miranda (zagueiro)"
+nome = "Paulo Miranda"
+incluir = true
+
+[[jogador]]
+pagina = "Paulo Osmar David"
+nome = "Paulo Osmar David"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Paulo Roberto Prestes"
+nome = "Paulo Roberto Prestes"
+incluir = true
+
+[[jogador]]
+pagina = "Paulo Sérgio Rocha"
+nome = "Paulo Sérgio"
+incluir = true
+
+[[jogador]]
+pagina = "Paulo Turra"
+nome = "Paulo Turra"
+incluir = true
+
+[[jogador]]
+pagina = "Pedro Paulo de Oliveira"
+nome = "Pedrinho"
+incluir = true
+
+[[jogador]]
+pagina = "Pedro Bicalho"
+nome = "Pedro Bicalho"
+incluir = true
+
+[[jogador]]
+pagina = "Pedro Luís Vicençote"
+nome = "Pedrinho"
+incluir = true
+
+[[jogador]]
+pagina = "Pedro Rocha"
+nome = "Pedro Rocha"
+incluir = true
+
+[[jogador]]
+pagina = "Pedro Salvador"
+nome = "Xingô"
+incluir = true
+
+[[jogador]]
+pagina = "Pedro Silva (futebolista)"
+nome = "Pedro Silva"
+incluir = true
+
+[[jogador]]
+pagina = "Kaique Pereira"
+nome = "Kaique Pereira"
+incluir = true
+
+[[jogador]]
+pagina = "Darío Pereyra"
+nome = "Darío Pereyra"
+incluir = true
+
+[[jogador]]
+pagina = "Perivaldo"
+nome = "Perivaldo"
+incluir = true
+
+[[jogador]]
+pagina = "Pierre (futebolista)"
+nome = "Pierre"
+incluir = true
+
+[[jogador]]
+pagina = "Pimentel (futebolista)"
+nome = "Pimentel"
+incluir = true
+
+[[jogador]]
+pagina = "Pio (futebolista, 1945)"
+nome = "Pio"
+incluir = true
+
+[[jogador]]
+pagina = "Pipi (futebolista)"
+nome = "Pipi"
+incluir = true
+
+[[jogador]]
+pagina = "Joaquín Piquerez"
+nome = "Joaquín Piquerez"
+incluir = true
+
+[[jogador]]
+pagina = "Polaco (futebolista)"
+nome = "Polaco"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Polozzi"
+nome = "Polozzi"
+incluir = true
+
+[[jogador]]
+pagina = "Primo Zanotta"
+nome = "Primo"
+incluir = true
+
+[[jogador]]
+pagina = "Procópio Cardozo"
+nome = "Procópio Cardozo"
+incluir = true
+
+[[jogador]]
+pagina = "Puglia (futebolista)"
+nome = "Puglia"
+incluir = false  # sem infobox
+
+[[jogador]]
+pagina = "Quincas (futebolista)"
+nome = "Quincas"
+incluir = true
+
+[[jogador]]
+pagina = "Rafael Marques Mariano"
+nome = "Rafael Marques"
+incluir = true
+
+[[jogador]]
+pagina = "Rafael Navarro"
+nome = "Rafael Navarro"
+incluir = true
+
+[[jogador]]
+pagina = "Raimundo José Cutrim"
+nome = "Raí"
+incluir = true
+
+[[jogador]]
+pagina = "Ramires (futebolista)"
+nome = "Ramires"
+incluir = true
+
+[[jogador]]
+pagina = "Ranielli"
+nome = "Ranielli"
+incluir = true
+
+[[jogador]]
+pagina = "Raphael Veiga"
+nome = "Raphael Veiga"
+incluir = true
+
+[[jogador]]
+pagina = "Raul Marcel"
+nome = "Raul Marcel"
+incluir = true
+
+[[jogador]]
+pagina = "Régis (futebolista, 1992)"
+nome = "Régis"
+incluir = true
+
+[[jogador]]
+pagina = "Reinaldinho (futebolista)"
+nome = "Reinaldinho"
+incluir = true
+
+[[jogador]]
+pagina = "Renaldo"
+nome = "Renaldo"
+incluir = true
+
+[[jogador]]
+pagina = "Renan Victor da Silva"
+nome = "Renan"
+incluir = true
+
+[[jogador]]
+pagina = "Renato Martins (futebolista)"
+nome = "Renato Martins"
+incluir = true
+
+[[jogador]]
+pagina = "Renato Violani"
+nome = "Renato Violani"
+incluir = true
+
+[[jogador]]
+pagina = "Pena (futebolista)"
+nome = "Pena"
+incluir = true
+
+[[jogador]]
+pagina = "Ricardo Bueno"
+nome = "Ricardo Bueno"
+incluir = true
+
+[[jogador]]
+pagina = "Ricardo Goulart"
+nome = "Ricardo Goulart"
+incluir = true
+
+[[jogador]]
+pagina = "Ricardo Nascimento"
+nome = "Ricardo Nascimento"
+incluir = true
+
+[[jogador]]
+pagina = "Richard Petrocelli"
+nome = "Richard Petrocelli"
+incluir = true
+
+[[jogador]]
+pagina = "Rinaldo Amorim"
+nome = "Rinaldo"
+incluir = true
+
+[[jogador]]
+pagina = "Richard Ríos"
+nome = "Richard Ríos"
+incluir = true
+
+[[jogador]]
+pagina = "Rivaldo"
+nome = "Rivaldo"
+incluir = true
+
+[[jogador]]
+pagina = "Rivaldo Barbosa de Souza"
+nome = "Rivaldo"
+incluir = true
+
+[[jogador]]
+pagina = "Catalino Rivarola"
+nome = "Rivarola"
+incluir = true
+
+[[jogador]]
+pagina = "Robert de Pinho de Souza"
+nome = "Robert de Pinho de Souza"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Roberto Oliveira Gonçalves do Carmo"
+nome = "Robertinho"
+incluir = true
+
+[[jogador]]
+pagina = "Roberto Carlos (futebolista)"
+nome = "Roberto Carlos"
+incluir = true
+
+[[jogador]]
+pagina = "Zanata (futebolista)"
+nome = "Zanata"
+incluir = true
+
+[[jogador]]
+pagina = "Róbson Michael Signorini"
+nome = "Robinho"
+incluir = true
+
+[[jogador]]
+pagina = "Rodolfo Carlos de Lima"
+nome = "Rodolfo Carlos de Lima"
+incluir = false  # sem posição
+
+[[jogador]]
+pagina = "Rodrigo Fernandes Alflen"
+nome = "Rodrigão"
+incluir = true
+
+[[jogador]]
+pagina = "Rodrigo Fernandes Valete"
+nome = "Fernandes"
+incluir = true
+
+[[jogador]]
+pagina = "Rodrigo Lacerda Ramos"
+nome = "Ferrugem"
+incluir = true
+
+[[jogador]]
+pagina = "Rodrigo Taddei"
+nome = "Taddei"
+incluir = true
+
+[[jogador]]
+pagina = "Rodrigo Vasconcelos Oliveira"
+nome = "Rodrigo"
+incluir = true
+
+[[jogador]]
+pagina = "Roger Bernardo"
+nome = "Roger Bernardo"
+incluir = true
+
+[[jogador]]
+pagina = "Roger Carvalho"
+nome = "Roger Carvalho"
+incluir = true
+
+[[jogador]]
+pagina = "Róger Guedes"
+nome = "Róger Guedes"
+incluir = true
+
+[[jogador]]
+pagina = "Roger Silva"
+nome = "Roger Silva"
+incluir = true
+
+[[jogador]]
+pagina = "Rogério Fidélis Régis"
+nome = "Rogério Fidélis Régis"
+incluir = false  # sem posição
+
+[[jogador]]
+pagina = "Adalberto Román"
+nome = "Adalberto Román"
+incluir = true
+
+[[jogador]]
+pagina = "Romeu Cambalhota"
+nome = "Romeu Cambalhota"
+incluir = true
+
+[[jogador]]
+pagina = "Romeu Pellicciari"
+nome = "Romeu Pellicciari"
+incluir = true
+
+[[jogador]]
+pagina = "Rômulo (futebolista, 2001)"
+nome = "Rômulo"
+incluir = true
+
+[[jogador]]
+pagina = "Ronaldo Drummond"
+nome = "Ronaldo Drummond"
+incluir = true
+
+[[jogador]]
+pagina = "Rondinelly"
+nome = "Rondinelly"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Rony"
+nome = "Rony"
+incluir = true
+
+[[jogador]]
+pagina = "Roque Júnior"
+nome = "Roque Júnior"
+incluir = true
+
+[[jogador]]
+pagina = "Vitor Roque"
+nome = "Vitor Roque"
+incluir = true
+
+[[jogador]]
+pagina = "Rosemiro (futebolista)"
+nome = "Rosemiro"
+incluir = true
+
+[[jogador]]
+pagina = "Rubens Cardoso"
+nome = "Rubens Cardoso"
+incluir = true
+
+[[jogador]]
+pagina = "Rubens Júnior"
+nome = "Rubens Júnior"
+incluir = true
+
+[[jogador]]
+pagina = "Rui Campos"
+nome = "Rui"
+incluir = true
+
+[[jogador]]
+pagina = "Rui Sérgio Gomes de Rosis"
+nome = "De Rosis"
+incluir = true
+
+[[jogador]]
+pagina = "Ryder Matos"
+nome = "Ryder Matos"
+incluir = true
+
+[[jogador]]
+pagina = "Salvador Cardelli Filho"
+nome = "Salvador"
+incluir = true
+
+[[jogador]]
+pagina = "Salvador Loschiavo"
+nome = "Salvador Loschiavo"
+incluir = false  # sem infobox
+
+[[jogador]]
+pagina = "Sandro Blum"
+nome = "Sandro Blum"
+incluir = true
+
+[[jogador]]
+pagina = "Santo Zanin"
+nome = "Santo Zanin"
+incluir = true
+
+[[jogador]]
+pagina = "Saulo da Fé Freitas"
+nome = "Saulo"
+incluir = true
+
+[[jogador]]
+pagina = "Sebastião Couto"
+nome = "Sebastião Couto"
+incluir = true
+
+[[jogador]]
+pagina = "Sebastião Lapola"
+nome = "Sebastião Lapola"
+incluir = false  # sem posição
+
+[[jogador]]
+pagina = "Serginho (futebolista, 1990)"
+nome = "Serginho"
+incluir = true
+
+[[jogador]]
+pagina = "Serginho Fraldinha"
+nome = "Serginho Fraldinha"
+incluir = true
+
+[[jogador]]
+pagina = "Sérgio Paes de Mello"
+nome = "Sérgio Paes de Mello"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Sérgio Soares"
+nome = "Sérgio Soares"
+incluir = true
+
+[[jogador]]
+pagina = "Servílio"
+nome = "Servílio"
+incluir = true
+
+[[jogador]]
+pagina = "Sorato"
+nome = "Sorato"
+incluir = true
+
+[[jogador]]
+pagina = "Ramón Sosa"
+nome = "Ramón Sosa"
+incluir = true
+
+[[jogador]]
+pagina = "Mario Soto"
+nome = "Mario Soto"
+incluir = true
+
+[[jogador]]
+pagina = "Tainara Silva"
+nome = "Tainara Silva"
+incluir = false  # sem anos no clube
+
+[[jogador]]
+pagina = "Suingue (futebolista)"
+nome = "Suingue"
+incluir = true
+
+[[jogador]]
+pagina = "Tadeu (futebolista)"
+nome = "Tadeu"
+incluir = true
+
+[[jogador]]
+pagina = "Tchê Tchê"
+nome = "Tchê Tchê"
+incluir = true
+
+[[jogador]]
+pagina = "Telmário de Araújo Sacramento"
+nome = "Dinei"
+incluir = true
+
+[[jogador]]
+pagina = "Thiago Gentil"
+nome = "Thiago Gentil"
+incluir = true
+
+[[jogador]]
+pagina = "Thiago Heleno"
+nome = "Thiago Heleno"
+incluir = true
+
+[[jogador]]
+pagina = "Thiago Martins (futebolista)"
+nome = "Thiago Martins"
+incluir = true
+
+[[jogador]]
+pagina = "Thiago Matias"
+nome = "Thiago Matias"
+incluir = true
+
+[[jogador]]
+pagina = "Thiago Santos (futebolista)"
+nome = "Thiago Santos"
+incluir = true
+
+[[jogador]]
+pagina = "Thiago Cunha"
+nome = "Thiago Cunha"
+incluir = true
+
+[[jogador]]
+pagina = "Thomaz de Aquino"
+nome = "Thomaz de Aquino Gonçalves"
+incluir = true
+
+[[jogador]]
+pagina = "Tiago Alves"
+nome = "Tiago Alves"
+incluir = true
+
+[[jogador]]
+pagina = "Tiago Real"
+nome = "Tiago Real"
+incluir = true
+
+[[jogador]]
+pagina = "Tiago Silva"
+nome = "Tiago Silva"
+incluir = true
+
+[[jogador]]
+pagina = "Tiga (futebolista)"
+nome = "Adriana Costa"
+incluir = true
+
+[[jogador]]
+pagina = "Titi (futebolista, 1972)"
+nome = "Titi"
+incluir = true
+
+[[jogador]]
+pagina = "Fernando Tobio"
+nome = "Fernando Tobio"
+incluir = true
+
+[[jogador]]
+pagina = "Toinzinho (futebolista)"
+nome = "Toinzinho"
+incluir = true
+
+[[jogador]]
+pagina = "Tonhão"
+nome = "Tonhão"
+incluir = true
+
+[[jogador]]
+pagina = "Toninho Cecílio"
+nome = "Toninho Cecílio"
+incluir = true
+
+[[jogador]]
+pagina = "Toninho Vanusa"
+nome = "Toninho Vanusa"
+incluir = true
+
+[[jogador]]
+pagina = "Facundo Torres"
+nome = "Facundo Torres"
+incluir = true
+
+[[jogador]]
+pagina = "Tupãzinho (futebolista)"
+nome = "Tupãzinho"
+incluir = true
+
+[[jogador]]
+pagina = "Tuta (futebolista)"
+nome = "Tuta"
+incluir = true
+
+[[jogador]]
+pagina = "Vágner Bacharel"
+nome = "Vágner Bacharel"
+incluir = true
+
+[[jogador]]
+pagina = "Vagner Benazzi"
+nome = "Vagner Benazzi"
+incluir = true
+
+[[jogador]]
+pagina = "Vágner Love"
+nome = "Vágner Love"
+incluir = true
+
+[[jogador]]
+pagina = "Válber Costa"
+nome = "Válber"
+incluir = true
+
+[[jogador]]
+pagina = "Valdemar Carabina"
+nome = "Valdemar Carabina"
+incluir = true
+
+[[jogador]]
+pagina = "Valdir Manuel dos Santos"
+nome = "Didi"
+incluir = true
+
+[[jogador]]
+pagina = "Jorge Valdivia"
+nome = "Jorge Valdivia"
+incluir = true
+
+[[jogador]]
+pagina = "Valdomiro Duarte de Macedo"
+nome = "Valdomiro"
+incluir = true
+
+[[jogador]]
+pagina = "Valmir Louruz"
+nome = "Valmir Louruz"
+incluir = false  # anos e clubes não batem
+
+[[jogador]]
+pagina = "Vanderlan"
+nome = "Vanderlan"
+incluir = true
+
+[[jogador]]
+pagina = "Vanderlei Paiva"
+nome = "Vanderlei Paiva"
+incluir = true
+
+[[jogador]]
+pagina = "Vavá"
+nome = "Vavá"
+incluir = true
+
+[[jogador]]
+pagina = "Victor Hugo Santana Carvalho"
+nome = "Vitinho"
+incluir = true
+
+[[jogador]]
+pagina = "Victor Luis"
+nome = "Victor Luis"
+incluir = true
+
+[[jogador]]
+pagina = "Victor Ramos"
+nome = "Victor Ramos"
+incluir = true
+
+[[jogador]]
+pagina = "Mauricio Victorino"
+nome = "Mauricio Victorino"
+incluir = true
+
+[[jogador]]
+pagina = "Luis Villa"
+nome = "Luis Villa"
+incluir = true
+
+[[jogador]]
+pagina = "Segundo Villadóniga"
+nome = "Segundo Villadóniga"
+incluir = true
+
+[[jogador]]
+pagina = "Vilson (futebolista)"
+nome = "Vilson"
+incluir = true
+
+[[jogador]]
+pagina = "Matías Viña"
+nome = "Matías Viña"
+incluir = true
+
+[[jogador]]
+pagina = "Vinicius Reche"
+nome = "Vinicius Reche"
+incluir = true
+
+[[jogador]]
+pagina = "Vinícius de Abreu"
+nome = "Vinícus Rato"
+incluir = true
+
+[[jogador]]
+pagina = "Vinícius Santos Silva"
+nome = "Vinícius"
+incluir = true
+
+[[jogador]]
+pagina = "Viola (futebolista)"
+nome = "Viola"
+incluir = true
+
+[[jogador]]
+pagina = "Vitão (futebolista)"
+nome = "Vitão"
+incluir = true
+
+[[jogador]]
+pagina = "Vitor Hugo Franchescoli de Souza"
+nome = "Vitor Hugo"
+incluir = true
+
+[[jogador]]
+pagina = "Vitor Reis"
+nome = "Vitor Reis"
+incluir = true
+
+[[jogador]]
+pagina = "Wagner Alves dos Santos"
+nome = "Wagner Alves"
+incluir = true
+
+[[jogador]]
+pagina = "Waldemar de Brito"
+nome = "Waldemar de Brito"
+incluir = true
+
+[[jogador]]
+pagina = "Waldemar Fiume"
+nome = "Waldemar Fiume"
+incluir = true
+
+[[jogador]]
+pagina = "Waldomiro Jamal"
+nome = "Caxambu"
+incluir = true
+
+[[jogador]]
+pagina = "Walter Oliveira Neves"
+nome = "Neves"
+incluir = true
+
+[[jogador]]
+pagina = "Warley (futebolista)"
+nome = "Warley"
+incluir = true
+
+[[jogador]]
+pagina = "Washington Orelha"
+nome = "Washington"
+incluir = true
+
+[[jogador]]
+pagina = "Weldinho"
+nome = "Weldinho"
+incluir = true
+
+[[jogador]]
+pagina = "Wellington da Silva Pinto"
+nome = "Wellington"
+incluir = true
+
+[[jogador]]
+pagina = "Wellington Paulista"
+nome = "Wellington Paulista"
+incluir = true
+
+[[jogador]]
+pagina = "Wendel Santana Pereira Santos"
+nome = "Wendel"
+incluir = true
+
+[[jogador]]
+pagina = "Wesley Lopes Beltrame"
+nome = "Wesley"
+incluir = true
+
+[[jogador]]
+pagina = "Wesley Ribeiro Silva"
+nome = "Wesley"
+incluir = true
+
+[[jogador]]
+pagina = "Willian José de Souza"
+nome = "Amaral"
+incluir = true
+
+[[jogador]]
+pagina = "Willian Bigode"
+nome = "Willian"
+incluir = true
+
+[[jogador]]
+pagina = "Willians Santana"
+nome = "Willians Santana"
+incluir = true
+
+[[jogador]]
+pagina = "Wílton Figueiredo"
+nome = "Wílton Figueiredo"
+incluir = false  # sem anos no clube
+
+[[jogador]]
+pagina = "Zé Love"
+nome = "Zé Love"
+incluir = true
+
+[[jogador]]
+pagina = "José Marcelo Ferreira"
+nome = "Zé Maria"
+incluir = true
+
+[[jogador]]
+pagina = "Zé Roberto (futebolista)"
+nome = "Zé Roberto"
+incluir = true
+
+[[jogador]]
+pagina = "Zé Rafael"
+nome = "Zé Rafael"
+incluir = true
+
+[[jogador]]
+pagina = "Zeca (futebolista)"
+nome = "Zeca"
+incluir = true
+
+[[jogador]]
+pagina = "Zequinha (futebolista)"
+nome = "Zequinha"
+incluir = true
+
+[[jogador]]
+pagina = "Zezé Moreira"
+nome = "Zezé Moreira"
+incluir = false  # sem infobox
+
+[[jogador]]
+pagina = "Zezé Procópio"
+nome = "Zezé Procópio"
+incluir = true
+
+[[jogador]]
+pagina = "Zinho"
+nome = "Zinho"
+incluir = true
+
+[[jogador]]
+pagina = "Zuza (futebolista)"
+nome = "Zuza"
+incluir = false  # sem anos no clube

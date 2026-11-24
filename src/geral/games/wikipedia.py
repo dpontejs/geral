@@ -34,6 +34,7 @@ class Stint:
 def years(text: str) -> tuple[int, int | None] | None:
     """'2007–2012' -> (2007, 2012); '2011' -> (2011, 2011); '2022–' -> (2022, None)."""
     text = html.unescape(text)  # "1978&ndash;1990"
+    text = re.sub(r"\[\[([^\]|]*)(?:\|[^\]]*)?\]\]", r"\1", text)  # "[[1990]]–[[1992]]"
     text = DASH.sub("–", text)  # "1978{{ndash}}1990"
     text = re.sub(r"\{\{\s*0\s*\}\}", "", text)  # {{0}}: a padding digit, not a year
     text = WRAPPER.sub(r"\1", text)  # {{nowrap|1978–1990}}
