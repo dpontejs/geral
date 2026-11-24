@@ -5,6 +5,7 @@ from typing import Literal
 from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 type Posicao = Literal["GOL", "ZAG", "LAT", "MEI", "ATA"]
+POSICOES: frozenset[Posicao] = frozenset(("GOL", "ZAG", "LAT", "MEI", "ATA"))
 
 # Slots go goalkeeper, full-backs, centre-backs, midfield, attack.
 ESQUEMAS: dict[str, tuple[Posicao, ...]] = {
@@ -65,33 +66,31 @@ def epocas(
     jogadores: list[Jogador], minimo: int = MIN_EPOCA, desde: int = PRIMEIRA_DECADA
 ) -> list[Epoca]:
     """A club's eras, oldest first: decades from `desde` in order, joined until an era has
-    `minimo` players.
+    `minimo` players and someone for every position (an offer always has a keeper to give).
 
-    A thin run left at the end joins the last era; a club with fewer than `minimo` players in all
-    has a single era. Eras never start before `desde`, so whoever only played earlier is in none.
+    A thin run left at the end joins the last era; a club that never fills an era has a single
+    one. Eras never start before `desde`, so whoever only played earlier is in none.
     """
-    por_decada: dict[int, set[str]] = {}
+    por_decada: dict[int, dict[str, Jogador]] = {}
     for jogador in jogadores:
         for decada in jogador.decadas():
             if decada >= desde:
-                por_decada.setdefault(decada, set()).add(jogador.id)
-    grupos: list[tuple[int, int, set[str]]] = []
-    aberto: tuple[int, set[str]] | None = None
+                por_decada.setdefault(decada, {})[jogador.id] = jogador
+    grupos: list[tuple[int, int]] = []
+    aberto: tuple[int, dict[str, Jogador]] | None = None
     for decada in sorted(por_decada):
-        inicio, ids = aberto or (decada, set())
-        ids = ids | por_decada[decada]
-        if len(ids) >= minimo:
-            grupos.append((inicio, decada, ids))
+        inicio, elenco = aberto or (decada, {})
+        elenco = elenco | por_decada[decada]
+        posicoes = {p for j in elenco.values() for p in j.posicoes}
+        if len(elenco) >= minimo and posicoes >= POSICOES:
+            grupos.append((inicio, decada))
             aberto = None
         else:
-            aberto = (inicio, ids)
+            aberto = (inicio, elenco)
     if aberto:
-        if grupos:
-            inicio, _, ids = grupos.pop()
-            grupos.append((inicio, max(por_decada), ids | aberto[1]))
-        else:
-            grupos.append((aberto[0], max(por_decada), aberto[1]))
-    return [_epoca(inicio, fim) for inicio, fim, _ in grupos]
+        inicio = grupos.pop()[0] if grupos else aberto[0]
+        grupos.append((inicio, max(por_decada)))
+    return [_epoca(inicio, fim) for inicio, fim in grupos]
 
 
 class Clube(BaseModel):
