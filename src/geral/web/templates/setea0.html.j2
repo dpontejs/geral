@@ -23,6 +23,11 @@
       {% endfor %}
     </div>
     {% endif %}
+    {% if jogo.edicao != "geral" %}
+    <nav class="editions" aria-label="Clubes do 7a0">
+      {% for slug, nome in edicoes_7a0 %}<a href="/jogos/7a0/{{ slug }}"{% if slug == jogo.edicao %} aria-current="page"{% endif %}>{{ nome }}</a>{% endfor %}
+    </nav>
+    {% endif %}
     <script type="application/json" id="s7-data">{{ jogo | tojson }}</script>
     {% if jogo.edicao != "geral" %}
     {% with nome = jogo.nome, edicao = jogo.edicao %}{% include "_setea0_tela.html.j2" %}{% endwith %}

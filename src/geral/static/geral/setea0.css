@@ -45,7 +45,7 @@
 @media (max-width: 760px) { .s7-card { grid-template-columns: 1fr; } }
 .s7-card .kicker { font: 700 14px/1 var(--body); text-transform: uppercase; letter-spacing: .1em; }
 .s7-card h2 { font: 900 clamp(40px, 7vw, 72px)/.95 var(--display); text-transform: uppercase; margin: 6px 0 10px; }
-.s7-card .placar-final { background: #111; padding: 12px 14px; font: 900 clamp(15px, 3vw, 26px)/1.25 var(--dots); white-space: nowrap; color: var(--lamp); text-transform: uppercase; }
+.s7-card .placar-final { background: #111; padding: 12px 14px; font: 900 clamp(18px, 2.6vw, 26px)/1.25 var(--dots); display: flex; flex-direction: column; gap: 4px; color: var(--lamp); text-transform: uppercase; }
 .s7-card .trilha { list-style: none; margin: 12px 0 0; padding: 0; font: 600 15px/1.6 var(--body); }
 .s7-card .trilha b { font-family: var(--display); }
 .s7-marcas { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
@@ -76,3 +76,5 @@
 .s7-inicio .btn { background: var(--lamp); color: var(--ink); }
 .s7 .btn.secondary { background: var(--paper); color: var(--ink); border-color: var(--ink); }
 .s7-ocupado .s7-oferta, .s7-ocupado .s7-escalar-campo { opacity: .6; pointer-events: none; }
+.s7-card .placar-final .rotulo { font-size: .7em; opacity: .85; }
+.s7 .editions { margin-bottom: 4px; }

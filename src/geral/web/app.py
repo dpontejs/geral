@@ -1784,6 +1784,7 @@ def create_app(
             team=listed.get(edicao),
             club=club_palette(listed.get(edicao)),
             compartilhada=jogo.get("compartilhada"),
+            edicoes_7a0=[(s, setea0_nome(s)) for s in setea0_edicoes()],
             jogo=dados,
         )
 
