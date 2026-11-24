@@ -1667,3 +1667,120 @@ incluir = false  # anos e clubes não batem
 pagina = "Zequinha (futebolista)"
 nome = "Zequinha"
 incluir = true
+
+# Goleiros e subcategorias (2026-11-24)
+
+[[jogador]]
+pagina = "Albérico (futebolista)"
+nome = "Albérico"
+incluir = true
+
+[[jogador]]
+pagina = "Alessandro Felipe Oltramari"
+nome = "Alessandro"
+incluir = true
+
+[[jogador]]
+pagina = "Alex Alves de Lima"
+nome = "Alex Alves"
+incluir = true
+
+[[jogador]]
+pagina = "Cantareli"
+nome = "Cantareli"
+incluir = true
+
+[[jogador]]
+pagina = "Cláudio Roberto Sollito"
+nome = "Solito"
+incluir = true
+
+[[jogador]]
+pagina = "Douglas Gonzaga Leite"
+nome = "Douglas"
+incluir = true
+
+[[jogador]]
+pagina = "Eduardo Allax"
+nome = "Eduardo"
+incluir = true
+
+[[jogador]]
+pagina = "Elinton Andrade"
+nome = "Elinton Andrade"
+incluir = true
+
+[[jogador]]
+pagina = "Fabiano Bolla Lora"
+nome = "Fabiano"
+incluir = true
+
+[[jogador]]
+pagina = "Felipe Garcia dos Prazeres"
+nome = "Felipe Garcia"
+incluir = true
+
+[[jogador]]
+pagina = "Gilvan (futebolista)"
+nome = "Gilvan"
+incluir = true
+
+[[jogador]]
+pagina = "Gléguer Zorzin"
+nome = "Gléguer"
+incluir = true
+
+[[jogador]]
+pagina = "Gastón Guruceaga"
+nome = "Gastón Guruceaga"
+incluir = true
+
+[[jogador]]
+pagina = "Hélio Miguel"
+nome = "Neneca"
+incluir = true
+
+[[jogador]]
+pagina = "João Jorge Ferreira Couto"
+nome = "Ferreira"
+incluir = true
+
+[[jogador]]
+pagina = "Júlio César de Souza Santos"
+nome = "Júlio César de Souza Santos"
+incluir = false  # sem posição
+
+[[jogador]]
+pagina = "Marco Aurélio Siqueira"
+nome = "Marco Aurélio"
+incluir = true
+
+[[jogador]]
+pagina = "Muriel (futebolista)"
+nome = "Muriel"
+incluir = true
+
+[[jogador]]
+pagina = "País José de Oliveira"
+nome = "País"
+incluir = true
+
+[[jogador]]
+pagina = "Ricardo Berna"
+nome = "Ricardo Berna"
+incluir = true
+
+[[jogador]]
+pagina = "Tiago Cardoso"
+nome = "Tiago Cardoso"
+incluir = true
+
+[[jogador]]
+pagina = "Vagner Antônio Brandalise"
+nome = "Vagner"
+incluir = true
+
+[[jogador]]
+pagina = "Waldemar Chiarelli"
+nome = "Waldemar"
+incluir = true

@@ -99,12 +99,18 @@ def _toml(texto: str) -> str:
     return json.dumps(texto, ensure_ascii=False)
 
 
-def _entradas(raw: dict, slug: str, titulos: list[str], ja: dict[str, str]) -> list[str]:
-    """The TOML entries of the pages, cut (`incluir = false`) with the reason."""
+def _entradas(
+    raw: dict, slug: str, titulos: list[str], ja: dict[str, str], so_revisados: bool = True
+) -> list[str]:
+    """The TOML entries of the pages, cut (`incluir = false`) with the reason.
+
+    `so_revisados`: a page missing from `jogadores_pt.toml` is cut (a first list); pages added
+    to an existing list were never reviewed there, so only the automatic cuts apply.
+    """
     linhas: list[str] = []
     for titulo in titulos:
         jogador, motivo = avaliar(raw, slug, titulo)
-        if ja and titulo not in ja and not motivo:
+        if so_revisados and ja and titulo not in ja and not motivo:
             motivo = "fora de jogadores_pt.toml (não revisado)"
         nome = ja.get(titulo) or (jogador or {}).get("nome") or re.sub(r"\s*\(.*\)$", "", titulo)
         incluir = "false  # " + motivo if motivo else "true"
@@ -127,7 +133,7 @@ def sugerir(raw: dict, slug: str) -> None:
             print(f"{destino}: nenhuma página nova")
             return
         linhas = [f"# Goleiros e subcategorias ({date.today().isoformat()})", ""]
-        linhas += _entradas(raw, slug, novas, ja)
+        linhas += _entradas(raw, slug, novas, ja, so_revisados=False)
         separador = "" if texto.endswith("\n\n") else "\n" if texto.endswith("\n") else "\n\n"
         destino.write_text(texto + separador + "\n".join(linhas), encoding="utf-8")
         print(f"{destino}: {len(novas)} páginas novas, {linhas.count('incluir = true')} incluídas")
