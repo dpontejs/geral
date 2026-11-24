@@ -1,0 +1,35 @@
+# Marcas do 7a0 do clube: o que a campanha deixa no card (docs/features/setea0.md).
+# A ordem aqui é a ordem no card. Nunca reuse um id: campanhas guardadas dependem deles.
+# A regra de cada marca mora em `motor.marcas`; aqui só o nome e a linha do card.
+
+[sete-a-zero]
+nome = "7 a 0"
+texto = "Sete na rede, nenhum sofrido: a goleada que dá nome ao jogo."
+
+[campeao]
+nome = "Campeão"
+texto = "Sete jogos, sete vitórias: a campanha perfeita."
+
+[artilheiro]
+nome = "Artilheiro"
+texto = "Um só jogador balançou a rede sete vezes ou mais."
+
+[nos-penaltis]
+nome = "Nos pênaltis"
+texto = "O título do clássico veio na marca da cal."
+
+[virada-na-final]
+nome = "Virada na final"
+texto = "Saiu atrás no clássico e virou para levantar a taça."
+
+[paredao]
+nome = "Paredão"
+texto = "Campeão sofrendo no máximo dois gols na campanha inteira."
+
+[caiu-na-final]
+nome = "Caiu na final"
+texto = "Seis vitórias e a taça escapou no clássico."
+
+[estreia-amarga]
+nome = "Estreia amarga"
+texto = "Perdeu logo no primeiro jogo e voltou cedo para casa."

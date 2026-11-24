@@ -80,3 +80,4 @@ Gemini (`google-genai`), ESPN (API pública), Jinja2 + `premailer`, Resend, Fast
 | 2026-11-10 | Gemini com chave paga, modelo Flash padrão (`GEMINI_MODEL`) | cota gratuita não comporta várias torcidas; orçamento aprovado pelo dono |
 | 2026-11-10 | Fóruns por último | login, moderação e spam custam mais que todo o resto junto |
 | 2026-11-23 | Prancheta (desenhar e adivinhar ao vivo): sala só em memória, num processo só do uvicorn, com SSE + POST; o SQLite guarda só a súmula | salas privadas de até 10 pessoas não pedem broker nem WebSocket; o custo é um deploy derrubar as salas abertas e não poder subir mais de um processo sem trocar o hub (`docs/features/prancheta.md`) |
+| 2026-11-23 | 7a0 do clube: a força do adversário é o melhor XI de todos os tempos do nosso clube × o fator da posição na chave (o elenco do adversário só dá autores de gols e goleiro) | garante a ordem crescente dos jogos e a paridade entre clubes pequenos e grandes; aprovado pelo dev |
