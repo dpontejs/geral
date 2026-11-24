@@ -1,0 +1,49 @@
+# Palavrões e ofensas filtrados no apelido e no chute da Prancheta.
+# Uma entrada por linha, comparada por palavra inteira no texto normalizado
+# (minúsculas, sem acento). Expressões de várias palavras valem como sequência.
+# Termos de futebol que soam mal (frango, pipoqueiro, bagre...) ficam de fora.
+arrombado
+arrombada
+babaca
+bicha
+boceta
+buceta
+bosta
+brioco
+caralho
+cacete
+corno
+cu
+cuzao
+desgracado
+desgracada
+escroto
+foda
+foder
+fodase
+foda se
+fudido
+fdp
+filho da puta
+filha da puta
+merda
+pau no cu
+piranha
+porra
+puta
+puto
+putaria
+punheta
+punheteiro
+retardado
+rola
+safado
+vadia
+viado
+xana
+xereca
+xota
+vsf
+vtnc
+tnc
+pqp
