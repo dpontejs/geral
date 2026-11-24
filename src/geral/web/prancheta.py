@@ -216,26 +216,31 @@ class Prancheta:
     async def rodar(self) -> None:
         """The lifespan's task: one step every half second, until cancelled."""
         while True:
-            try:
-                self.passo()
-            except Exception:  # one bad step must not stop every room
-                logger.exception("Prancheta loop step failed")
+            self.passo()
             await self._sleep(INTERVALO)
 
     def passo(self) -> None:
         """Moves every room's clock (deadlines, hints, absences) and delivers what changed.
 
         A room nobody has been connected to for 10 minutes, or 3 hours old, is closed: a game in
-        progress goes to `fim` (and its súmula is kept), and the room leaves the memory.
+        progress goes to `fim` (and its súmula is kept), and the room leaves the memory. A room
+        whose step fails is logged and leaves the memory too; the others go on.
         """
         agora = self._now()
         for viva in list(self._salas.values()):
-            abandonada = not viva.conexoes and agora - viva.vazia_desde >= ABANDONO
-            if abandonada or agora - viva.sala.criada_em >= DURACAO_MAX:
-                self._entregar(viva, viva.sala.encerrar(agora))
-                self._retirar(viva)
-            else:
-                self._entregar(viva, viva.sala.avancar(agora))
+            try:
+                abandonada = not viva.conexoes and agora - viva.vazia_desde >= ABANDONO
+                if abandonada or agora - viva.sala.criada_em >= DURACAO_MAX:
+                    self._entregar(viva, viva.sala.encerrar(agora))
+                    self._retirar(viva)
+                else:
+                    self._entregar(viva, viva.sala.avancar(agora))
+            except Exception:
+                logger.exception("Prancheta room failed in the loop: %s", viva.sala.id)
+                try:
+                    self._retirar(viva)  # out of memory first, then its streams end
+                except Exception:
+                    logger.exception("Prancheta room %s: closing its streams failed", viva.sala.id)
 
     def _retirar(self, viva: _SalaViva) -> None:
         """Out of memory; its events streams end after what is already queued."""

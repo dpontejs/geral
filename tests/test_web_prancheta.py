@@ -671,6 +671,30 @@ def test_rodar_avanca_as_salas_a_cada_meio_segundo(tmp_path):
     assert foto["fase"] == "desenho" and foto["palavra"]
 
 
+@assincrono
+async def test_erro_numa_sala_nao_para_as_outras(tmp_path, caplog):
+    async with mesa(tmp_path) as m:
+        quebrada, tokens_q = await m.sala_com(2)
+        boa, tokens_b = await m.sala_com(2)
+        ouvinte = await m.ouvir(quebrada, tokens_q[2])
+        await m.ouvir(boa, tokens_b[1])
+        await m.ouvir(boa, tokens_b[2])
+        await m.agir(boa, tokens_b[1], "comecar")
+
+        def quebra(agora):
+            raise RuntimeError("bug")
+
+        m.prancheta._salas[quebrada].sala.avancar = quebra
+        m.relogio.andar(15)
+        m.prancheta.passo()  # must not raise
+
+        assert (await m.foto(boa, tokens_b[1]))["fase"] == "desenho"  # the choice ran out
+        assert not m.prancheta.viva(quebrada)
+        while await ouvinte.proximo() is not None:  # its streams end
+            pass
+        assert "Prancheta room failed" in caplog.text
+
+
 # --- no app ---
 
 
