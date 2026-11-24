@@ -763,7 +763,10 @@
     try {
       const r = await fetch(`/jogos/prancheta/s/${SALA}`, { cache: "no-store" });
       const html = await r.text();
-      if (r.status === 404) aviso("A sala acabou", "A sala acabou ou o servidor reiniciou. Crie outra e mande o link de novo.");
+      if (r.status === 404) {
+        esquecer(); // the room is gone: its seat with it
+        aviso("A sala acabou", "A sala acabou ou o servidor reiniciou. Crie outra e mande o link de novo.");
+      }
       else if (html.includes('id="pr-sumula"')) location.reload();
       else if (r.ok && (await meuToken()) === 403) {
         esquecer(); eu = null; est = null; tela = "";
