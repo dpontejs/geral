@@ -189,6 +189,7 @@
       corpo = { id: t.id, cor: t.cor, esp: t.esp, pts, fim };
     }
     enviando = true;
+    item.emVoo = true; // from here on the server may have it: undoing must tell the server
     const status = await acao(item.tipo, corpo);
     enviando = false;
     if (fila[0] !== item) return; // the play changed meanwhile
@@ -208,7 +209,7 @@
     const t = tracos.pop();
     if (!t) return;
     const i = fila.findIndex((it) => it.t === t);
-    if (i >= 0 && fila[i].enviado === 0) fila.splice(i, 1); // the server never saw it
+    if (i >= 0 && fila[i].enviado === 0 && !fila[i].emVoo) fila.splice(i, 1); // the server never saw it
     else fila.push({ tipo: "desfazer" });
     pedirDesenho();
   }
