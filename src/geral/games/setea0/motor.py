@@ -100,9 +100,11 @@ def oferta(
     rng.shuffle(da_epoca)
     escolhidos: list[Jogador] = []
     ids: set[str] = set()
-    for linha in ("GOL", "DEF", "MEI", "ATA"):  # one of each line when the era has one
+    for posicao in ("GOL", "LAT", "ZAG", "MEI", "ATA"):  # one of each when the era has one
+        if any(posicao in j.posicoes for j in escolhidos):
+            continue
         for j in da_epoca:
-            if j.id not in ids and any(LINHA[p] == linha for p in j.posicoes):
+            if j.id not in ids and posicao in j.posicoes:
                 escolhidos.append(j)
                 ids.add(j.id)
                 break
@@ -127,9 +129,9 @@ def _encaixe_de(posicao: Posicao, vaga: Posicao) -> float:
         return 1.0
     if frozenset((posicao, vaga)) in VIZINHAS:
         return 0.85
-    if "GOL" in (posicao, vaga):
-        return 0.3
-    return 0.6
+    if "GOL" in (posicao, vaga):  # a centre-back in goal, or a keeper up front: next to nothing
+        return 0.1
+    return 0.45
 
 
 _ENCAIXES = {(p, v): _encaixe_de(p, v) for p in LINHA for v in LINHA}
@@ -191,11 +193,20 @@ JOGOS = 7
 ESQUEMA_ADVERSARIO = "4-4-2"
 
 
+# Without a real keeper the whole team sinks: its strength is multiplied by the goal slot's fit
+# to this power (a centre-back in goal, 0.1 ** 0.2 = 0.63), on top of his own share.
+EXPOENTE_GOLEIRO = 0.2
+
+
 def forca_do_time(escalados: list[Escalado], esquema: str) -> float:
     vagas = ESQUEMAS[esquema]
-    return sum(e.jogador.forca * encaixe(e.jogador, vagas[e.vaga]) for e in escalados) / len(
-        escalados
-    )
+    soma, goleiro = 0.0, 1.0
+    for e in escalados:
+        encaixado = encaixe(e.jogador, vagas[e.vaga])
+        soma += e.jogador.forca * encaixado
+        if vagas[e.vaga] == "GOL":
+            goleiro = encaixado
+    return soma / len(escalados) * goleiro**EXPOENTE_GOLEIRO
 
 
 def adversario(dados: Dados, slug: str) -> list[Jogador]:

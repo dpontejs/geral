@@ -16,7 +16,6 @@ from geral.games.setea0.modelos import (
 )
 
 DADOS = dados_de_teste()
-LINHA = {"GOL": "GOL", "ZAG": "DEF", "LAT": "DEF", "MEI": "MEI", "ATA": "ATA"}
 
 
 def escolhas_validas(semente="s", esquema="4-4-2", modo="classico", trocas=None):
@@ -38,10 +37,26 @@ def test_oferta_so_tem_jogadores_do_clube_na_epoca():
         assert len({j.id for j in r.jogadores}) == len(r.jogadores)
         for j in r.jogadores:
             assert j.id in ids_abc and r.epoca.contem(j)
-        assert {LINHA[p] for j in r.jogadores for p in j.posicoes} == {"GOL", "DEF", "MEI", "ATA"}
+        assert {p for j in r.jogadores for p in j.posicoes} == {"GOL", "LAT", "ZAG", "MEI", "ATA"}
         forcas = [j.forca for j in r.jogadores]
         assert forcas == sorted(forcas, reverse=True)
         assert r.trocas_restantes == 3
+
+
+def test_oferta_tem_as_5_posicoes_mesmo_com_uma_rara():
+    from geral.games.setea0.modelos import Clube, Dados
+
+    def jogador(i, posicao):
+        return Jogador(
+            id=f"Qr{i}", nome=f"R{i}", posicoes=[posicao], passagens=[(2011, 2012)], forca=50
+        )
+
+    raros = [jogador(i, p) for i, p in enumerate(["GOL", "LAT", "ZAG"])]
+    meio = [jogador(10 + i, "MEI" if i % 2 else "ATA") for i in range(30)]
+    dados = Dados(versao="t", clubes={"abc": Clube(nome="ABC", jogadores=raros + meio)})
+    for i in range(30):
+        r = motor.oferta(dados, "abc", f"p{i}", 0, 0)
+        assert {p for j in r.jogadores for p in j.posicoes} == {"GOL", "LAT", "ZAG", "MEI", "ATA"}
 
 
 def test_decadas_ralas_viram_epoca():
@@ -224,10 +239,13 @@ def test_mesma_entrada_mesma_campanha():
         ("LAT", "MEI", 0.85),
         ("MEI", "ATA", 0.85),
         ("ATA", "MEI", 0.85),
-        ("GOL", "ATA", 0.3),
-        ("ZAG", "GOL", 0.3),
-        ("ZAG", "ATA", 0.6),
-        ("LAT", "ATA", 0.6),
+        # dev decision 2026-11-24: out of position costs much more, in goal above all (a team
+        # with a centre-back in goal still reached game 5); was 0.3 for goal, 0.6 elsewhere
+        ("GOL", "ATA", 0.1),
+        ("ZAG", "GOL", 0.1),
+        ("MEI", "GOL", 0.1),
+        ("ZAG", "ATA", 0.45),
+        ("LAT", "ATA", 0.45),
     ],
 )
 def test_fora_de_posicao_perde_forca(posicao, vaga, esperado):
@@ -239,6 +257,28 @@ def test_time_fora_de_posicao_e_mais_fraco():
     certo = motor.forca_do_time(escalados, "4-4-2")
     trocado = [e.model_copy(update={"vaga": 10 - e.vaga}) for e in escalados]
     assert motor.forca_do_time(trocado, "4-4-2") < certo
+
+
+def test_time_sem_goleiro_desaba():
+    from geral.games.setea0.modelos import ESQUEMAS, Escalado
+
+    vagas = ESQUEMAS["4-4-2"]
+
+    def time(trocada: int) -> list[Escalado]:
+        epoca = motor.TODOS_OS_TEMPOS
+        return [
+            Escalado(jogador=_jogador("ZAG" if i == trocada else v), epoca=epoca, vaga=i)
+            for i, v in enumerate(vagas)
+        ]
+
+    certo = motor.forca_do_time(time(-1), "4-4-2")
+    assert certo == 80
+    # one man out of position up front costs his share; in goal, the whole team sinks
+    assert motor.forca_do_time(time(10), "4-4-2") == pytest.approx((10 * 80 + 80 * 0.45) / 11)
+    sem_goleiro = motor.forca_do_time(time(0), "4-4-2")
+    assert motor.EXPOENTE_GOLEIRO == 0.2
+    assert sem_goleiro == pytest.approx((10 * 80 + 80 * 0.1) / 11 * 0.1**0.2)
+    assert sem_goleiro < 0.65 * certo
 
 
 def test_adversario_tem_11_no_4_4_2():
