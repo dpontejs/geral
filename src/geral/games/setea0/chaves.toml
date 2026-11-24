@@ -3,6 +3,7 @@
 # `publicado`: o dev liga depois de revisar a lista e os ídolos do clube (elencos/, idolos.toml).
 # `[clube.*]`: de onde vem o elenco; `velha` = base do jogo da velha (todos os tempos, sem
 # décadas), `ptwiki` = categoria da Wikipédia em português (com os anos no clube).
+# `wikidata`: o id do clube, para filtrar as passagens de cada jogador.
 
 [edicao.abc]
 nome = "ABC"
@@ -41,41 +42,49 @@ final = "corinthians"
 publicado = false
 
 [clube.abc]
+wikidata = "Q287129"
 nome = "ABC"
 origem = "ptwiki"
 categoria = "Futebolistas do ABC Futebol Clube"
 
 [clube.nautico]
+wikidata = "Q73971"
 nome = "Náutico"
 origem = "ptwiki"
 categoria = "Futebolistas do Clube Náutico Capibaribe"
 
 [clube.csa]
+wikidata = "Q928885"
 nome = "CSA"
 origem = "ptwiki"
 categoria = "Futebolistas do Centro Sportivo Alagoano"
 
 [clube.flamengo]
+wikidata = "Q17479"
 nome = "Flamengo"
 origem = "ptwiki"
 categoria = "Futebolistas do Clube de Regatas do Flamengo"
 
 [clube.vasco]
+wikidata = "Q5014111"
 nome = "Vasco"
 origem = "ptwiki"
 categoria = "Futebolistas do Club de Regatas Vasco da Gama"
 
 [clube.palmeiras]
+wikidata = "Q80964"
 nome = "Palmeiras"
 origem = "ptwiki"
 categoria = "Futebolistas da Sociedade Esportiva Palmeiras"
 
 [clube.america-rn]
+wikidata = "Q482262"
 nome = "América-RN"
 origem = "ptwiki"
 categoria = "Futebolistas do América Futebol Clube (Rio Grande do Norte)"
 
 [clube.crb]
+wikidata = "Q1024264"
 nome = "CRB"
 origem = "ptwiki"
 categoria = "Futebolistas do Clube de Regatas Brasil"

@@ -44,9 +44,21 @@ def test_slug_sem_clube_falha(tmp_path, monkeypatch):
     )
     monkeypatch.setattr(dados, "CHAVES", toml)
     dados.chaves.cache_clear()
-    with pytest.raises(ValueError, match="x"):
-        dados.chaves()
-    dados.chaves.cache_clear()
+    try:
+        with pytest.raises(ValueError, match="x"):
+            dados.chaves()
+    finally:
+        dados.chaves.cache_clear()
+
+
+def test_todo_clube_tem_wikidata():
+    for slug, clube in chaves()["clube"].items():
+        assert clube["wikidata"].startswith("Q"), slug
+
+
+def test_passagem_ao_contrario_nao_vale():
+    with pytest.raises(ValueError):
+        Jogador(id="Q1", nome="X", posicoes=["MEI"], passagens=[(1990, 1980)], forca=50)
 
 
 def test_geral_nao_tem_7a0():
@@ -62,5 +74,15 @@ def test_dados_de_teste_validam():
         da_decada = [j for j in abc if decada in j.decadas()]
         assert len(da_decada) >= 12
         assert {p for j in da_decada for p in j.posicoes} == {"GOL", "ZAG", "LAT", "MEI", "ATA"}
+    assert any(len(j.decadas()) > 1 for j in abc)  # someone shows up in two decades
     for slug in [*chaves()["edicao"]["abc"]["adversarios"], "america-rn"]:
         assert len(fake.clubes[slug].jogadores) == 18
+
+
+def test_dados_de_teste_com_outra_semente_e_escala():
+    forte = dados_de_teste(semente=8, escala=1.2)
+    base = dados_de_teste()
+    assert forte != base
+    media = lambda d: sum(j.forca for j in d.clubes["abc"].jogadores) / 63  # noqa: E731
+    assert media(forte) > media(base) * 1.1
+    assert all(j.forca <= 99 for j in forte.clubes["abc"].jogadores)

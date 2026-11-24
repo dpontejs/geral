@@ -8,8 +8,9 @@ from geral.games.setea0.modelos import Clube, Dados, Jogador
 LINHAS = ["GOL", "LAT", "ZAG", "ZAG", "MEI", "MEI", "MEI", "ATA", "ATA"]  # cycled per decade
 
 
-def dados_de_teste() -> Dados:
-    rng = random.Random(7)
+def dados_de_teste(semente: int = 7, escala: float = 1.0) -> Dados:
+    """`escala` multiplies the ABC's strengths (capped at 99), for a stronger synthetic club."""
+    rng = random.Random(semente)
     abc = []
     for decada in (1970, 1980, 2000, 2010):
         for i in range(15):
@@ -19,8 +20,9 @@ def dados_de_teste() -> Dados:
                     id=f"Qabc{decada}{i}",
                     nome=f"ABC {decada} {i}",
                     posicoes=[LINHAS[i % len(LINHAS)]],
-                    passagens=[(inicio, min(inicio + rng.randint(0, 2), decada + 9))],
-                    forca=rng.randint(30, 95),
+                    # the last of each decade stays into the next one
+                    passagens=[(inicio, inicio + 4 if i == 14 else min(inicio + 2, decada + 9))],
+                    forca=min(99, round(rng.randint(30, 95) * escala)),
                 )
             )
     for i, posicao in enumerate(["GOL", "ZAG", "ATA"]):  # a thin decade
