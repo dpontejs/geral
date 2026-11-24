@@ -1,7 +1,7 @@
 # Prancheta: desenhar e adivinhar em sala privada
 
 - **Data:** 2026-11-23
-- **Status:** aprovada
+- **Status:** entregue (PRs #84, #85, #86, #88, #90, #92 e a entrada em /jogos)
 - **ADRs:** — (sala em memória num processo só: registrado nas Decisões do PLAN)
 
 ## Objetivo

@@ -115,3 +115,17 @@ def test_app_liga_as_paginas_ao_servidor(store, mailer, clock):
     assert f'data-sala="{sala.json()["id"]}"' in pagina.text
     assert app.get("/jogos/prancheta").status_code == 200
     assert app.get("/jogos/prancheta/s/zzzzzz").status_code == 404
+
+
+def test_prancheta_aparece_em_jogos_e_nas_abas(store, mailer, clock):
+    """The hub lists the Prancheta as free play and every game's tabs link to it."""
+    from webkit import make_client
+
+    app = make_client(store, mailer, clock)
+    jogos = app.get("/jogos").text
+    assert "Prancheta" in jogos and 'href="/jogos/prancheta"' in jogos
+    assert "#None" not in jogos
+    aba = app.get("/jogos/velha").text
+    assert 'href="/jogos/prancheta"' in aba
+    propria = app.get("/jogos/prancheta").text
+    assert 'href="/jogos/prancheta" aria-current="page">Prancheta' in propria

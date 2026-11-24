@@ -537,6 +537,14 @@ def create_app(
                 "editions": {"geral": True},  # no team edition
                 "number": velha_number(),
             },
+            {
+                "path": "prancheta",
+                "name": "Prancheta",
+                "desc": "Desenhe lances, objetos e craques do futebol enquanto a turma tenta "
+                "adivinhar, ao vivo, numa sala que você manda pelo link.",
+                "editions": {"geral": True},  # no team edition
+                "number": None,  # live rooms: no game of the day
+            },
         ]
 
     def game_tabs(current: str, edition: str) -> list[dict]:
