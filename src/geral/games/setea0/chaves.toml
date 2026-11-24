@@ -9,37 +9,37 @@
 nome = "ABC"
 adversarios = ["ceara", "fortaleza", "santa-cruz", "vitoria", "sport", "bahia"]
 final = "america-rn"
-publicado = false
+publicado = true
 
 [edicao.nautico]
 nome = "Náutico"
 adversarios = ["abc", "ceara", "fortaleza", "santa-cruz", "vitoria", "bahia"]
 final = "sport"
-publicado = false
+publicado = true
 
 [edicao.csa]
 nome = "CSA"
 adversarios = ["ceara", "fortaleza", "santa-cruz", "vitoria", "sport", "bahia"]
 final = "crb"
-publicado = false
+publicado = true
 
 [edicao.flamengo]
 nome = "Flamengo"
 adversarios = ["atletico-mg", "gremio", "cruzeiro", "internacional", "sao-paulo", "palmeiras"]
 final = "vasco"
-publicado = false
+publicado = true
 
 [edicao.vasco]
 nome = "Vasco"
 adversarios = ["atletico-mg", "gremio", "cruzeiro", "internacional", "sao-paulo", "palmeiras"]
 final = "flamengo"
-publicado = false
+publicado = true
 
 [edicao.palmeiras]
 nome = "Palmeiras"
 adversarios = ["atletico-mg", "gremio", "cruzeiro", "internacional", "sao-paulo", "flamengo"]
 final = "corinthians"
-publicado = false
+publicado = true
 
 [clube.abc]
 wikidata = "Q287129"

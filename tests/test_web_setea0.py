@@ -67,6 +67,7 @@ def test_pagina_do_clube_publicado(game) -> None:
 
 
 def test_clube_nao_publicado_da_404(game, monkeypatch) -> None:
+    monkeypatch.setitem(setea0_dados.chaves()["edicao"]["nautico"], "publicado", False)
     assert game.get("/jogos/7a0/nautico").status_code == 404
     assert game.post("/api/jogos/7a0/nautico/oferta", json={"rodada": 0}).status_code == 404
     assert game.get("/jogos/7a0/nao-existe").status_code == 404

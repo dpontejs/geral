@@ -31,7 +31,7 @@ def test_toda_edicao_tem_6_adversarios_e_final():
         assert len(edicao["adversarios"]) == 6, slug
         assert edicao["final"] not in edicao["adversarios"], slug
         assert slug not in [*edicao["adversarios"], edicao["final"]], slug
-        assert edicao["publicado"] is False, slug
+        assert edicao["publicado"] is True, slug  # all six live since 2026-11-24 (dev)
         assert chaves()["clube"][slug]["origem"] == "ptwiki", slug
 
 
