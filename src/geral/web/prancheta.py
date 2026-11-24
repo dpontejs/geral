@@ -40,6 +40,7 @@ PING = 15.0  # seconds between keep-alive comments on an idle events stream
 INTERVALO = 0.5  # seconds between two steps of the loop
 ABANDONO = timedelta(minutes=10)  # a room with no events connection for this long is closed
 DURACAO_MAX = timedelta(hours=3)  # and any room this old
+ESPERA_DB = 1.0  # seconds to wait for a locked SQLite: these calls run on the event loop
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS prancheta_sumulas (
     id TEXT PRIMARY KEY,
@@ -179,7 +180,7 @@ class Prancheta:
         self._rng = rng
         self._salas: dict[str, _SalaViva] = {}
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
-        with closing(sqlite3.connect(self.db_path)) as db, db:
+        with closing(sqlite3.connect(self.db_path, timeout=ESPERA_DB)) as db, db:
             db.executescript(SCHEMA)
         self.router = APIRouter(prefix="/api/jogos/prancheta")
         self._rotas()
@@ -192,7 +193,7 @@ class Prancheta:
 
     def sumula(self, sala_id: str) -> dict | None:
         """The súmula of a finished room (from the table); None while playing or never played."""
-        with closing(sqlite3.connect(self.db_path)) as db:
+        with closing(sqlite3.connect(self.db_path, timeout=ESPERA_DB)) as db:
             linha = db.execute(
                 "SELECT dados FROM prancheta_sumulas WHERE id = ?", (sala_id,)
             ).fetchone()
@@ -200,7 +201,7 @@ class Prancheta:
 
     def _gravar(self, sala_id: str, criada_em: datetime, encerrada_em: datetime, dados: dict):
         """Keeps a súmula; the first copy stays (the end is written once, whatever calls it)."""
-        with closing(sqlite3.connect(self.db_path)) as db, db:
+        with closing(sqlite3.connect(self.db_path, timeout=ESPERA_DB)) as db, db:
             db.execute(
                 "INSERT OR IGNORE INTO prancheta_sumulas VALUES (?, ?, ?, ?)",
                 (
@@ -282,8 +283,12 @@ class Prancheta:
         for evento in eventos:
             if evento.tipo == "fim":
                 sala = viva.sala
-                self._gravar(sala.id, sala.criada_em, self._now(), evento.dados["sumula"])
-                self._retirar(viva)
+                try:
+                    self._gravar(sala.id, sala.criada_em, self._now(), evento.dados["sumula"])
+                except Exception:
+                    logger.exception("Prancheta room %s: saving the súmula failed", sala.id)
+                finally:
+                    self._retirar(viva)
 
     def _desligar(self, viva: _SalaViva, conexao: _Conexao) -> None:
         """Takes a connection out of the room once (closed, or dropped for a full queue)."""

@@ -695,6 +695,27 @@ async def test_erro_numa_sala_nao_para_as_outras(tmp_path, caplog):
         assert "Prancheta room failed" in caplog.text
 
 
+@assincrono
+async def test_falha_ao_gravar_sumula_ainda_fecha_a_sala(tmp_path, monkeypatch, caplog):
+    async with mesa(tmp_path) as m:
+        sala, tokens = await m.sala_com(2)
+        ouvinte = await m.ouvir(sala, tokens[1])
+        await m.em_desenho(sala, tokens)
+        esperas = []
+
+        def travado(*args, timeout=5.0, **kwargs):
+            esperas.append(timeout)
+            raise sqlite3.OperationalError("database is locked")
+
+        monkeypatch.setattr(hub.sqlite3, "connect", travado)
+        assert (await m.agir(sala, tokens[2], "sair")).status_code == 204  # the end
+        assert esperas == [1.0]  # a short wait: the event loop is not stuck behind the lock
+        assert not m.prancheta.viva(sala)
+        *_, (tipo, _) = await ouvinte.ate(lambda t, d: t == "fim")
+        assert await ouvinte.proximo() is None  # its streams end all the same
+        assert f"Prancheta room {sala}: saving the súmula failed" in caplog.text
+
+
 # --- no app ---
 
 
