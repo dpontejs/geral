@@ -127,6 +127,10 @@ class Sala:
             self._fila.append(jogador.id)
         return jogador.id, jogador.token, self._estados(agora)
 
+    def esta(self, jogador: int) -> bool:
+        """The player is still in the room (not left, not sent off)."""
+        return jogador in self._jogadores
+
     def jogador(self, token: str) -> int:
         try:
             return self._tokens[token]
@@ -270,7 +274,7 @@ class Sala:
     def _cartao(self, jogador: _Jogador, acao: dict, agora: datetime) -> list[Evento]:
         alvo = self._alvo(jogador, acao)
         self._votos.setdefault(alvo, set()).add(jogador.id)
-        return self._checar_votos(agora)
+        return self._checar_votos(agora) or self._estados(agora)  # everyone sees the count
 
     def _tirar(self, jogador: _Jogador, acao: dict, agora: datetime) -> list[Evento]:
         if jogador.id != self._anfitriao:
@@ -444,6 +448,13 @@ class Sala:
         self._prazo = agora + TEMPO_INTERVALO
         return self._estados(agora, tambem)
 
+    def encerrar(self, agora: datetime) -> list[Evento]:
+        """The hub's cleanup: a game in progress goes to `fim`; a room still waiting just closes."""
+        if self._fase == "espera":
+            self.encerrada = True
+            return []
+        return self._encerrar(agora)
+
     def _encerrar(self, agora: datetime, tambem: tuple[int, ...] = ()) -> list[Evento]:
         if self.encerrada:
             return []
@@ -491,6 +502,7 @@ class Sala:
 
     def foto(self, jogador: int, agora: datetime) -> dict:
         desenha = jogador == self._desenhista
+        presentes = set(self._presentes())
         ve_palavra = self._fase in ("intervalo", "fim") or (desenha and self._fase == "desenho")
         return {
             "seq": self._seq,
@@ -511,6 +523,9 @@ class Sala:
                     "presente": j.presente,
                     "anfitriao": j.id == self._anfitriao,
                     "acertou": j.acertou,
+                    # red cards that count against them, and how many send them off
+                    "cartoes": len(self._votos.get(j.id, set()) & (presentes - {j.id})),
+                    "cartoes_para_sair": len(presentes - {j.id}) // 2 + 1,
                 }
                 for j in self._jogadores.values()
             ],
