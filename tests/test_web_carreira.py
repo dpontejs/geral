@@ -457,3 +457,29 @@ def test_link_sem_carreira_guardada_e_dados_velhos_mostra_o_resumo(game) -> None
     assert (
         compartilhada["carreira"] is None and compartilhada["resumo"]["rotulo"] == final["rotulo"]
     )
+
+
+def test_oferta_diz_a_versao_dos_dados(game) -> None:
+    from geral.games.carreira.dados import carregar
+
+    corpo = game.post(f"{API}/geral/oferta", json={"clube": CRAQUE["clube"]}).json()
+
+    assert corpo["versao"] == carregar().versao
+
+
+def test_carreira_de_dados_antigos_avisa_que_o_jogo_foi_atualizado(game) -> None:
+    pedido = _comeco(game) | {"semente": "fixa", "escolhas": [0], "versao": "antiga"}
+
+    resposta = game.post(f"{API}/geral/simular", json=pedido)
+
+    assert resposta.status_code == 409
+    corpo = resposta.json()
+    assert corpo["atualizado"] is True and "atualizad" in corpo["detail"]
+
+
+def test_carreira_com_a_versao_de_hoje_segue_normal(game) -> None:
+    from geral.games.carreira.dados import carregar
+
+    pedido = _comeco(game) | {"semente": "fixa", "escolhas": [], "versao": carregar().versao}
+
+    assert game.post(f"{API}/geral/simular", json=pedido).status_code == 200
