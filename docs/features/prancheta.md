@@ -9,7 +9,7 @@
 Joguinho de desenhar e adivinhar com tema de futebol, **ao vivo**, numa sala privada que quem cria
 manda por link no grupo. Na sua vez, você desenha na prancheta do técnico (quadro verde, traço de
 giz) e os outros chutam o que é. Nome, visual e regras são da Geral; do gênero, só a mecânica.
-Palavras com o Nordeste como diferencial. Ao fim, a súmula fica no mesmo link curto.
+Um banco só de palavras de futebol, sem tema por time. Ao fim, a súmula fica no mesmo link curto.
 
 ## Fora de escopo
 
@@ -22,8 +22,7 @@ Palavras com o Nordeste como diferencial. Ao fim, a súmula fica no mesmo link c
 ## Regras (decididas com o dev em 2026-11-23)
 
 - **Sala:** de 2 a 10 jogadores, cada um com apelido (2–16 caracteres, sem login, filtro de
-  palavrão). Quem cria é o anfitrião e escolhe o **tema** (`geral`, `nordeste` ou slug de clube
-  do `teams.toml` com palavras suficientes) e as **rodadas** (1–3, fixas desde o início; cada
+  palavrão). Quem cria é o anfitrião e escolhe só as **rodadas** (1–3, fixas desde o início; cada
   jogador desenha uma vez por rodada). Dá para entrar no meio: vai para o fim da fila da rodada
   em curso (a partida fica um pouco mais longa).
 - **Fases do lance:** `escolha` (quem desenha escolhe 1 de 3 palavras: fácil, média, difícil;
@@ -62,16 +61,14 @@ Palavras com o Nordeste como diferencial. Ao fim, a súmula fica no mesmo link c
   A sala recebe um `Banco` (Protocol com `opcoes` e `julgar`), para A andar sem B (banco falso).
   A privacidade (palavra, trave, opções) é decidida **dentro da `Sala`**; o hub só entrega.
 - **Jogador:** `id` inteiro sequencial na sala (1, 2, …); `alvo` em `cartao`/`tirar` é esse `id`.
-- **Palavras** (`palavras.toml`): `[[palavra]] texto, aceita = [...], dificuldade =
-  "facil"|"media"|"dificil", tipo = "lance"|"jogador"|"clube"|"estadio"|"mascote"|"apelido"|
-  "torcida"|"objeto"|"tecnico", temas = ["geral", "nordeste", "<slug>"]`. Mínimos (teste): `geral`
-  ≥ 300 com ≥ 60 por dificuldade; `nordeste` ≥ 80; clube (slug do `teams.toml`) só vira tema com
-  ≥ 40 próprias (o resto completa com `geral`): na v1, **obrigatórios `abc` e `nautico`**; os
-  outros entram quando chegarem a 40. `clubes.toml` é só fonte. Sem `texto` repetido.
-  `temas_disponiveis() -> list[str]` diz o que a tela de criar oferece e o servidor aceita. Fontes: `conhecidos.toml`, `clubes.toml`, base da
-  velha e curadoria (lances, estádios, mascotes, apelidos, a Geral do Maracanã).
-  `palavras.py`: `opcoes(tema, rng) -> list[Palavra]` (3, uma por dificuldade, sem repetir na
-  partida) e `julgar(chute, palavra) -> Literal["certo", "trave", "errado"]`.
+- **Palavras** (`palavras.toml`): banco único, **sem tema** (decisão do dev em 2026-11-23: nada
+  de tema por time; palavras de futebol que qualquer torcedor brasileiro reconhece, e uma ligada a
+  um clube só entra se for de todos, como "Maracanã"). `[[palavra]] texto, aceita = [...],
+  dificuldade = "facil"|"media"|"dificil", tipo = "lance"|"jogador"|"clube"|"estadio"|"mascote"|
+  "apelido"|"torcida"|"objeto"|"tecnico"`. Mínimos (teste): ≥ 300 no total, ≥ 60 por dificuldade.
+  Sem `texto` repetido. `palavras.py`: `opcoes(rng, usadas) -> list[Palavra]` (3, uma por
+  dificuldade, sem repetir na partida) e `julgar(chute, palavra) -> Literal["certo", "trave",
+  "errado"]`.
 - **Traço:** coordenadas inteiras 0–1000 num quadro 4:3. `{"id": int, "cor": 0–7, "esp": 1|2|3,
   "pts": [[x, y], ...], "fim": bool}`; um traço chega em pedaços (≤ 64 pontos cada, mesmo `id`).
   Cor 0 = apagador (cor do quadro). Desfazer tira o último `id`; limpar zera. Teto: 20 mil pontos
@@ -79,7 +76,7 @@ Palavras com o Nordeste como diferencial. Ao fim, a súmula fica no mesmo link c
 - **Rotas** (prefixo `/api/jogos/prancheta`):
   - `GET /jogos/prancheta` (criar) e `GET /jogos/prancheta/s/{id}` (sala viva → jogo; encerrada →
     súmula; sem sala nem súmula → "a sala acabou ou o servidor reiniciou").
-  - `POST /salas {apelido, tema, rodadas}` → `{id, jogador, token}`; `id` = 6 caracteres base32.
+  - `POST /salas {apelido, rodadas}` → `{id, jogador, token}`; `id` = 6 caracteres base32.
   - `POST /salas/{id}/entrar {apelido}` → `{jogador, token}`; 409 cheia/encerrada, 422 apelido.
   - `POST /salas/{id}/acao {token, tipo, ...}`, `tipo` ∈ `comecar | escolher{indice} | traco{...}
     | desfazer | limpar | chute{texto} | cartao{alvo} | tirar{alvo} | sair` (união discriminada
@@ -88,7 +85,7 @@ Palavras com o Nordeste como diferencial. Ao fim, a súmula fica no mesmo link c
     sempre recebe a foto de novo.
 - **Eventos (contrato de C, D e E):**
   - `estado` (ao conectar e a cada mudança de fase ou de jogadores): `{seq, voce, fase, rodada,
-    rodadas, tema, prazo, agora, desenhista, jogadores: [{id, apelido, pontos, gols, assist,
+    rodadas, prazo, agora, desenhista, jogadores: [{id, apelido, pontos, gols, assist,
     presente, anfitriao, acertou}], dica, opcoes, palavra, tracos}`. `prazo` e `agora` em ISO UTC
     (a tela corrige o relógio pela diferença). `dica`: um item por caractere, a letra se acesa,
     `null` se apagada (não-letras sempre visíveis). `opcoes`: só para quem desenha na `escolha`,
@@ -104,7 +101,7 @@ Palavras com o Nordeste como diferencial. Ao fim, a súmula fica no mesmo link c
   `web/prancheta.py` expõe `criar_prancheta(db_path, now, sleep, limite_salas: RateLimiter) ->
   Prancheta` (com `.router` e `.rodar()`, a tarefa do laço). No `app.py` entram só: criar o objeto
   (passando o `RateLimiter` de lá), `include_router` e iniciar/parar `.rodar()` no lifespan.
-- **Banco:** `prancheta_sumulas(id TEXT PK, tema, criada_em, encerrada_em, dados JSON)` no mesmo
+- **Banco:** `prancheta_sumulas(id TEXT PK, criada_em, encerrada_em, dados JSON)` no mesmo
   SQLite, gravada ao entrar em `fim` (jogadores com pontos/gols/assistências; lances com quem
   desenhou, a palavra e quem acertou, em ordem). Não toca no `store.py`.
 - **Limites:** criar sala 20/h por rede (`RateLimiter`); por jogador, 1 chute a cada 0,5 s e 40

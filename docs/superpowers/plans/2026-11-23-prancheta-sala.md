@@ -54,11 +54,10 @@ class Palavra:
     aceita: tuple[str, ...]
     dificuldade: Dificuldade
     tipo: str
-    temas: tuple[str, ...]
 
 
 class Banco(Protocol):
-    def opcoes(self, tema: str, rng: random.Random, usadas: set[str]) -> list[Palavra]: ...
+    def opcoes(self, rng: random.Random, usadas: set[str]) -> list[Palavra]: ...
     def julgar(self, chute: str, palavra: Palavra) -> Veredito: ...
 
 
@@ -94,7 +93,7 @@ class ErroSala(Exception):
     def __init__(self, status: int, motivo: str): ...   # 403, 409, 422 ou 429
 
 class Sala:
-    def __init__(self, id: str, tema: str, rodadas: int, banco: Banco, rng: random.Random, agora: datetime): ...
+    def __init__(self, id: str, rodadas: int, banco: Banco, rng: random.Random, agora: datetime): ...
     encerrada: bool
     def entrar(self, apelido: str, agora: datetime) -> tuple[int, str, list[Evento]]  # (jogador, token, eventos)
     def jogador(self, token: str) -> int                                    # ErroSala(403) se inválido/expulso
@@ -128,7 +127,7 @@ Regras: `chute{texto}` ≤ 40 caracteres (422), 1 a cada 0,5 s por jogador (429)
 
 **Files:** Modify `sala.py`; Test `tests/test_prancheta_sala.py`
 
-Regras: `conectou`/`desconectou` contam conexões (o hub chama em cada stream; presente se ≥ 1); ausente quando sem conexão há ≥ 30 s (em `avancar`). Vez de ausente é pulada; desenhista que sai (`sair`), é expulso ou fica ausente durante `escolha`/`desenho` → `intervalo`, pontos ficam. Anfitrião passa ao presente mais antigo ao sair/ser expulso/ficar ausente. `tirar{alvo}` só do anfitrião; `cartao{alvo}` registra o voto, maioria estrita dos presentes sem o alvo expulsa; voto cai quando o votante sai. Expulso: token passa a dar 403. < 2 presentes em jogo → `fim`. `fim{sumula}` uma vez só, `encerrada = True`. `sumula()` = `{"id", "tema", "jogadores": [{apelido, pontos, gols, assist}] por pontos desc, "lances": [{"desenhista", "palavra", "acertaram": [apelidos em ordem]}]}`.
+Regras: `conectou`/`desconectou` contam conexões (o hub chama em cada stream; presente se ≥ 1); ausente quando sem conexão há ≥ 30 s (em `avancar`). Vez de ausente é pulada; desenhista que sai (`sair`), é expulso ou fica ausente durante `escolha`/`desenho` → `intervalo`, pontos ficam. Anfitrião passa ao presente mais antigo ao sair/ser expulso/ficar ausente. `tirar{alvo}` só do anfitrião; `cartao{alvo}` registra o voto, maioria estrita dos presentes sem o alvo expulsa; voto cai quando o votante sai. Expulso: token passa a dar 403. < 2 presentes em jogo → `fim`. `fim{sumula}` uma vez só, `encerrada = True`. `sumula()` = `{"id", "jogadores": [{apelido, pontos, gols, assist}] por pontos desc, "lances": [{"desenhista", "palavra", "acertaram": [apelidos em ordem]}]}`.
 
 - [ ] **Step 1:** testes: `test_vez_de_ausente_e_pulada`, `test_quem_desenha_sai_lance_vai_ao_intervalo`, `test_desenhista_sai_na_escolha`, `test_anfitriao_passa_ao_mais_antigo`, `test_cartao_vermelho_por_maioria`, `test_voto_cai_quando_votante_sai`, `test_expulso_nao_age`, `test_so_anfitriao_tira_409`, `test_reconectar_recebe_tracos_do_desenho_atual` (`foto` traz `tracos` inteiros), `test_fim_uma_vez_so`, `test_sumula_ordenada_por_pontos`. Ver falhar.
 - [ ] **Step 2:** implementar; verde; `uv run ruff check . && uv run ruff format --check . && uv run pytest`.
