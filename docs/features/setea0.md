@@ -59,8 +59,9 @@ ABC, Náutico e CSA têm o seu, com os rivais do Nordeste e o clássico local na
 
 ```python
 # motor puro e determinístico (setea0/motor.py)
-class Jogador(BaseModel): id: str; nome: str; posicao: Posicao; decada: int; forca: int
-def oferta(edicao, semente, rodada, trocas_usadas) -> Rodada   # década + jogadores
+# tipos em setea0/modelos.py; toda função do motor recebe também `dados: Dados`
+class Jogador(BaseModel): id: str; nome: str; posicoes: list[Posicao]; passagens: list[tuple[int, int]]; forca: int
+def oferta(edicao, semente, rodada, troca) -> Rodada   # década + jogadores
 def jogo(edicao, semente, esquema, escalacao: list[Escolha], cobrancas: list[list[Cobranca]],
          n: int) -> Partida | PedidoDePenalti   # reprocessa do 1º ao n-ésimo, sem estado
 class Cobranca(BaseModel): resultado: Literal["gol", "defesa", "fora", "trave", "motor"]

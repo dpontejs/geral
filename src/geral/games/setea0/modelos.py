@@ -2,7 +2,7 @@
 
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 type Posicao = Literal["GOL", "ZAG", "LAT", "MEI", "ATA"]
 
@@ -21,8 +21,17 @@ class Jogador(BaseModel):
     id: str
     nome: str
     posicoes: list[Posicao] = Field(min_length=1)
-    passagens: list[tuple[int, int]] = []  # years at the club; empty for all-time opponents
+    # Years at the club, first and last; still there = the current year. Empty for the all-time
+    # opponents of the velha base, who have no years.
+    passagens: list[tuple[int, int]] = []
     forca: int = Field(ge=1, le=99)
+
+    @field_validator("passagens")
+    @classmethod
+    def _em_ordem(cls, passagens: list[tuple[int, int]]) -> list[tuple[int, int]]:
+        if any(inicio > fim for inicio, fim in passagens):
+            raise ValueError(f"passagem ao contrário: {passagens}")
+        return passagens
 
     def decadas(self) -> set[int]:
         return {ano // 10 * 10 for inicio, fim in self.passagens for ano in range(inicio, fim + 1)}
