@@ -83,6 +83,10 @@ El Ídolo, Destiny Eleven, Copero, GAMBETA, Missing 11).
   faltam Alberi (ABC) e ídolos do CRB, sem id na base
 - [ ] Carreira, desafio com o mesmo sorteio: link "joga com o meu draft" e placar lado a lado
   (projeto 5, sem guardar nada no servidor)
+- [x] **Prancheta**: desenhar e adivinhar ao vivo, em sala privada por link, sem tema, com súmula
+  no link curto (`docs/features/prancheta.md`; PRs #84–#86, #88, #90, #92 e este)
+  - [ ] Conferir num celular de verdade o teclado aberto sobre o campo de chute
+  - [ ] Pedaço de traço reenviado depois de queda de rede duplica um trecho (raro; aceito por ora)
 - [ ] **7a0 do clube**: montar o time dos sonhos de um clube com quem já vestiu a camisa e tentar
   vencer um mata-mata (o 7a0 original é só de seleções em Copas). Dados: a base do jogo da velha
   (5.495 jogadores com clubes, posição, período e fama) já basta para elencos e força; o diferencial
