@@ -1,13 +1,15 @@
 """Build `setea0.json`, the 7a0 squads, from Portuguese Wikipedia, Wikidata and the velha base.
 
 The clubs with years at the club (`origem = "ptwiki"` in `chaves.toml`) come from the category
-"Futebolistas do <clube>", reviewed by hand in `elencos/<slug>.toml`; the all-time opponents
-come from the jogo da velha base. `idolos.toml` fixes the strength of the idols.
+"Futebolistas do <clube>" and its subcategories (the goalkeepers live in one), reviewed by
+hand in `elencos/<slug>.toml`; the all-time opponents come from the jogo da velha base.
+`idolos.toml` fixes the strength of the idols.
 
 Usage:
   uv run python scripts/import_setea0.py                  # download, write setea0.json, report
   uv run python scripts/import_setea0.py --cache          # rebuild from the last download
   uv run python scripts/import_setea0.py --sugerir abc    # write elencos/abc.toml to review
+      # (an existing list only gets the new pages, at the end; its review stays)
 """
 
 import json
@@ -32,6 +34,8 @@ PARCIAL = CACHE.with_name("setea0-paginas.json")  # removed once the download en
 ELENCOS = dados.HERE / "elencos"
 IDOLOS = dados.HERE / "idolos.toml"
 JOGADORES_PT = GAMES / "jogadores_pt.toml"
+# Subcategories of a club's players left out: other teams of the club, not its football.
+FORA = re.compile(r"\(feminino\)|futebol de areia|showbol", re.IGNORECASE)
 REVISADOS = ("abc", "nautico")  # already reviewed in jogadores_pt.toml
 
 
@@ -68,7 +72,7 @@ def download() -> dict:
 def baixar_paginas(client: httpx.Client, clubes: dict) -> tuple[dict, dict]:
     titulos: dict[str, list[str]] = {}
     for slug in ptwiki_slugs():
-        membros = ptwiki.category_members(client, clubes[slug]["categoria"])
+        membros = ptwiki.category_tree(client, clubes[slug]["categoria"], FORA)
         extras = [t for t in revisados(slug) if t not in membros]
         titulos[slug] = membros + extras
         print(f"{slug}: {len(titulos[slug])} páginas", file=sys.stderr)
@@ -95,13 +99,39 @@ def _toml(texto: str) -> str:
     return json.dumps(texto, ensure_ascii=False)
 
 
+def _entradas(raw: dict, slug: str, titulos: list[str], ja: dict[str, str]) -> list[str]:
+    """The TOML entries of the pages, cut (`incluir = false`) with the reason."""
+    linhas: list[str] = []
+    for titulo in titulos:
+        jogador, motivo = avaliar(raw, slug, titulo)
+        if ja and titulo not in ja and not motivo:
+            motivo = "fora de jogadores_pt.toml (não revisado)"
+        nome = ja.get(titulo) or (jogador or {}).get("nome") or re.sub(r"\s*\(.*\)$", "", titulo)
+        incluir = "false  # " + motivo if motivo else "true"
+        linhas += ["[[jogador]]", f"pagina = {_toml(titulo)}", f"nome = {_toml(nome)}"]
+        linhas += [f"incluir = {incluir}", ""]
+    return linhas
+
+
 def sugerir(raw: dict, slug: str) -> None:
-    """Write `elencos/<slug>.toml`: every page, cut (`incluir = false`) with the reason."""
+    """Write `elencos/<slug>.toml` with every page; when it exists, add only the new pages at
+    the end, so the review already done stays as it is."""
     destino = ELENCOS / f"{slug}.toml"
-    if destino.exists():
-        sys.exit(f"{destino} já existe: apague-o para sugerir de novo (a revisão se perde)")
     clube = dados.chaves()["clube"][slug]
     ja = revisados(slug) if slug in REVISADOS else {}
+    if destino.exists():
+        texto = destino.read_text(encoding="utf-8")
+        listadas = {j["pagina"] for j in tomllib.loads(texto).get("jogador", [])}
+        novas = [t for t in raw["titulos"][slug] if t not in listadas]
+        if not novas:
+            print(f"{destino}: nenhuma página nova")
+            return
+        linhas = [f"# Goleiros e subcategorias ({date.today().isoformat()})", ""]
+        linhas += _entradas(raw, slug, novas, ja)
+        separador = "" if texto.endswith("\n\n") else "\n" if texto.endswith("\n") else "\n\n"
+        destino.write_text(texto + separador + "\n".join(linhas), encoding="utf-8")
+        print(f"{destino}: {len(novas)} páginas novas, {linhas.count('incluir = true')} incluídas")
+        return
     linhas = [
         f'# {clube["nome"]}: jogadores de "{clube["categoria"]}" (Wikipédia pt), sugeridos por',
         f"# `scripts/import_setea0.py --sugerir {slug}`. A revisão é humana:",
@@ -112,17 +142,10 @@ def sugerir(raw: dict, slug: str) -> None:
         linhas[2:2] = [
             "# Os nomes vêm de jogadores_pt.toml, já revisado; quem não está lá entra cortado."
         ]
-    for titulo in raw["titulos"][slug]:
-        jogador, motivo = avaliar(raw, slug, titulo)
-        if ja and titulo not in ja and not motivo:
-            motivo = "fora de jogadores_pt.toml (não revisado)"
-        nome = ja.get(titulo) or (jogador or {}).get("nome") or re.sub(r"\s*\(.*\)$", "", titulo)
-        incluir = "false  # " + motivo if motivo else "true"
-        linhas += ["[[jogador]]", f"pagina = {_toml(titulo)}", f"nome = {_toml(nome)}"]
-        linhas += [f"incluir = {incluir}", ""]
+    linhas += _entradas(raw, slug, raw["titulos"][slug], ja)
     ELENCOS.mkdir(exist_ok=True)
     destino.write_text("\n".join(linhas), encoding="utf-8")
-    print(f"{destino}: {sum(x == 'incluir = true' for x in linhas)} incluídos")
+    print(f"{destino}: {linhas.count('incluir = true')} incluídos")
 
 
 def brutos_ptwiki(raw: dict, slug: str, relatorio: list[str]) -> list[dict]:
