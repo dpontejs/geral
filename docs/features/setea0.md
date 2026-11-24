@@ -1,7 +1,7 @@
 # 7a0 do clube
 
 - **Data:** 2026-11-23
-- **Status:** proposta
+- **Status:** aprovada
 - **ADRs:** —
 
 ## Objetivo
