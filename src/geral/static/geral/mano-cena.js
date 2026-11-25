@@ -257,20 +257,28 @@ function montarEstadio(cena) {
     k++;
   }
   g.add(povo);
-  // The Geral itself: a packed standing line right behind the moat.
   // Lamp rigs on the roof edge: grids of yellow bulbs, as the old board.
-  const lampada = basico(COR.lamp);
+  // One instanced mesh for every bulb keeps the draw calls down on phones.
+  const angulos = [0.35, 1.2, 1.95, 2.8, 3.5, 4.3, 5.1, 5.9];
+  const bulbos = new THREE.InstancedMesh(new THREE.BoxGeometry(0.6, 0.6, 0.2), basico(COR.lamp), angulos.length * 24);
   const placa = basico(0x16150f);
-  for (const ang of [0.35, 1.2, 1.95, 2.8, 3.5, 4.3, 5.1, 5.9]) {
+  let nb = 0;
+  for (const ang of angulos) {
     const rr = R0 + r - 3;
     const rig = new THREE.Group();
     rig.add(caixa(7.6, 3.2, 0.3, placa, 0, 0, 0.2));
-    for (let i = 0; i < 8; i++) for (let j = 0; j < 3; j++) rig.add(caixa(0.6, 0.6, 0.2, lampada, -3.15 + i * 0.9, -0.9 + j * 0.9, 0));
     rig.position.set(cx + Math.cos(ang) * rr, topo + 6.5, cz + Math.sin(ang) * rr * 1.42);
     rig.lookAt(0, 0, 52.5);
+    rig.updateMatrixWorld();
+    for (let i = 0; i < 8; i++) {
+      for (let j = 0; j < 3; j++) {
+        m.makeTranslation(-3.15 + i * 0.9, -0.9 + j * 0.9, 0).premultiply(rig.matrixWorld);
+        bulbos.setMatrixAt(nb++, m);
+      }
+    }
     g.add(rig);
   }
-  // A dull old scoreboard frame behind the goal, unlit (the live one is the HTML board).
+  g.add(bulbos);
   cena.add(g);
 }
 
