@@ -8,6 +8,7 @@ Lado = Literal["esquerda", "fica", "direita"]
 Trajetoria = Literal["rasteira", "por_cima", "pelo_lado"]
 Resultado = Literal["gol", "defesa", "trave", "fora", "barreira"]
 Modo = Literal["penaltis", "faltas"]
+Nivel = Literal["facil", "medio", "dificil"]
 
 Coord = Annotated[int, Field(ge=0, le=1000)]
 
