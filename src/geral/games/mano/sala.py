@@ -213,7 +213,12 @@ class Sala:
         return self._depois_de_travar(agora)
 
     def _sair_do_gol(self, jogador: int, dados: dict, agora: datetime) -> list[Evento]:
-        """The keeper's exit: the first press after both locked decides, in or out of the window."""
+        """The keeper's exit: the first press after both locked decides, in or out of the window.
+
+        A press that arrives after the kick was resolved (a slow network) changes nothing.
+        """
+        if self._fase == "resultado" and self._papel(jogador) == "goleiro":
+            return []
         if self._fase not in ("corrida", "voo"):
             raise ErroSala(409, f"not the time for this ({self._fase})")
         if self._papel(jogador) != "goleiro":
@@ -226,6 +231,8 @@ class Sala:
     def _revanche(self, jogador: int, dados: dict, agora: datetime) -> list[Evento]:
         if self._fase != "fim":
             raise ErroSala(409, "the match is not over")
+        if not self.esta(1 - jogador) and not self._jogadores[1 - jogador].bot:
+            raise ErroSala(409, "the other player left")
         self._jogadores[jogador].revanche = True
         if not all(j.revanche or j.bot for j in self._jogadores):
             return self._estados(agora)
@@ -269,9 +276,13 @@ class Sala:
         if self.encerrada:
             return eventos
         if self._fase in EM_JOGO:
-            for j in self._jogadores:
-                if not j.bot and j.conexoes == 0 and agora - j.desde >= AUSENCIA:
-                    return self._wo(j.id, agora)
+            ausentes = [
+                j
+                for j in self._jogadores
+                if not j.bot and j.conexoes == 0 and agora - j.desde >= AUSENCIA
+            ]
+            if ausentes:  # both gone: whoever left first loses
+                return self._wo(min(ausentes, key=lambda j: j.desde).id, agora)
         while not self.encerrada and self._prazo is not None and agora >= self._prazo:
             if self._fase == "barreira":
                 barreira = Barreira(n=self._rng.randint(2, 5), x=self._rng.randint(0, 1000))
@@ -411,7 +422,11 @@ class Sala:
     def _papel(self, jogador: int) -> str | None:
         if len(self._jogadores) < 2 or self._fase in ("espera", "fim"):
             return None
-        return "batedor" if jogador == self._disputa.batedor() else "goleiro"
+        if self._fase == "resultado":  # the replay: the roles of the kick just taken
+            batedor = self._disputa.cobrancas[-1][0]
+        else:
+            batedor = self._disputa.batedor()
+        return "batedor" if jogador == batedor else "goleiro"
 
     def _placar(self) -> list[int]:
         return list(self._disputa.placar())

@@ -563,3 +563,64 @@ def test_encerrar_na_espera_nao_grava():
     sala.entrar("Ana", T0)
     assert _fins(sala.encerrar(T0)) == []
     assert sala.encerrada
+
+
+def test_saida_depois_de_resolvida_e_sem_efeito():
+    jogo = Jogo()
+    jogo.cobrar(SAIDA, "esquerda")
+    assert jogo.foto(1)["fase"] == "resultado"
+    assert jogo.agir(1, "saida") == []  # the late press of a slow network: 204, no effect
+
+
+def test_os_dois_ausentes_perde_quem_saiu_primeiro():
+    jogo = Jogo()
+    jogo.sala.desconectou(1, jogo.agora)
+    jogo.andar(5)
+    jogo.sala.desconectou(0, jogo.agora)
+    jogo.andar(40)
+    (sumula,) = _fins(jogo.eventos)
+    assert sumula["wo"] is True and sumula["vencedor"] == 0
+
+
+def test_revanche_sem_o_outro_409():
+    jogo = Jogo()
+    jogo.agir(0, "sair")
+    with pytest.raises(ErroSala) as erro:
+        jogo.agir(1, "revanche")
+    assert erro.value.status == 409
+
+
+def test_bot_le_as_cobrancas_do_humano_no_papel_que_enfrenta(monkeypatch):
+    lidos = {"defender": [], "chutar": []}
+    defender, chutar = bot_mod.defender, bot_mod.chutar
+
+    def espia_defender(nivel, historico, rng):
+        lidos["defender"].append([lance.chute.alvo for lance in historico])
+        return defender(nivel, historico, rng)
+
+    def espia_chutar(nivel, historico, rng, **kw):
+        lidos["chutar"].append([lance.defesa.lado for lance in historico])
+        return chutar(nivel, historico, rng, **kw)
+
+    monkeypatch.setattr(bot_mod, "defender", espia_defender)
+    monkeypatch.setattr(bot_mod, "chutar", espia_chutar)
+    jogo = Jogo(bot="dificil")
+    jogo.agir(0, "chute", alvo=[1000, 1000], barra=0)  # the human kicks (out)
+    jogo.andar(_s(CORRIDA + JANELA + FOLGA))
+    jogo.depois()
+    jogo.agir(0, "defesa", lado="direita")  # the human dives right
+    jogo.andar(_s(CORRIDA + JANELA + FOLGA))
+    jogo.depois()  # the human kicks again: the bot reads the first kick only
+    assert lidos["defender"] == [[], [(1000, 1000)]]
+    jogo.agir(0, "chute", alvo=[1000, 1000], barra=0)
+    jogo.andar(_s(CORRIDA + JANELA + FOLGA))
+    jogo.depois()  # the bot kicks again: it reads the human's dive only
+    assert lidos["chutar"] == [[], ["direita"]]
+
+
+def test_no_replay_cada_um_mantem_o_papel_do_lance():
+    jogo = Jogo()
+    jogo.cobrar(GOL_ESQUERDA, "direita")
+    assert jogo.foto(0)["papel"] == "batedor" and jogo.foto(1)["papel"] == "goleiro"
+    jogo.depois()
+    assert jogo.foto(0)["papel"] == "goleiro"
