@@ -20,6 +20,8 @@ const $ = (s, el = document) => el.querySelector(s);
 const esc = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 
 const MODOS = { penaltis: "Pênaltis", faltas: "Faltas" };
+// Free kicks can be off on the server (MANO_FALTAS): then the form offers only penalties.
+const MODOS_OFERTA = raiz.dataset.faltas ? MODOS : { penaltis: MODOS.penaltis };
 const BOTS = { facil: "Bot fácil", medio: "Bot médio", dificil: "Bot difícil" };
 const LETREIROS = { gol: "GOOOL", defesa: "DEFENDEU", trave: "NA TRAVE", fora: "PRA FORA", barreira: "NA BARREIRA" };
 const ERROS = {
@@ -133,7 +135,7 @@ function telaCriar(erro = "") {
       <h2>Nova sala</h2>
       <p>Batedor contra goleiro. Jogue contra o bot ou mande o link para um amigo.</p>
       <label class="campo-f"><span>Seu apelido</span><input class="pr-apelido" id="mn-apelido" maxlength="16" minlength="2" required autocomplete="nickname" spellcheck="false" placeholder="Como a turma te chama"></label>
-      <fieldset class="campo-f"><legend>Modo</legend><div class="chips" id="mn-modo">${chips("modo", MODOS, "penaltis")}</div></fieldset>
+      <fieldset class="campo-f"${raiz.dataset.faltas ? "" : " hidden"}><legend>Modo</legend><div class="chips" id="mn-modo">${chips("modo", MODOS_OFERTA, "penaltis")}</div></fieldset>
       <fieldset class="campo-f"><legend>Contra quem</legend><div class="chips" id="mn-contra">${chips("contra", { amigo: "Um amigo", ...BOTS }, "amigo")}</div></fieldset>
       <p class="pr-erro" role="alert"${erro ? "" : " hidden"}>${esc(erro)}</p>
       <button class="btn lamp-btn" type="submit">Criar sala</button>

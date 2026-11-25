@@ -90,6 +90,7 @@ El Ídolo, Destiny Eleven, Copero, GAMBETA, Missing 11).
 - [x] **Mano a Mano**: batedor contra goleiro em 3D, pênaltis ou faltas, contra o bot ou por link,
   com súmula por partida (`docs/features/mano-a-mano.md`; PRs #107–#112 e este)
   - [ ] Conferir num celular de verdade deitado (toque na saída, tela cheia no Android)
+  - [ ] Refinar a falta e religar (`MANO_FALTAS=1`; desligada pelo dev em 2026-11-25)
 - [ ] **7a0 do clube**: montar o time dos sonhos de um clube com quem já vestiu a camisa e tentar
   vencer um mata-mata (o 7a0 original é só de seleções em Copas). Dados: a base do jogo da velha
   (5.495 jogadores com clubes, posição, período e fama) já basta para elencos e força; o diferencial

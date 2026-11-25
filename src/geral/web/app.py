@@ -403,7 +403,12 @@ def create_app(
     # Prancheta: live rooms in memory (one process), the súmulas in the same SQLite.
     prancheta = criar_prancheta(store.path, now, RateLimiter(SALAS_POR_REDE, timedelta(hours=1)))
     # Mano a Mano: the same, its own rooms and súmulas.
-    mano = criar_mano(store.path, now, RateLimiter(MANO_SALAS_POR_REDE, timedelta(hours=1)))
+    mano = criar_mano(
+        store.path,
+        now,
+        RateLimiter(MANO_SALAS_POR_REDE, timedelta(hours=1)),
+        faltas=settings.MANO_FALTAS,
+    )
     catalog = teams if teams is not None else load_teams()
     # Teams people can see and join; unlisted ones (moving in) still work for links and the API.
     listed = {slug: team for slug, team in catalog.items() if team.listed}
@@ -654,7 +659,7 @@ def create_app(
             {
                 "path": "mano",
                 "name": "Mano a Mano",
-                "desc": "Batedor contra goleiro: pênaltis ou faltas contra o bot ou contra um "
+                "desc": "Batedor contra goleiro: disputa de pênaltis contra o bot ou contra um "
                 "amigo, numa sala que você manda pelo link.",
                 "editions": {"geral": True},  # no team edition
                 "number": None,  # live rooms: no game of the day

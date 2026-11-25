@@ -137,8 +137,10 @@ class Mano:
         limite_salas: "RateLimiter",
         sleep: Callable[[float], Awaitable[None]],
         rng: random.Random,
+        faltas: bool = True,
     ) -> None:
         self.db_path = Path(db_path)
+        self.faltas = faltas  # the free-kick mode is offered (MANO_FALTAS)
         self._now = now
         self._limite = limite_salas
         self._sleep = sleep
@@ -310,6 +312,8 @@ class Mano:
             ip = request.client.host if request.client else ""
             if not self._limite.allow(network(ip), self._now()):
                 return _erro(429, "too many rooms, try later")
+            if corpo.modo == "faltas" and not self.faltas:
+                return _erro(422, "free kicks are off")
             agora = self._now()
             sala = Sala(self._novo_id(), corpo.modo, corpo.bot, agora, self._rng)
             try:
@@ -368,6 +372,7 @@ def criar_mano(
     limite_salas: "RateLimiter",
     sleep: Callable[[float], Awaitable[None]] = asyncio.sleep,
     rng: random.Random | None = None,
+    faltas: bool = True,
 ) -> Mano:
     """The hub with its router; `rodar()` is the loop the app's lifespan runs."""
-    return Mano(db_path, now, limite_salas, sleep, rng or random.SystemRandom())
+    return Mano(db_path, now, limite_salas, sleep, rng or random.SystemRandom(), faltas)
