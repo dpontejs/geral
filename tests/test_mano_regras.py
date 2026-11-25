@@ -163,3 +163,17 @@ def test_goleiro_tapado_na_falta_defende_so_em_parte():
         for s in range(2000)
     )
     assert abs(defesas / 2000 - P_DEFESA_FALTA) <= 0.05
+
+
+def test_lance_marca_quando_o_goleiro_chegou_mas_estava_tapado():
+    chute = Chute(alvo=(150, 300), barra=500, trajetoria="por_cima")
+    defesa = Defesa(lado="esquerda", saida=False)
+    lances = [
+        resolver(chute, defesa, Random(s), barreira=Barreira(n=2, x=900), posicao=MEIA_LUA)
+        for s in range(200)
+    ]
+    gols = [lance for lance in lances if lance.resultado == "gol"]
+    assert gols and all(lance.tapado for lance in gols)
+    assert not any(lance.tapado for lance in lances if lance.resultado == "defesa")
+    penalti = resolver(Chute(alvo=(150, 300), barra=500), LONGE, Random(1))
+    assert penalti.tapado is False

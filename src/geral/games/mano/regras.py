@@ -133,6 +133,7 @@ def resolver(
         y = min(y, ALTURA_RASTEIRA)
     onde = (round(x) + (posicao.desvio if posicao else 0), max(0, round(y)))
     resultado: Resultado | None = None
+    tapado = False
     if barreira is not None and _na_barreira(chute, barreira, *onde):
         resultado = "barreira"
     if resultado is None:
@@ -140,7 +141,7 @@ def resolver(
     if resultado is None:
         resultado = "defesa" if _alcanca(defesa, *onde, rng) else "gol"
         if resultado == "defesa" and falta and rng.random() >= P_DEFESA_FALTA:
-            resultado = "gol"
+            resultado, tapado = "gol", True
     return Lance(
         chute=chute,
         defesa=defesa,
@@ -148,4 +149,5 @@ def resolver(
         posicao=posicao,
         onde=onde,
         resultado=resultado,
+        tapado=tapado,
     )
