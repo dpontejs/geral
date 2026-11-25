@@ -1,0 +1,200 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mano a Mano · Geral (rascunho)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Big+Shoulders+Stencil+Display:wght@800&family=Doto:wght@900&family=Barlow:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../../src/geral/static/geral/mano.css">
+<style>
+/* Rascunho da fatia 3: a cena sem servidor, com eventos falsos e um resolvedor falso em JS
+   (a regra de verdade é Python, fatia 1). Servir da raiz do repo: python -m http.server. */
+:root {
+  --paper: #EFE4CC; --concrete-lt: #B9B5AC; --ink: #14231A; --ink-soft: #3F3C36;
+  --ticket: #E3B23C; --board: #0B0B0A; --lamp: #FFC21A; --lamp-off: #1D1C18;
+  --turf: #0E3320; --pitch: #1F7A3D; --wash: #D3E2C6;
+  --display: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+  --stencil: "Big Shoulders Stencil Display", "Big Shoulders Display", Impact, sans-serif;
+  --dots: "Doto", ui-monospace, monospace;
+  --body: "Barlow", "Helvetica Neue", Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+html { background: var(--turf); }
+body { margin: 0; background: var(--board); color: var(--paper); font: 17px/1.5 var(--body); }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 max(16px, env(safe-area-inset-left, 0px)); }
+header { background: var(--turf); }
+header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 12px; }
+header b { font: 800 34px/1 var(--stencil); letter-spacing: .04em; }
+header span { font: 900 18px/1 var(--dots); color: var(--lamp); text-transform: uppercase; letter-spacing: .1em; }
+main .wrap { padding-block: 18px 30px; display: flex; flex-direction: column; gap: 14px; }
+h1 { font: 900 clamp(34px, 6vw, 60px)/.95 var(--display); text-transform: uppercase; margin: 0; color: var(--lamp); }
+.painel { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.painel .rot { font: 800 14px/1 var(--display); text-transform: uppercase; letter-spacing: .08em; color: var(--concrete-lt); margin-right: 4px; }
+.chip { font: 700 14px/1 var(--body); padding: 9px 12px; min-height: 40px; border: 2px solid var(--paper); background: transparent; color: var(--paper); cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--lamp); border-color: var(--lamp); color: var(--ink); }
+.btn { font: 900 22px/1 var(--display); text-transform: uppercase; letter-spacing: .06em; background: var(--lamp); color: var(--ink); border: 0; padding: 13px 22px; cursor: pointer; }
+.nota { font-size: 14px; color: var(--concrete-lt); margin: 0; }
+</style>
+</head>
+<body>
+<header><div class="wrap"><b>GERAL</b><span>Joguinhos</span></div></header>
+<main><div class="wrap">
+  <h1>Mano a Mano</h1>
+  <div class="painel" id="painel">
+    <span class="rot">Câmera</span>
+    <button class="chip" data-papel="batedor" aria-pressed="true">Ser batedor</button>
+    <button class="chip" data-papel="goleiro" aria-pressed="false">Ser goleiro</button>
+    <span class="rot">Modo</span>
+    <button class="chip" data-modo="penaltis" aria-pressed="true">Pênaltis</button>
+    <button class="chip" data-modo="faltas" aria-pressed="false">Faltas</button>
+  </div>
+  <div class="painel">
+    <button class="btn" id="disputa">Disputa contra o bot</button>
+    <button class="chip" id="bater">Bater uma</button>
+    <button class="chip" id="defender">Defender uma</button>
+    <button class="chip" id="replay">Ver de novo</button>
+  </div>
+  <div id="cena"></div>
+  <p class="nota">Rascunho sem servidor: eventos e resultado falsos. A regra de verdade é a da fatia 1.</p>
+</div></main>
+<script type="module">
+import { criarCena, POSICOES, faixaBoa } from "../../src/geral/static/geral/mano-cena.js";
+
+const cena = criarCena(document.getElementById("cena"), { papel: "batedor", modo: "penaltis" });
+const painel = document.getElementById("painel");
+let modo = "penaltis";
+const sortear = (lista) => lista[Math.floor(Math.random() * lista.length)];
+const acaso = (a, b) => a + Math.random() * (b - a);
+const dormir = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// ---- Fake resolver: NOT the rules (those are Python, slice 1). Same contract, rough numbers.
+function resolverFalso({ chute, defesa, barreira }) {
+  let [x, y] = chute.alvo;
+  const [lo, hi] = faixaBoa(chute.alvo);
+  const t = chute.trajetoria;
+  if (t === "por_cima") {
+    if (chute.barra < lo) return { onde: [x, 250], resultado: barreira ? "barreira" : "defesa" };
+    if (chute.barra > hi) y += (chute.barra - hi) * 1.4;
+  } else if (chute.barra < lo || chute.barra > hi) {
+    const erro = chute.barra < lo ? lo - chute.barra : chute.barra - hi;
+    x += (x < 500 ? -1 : 1) * erro * 0.9;
+    y += erro * 0.45;
+  }
+  if (barreira && x > barreira.x - barreira.n * 55 && x < barreira.x + barreira.n * 55) {
+    if (t === "rasteira" || (t === "pelo_lado" && Math.abs(chute.curva) < 0.3)) return { onde: [x, 200], resultado: "barreira" };
+  }
+  const onde = [Math.round(x), Math.round(Math.max(0, y))];
+  if (x < -25 || x > 1025 || y > 1030) return { onde, resultado: "fora" };
+  if (x < 20 || x > 980 || y > 965) return { onde, resultado: "trave" };
+  const terco = x < 333 ? "esquerda" : x > 666 ? "direita" : "fica";
+  const vizinho = defesa.saida && ((defesa.lado === "esquerda" && x < 450) || (defesa.lado === "direita" && x > 550) || (defesa.lado === "fica" && x > 220 && x < 780));
+  if (terco === defesa.lado || vizinho) {
+    if (defesa.lado === "fica" || y < 500 || Math.random() < 0.4) return { onde, resultado: "defesa" };
+  }
+  return { onde, resultado: "gol" };
+}
+
+// ---- The bot: uniform at random, as the "facil" level.
+const botChute = () => ({
+  alvo: [Math.round(acaso(60, 940)), Math.round(acaso(40, 900))],
+  barra: Math.round(acaso(250, 750)),
+  ...(modo === "faltas" ? { trajetoria: sortear(["rasteira", "por_cima", "pelo_lado"]), curva: Math.round(acaso(-1, 1) * 100) / 100 } : {}),
+});
+const botDefesa = () => ({ lado: sortear(["esquerda", "fica", "direita"]) });
+const botBarreira = () => ({ n: 2 + Math.floor(Math.random() * 4), x: Math.round(acaso(150, 850)) });
+
+// The keeper's exit as the server would judge it: inside 600 ms from chute_em (+150 slack).
+let saidaMs = null;
+cena.onSaida(({ ms }) => (saidaMs = ms));
+
+/** One kick. quem: "voce" kicks, or "bot" kicks and you keep. Returns the result. */
+async function umaCobranca(quem) {
+  cena.reiniciar();
+  cena.trocarPapel(quem === "voce" ? "batedor" : "goleiro");
+  marcar("papel", cena.papel);
+  let barreira = null;
+  if (modo === "faltas") {
+    const nome = sortear(Object.keys(POSICOES));
+    if (quem === "voce") {
+      barreira = botBarreira();
+      cena.posicionarFalta({ nome, barreira });
+    } else {
+      cena.posicionarFalta({ nome, barreira: null });
+      barreira = await cena.pedirBarreira();
+    }
+  } else {
+    cena.trocarModo("penaltis");
+  }
+  const chute = quem === "voce" ? await cena.pedirChute() : botChute();
+  const escolhaDefesa = quem === "voce" ? botDefesa() : await cena.pedirDefesa();
+  saidaMs = null;
+  const chute_em = performance.now() + 1500;
+  // The server answers when the exit window closes; a little network on top.
+  const lance = new Promise((res) =>
+    setTimeout(() => {
+      const saida = quem === "voce" ? Math.random() < 0.5 : saidaMs !== null && saidaMs >= 0 && saidaMs <= 750;
+      const defesa = { ...escolhaDefesa, saida };
+      res({ chute, defesa, barreira, ...resolverFalso({ chute, defesa, barreira }) });
+    }, 1500 + 600 + 60),
+  );
+  await cena.cobrar({ chute_em, lance });
+  return (await lance).resultado;
+}
+
+function acabou([a, b]) {
+  const ga = a.filter((v) => v === "g").length;
+  const gb = b.filter((v) => v === "g").length;
+  if (a.length <= 5 && b.length <= 5) return ga + (5 - a.length) < gb || gb + (5 - b.length) < ga;
+  return a.length === b.length && ga !== gb;
+}
+
+let rodando = false;
+async function disputa() {
+  if (rodando) return;
+  rodando = true;
+  const series = [[], []];
+  const nomes = ["Você", "Bot"];
+  cena.placar({ nomes, series });
+  try {
+    while (!acabou(series)) {
+      for (const [i, quem] of [[0, "voce"], [1, "bot"]]) {
+        const r = await umaCobranca(quem);
+        series[i].push(r === "gol" ? "g" : "e");
+        cena.placar({ nomes, series });
+        await dormir(500);
+        if (acabou(series)) break;
+      }
+    }
+    const [ga, gb] = series.map((s) => s.filter((v) => v === "g").length);
+    cena.letreiro(ga > gb ? "VOCÊ GANHOU" : "O BOT GANHOU");
+  } finally {
+    rodando = false;
+  }
+}
+
+function marcar(attr, valor) {
+  for (const b of painel.querySelectorAll(`[data-${attr}]`)) b.setAttribute("aria-pressed", String(b.dataset[attr] === valor));
+}
+painel.addEventListener("click", (ev) => {
+  const b = ev.target.closest("button");
+  if (!b) return;
+  if (b.dataset.papel) { cena.trocarPapel(b.dataset.papel); marcar("papel", b.dataset.papel); }
+  if (b.dataset.modo) {
+    modo = b.dataset.modo;
+    marcar("modo", modo);
+    if (modo === "faltas") cena.posicionarFalta({ nome: sortear(Object.keys(POSICOES)), barreira: botBarreira() });
+    else cena.trocarModo("penaltis");
+  }
+});
+document.getElementById("disputa").addEventListener("click", disputa);
+document.getElementById("bater").addEventListener("click", () => umaCobranca("voce"));
+document.getElementById("defender").addEventListener("click", () => umaCobranca("bot"));
+document.getElementById("replay").addEventListener("click", () => cena.replay());
+
+// For the photo script: drive a kick with a fixed result.
+window.__mano = { cena, resolverFalso, umaCobranca, disputa, setModo: (m) => { modo = m; marcar("modo", m); } };
+</script>
+</body>
+</html>
