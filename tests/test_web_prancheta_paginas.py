@@ -79,10 +79,20 @@ def test_sala_encerrada_mostra_sumula(cliente):
     assert "prancheta.js" not in html  # nothing live on the súmula
 
 
-def test_sumula_vale_mais_que_sala_viva(cliente):
-    """A room that just ended may still be in memory: its link already shows the súmula."""
+def test_sala_viva_vale_mais_que_sumula(cliente):
+    """At the end the room stays open for another game (2026-11-25): its link is the live room."""
     prancheta = PranchetaFalsa(vivas={"K7M2QX"}, sumulas={"K7M2QX": SUMULA})
-    assert 'id="pr-sumula"' in cliente(prancheta).get("/jogos/prancheta/s/K7M2QX").text
+    html = cliente(prancheta).get("/jogos/prancheta/s/K7M2QX").text
+    assert 'data-sala="K7M2QX"' in html and 'id="pr-sumula"' not in html
+
+
+def test_sumula_de_cada_partida_no_seu_link(cliente):
+    sumula = SUMULA | {"id": "K7M2QX-2", "sala": "K7M2QX", "partida": 2}
+    prancheta = PranchetaFalsa(vivas={"K7M2QX"}, sumulas={"K7M2QX-2": sumula})
+    html = cliente(prancheta).get("/jogos/prancheta/s/K7M2QX-2").text
+    assert 'id="pr-sumula"' in html
+    assert "Sala K7M2QX · partida 2" in html
+    assert "https://geral.test/jogos/prancheta/s/K7M2QX-2" in html
 
 
 def test_sala_inexistente_mostra_aviso(cliente):

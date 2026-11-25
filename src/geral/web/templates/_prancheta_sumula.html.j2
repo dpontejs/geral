@@ -4,7 +4,7 @@
 {% set campeoes = jogadores | selectattr("pontos", "equalto", topo) | map(attribute="apelido") | list %}
 <div class="placar board campeao"><span class="lamp">Fim de jogo{% if jogadores %} · {{ campeoes | join(" e ") }}{% endif %}</span><span class="lamp n">{{ topo }} pts</span></div>
 <article class="sumula">
-  <div class="cab"><h2>Súmula</h2><p>Sala {{ sala_id }}{% if sumula.rodadas %} · {{ sumula.rodadas }} rodada{{ "s" if sumula.rodadas > 1 }}{% endif %} · {{ sumula.lances | length }} lance{{ "s" if sumula.lances | length != 1 }}</p></div>
+  <div class="cab"><h2>Súmula</h2><p>Sala {{ sumula.sala or sala_id }}{% if sumula.partida %} · partida {{ sumula.partida }}{% endif %}{% if sumula.rodadas %} · {{ sumula.rodadas }} rodada{{ "s" if sumula.rodadas > 1 }}{% endif %} · {{ sumula.lances | length }} lance{{ "s" if sumula.lances | length != 1 }}</p></div>
   <div class="colunas">
     <section><h3>Placar</h3><table><thead><tr><th>#</th><th>Jogador</th><th>Pts</th><th>Gols</th><th>Assist.</th></tr></thead>
       <tbody>{% for j in jogadores %}<tr><td>{{ loop.index }}</td><td>{{ j.apelido }}</td><td class="pts">{{ j.pontos }}</td><td>{{ j.gols }}</td><td>{{ j.assist }}</td></tr>{% endfor %}</tbody></table>

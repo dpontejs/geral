@@ -1,7 +1,7 @@
 # Prancheta: desenhar e adivinhar em sala privada
 
 - **Data:** 2026-11-23 (ajustes de 2026-11-24: pedir para entrar, 12 gizes, dica de quem desenha,
-  pular a vez; 2026-11-25: reta, retângulo, círculo e balde)
+  pular a vez; 2026-11-25: reta, retângulo, círculo e balde; nova partida na mesma sala)
 - **Status:** entregue (PRs #84, #85, #86, #88, #90, #92 e a entrada em /jogos); ajustes de
   2026-11-24 em `feat/prancheta-sala-ajustes`
 - **ADRs:** — (sala em memória num processo só: registrado nas Decisões do PLAN)
@@ -38,7 +38,8 @@ Um banco só de palavras de futebol, sem tema por time. Ao fim, a súmula fica n
   pedido.
 - **Fases do lance:** `escolha` (quem desenha escolhe 1 de 3 palavras: fácil, média, difícil;
   15 s, senão sorteia) → `desenho` (80 s) → `intervalo` (palavra revelada, 6 s) → próximo lance.
-  O lance acaba antes se todos os presentes acertarem. Antes do 1º lance, `espera`; no fim, `fim`.
+  O lance acaba antes se todos os presentes acertarem. Antes do 1º lance, `espera`; no fim, `fim`
+  (a sala fica aberta 10 min esperando a próxima partida; ver "Nova partida").
 - **Dicas de quem desenha** (dev, 2026-11-24, no lugar das automáticas): a palavra aparece desde
   o início como lâmpadas apagadas, uma por letra; espaço, hífen, ponto e dígito aparecem desde o
   início e não contam como letra. Quem desenha tem o botão "dar dica", que acende uma letra ao
@@ -71,6 +72,16 @@ Um banco só de palavras de futebol, sem tema por time. Ao fim, a súmula fica n
   do toque). As formas seguem o dedo com prévia só na tela de quem desenha e vão uma vez, ao
   soltar; o balde vai no toque. Cor e espessura valem para todas; com o apagador, a forma apaga e o
   balde limpa a região. Desfazer tira o último item (traço, forma ou balde); limpar zera tudo.
+- **Nova partida na mesma sala** (dev, 2026-11-25): no `fim`, o anfitrião tem "Nova partida" e
+  escolhe de novo as rodadas (1–3). A sala volta à `espera` com os mesmos jogadores (mesmos
+  tokens), placar zerado; quem está **ausente** sai da sala (o token deixa de valer); os pedidos
+  esperando continuam. As palavras já jogadas na sala não voltam enquanto o banco tiver outras da
+  mesma dificuldade. Quem não é anfitrião vê "Esperando o anfitrião" com o botão de sair. No `fim`
+  dá para pedir para entrar, aceitar, recusar e sair (quem entra no `fim` joga a próxima, não entra
+  na súmula da que acabou). Sem nova partida em 10 min, a sala fecha de vez. Cartões já dados
+  continuam valendo (a regra do voto não muda). Cada partida tem a **sua súmula**, no seu link
+  (`/jogos/prancheta/s/{sala}-{n}`, n = 1, 2, …); o link da sala segue sendo a sala viva enquanto
+  ela existe e, depois que fecha, mostra a súmula da última partida.
 
 ## Contratos
 
@@ -112,20 +123,22 @@ Um banco só de palavras de futebol, sem tema por time. Ao fim, a súmula fica n
   cresce 1 px para encostar no contorno. A tinta sai com o grão do giz, mais leve que o do traço.
   Navegadores diferentes podem divergir em um pixel na borda (suavização), nunca na região.
 - **Rotas** (prefixo `/api/jogos/prancheta`):
-  - `GET /jogos/prancheta` (criar) e `GET /jogos/prancheta/s/{id}` (sala viva → jogo; encerrada →
-    súmula; sem sala nem súmula → "a sala acabou ou o servidor reiniciou").
+  - `GET /jogos/prancheta` (criar) e `GET /jogos/prancheta/s/{id}` (sala viva, inclusive no
+    `fim` → jogo; senão a súmula com esse id, ou a última súmula da sala com esse id; sem sala nem
+    súmula → "a sala acabou ou o servidor reiniciou").
   - `POST /salas {apelido, rodadas}` → `{id, jogador, token}`; `id` = 6 caracteres base32.
   - `POST /salas/{id}/entrar {apelido}` → `{jogador, token, pendente: true}`: é um **pedido**
     (`jogador` = o id que ele terá se aceito); 409 muitos pedidos/encerrada, 422 apelido.
   - `POST /salas/{id}/acao {token, tipo, ...}`, `tipo` ∈ `comecar | escolher{indice} | traco{...}
-    | balde{id, cor, pt} | desfazer | limpar | chute{texto} | cartao{alvo} | tirar{alvo} | sair | aceitar{pedido} |
-    recusar{pedido} | dica | pular` (união discriminada do Pydantic). 403 token inválido/expulso/
+    | balde{id, cor, pt} | desfazer | limpar | chute{texto} | cartao{alvo} | tirar{alvo} | sair |
+    aceitar{pedido} | recusar{pedido} | dica | pular | nova_partida{rodadas}` (união discriminada
+    do Pydantic; `nova_partida` só do anfitrião e só no `fim`, 409; rodadas fora de 1–3, 422). 403 token inválido/expulso/
     recusado; 409 ação fora da vez/fase, pedido ainda esperando ou dica ainda travada; 204 se aceita.
   - `GET /salas/{id}/eventos?token=` (SSE, `event:` = tipo, `data:` = JSON com `seq`). Reconectar
     sempre recebe a foto de novo. O token de um pedido também ouve (para saber a resposta).
 - **Eventos (contrato de C, D e E):**
   - `estado` (ao conectar e a cada mudança de fase ou de jogadores): `{seq, voce, fase, rodada,
-    rodadas, prazo, agora, desenhista, jogadores: [{id, apelido, pontos, gols, assist,
+    rodadas, partida, sumula, prazo, agora, desenhista, jogadores: [{id, apelido, pontos, gols, assist,
     presente, anfitriao, acertou}], dica, opcoes, palavra, tracos}`. `prazo` e `agora` em ISO UTC
     (a tela corrige o relógio pela diferença). `dica`: um item por caractere, a letra se acesa,
     `null` se apagada (não-letras sempre visíveis). `opcoes`: só para quem desenha na `escolha`,
@@ -133,7 +146,8 @@ Um banco só de palavras de futebol, sem tema por time. Ao fim, a súmula fica n
     `palavra`: para quem desenha a partir do `desenho`, para todos no `intervalo` e no `fim`, senão
     `null`. `tracos`: os traços inteiros do desenho atual. `dicas`: só para quem desenha no
     `desenho`, `{dadas, marcos: [ISO, ...]}` (quando cada dica libera), senão `null`. `pedidos`: só
-    para o anfitrião, `[{id, apelido}]`, senão `null`.
+    para o anfitrião, `[{id, apelido}]`, senão `null`. `partida`: 1, 2, … na sala. `sumula`: no
+    `fim`, o id da súmula desta partida (`{sala}-{partida}`), senão `null`.
   - `estado` de um **pedido** esperando: `{seq, voce, fase: "pedido", agora, apelido, anfitriao}`
     (o apelido do anfitrião; nada da sala). Aceito, passa a receber o `estado` de jogador.
   - `traco` `{id, forma, cor, esp, pts, fim}`: cada pedaço repassado como chegou, a todos **menos**
@@ -142,15 +156,21 @@ Um banco só de palavras de futebol, sem tema por time. Ao fim, a súmula fica n
   - `chute {jogador, texto}` (só os errados e longe); `acerto {jogador, pontos}`; `trave {texto}`
     (privado); `dica {dica}` (a todos menos quem desenha, que recebe um `estado` novo);
     `pulou {jogador}` (antes do `estado` do intervalo); `recusado {}` (só ao pedido, e o fluxo
-    dele fecha); `fim {sumula}` (o mesmo JSON gravado na tabela).
+    dele fecha); `fim {sumula}` (o mesmo JSON gravado na tabela; `sumula` traz `id` da partida,
+    `sala` e `partida` além de jogadores e lances). O fluxo de eventos **não** fecha no `fim`.
 - **Hub:** dicionário de salas em memória; um laço do lifespan chama `sala.avancar(agora)` a cada
-  0,5 s e transmite o que mudou. Sala sem ninguém conectado por 10 min, ou com 3 h, é encerrada.
+  0,5 s e transmite o que mudou. Sala sem ninguém conectado por 10 min, ou com 3 h, é encerrada
+  (uma partida em curso vai ao `fim` e grava a súmula); também a que passou 10 min no `fim` sem
+  nova partida. Encerrada, sai da memória e os fluxos fecham.
   `web/prancheta.py` expõe `criar_prancheta(db_path, now, sleep, limite_salas: RateLimiter) ->
   Prancheta` (com `.router` e `.rodar()`, a tarefa do laço). No `app.py` entram só: criar o objeto
   (passando o `RateLimiter` de lá), `include_router` e iniciar/parar `.rodar()` no lifespan.
-- **Banco:** `prancheta_sumulas(id TEXT PK, criada_em, encerrada_em, dados JSON)` no mesmo
-  SQLite, gravada ao entrar em `fim` (jogadores com pontos/gols/assistências; lances com quem
-  desenhou, a palavra e quem acertou, em ordem). Não toca no `store.py`.
+- **Banco:** `prancheta_sumulas(id TEXT PK, criada_em, encerrada_em, dados JSON, sala TEXT)` no
+  mesmo SQLite, uma linha por partida, gravada ao entrar em `fim` (jogadores com
+  pontos/gols/assistências; lances com quem desenhou, a palavra e quem acertou, em ordem).
+  `id` = `{sala}-{partida}`, `criada_em` = início da partida. A coluna `sala` (e um índice) entrou
+  em 2026-11-25 por `ALTER TABLE` na subida; súmulas antigas têm `id` = sala e `sala` nula, e
+  continuam no mesmo link. Não toca no `store.py`.
 - **Limites:** criar sala 20/h por rede (`RateLimiter`); por jogador, 1 chute a cada 0,5 s e 40
   pedaços de traço por segundo (acima disso, 429 sem efeito).
 
@@ -177,6 +197,13 @@ Um banco só de palavras de futebol, sem tema por time. Ao fim, a súmula fica n
   `test_balde_invalido_422`, `test_desfazer_e_limpar_com_formas_e_balde`,
   `test_balde_e_formas_contam_no_teto`, `test_traco_sem_forma_e_livre`; no servidor,
   `test_formas_e_balde_pela_rota`.
+- [x] Nova partida (2026-11-25): `test_fim_deixa_a_sala_aberta_para_nova_partida`,
+  `test_anfitriao_comeca_nova_partida`, `test_nova_partida_so_do_anfitriao_e_so_no_fim`,
+  `test_nova_partida_tira_ausentes_e_mantem_pedidos`, `test_no_fim_da_para_pedir_aceitar_e_sair`,
+  `test_sala_fecha_dez_minutos_depois_do_fim`; no servidor, `test_nova_partida_pela_rota`,
+  `test_sala_fecha_dez_minutos_depois_do_fim` e `test_tabela_antiga_ganha_a_coluna_da_sala`;
+  nas páginas, `test_sala_viva_vale_mais_que_sumula` (substitui
+  `test_sumula_vale_mais_que_sala_viva`) e `test_sumula_de_cada_partida_no_seu_link`.
 - [ ] `test_lance_acaba_quando_todos_acertam` e `test_vez_de_ausente_e_pulada`.
 - [ ] `test_entra_no_meio_vai_para_o_fim_da_fila` e `test_sala_cheia_409`.
 - [ ] `test_acao_fora_da_vez_409` e `test_token_de_outra_sala_403`.
@@ -196,7 +223,9 @@ gizes no PC e no celular de 390 px, botão de dica travado e liberado, e pular n
 desenho.
 Nas ferramentas de 2026-11-25: bandeja no PC e no celular de 390 px, uma cena com cada ferramenta
 vista por quem chuta em outro tamanho de tela (miniaturas iguais), prévia da forma, desfazer e
-recarregar a página (o desenho se refaz igual a partir de `tracos`).
+recarregar a página (o desenho se refaz igual a partir de `tracos`). Na nova partida: tela de
+`fim` do anfitrião (rodadas e "Nova partida") e de quem espera (celular), a sala de volta à
+`espera` com os três, a 2ª partida começando com placar zerado e a súmula da 1ª no seu link.
 
 ## Fatias (um PR cada; subagentes em worktrees)
 

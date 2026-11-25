@@ -47,9 +47,14 @@ CREATE TABLE IF NOT EXISTS prancheta_sumulas (
     id TEXT PRIMARY KEY,
     criada_em TEXT NOT NULL,
     encerrada_em TEXT NOT NULL,
-    dados TEXT NOT NULL
+    dados TEXT NOT NULL,
+    sala TEXT
 );
 """
+# Since 2026-11-25 each game in a room has its own súmula (`<room>-<n>`) and `sala` says whose
+# room it was. Older súmulas have the room's id and no `sala`.
+COLUNA_SALA = "ALTER TABLE prancheta_sumulas ADD COLUMN sala TEXT"
+INDICE_SALA = "CREATE INDEX IF NOT EXISTS prancheta_sumulas_sala ON prancheta_sumulas (sala)"
 
 
 # --- corpos ---
@@ -131,6 +136,11 @@ class Recusar(_ComToken):
     pedido: int
 
 
+class NovaPartida(_ComToken):
+    tipo: Literal["nova_partida"]
+    rodadas: int
+
+
 class Dica(_ComToken):
     tipo: Literal["dica"]
 
@@ -153,7 +163,8 @@ Acao = Annotated[
     | Aceitar
     | Recusar
     | Dica
-    | Pular,
+    | Pular
+    | NovaPartida,
     Field(discriminator="tipo"),
 ]
 
@@ -240,6 +251,10 @@ class Prancheta:
         self.db_path.parent.mkdir(parents=True, exist_ok=True)
         with closing(sqlite3.connect(self.db_path, timeout=ESPERA_DB)) as db, db:
             db.executescript(SCHEMA)
+            colunas = {linha[1] for linha in db.execute("PRAGMA table_info(prancheta_sumulas)")}
+            if "sala" not in colunas:
+                db.execute(COLUNA_SALA)
+            db.execute(INDICE_SALA)
         logging.getLogger("uvicorn.access").addFilter(_SEM_TOKEN)  # the same one: added once
         self.router = APIRouter(prefix="/api/jogos/prancheta")
         self._rotas()
@@ -250,24 +265,30 @@ class Prancheta:
         viva = self._salas.get(sala_id)
         return viva is not None and not viva.sala.encerrada
 
-    def sumula(self, sala_id: str) -> dict | None:
-        """The súmula of a finished room (from the table); None while playing or never played."""
+    def sumula(self, id_: str) -> dict | None:
+        """A game's súmula by its own id, or a room's last one by the room's id; else None."""
         with closing(sqlite3.connect(self.db_path, timeout=ESPERA_DB)) as db:
             linha = db.execute(
-                "SELECT dados FROM prancheta_sumulas WHERE id = ?", (sala_id,)
+                "SELECT dados FROM prancheta_sumulas WHERE id = ? OR sala = ?"
+                " ORDER BY encerrada_em DESC, rowid DESC LIMIT 1",
+                (id_, id_),
             ).fetchone()
         return json.loads(linha[0]) if linha else None
 
-    def _gravar(self, sala_id: str, criada_em: datetime, encerrada_em: datetime, dados: dict):
+    def _gravar(
+        self, id_: str, sala_id: str, criada_em: datetime, encerrada_em: datetime, dados: dict
+    ):
         """Keeps a súmula; the first copy stays (the end is written once, whatever calls it)."""
         with closing(sqlite3.connect(self.db_path, timeout=ESPERA_DB)) as db, db:
             db.execute(
-                "INSERT OR IGNORE INTO prancheta_sumulas VALUES (?, ?, ?, ?)",
+                "INSERT OR IGNORE INTO prancheta_sumulas (id, criada_em, encerrada_em, dados, sala)"
+                " VALUES (?, ?, ?, ?, ?)",
                 (
-                    sala_id,
+                    id_,
                     criada_em.isoformat(),
                     encerrada_em.isoformat(),
                     json.dumps(dados, ensure_ascii=False),
+                    sala_id,
                 ),
             )
 
@@ -283,8 +304,9 @@ class Prancheta:
         """Moves every room's clock (deadlines, hints, absences) and delivers what changed.
 
         A room nobody has been connected to for 10 minutes, or 3 hours old, is closed: a game in
-        progress goes to `fim` (and its súmula is kept), and the room leaves the memory. A room
-        whose step fails is logged and leaves the memory too; the others go on.
+        progress goes to `fim` (and its súmula is kept), and the room leaves the memory; so does a
+        room whose game ended 10 minutes ago with no next one. A room whose step fails is logged
+        and leaves the memory too; the others go on.
         """
         agora = self._now()
         for viva in list(self._salas.values()):
@@ -339,15 +361,17 @@ class Prancheta:
             self._desligar(viva, conexao)
         for conexao in [c for c in viva.conexoes if not viva.sala.esta(c.jogador)]:
             self._encerrar_fluxo(viva, conexao)  # left, sent off or refused: last word was sent
+        sala = viva.sala
         for evento in eventos:
-            if evento.tipo == "fim":
-                sala = viva.sala
+            if evento.tipo == "fim":  # a game is over; the room waits for the host's next one
+                dados = evento.dados["sumula"]
                 try:
-                    self._gravar(sala.id, sala.criada_em, self._now(), evento.dados["sumula"])
+                    self._gravar(dados["id"], sala.id, sala.partida_desde, self._now(), dados)
                 except Exception:
                     logger.exception("Prancheta room %s: saving the súmula failed", sala.id)
-                finally:
-                    self._retirar(viva)
+                    self._retirar(viva)  # nowhere to show it: the room ends here
+        if sala.encerrada:
+            self._retirar(viva)
 
     def _desligar(self, viva: _SalaViva, conexao: _Conexao) -> None:
         """Takes a connection out of the room once (closed, or dropped for a full queue)."""
