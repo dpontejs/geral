@@ -53,7 +53,7 @@
 .mn-celulas i.boa.on { background: #fff; }
 
 /* The big result sign. */
-.mn-letreiro { position: absolute; left: 50%; top: 30%; transform: translate(-50%, -50%); font-size: clamp(36px, 8vw, 96px); background: rgba(11, 11, 10, .88); padding: 10px 22px; white-space: nowrap; pointer-events: none; }
+.mn-letreiro { position: absolute; left: 50%; top: 21%; transform: translate(-50%, -50%); font-size: clamp(36px, 8vw, 96px); background: rgba(11, 11, 10, .88); padding: 10px 22px; white-space: nowrap; pointer-events: none; }
 .mn-letreiro:empty { display: none; }
 @media (max-height: 430px) {
   .mn-baixo { bottom: 8px; gap: 6px; }
@@ -61,4 +61,19 @@
   .mn-placar { top: 6px; padding: 4px 10px; }
   .mn-dica { top: 52px; }
   .mn-tela { top: 6px; right: 6px; padding: 7px 9px; font-size: 13px; }
+}
+
+/* The shootout lines: lit lamp for a goal, a cross for a miss, an off lamp still to come. */
+.mn-series { display: flex; flex-direction: column; gap: 4px; }
+.mn-series:empty { display: none; }
+.mn-fila { display: grid; grid-template-columns: minmax(0, 9ch) auto 2ch; gap: 12px; align-items: center; font-size: clamp(13px, 1.7vw, 19px); }
+.mn-quem { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mn-bolas { display: flex; gap: 5px; letter-spacing: 0; }
+.mn-bolas b { width: 1.1em; text-align: center; font-weight: 900; }
+.mn-bolas .mn-a { color: #3A3833; text-shadow: none; }
+.mn-bolas .mn-e { color: #8a7a55; text-shadow: none; }
+.mn-gols { font-size: 1.35em; text-align: right; font-variant-numeric: tabular-nums; }
+@media (prefers-reduced-motion: no-preference) {
+  .mn-letreiro.blink { animation: mn-pisca .45s steps(1) 3; }
+  @keyframes mn-pisca { 50% { opacity: .15; } }
 }

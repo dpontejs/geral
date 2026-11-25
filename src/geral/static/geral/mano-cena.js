@@ -373,7 +373,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
   const batedor = montarJogador({ camisa: COR.papel, calcao: COR.tinta, meia: COR.papel });
   const goleiro = montarJogador({ camisa: COR.tintaSoft, calcao: COR.tinta, meia: COR.tinta, luvas: COR.papel, cabelo: COR.tinta });
   cena.add(batedor.grupo, goleiro.grupo);
-  const bola = new THREE.Mesh(new THREE.IcosahedronGeometry(0.11, 1), lambert(COR.giz));
+  const bola = new THREE.Mesh(new THREE.IcosahedronGeometry(0.13, 1), lambert(COR.giz));
   cena.add(bola);
   const barreiraGrupo = new THREE.Group();
   cena.add(barreiraGrupo);
@@ -439,11 +439,17 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     const bz = estado.bolaEm.z;
     bola.position.copy(estado.bolaEm);
     bola.rotation.set(0, 0, 0);
-    // Kicker 2.3 m behind the ball and a little to the left, facing the goal.
-    const lado = new THREE.Vector3(-d.z, 0, d.x); // kicker's left on the ground
-    batedor.grupo.position.set(bx - d.x * 2.2 - lado.x * 1.1, 0.95, bz - d.z * 2.2 - lado.z * 1.1);
+    // Kicker 2.2 m behind the ball and a little to his left, facing the goal.
+    const direita = new THREE.Vector3(-d.z, 0, d.x); // kicker's right on the ground
+    batedor.grupo.position.set(bx - d.x * 2.2 - direita.x * 1.1, 0.95, bz - d.z * 2.2 - direita.z * 1.1);
     batedor.grupo.rotation.set(0, Math.atan2(d.x, d.z), 0);
+    batedor.partes.corpo.rotation.set(0, 0, 0);
     pose(batedor);
+    goleiro.grupo.rotation.set(0, 0, 0);
+    goleiro.partes.bracoE.rotation.set(0, 0, 0);
+    goleiro.partes.bracoD.rotation.set(0, 0, 0);
+    rede.geometry.attributes.position.array.set(rede.userData.base);
+    rede.geometry.attributes.position.needsUpdate = true;
     goleiro.grupo.position.set(0, 0.88, 0.35);
     goleiro.grupo.rotation.set(0, Math.atan2(bx, bz) * 0.6, 0);
     goleiro.partes.corpo.rotation.set(0.12, 0, 0);
@@ -470,13 +476,21 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     const bz = estado.bolaEm;
     if (estado.papel === "batedor") {
       const d = direcaoAoGol();
-      camera.position.set(bz.x - d.x * 7, 2.7, bz.z - d.z * 7);
+      // Behind the ball and a step to the right, so the kicker never hides the goal.
+      camera.position.set(bz.x - d.x * 7 - d.z * 0.6, 2.7, bz.z - d.z * 7 + d.x * 0.6);
       camera.lookAt(bz.x * 0.15, -0.3, 0);
     } else {
       // Inside the goal, back to the net, under the crossbar: the kicker at the spot.
       // A little off-centre, over the keeper's shoulder, so his head never hides the ball.
       camera.position.set(0.5, 2.3, -1.9);
-      camera.lookAt(bz.x * 0.9 + 0.2, 0.1, bz.z);
+      const olhar = new THREE.Vector3(bz.x * 0.9 + 0.2, 0.1, bz.z);
+      const s = estado.seguir;
+      if (s) {
+        // During the dive the head turns with the body: the post and the ball come in.
+        camera.position.x += (s.T.x * 0.3 - 0.5) * s.k;
+        olhar.lerp(new THREE.Vector3(s.T.x * 1.1, Math.min(s.T.y, 1.6) * 0.6, 3.2), 0.55 * s.k);
+      }
+      camera.lookAt(olhar);
     }
     camera.updateProjectionMatrix();
   }
@@ -521,14 +535,15 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
 
   // ---- loop ------------------------------------------------------------------------------
 
-  function quadro(t) {
+  function quadro() {
     if (estado.destruida) return;
-    if (estado.animacao) estado.animacao(t);
+    if (estado.animacao) estado.animacao(performance.now());
     renderer.render(cena, camera);
     requestAnimationFrame(quadro);
   }
 
   function arrumar() {
+    estado.seguir = null;
     if (estado.modo === "faltas" && estado.falta) {
       estado.bolaEm.set(estado.falta.x, 0.11, estado.falta.z);
     } else {
@@ -859,6 +874,357 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     });
   }
 
+  // ---- board: the shootout lines and the result sign --------------------------------------
+
+  const seriesEl = $(".mn-series");
+  const letreiroEl = $(".mn-letreiro");
+  /** nomes: [a, b]; series: [[...], [...]] with "g" (goal) | "e" (missed); gols: [ga, gb]. */
+  function placar({ nomes = ["", ""], series = [[], []], gols = null } = {}) {
+    const vagas = Math.max(5, series[0].length, series[1].length);
+    const conta = gols ?? series.map((s) => s.filter((v) => v === "g").length);
+    seriesEl.innerHTML = [0, 1]
+      .map((i) => {
+        const bolas = Array.from({ length: vagas }, (_, k) => {
+          const v = series[i][k];
+          return v === "g" ? '<b class="mn-g">●</b>' : v === "e" ? '<b class="mn-e">✕</b>' : '<b class="mn-a">○</b>';
+        }).join("");
+        return `<div class="mn-fila"><span class="mn-quem lamp">${escapar(nomes[i])}</span><span class="mn-bolas lamp">${bolas}</span><span class="mn-gols lamp">${conta[i]}</span></div>`;
+      })
+      .join("");
+  }
+  const escapar = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
+
+  const LETREIROS = { gol: "GOOOL", defesa: "DEFENDEU", trave: "NA TRAVE", fora: "PRA FORA", barreira: "NA BARREIRA" };
+  function letreiro(texto) {
+    letreiroEl.textContent = texto || "";
+    letreiroEl.classList.toggle("blink", Boolean(texto));
+  }
+
+  // ---- the kick ---------------------------------------------------------------------------
+  //
+  // Every frame is a pure function of the clock, so a background tab (rAF paused) or a
+  // resize never leaves the kick halfway: the next frame, or the closing timer, lands it.
+  //
+  // Times (ms, performance.now()): t0 call; chute_em the kicker reaches the ball; the
+  // strike waits for the result (server: window close, chute_em + 600 ms) - a "paradinha"
+  // while the keeper's exit window is open; then ~0.6 s of flight and the outcome.
+
+  const JANELA = 600;
+  const VOO = { penaltis: 600, faltas: 800 };
+  const DEPOIS = 1700;
+  const ouvintesSaida = new Set();
+  let ultimo = null; // {lance, modo, falta} of the last kick, for the replay
+  let cobrancaAtual = null;
+
+  const lerp = (a, b, k) => a + (b - a) * k;
+  const suave = (k) => (k <= 0 ? 0 : k >= 1 ? 1 : k * k * (3 - 2 * k));
+  const entre = (t, a, b) => Math.min(1, Math.max(0, (t - a) / (b - a)));
+
+  function planejarVoo(lance) {
+    const origem = estado.bolaEm.clone();
+    const falta = estado.modo === "faltas";
+    const [ox, oy] = lance.onde;
+    let destino = golParaMundo(ox, oy);
+    destino.y = Math.max(0.11, destino.y);
+    if (lance.resultado === "trave") {
+      // Snap to the frame: the crossbar if high, else the nearer post.
+      if (oy >= 940 && ox > 40 && ox < 960) destino.y = GOL.altura + 0.02;
+      else destino.x = Math.sign(destino.x || 1) * (GOL.meia + 0.02);
+    }
+    const escolha = falta ? { trajetoria: lance.chute.trajetoria ?? "por_cima", curva: lance.chute.curva ?? 0 } : {};
+    const curva = caminho(origem, destino, escolha);
+    let fim = 1;
+    if (lance.resultado === "barreira") {
+      for (let u = 0; u <= 1; u += 0.01) {
+        const p = curva.getPoint(u);
+        if (Math.hypot(p.x - origem.x, p.z - origem.z) >= DIST_BARREIRA - 0.25) {
+          fim = u;
+          break;
+        }
+      }
+    }
+    const chegada = curva.getPoint(fim);
+    if (lance.resultado === "barreira") chegada.y = Math.min(chegada.y, 1.9);
+    const tangente = curva.getTangent(fim);
+    const velocidade = (curva.getLength() * fim) / (VOO[estado.modo] / 1000);
+    return { curva, fim, chegada, tangente, velocidade, origem };
+  }
+
+  /** Where the ball is `dt` seconds after it arrives, by outcome. */
+  function bolaDepois(plano, resultado, dt) {
+    const { chegada: c, tangente: v, velocidade } = plano;
+    const p = new THREE.Vector3();
+    const queda = (y0, vy) => {
+      // Bounces on the grass, losing half its height each time.
+      let y = y0 + vy * dt - 4.9 * dt * dt;
+      if (y >= 0.11) return y;
+      const tChao = (vy + Math.sqrt(vy * vy + 19.6 * Math.max(0, y0 - 0.11))) / 9.8;
+      const v2 = Math.max(0, 9.8 * tChao - vy) * 0.45;
+      const d2 = dt - tChao;
+      return Math.max(0.11, 0.11 + v2 * d2 - 4.9 * d2 * d2);
+    };
+    if (resultado === "gol") {
+      const alcance = Math.min(3, (GOL.fundo - 0.15) / Math.max(0.2, -v.z));
+      const k = 1 - Math.exp(-7 * dt);
+      p.copy(c).addScaledVector(v, alcance * k);
+      p.y = Math.max(0.11, p.y - 4.9 * Math.max(0, dt - 0.25) ** 2);
+      return p;
+    }
+    if (resultado === "fora") {
+      p.copy(c).addScaledVector(v, velocidade * Math.min(dt, 0.9));
+      p.y = Math.max(0.11, c.y + v.y * velocidade * Math.min(dt, 0.9) - 4.9 * dt * dt);
+      return p;
+    }
+    // Rebounds: off the keeper, the frame or the wall, back towards the pitch.
+    const lado = Math.sign(c.x || 0.5);
+    const rebote = {
+      defesa: [lado * 2.6, 2.2, 6.5],
+      trave: [c.y > GOL.altura - 0.1 ? lado * 0.6 : -lado * 2.4, c.y > GOL.altura - 0.1 ? 3.2 : 0.8, 8.5],
+      barreira: [(Math.random() - 0.5) * 2, 2.6, 0],
+    }[resultado];
+    if (resultado === "barreira") {
+      const volta = plano.origem.clone().sub(c).setY(0).normalize().multiplyScalar(4.5);
+      rebote[0] += volta.x;
+      rebote[2] = volta.z;
+    }
+    const k = Math.exp(-0.8 * dt);
+    p.set(c.x + rebote[0] * dt * k, queda(c.y, rebote[1]), c.z + rebote[2] * dt * k);
+    return p;
+  }
+
+  function sacudirRede(plano, resultado, dt) {
+    const arr = rede.geometry.attributes.position.array;
+    const base = rede.userData.base;
+    const alvo = resultado === "gol" ? bolaDepois(plano, "gol", 0.5) : null;
+    const amp = alvo && dt > 0.12 ? 0.55 * Math.exp(-3 * (dt - 0.12)) * Math.cos(9 * (dt - 0.12)) : 0;
+    for (let i = 0; i < arr.length; i += 3) {
+      if (!amp) {
+        arr[i + 2] = base[i + 2];
+        continue;
+      }
+      const d2 = (base[i] - alvo.x) ** 2 + (base[i + 1] - alvo.y) ** 2;
+      arr[i + 2] = base[i + 2] - amp * Math.exp(-d2 / 1.1);
+    }
+    rede.geometry.attributes.position.needsUpdate = true;
+  }
+
+  function alvoDoGoleiro(lance, plano) {
+    const lado = lance.defesa.lado;
+    const s = lado === "esquerda" ? -1 : lado === "direita" ? 1 : 0;
+    const alcance = lance.defesa.saida ? 3.1 : 2.4;
+    if (lance.resultado === "defesa") {
+      const c = plano.chegada.clone();
+      c.x = prender(c.x, -alcance - 0.3, alcance + 0.3);
+      return c;
+    }
+    if (s === 0) return new THREE.Vector3(0, 2.05, 0.45);
+    const bolaDoLado = Math.sign(plano.chegada.x) === s;
+    return new THREE.Vector3(s * alcance, bolaDoLado ? Math.min(Math.max(plano.chegada.y, 0.4), 2.1) : 1.0, 0.45);
+  }
+
+  function animarGoleiro(t, tl) {
+    const g = goleiro;
+    const { lento } = tl;
+    const H0 = new THREE.Vector3(0, 0.88, 0.35);
+    // The exit: a step off the line, from the local press or from the result.
+    const tSaida = tl.saidaLocal ?? (tl.lance?.defesa?.saida ? tl.tGolpe - 220 * lento : null);
+    const passo = tSaida != null ? suave(entre(t, tSaida, tSaida + 200 * lento)) * 0.6 : 0;
+    H0.z += passo;
+    if (!tl.lance || t < tl.tGolpe - 40 * lento) {
+      // Ready stance, rocking on his toes.
+      g.grupo.position.copy(H0);
+      g.grupo.position.y += Math.sin(t / 140) * 0.015;
+      return;
+    }
+    const T = tl.alvoGoleiro;
+    const k = suave(entre(t, tl.tGolpe - 40 * lento, tl.tGolpe + 380 * lento));
+    if (estado.papel === "goleiro") {
+      estado.seguir = { k, T };
+      posicionarCamera();
+    }
+    const pe = new THREE.Vector3(H0.x, 0.35, H0.z);
+    const dir = T.clone().sub(pe);
+    dir.z = 0;
+    dir.y = Math.max(dir.y, 0.3); // never head-first into the grass
+    dir.normalize();
+    const quadrilAlvo = T.clone().addScaledVector(dir, -1.15);
+    quadrilAlvo.y = Math.max(0.55, quadrilAlvo.y);
+    quadrilAlvo.z = T.z;
+    const fica = Math.abs(dir.x) < 0.35;
+    const theta = Math.atan2(-dir.x, dir.y) * 1.0;
+    // Then down to the grass (not when he just jumped in the middle).
+    const q = fica ? 0 : suave(entre(t, tl.tGolpe + 420 * lento, tl.tGolpe + 900 * lento));
+    g.grupo.rotation.set(0, 0, lerp(0, theta, k) + q * (Math.sign(theta) * Math.PI) / 2 * 0.25);
+    g.grupo.position.set(lerp(H0.x, quadrilAlvo.x, k), lerp(H0.y, quadrilAlvo.y, k) * (1 - q) + 0.32 * q, lerp(H0.z, quadrilAlvo.z, k));
+    if (fica) g.grupo.position.y -= suave(entre(t, tl.tGolpe + 450 * lento, tl.tGolpe + 800 * lento)) * (quadrilAlvo.y - H0.y);
+    const braco = -Math.PI * 0.95 * k;
+    g.partes.bracoE.rotation.set(braco, 0, lerp(-0.45, 0.1, k));
+    g.partes.bracoD.rotation.set(braco, 0, lerp(0.45, -0.1, k));
+    g.partes.pernaE.rotation.set(0.35 * k, 0, -0.12 - 0.25 * k);
+    g.partes.pernaD.rotation.set(-0.2 * k, 0, 0.12 + 0.15 * k);
+    g.partes.corpo.rotation.set(0.12 * (1 - k), 0, 0);
+  }
+
+  function animarBatedor(t, tl) {
+    const b = batedor;
+    const { lento, inicio, plantio } = tl;
+    const u = suave(entre(t, tl.t0, tl.tChute)) * 0.7 + entre(t, tl.t0, tl.tChute) * 0.3;
+    const pos = inicio.clone().lerp(plantio, u);
+    const correndo = t < tl.tChute;
+    const passada = correndo ? Math.sin(u * Math.PI * 7) : 0;
+    b.partes.pernaE.rotation.x = passada * 0.7;
+    b.partes.pernaD.rotation.x = -passada * 0.7;
+    b.partes.bracoE.rotation.x = -passada * 0.6;
+    b.partes.bracoD.rotation.x = passada * 0.6;
+    b.partes.corpo.rotation.x = correndo ? 0.18 : 0.08;
+    // The strike: his right leg through the ball, the body following.
+    const tGolpe = tl.lance ? tl.tGolpe : Infinity;
+    const kg = entre(t, tGolpe - 160 * lento, tGolpe + 260 * lento);
+    if (kg > 0) {
+      const balanco = kg < 0.38 ? lerp(0, 0.9, kg / 0.38) : lerp(0.9, -1.5, suave((kg - 0.38) / 0.62));
+      b.partes.pernaE.rotation.x = balanco;
+      b.partes.pernaD.rotation.x = 0.1;
+      b.partes.bracoE.rotation.set(0, 0, -0.6 * Math.sin(Math.PI * kg));
+      b.partes.bracoD.rotation.set(-0.5 * Math.sin(Math.PI * kg), 0, 0.7 * Math.sin(Math.PI * kg));
+      b.partes.corpo.rotation.x = -0.15 * Math.sin(Math.PI * kg);
+      pos.addScaledVector(tl.d, 0.3 * suave(kg));
+    } else if (!correndo) {
+      // Paradinha: weight shifting by the ball.
+      b.partes.corpo.rotation.z = Math.sin((t - tl.tChute) / 110) * 0.05;
+    }
+    pos.y = 0.95 + (correndo ? Math.abs(Math.sin(u * Math.PI * 7)) * 0.05 : 0);
+    b.grupo.position.copy(pos);
+  }
+
+  function animarBola(t, tl) {
+    if (!tl.lance || t < tl.tGolpe) {
+      bola.position.copy(estado.bolaEm);
+      return;
+    }
+    const voo = tl.voo;
+    const fimVoo = tl.tGolpe + VOO[estado.modo] * voo.fim * tl.lento;
+    if (t <= fimVoo) {
+      const u = entre(t, tl.tGolpe, fimVoo) * voo.fim;
+      bola.position.copy(voo.curva.getPoint(u));
+      bola.rotation.x -= 0.5;
+      bola.rotation.y += (lance_curva(tl.lance) || 0.1) * 0.4;
+    } else {
+      const dt = (t - fimVoo) / 1000 / tl.lento;
+      bola.position.copy(bolaDepois(voo, tl.lance.resultado, dt));
+      bola.rotation.x -= 0.2 * Math.exp(-dt);
+      sacudirRede(voo, tl.lance.resultado, dt);
+    }
+    if (!tl.letreiro && t >= fimVoo + 80 * tl.lento) {
+      tl.letreiro = true;
+      letreiro(LETREIROS[tl.lance.resultado] ?? "");
+    }
+  }
+  const lance_curva = (lance) => lance?.chute?.curva ?? 0;
+
+  function rodarCobranca({ chute_em, lance, lento = 1, replay = false }) {
+    cobrancaAtual?.parar();
+    posicionarJogadores();
+    letreiro("");
+    const d = direcaoAoGol();
+    const direita = new THREE.Vector3(-d.z, 0, d.x);
+    const tl = {
+      t0: performance.now(),
+      tChute: chute_em,
+      tGolpe: Infinity,
+      lance: null,
+      lento,
+      d,
+      inicio: batedor.grupo.position.clone(),
+      plantio: estado.bolaEm.clone().addScaledVector(d, -0.5).addScaledVector(direita, -0.45),
+      saidaLocal: null,
+      letreiro: false,
+    };
+    let parado = false;
+    let resolver;
+    const pronto = new Promise((r) => (resolver = r));
+    let relogio = null;
+    const fechar = () => {
+      if (parado) return;
+      aplicar(tl.fim + 1); // land the final frame even if rAF never ran
+      parar();
+      resolver();
+    };
+    const aplicar = (t) => {
+      animarBatedor(t, tl);
+      animarGoleiro(t, tl);
+      animarBola(t, tl);
+    };
+    function parar() {
+      parado = true;
+      clearTimeout(relogio);
+      for (const f of soltar) f();
+      if (estado.animacao === aplicar) estado.animacao = aplicarFinal;
+      if (cobrancaAtual === controle) cobrancaAtual = null;
+    }
+    const aplicarFinal = () => {}; // the scene keeps the last frame until the next kick
+    const receber = (l) => {
+      if (parado) return;
+      tl.lance = l;
+      tl.tGolpe = Math.max(chute_em + JANELA * lento, performance.now());
+      tl.voo = planejarVoo(l);
+      tl.alvoGoleiro = alvoDoGoleiro(l, tl.voo);
+      tl.fim = tl.tGolpe + (VOO[estado.modo] * tl.voo.fim + DEPOIS) * lento;
+      ultimo = { lance: l, modo: estado.modo, falta: estado.falta ? { ...estado.falta } : null };
+      relogio = setTimeout(fechar, tl.fim - performance.now() + 20);
+    };
+    // The keeper's exit: space or a tap, once, from the run-up to the end of the flight.
+    const soltar = [];
+    if (!replay && estado.papel === "goleiro") {
+      const sair = (ev) => {
+        if (ev.type === "keydown" && (ev.code !== "Space" || ev.repeat)) return;
+        if (ev.target?.closest?.("button")) return;
+        const agora = performance.now();
+        const fimVoo = tl.lance ? tl.tGolpe + VOO[estado.modo] * tl.voo.fim : Infinity;
+        if (tl.saidaLocal != null || agora > fimVoo) return;
+        ev.preventDefault?.();
+        tl.saidaLocal = agora;
+        for (const cb of ouvintesSaida) cb({ ms: Math.round(agora - chute_em) });
+      };
+      window.addEventListener("keydown", sair);
+      canvas.addEventListener("pointerdown", sair);
+      soltar.push(() => window.removeEventListener("keydown", sair), () => canvas.removeEventListener("pointerdown", sair));
+    }
+    estado.animacao = aplicar;
+    const controle = { parar: () => (parar(), resolver()) };
+    cobrancaAtual = controle;
+    Promise.resolve(lance).then(receber);
+    return pronto;
+  }
+
+  /**
+   * Run a kick: run-up until `chute_em` (performance.now() clock), strike when `lance` is
+   * known (an object, or a Promise of one, as the server sends it at window close).
+   * lance: {chute, defesa: {lado, saida}, barreira, onde: [x, y], resultado}.
+   */
+  function cobrar({ chute_em, lance }) {
+    return rodarCobranca({ chute_em, lance });
+  }
+
+  /** The last kick again, slower, on the current camera. */
+  function replay() {
+    if (!ultimo) return Promise.resolve();
+    if (ultimo.modo === "faltas" && ultimo.falta) {
+      estado.modo = "faltas";
+      estado.falta = { ...ultimo.falta };
+    }
+    arrumar();
+    const lento = 1.8;
+    return rodarCobranca({ chute_em: performance.now() + 700 * lento, lance: ultimo.lance, lento, replay: true });
+  }
+
+  /** Back to the set position, sign and controls cleared. */
+  function reiniciar() {
+    cobrancaAtual?.parar();
+    estado.animacao = null;
+    letreiro("");
+    arrumar();
+  }
+
   arrumar();
   ajustar();
   requestAnimationFrame(quadro);
@@ -890,8 +1256,19 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     pedirChute,
     pedirDefesa,
     pedirBarreira,
+    cobrar,
+    replay,
+    reiniciar,
+    placar,
+    letreiro,
+    /** cb({ms}) once per kick when the keeper presses space / taps, ms from chute_em. */
+    onSaida(cb) {
+      ouvintesSaida.add(cb);
+      return () => ouvintesSaida.delete(cb);
+    },
     destruir() {
       pedidoAtual?.();
+      cobrancaAtual?.parar();
       estado.destruida = true;
       observador.disconnect();
       document.removeEventListener("fullscreenchange", aoTelaCheia);

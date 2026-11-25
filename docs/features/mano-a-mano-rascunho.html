@@ -50,30 +50,151 @@ h1 { font: 900 clamp(34px, 6vw, 60px)/.95 var(--display); text-transform: upperc
     <button class="chip" data-modo="penaltis" aria-pressed="true">Pênaltis</button>
     <button class="chip" data-modo="faltas" aria-pressed="false">Faltas</button>
   </div>
+  <div class="painel">
+    <button class="btn" id="disputa">Disputa contra o bot</button>
+    <button class="chip" id="bater">Bater uma</button>
+    <button class="chip" id="defender">Defender uma</button>
+    <button class="chip" id="replay">Ver de novo</button>
+  </div>
   <div id="cena"></div>
   <p class="nota">Rascunho sem servidor: eventos e resultado falsos. A regra de verdade é a da fatia 1.</p>
 </div></main>
 <script type="module">
-import { criarCena, POSICOES } from "../../src/geral/static/geral/mano-cena.js";
+import { criarCena, POSICOES, faixaBoa } from "../../src/geral/static/geral/mano-cena.js";
 
 const cena = criarCena(document.getElementById("cena"), { papel: "batedor", modo: "penaltis" });
-window.__mano = { cena };
-
 const painel = document.getElementById("painel");
+let modo = "penaltis";
+const sortear = (lista) => lista[Math.floor(Math.random() * lista.length)];
+const acaso = (a, b) => a + Math.random() * (b - a);
+const dormir = (ms) => new Promise((r) => setTimeout(r, ms));
+
+// ---- Fake resolver: NOT the rules (those are Python, slice 1). Same contract, rough numbers.
+function resolverFalso({ chute, defesa, barreira }) {
+  let [x, y] = chute.alvo;
+  const [lo, hi] = faixaBoa(chute.alvo);
+  const t = chute.trajetoria;
+  if (t === "por_cima") {
+    if (chute.barra < lo) return { onde: [x, 250], resultado: barreira ? "barreira" : "defesa" };
+    if (chute.barra > hi) y += (chute.barra - hi) * 1.4;
+  } else if (chute.barra < lo || chute.barra > hi) {
+    const erro = chute.barra < lo ? lo - chute.barra : chute.barra - hi;
+    x += (x < 500 ? -1 : 1) * erro * 0.9;
+    y += erro * 0.45;
+  }
+  if (barreira && x > barreira.x - barreira.n * 55 && x < barreira.x + barreira.n * 55) {
+    if (t === "rasteira" || (t === "pelo_lado" && Math.abs(chute.curva) < 0.3)) return { onde: [x, 200], resultado: "barreira" };
+  }
+  const onde = [Math.round(x), Math.round(Math.max(0, y))];
+  if (x < -25 || x > 1025 || y > 1030) return { onde, resultado: "fora" };
+  if (x < 20 || x > 980 || y > 965) return { onde, resultado: "trave" };
+  const terco = x < 333 ? "esquerda" : x > 666 ? "direita" : "fica";
+  const vizinho = defesa.saida && ((defesa.lado === "esquerda" && x < 450) || (defesa.lado === "direita" && x > 550) || (defesa.lado === "fica" && x > 220 && x < 780));
+  if (terco === defesa.lado || vizinho) {
+    if (defesa.lado === "fica" || y < 500 || Math.random() < 0.4) return { onde, resultado: "defesa" };
+  }
+  return { onde, resultado: "gol" };
+}
+
+// ---- The bot: uniform at random, as the "facil" level.
+const botChute = () => ({
+  alvo: [Math.round(acaso(60, 940)), Math.round(acaso(40, 900))],
+  barra: Math.round(acaso(250, 750)),
+  ...(modo === "faltas" ? { trajetoria: sortear(["rasteira", "por_cima", "pelo_lado"]), curva: Math.round(acaso(-1, 1) * 100) / 100 } : {}),
+});
+const botDefesa = () => ({ lado: sortear(["esquerda", "fica", "direita"]) });
+const botBarreira = () => ({ n: 2 + Math.floor(Math.random() * 4), x: Math.round(acaso(150, 850)) });
+
+// The keeper's exit as the server would judge it: inside 600 ms from chute_em (+150 slack).
+let saidaMs = null;
+cena.onSaida(({ ms }) => (saidaMs = ms));
+
+/** One kick. quem: "voce" kicks, or "bot" kicks and you keep. Returns the result. */
+async function umaCobranca(quem) {
+  cena.reiniciar();
+  cena.trocarPapel(quem === "voce" ? "batedor" : "goleiro");
+  marcar("papel", cena.papel);
+  let barreira = null;
+  if (modo === "faltas") {
+    const nome = sortear(Object.keys(POSICOES));
+    if (quem === "voce") {
+      barreira = botBarreira();
+      cena.posicionarFalta({ nome, barreira });
+    } else {
+      cena.posicionarFalta({ nome, barreira: null });
+      barreira = await cena.pedirBarreira();
+    }
+  } else {
+    cena.trocarModo("penaltis");
+  }
+  const chute = quem === "voce" ? await cena.pedirChute() : botChute();
+  const escolhaDefesa = quem === "voce" ? botDefesa() : await cena.pedirDefesa();
+  saidaMs = null;
+  const chute_em = performance.now() + 1500;
+  // The server answers when the exit window closes; a little network on top.
+  const lance = new Promise((res) =>
+    setTimeout(() => {
+      const saida = quem === "voce" ? Math.random() < 0.5 : saidaMs !== null && saidaMs >= 0 && saidaMs <= 750;
+      const defesa = { ...escolhaDefesa, saida };
+      res({ chute, defesa, barreira, ...resolverFalso({ chute, defesa, barreira }) });
+    }, 1500 + 600 + 60),
+  );
+  await cena.cobrar({ chute_em, lance });
+  return (await lance).resultado;
+}
+
+function acabou([a, b]) {
+  const ga = a.filter((v) => v === "g").length;
+  const gb = b.filter((v) => v === "g").length;
+  if (a.length <= 5 && b.length <= 5) return ga + (5 - a.length) < gb || gb + (5 - b.length) < ga;
+  return a.length === b.length && ga !== gb;
+}
+
+let rodando = false;
+async function disputa() {
+  if (rodando) return;
+  rodando = true;
+  const series = [[], []];
+  const nomes = ["Você", "Bot"];
+  cena.placar({ nomes, series });
+  try {
+    while (!acabou(series)) {
+      for (const [i, quem] of [[0, "voce"], [1, "bot"]]) {
+        const r = await umaCobranca(quem);
+        series[i].push(r === "gol" ? "g" : "e");
+        cena.placar({ nomes, series });
+        await dormir(500);
+        if (acabou(series)) break;
+      }
+    }
+    const [ga, gb] = series.map((s) => s.filter((v) => v === "g").length);
+    cena.letreiro(ga > gb ? "VOCÊ GANHOU" : "O BOT GANHOU");
+  } finally {
+    rodando = false;
+  }
+}
+
 function marcar(attr, valor) {
   for (const b of painel.querySelectorAll(`[data-${attr}]`)) b.setAttribute("aria-pressed", String(b.dataset[attr] === valor));
 }
-const sortear = (lista) => lista[Math.floor(Math.random() * lista.length)];
 painel.addEventListener("click", (ev) => {
   const b = ev.target.closest("button");
   if (!b) return;
   if (b.dataset.papel) { cena.trocarPapel(b.dataset.papel); marcar("papel", b.dataset.papel); }
-  if (b.dataset.modo === "penaltis") { cena.trocarModo("penaltis"); marcar("modo", "penaltis"); }
-  if (b.dataset.modo === "faltas") {
-    cena.posicionarFalta({ nome: sortear(Object.keys(POSICOES)), barreira: { n: 2 + Math.floor(Math.random() * 4), x: 200 + Math.random() * 600 } });
-    marcar("modo", "faltas");
+  if (b.dataset.modo) {
+    modo = b.dataset.modo;
+    marcar("modo", modo);
+    if (modo === "faltas") cena.posicionarFalta({ nome: sortear(Object.keys(POSICOES)), barreira: botBarreira() });
+    else cena.trocarModo("penaltis");
   }
 });
+document.getElementById("disputa").addEventListener("click", disputa);
+document.getElementById("bater").addEventListener("click", () => umaCobranca("voce"));
+document.getElementById("defender").addEventListener("click", () => umaCobranca("bot"));
+document.getElementById("replay").addEventListener("click", () => cena.replay());
+
+// For the photo script: drive a kick with a fixed result.
+window.__mano = { cena, resolverFalso, umaCobranca, disputa, setModo: (m) => { modo = m; marcar("modo", m); } };
 </script>
 </body>
 </html>
