@@ -2,7 +2,8 @@
 // the rules, the clock and the word; this page only draws what each `estado` and event says, and
 // sends my actions. A fresh `estado` (on connecting and on every change of phase or players)
 // redraws everything, strokes included, so a reconnect never duplicates a line. My token for the
-// room stays in localStorage (`prancheta:<id>`); without it, the room asks for a nickname.
+// room stays in localStorage (`prancheta:<id>`); without it, the room asks for a nickname and
+// sends a request the host accepts or refuses (meanwhile the `estado` has `fase: "pedido"`).
 (() => {
   const raiz = document.getElementById("pr");
   if (!raiz) return;
@@ -17,9 +18,10 @@
 
   const MAX_JOGADORES = 10;
   const DIF = { facil: ["Fácil", 5], media: ["Média", 7], dificil: ["Difícil", 10] };
-  // Chalk: 0 is the eraser (the board's colour), 1–7 the sticks in the tray.
-  const CORES = [null, "#F3F1EA", "#F6D55C", "#F29E4C", "#E5604D", "#F2A7C3", "#8CC5EE", "#B5E08A"];
-  const NOMES_COR = ["apagador", "giz branco", "giz amarelo", "giz laranja", "giz vermelho", "giz rosa", "giz azul", "giz verde"];
+  // Chalk: 0 is the eraser (the board's colour), 1–12 the sticks in the tray (two rows of 7).
+  // The dark ones (marrom, azul-escuro, preto) read as shading on the slate, like real chalk.
+  const CORES = [null, "#F3F1EA", "#F6D55C", "#F29E4C", "#E5604D", "#F2A7C3", "#8CC5EE", "#B5E08A", "#B99BE3", "#A87650", "#A3A6A1", "#4F73C4", "#191C1A"];
+  const NOMES_COR = ["apagador", "giz branco", "giz amarelo", "giz laranja", "giz vermelho", "giz rosa", "giz azul", "giz verde", "giz roxo", "giz marrom", "giz cinza", "giz azul-escuro", "giz preto"];
   const ESP = [0, 0.006, 0.013, 0.026]; // stroke width as a share of the board's width
   const PEDACO = 64; // points per piece sent
   const TETO = 20000; // points per drawing
@@ -81,6 +83,7 @@
   let lanceAtual = ""; // which play `ganhos` and my strokes belong to
   let opcoesDoLance = null; // what the drawer chose from (only the drawer knows the difficulty)
   let escolhida = null;
+  let pulou = false; // the drawer of this play gave up their turn
 
   const jogador = (id) => (est ? est.jogadores.find((j) => j.id === id) : null);
   const nome = (id) => (jogador(id) || { apelido: "alguém" }).apelido;
@@ -332,10 +335,10 @@
       ${placar({ meta: `Sala ${esc(SALA)}`, aviso: "Entre com um apelido" })}
       <form class="ticket" id="pr-entrar">
         <h2>Entrar na sala</h2>
-        <p>${esc(nota || "Te chamaram para desenhar e adivinhar. Escolha um apelido e entre.")}</p>
+        <p>${esc(nota || "Te chamaram para desenhar e adivinhar. Escolha um apelido e peça para entrar: o anfitrião aceita.")}</p>
         <label class="campo-f"><span>Seu apelido</span><input class="pr-apelido" id="pr-apelido" maxlength="16" minlength="2" required autocomplete="nickname" spellcheck="false" placeholder="Como a turma te chama"></label>
         <p class="pr-erro" role="alert" hidden></p>
-        <button class="btn lamp-btn" type="submit">Entrar</button>
+        <button class="btn lamp-btn" type="submit">Pedir para entrar</button>
       </form>
     </div>`;
     $("#pr-entrar").addEventListener("submit", async (e) => {
@@ -344,14 +347,14 @@
       botao.disabled = true;
       const { status, dados } = await postar(`/salas/${SALA}/entrar`, { apelido: $("#pr-apelido").value.trim() });
       if (status === 200 || status === 201) {
-        eu = { jogador: dados.jogador, token: dados.token };
+        eu = { jogador: dados.jogador, token: dados.token, pendente: true };
         gravar(SALA, eu);
         conectar();
         return;
       }
       botao.disabled = false;
       if (status === 404) return aviso("A sala acabou", "A sala acabou ou o servidor reiniciou. Crie outra e mande o link de novo.");
-      if (status === 409) return mostrarErro(e.target, "A sala está cheia (são 10 no máximo) ou a partida já acabou.");
+      if (status === 409) return mostrarErro(e.target, "Muita gente pedindo para entrar agora, ou a partida já acabou. Tente daqui a pouco.");
       mostrarErro(e.target, erroApelido(status));
     });
   }
@@ -371,6 +374,7 @@
     tela = "aviso";
     pararFonte();
     $("#pr-sair-box").hidden = true;
+    $("#pr-pedidos").hidden = true;
     palco.className = "palco";
     palco.innerHTML = `<div class="espera so">
       ${placar({ meta: SALA ? `Sala ${esc(SALA)}` : "Prancheta", aviso: esc(titulo) })}
@@ -378,6 +382,53 @@
         <div class="acoes"><a class="btn lamp-btn" href="/jogos/prancheta">Nova sala</a>${sumula ? `<a class="btn secondary" href="/jogos/prancheta/s/${esc(SALA)}">Ver a súmula</a>` : ""}</div></div>
     </div>`;
   }
+
+  // ---- asked to join: waiting for the host's answer ----------------------------------------------
+  function telaPedido() {
+    const html = `<b>${esc(est.apelido)}</b>`;
+    const quem = est.anfitriao ? esc(est.anfitriao) : "o anfitrião";
+    if (tela !== "pedido") {
+      tela = "pedido";
+      $("#pr-sair-box").hidden = true;
+      palco.className = "palco";
+      palco.innerHTML = `<div class="espera so">
+        ${placar({ meta: `Sala ${esc(SALA)}`, aviso: "Pedindo para entrar" })}
+        <div class="ticket pr-pedido">
+          <h2>Pedido enviado</h2>
+          <p id="pr-pedido-texto"></p>
+          <p class="pr-aguarde"><span class="lampadinha"></span><span class="lampadinha"></span><span class="lampadinha"></span> esperando a resposta</p>
+          <p class="fine">Deixe esta página aberta. Se fechar por mais de 30 segundos, o pedido cai.</p>
+        </div>
+      </div>`;
+    }
+    $("#pr-pedido-texto").innerHTML = `Você pediu para entrar como ${html}. Agora é com ${quem}: quando aceitar, a sala abre aqui.`;
+  }
+  function recusado() {
+    esquecer();
+    eu = null;
+    aviso("Pedido recusado", "O anfitrião não aceitou o pedido desta vez. Sem problema: dá para criar a sua sala e chamar a sua turma.");
+  }
+
+  // The host's answer box: who asked to join, over whatever screen is on.
+  function mostrarPedidos() {
+    const caixa = $("#pr-pedidos");
+    const lista = est && est.pedidos && tela !== "fim" && tela !== "aviso" ? est.pedidos : [];
+    caixa.hidden = !lista.length;
+    trocar(caixa, lista.length ? `<p class="lamp pr-pedidos-tit">Pede${lista.length > 1 ? "m" : ""} para entrar</p><ul>${lista.map((p) =>
+      `<li data-pedido="${p.id}"><b>${esc(p.apelido)}</b><span class="pr-pedido-nota" hidden></span><button class="btn lamp-btn" type="button" data-resposta="aceitar">Aceitar</button><button class="btn secondary" type="button" data-resposta="recusar">Recusar</button></li>`).join("")}</ul>` : "");
+  }
+  $("#pr-pedidos").addEventListener("click", async (e) => {
+    const b = e.target.closest("[data-resposta]");
+    if (!b) return;
+    const li = b.closest("li");
+    li.querySelectorAll("button").forEach((x) => (x.disabled = true));
+    const status = await acao(b.dataset.resposta, { pedido: +li.dataset.pedido });
+    if (status === 204) return; // the next `estado` takes the request away
+    li.querySelectorAll("button").forEach((x) => (x.disabled = false));
+    const nota = $(".pr-pedido-nota", li);
+    nota.hidden = false;
+    nota.textContent = status === 409 ? "sala cheia" : "não deu, tente de novo";
+  });
 
   // ---- the waiting room ------------------------------------------------------------------------
   let conhecidos = null; // ids already in the waiting room, to animate who just arrived
@@ -391,7 +442,7 @@
         <div id="pr-placar-box" class="placar-box"></div>
         <div class="ticket">
           <h2>Chame a turma</h2>
-          <p>Mande o link no grupo. Quem abrir escolhe um apelido e já entra.</p>
+          <p>Mande o link no grupo. Quem abrir escolhe um apelido e pede para entrar; o anfitrião aceita.</p>
           <div class="link"><code>${esc(LINK)}</code><button class="btn" type="button" id="pr-copiar">Copiar</button></div>
           <div class="acoes"><a class="btn secondary" href="${ZAP}" target="_blank" rel="noopener">Mandar no Zap</a></div>
           <p class="pr-rodadas" id="pr-rodadas-info"></p>
@@ -443,6 +494,7 @@
         <div class="feed"><h3>Chutes <span id="feed-sub"></span></h3><ol id="feed"></ol></div>
         <form class="entrada" id="chutar"><input id="chute" maxlength="40" autocomplete="off" spellcheck="false" enterkeyhint="send" placeholder="Seu chute" aria-label="Seu chute"><button class="btn" type="submit">Chutar</button></form>
         <div class="entrada" id="nota"><span class="nota" id="nota-texto"></span></div>
+        <div class="entrada vez" id="vez"><button class="btn lamp-btn" type="button" id="pr-dica"></button><button class="btn secondary" type="button" id="pr-pular">Pular a vez</button></div>
       </div>`;
     lousa = $("#lousa"); cv = $("canvas", lousa); ctx = cv.getContext("2d"); padroes = {};
     observadores.forEach((o) => o.disconnect()); // the last stage's, if any
@@ -468,6 +520,16 @@
       if ((await acao("escolher", { indice: escolhida })) !== 204) {
         $("#sobre").querySelectorAll(".opcao").forEach((o) => (o.disabled = false));
       }
+    });
+    $("#pr-dica").addEventListener("click", async (e) => {
+      e.target.disabled = true;
+      if ((await acao("dica")) === 204) sis("Você acendeu uma letra para a turma."); // the new `estado` redraws the button
+      botaoDica();
+    });
+    $("#pr-pular").addEventListener("click", async (e) => {
+      if (!confirm("Pular a sua vez? A palavra aparece para todos, os pontos ficam e o jogo segue.")) return;
+      e.target.disabled = true;
+      if ((await acao("pular")) !== 204) e.target.disabled = false;
     });
     $("#chutar").addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -527,14 +589,19 @@
     // the guess box, or a note in its place
     const eu_ = jogador(eu.jogador);
     const chuta = desenho && !euDesenho() && eu_ && !eu_.acertou;
+    const minhaVez = euDesenho() && (desenho || est.fase === "escolha");
     $("#chutar").hidden = !chuta;
-    $("#nota").hidden = chuta;
+    $("#nota").hidden = chuta || minhaVez;
+    $("#vez").hidden = !minhaVez;
+    $("#pr-dica").hidden = !desenho;
+    $("#pr-pular").disabled = false;
     $("#nota-texto").textContent =
       est.fase === "escolha" ? (euDesenho() ? "Escolha uma palavra. Sem escolher, sai no sorteio." : `${nome(d)} está escolhendo a palavra.`)
       : desenho && euDesenho() ? "Na sua vez você não chuta. Desenhe!"
       : desenho && eu_ && eu_.acertou ? `Você acertou${ganhos[eu.jogador] ? ` +${ganhos[eu.jogador]}` : ""}! Agora é torcer.`
       : "Intervalo. O próximo lance começa já.";
     if (!chuta && document.activeElement === $("#chute")) $("#chute").blur();
+    botaoDica();
     subtitulo();
     tic();
     encaixar();
@@ -547,15 +614,35 @@
     const dif = op && DIF[op.dificuldade] ? `${DIF[op.dificuldade][0].toLowerCase()} · ` : "";
     const linhas = certos.map((j) => `<li>${esc(j.apelido)} <b>${ganhos[j.id] ? `+${ganhos[j.id]}` : "✓"}</b></li>`);
     if (certos.length && jogador(est.desenhista)) linhas.push(`<li>${esc(nome(est.desenhista))} (assist.) <b>+${2 * certos.length}</b></li>`);
-    return `<div class="recorte"><div class="kicker"><span>Era</span><span>${dif}${certos.length} de ${Math.max(total, certos.length)} acertaram</span></div><h2>${esc(est.palavra || "")}</h2>
-      ${linhas.length ? `<ul>${linhas.join("")}</ul>` : ""}<p class="proximo">${certos.length ? "O próximo lance começa já." : "Ninguém acertou. O próximo lance começa já."}</p></div>`;
+    if (!est.palavra) {
+      return `<div class="recorte"><div class="kicker"><span>Lance</span><span>sem desenho</span></div><h2>${pulou ? "Pulou a vez" : "Sem desenho"}</h2><p class="proximo">O próximo lance começa já.</p></div>`;
+    }
+    return `<div class="recorte"><div class="kicker"><span>Era</span><span>${dif}${certos.length} de ${Math.max(total, certos.length)} acertaram</span></div><h2>${esc(est.palavra)}</h2>
+      ${linhas.length ? `<ul>${linhas.join("")}</ul>` : ""}<p class="proximo">${pulou ? `${esc(nome(est.desenhista))} pulou a vez. ` : certos.length ? "" : "Ninguém acertou. "}O próximo lance começa já.</p></div>`;
   }
   function subtitulo() {
     const sub = $("#feed-sub");
     if (!sub || !est) return;
     if (est.fase !== "desenho") return (sub.textContent = "");
     const s = restam(), faltam = quemChuta().filter((j) => !j.acertou).length;
-    sub.textContent = !euDesenho() && s > 40 ? "acende uma letra aos 0:40" : !euDesenho() && s > 20 ? "acende mais uma letra aos 0:20" : `${faltam} chutando`;
+    sub.textContent = `${faltam} chutando`;
+  }
+  // The drawer's hint: locked until its time, then one tap lights a letter for the others.
+  const fmt = (s) => `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+  function botaoDica() {
+    const b = $("#pr-dica");
+    if (!b || !est || !est.dicas || b.hidden) return;
+    const { dadas, marcos } = est.dicas, agora = Date.now() + diferenca;
+    const liberadas = marcos.filter((m) => Date.parse(m) <= agora).length;
+    let texto, pode = false, travada = false;
+    if (!marcos.length) texto = "Sem dica: palavra curta";
+    else if (dadas >= marcos.length) texto = "Dicas dadas";
+    else if (dadas < liberadas) { texto = marcos.length > 1 ? `Dar dica ${dadas + 1} de ${marcos.length}` : "Dar dica"; pode = true; }
+    else { texto = `Dica aos ${fmt(Math.round((Date.parse(est.prazo) - Date.parse(marcos[dadas])) / 1000))}`; travada = true; }
+    const html = `${travada ? `<svg class="cadeado" width="12" height="15" viewBox="0 0 12 15" aria-hidden="true"><path d="M3 7V4.5a3 3 0 0 1 6 0V7" fill="none" stroke="currentColor" stroke-width="2"/><rect x="1" y="7" width="10" height="7.5" fill="currentColor"/></svg>` : ""}${texto}`;
+    if (b.__html !== html) { b.innerHTML = html; b.__html = html; }
+    b.disabled = !pode;
+    b.classList.toggle("travada", travada);
   }
 
   // Fit the 4:3 board in its slot: by width on a phone, by width and height on a computer (and
@@ -618,6 +705,7 @@
     tela = "fim";
     pararFonte();
     $("#pr-sair-box").hidden = true;
+    $("#pr-pedidos").hidden = true;
     const ord = [...est.jogadores].sort((a, b) => b.pontos - a.pontos);
     palco.className = "palco";
     palco.innerHTML = `<div class="placar board campeao"><span class="lamp">Fim de jogo${ord.length ? ` · ${esc(ord[0].apelido)}` : ""}</span><span class="lamp n">${ord.length ? ord[0].pontos : 0} pts</span></div>
@@ -662,9 +750,13 @@
       const op = (opcoesDoLance || []).find((o) => o.texto === agora.palavra);
       sis(`Você ${escolhida === null ? "tirou no sorteio" : "escolheu"} ${agora.palavra}${op ? ` (${DIF[op.dificuldade][0].toLowerCase()})` : ""}.`);
     }
+    if (agora.fase === "intervalo" && antes.fase === "escolha" && pulou) {
+      sis(`${souEu(agora.desenhista) ? "Você" : nome(agora.desenhista)} pulou a vez.`);
+    }
     if (agora.fase === "intervalo" && antes.fase === "desenho") {
       const chutam = agora.jogadores.filter((j) => j.presente && j.id !== agora.desenhista);
-      const motivo = !agora.jogadores.some((j) => j.id === agora.desenhista && j.presente) ? "Quem desenhava saiu."
+      const motivo = pulou ? `${souEu(agora.desenhista) ? "Você" : nome(agora.desenhista)} pulou a vez.`
+        : !agora.jogadores.some((j) => j.id === agora.desenhista && j.presente) ? "Quem desenhava saiu."
         : chutam.length && chutam.every((j) => j.acertou) ? "Todo mundo acertou." : "Acabou o tempo.";
       sis(`${motivo} Era ${agora.palavra}.`);
     }
@@ -675,6 +767,9 @@
     seq = novo.seq;
     tentativas = 0;
     diferenca = Date.parse(novo.agora) - Date.now();
+    if (novo.fase === "pedido") return telaPedido();
+    if (eu.pendente) { eu = { jogador: eu.jogador, token: eu.token }; gravar(SALA, eu); } // accepted
+    mostrarPedidos();
     if (!novo.jogadores.some((j) => souEu(j.id))) {
       // I am no longer in the room: I left, or got the red card
       esquecer();
@@ -684,7 +779,7 @@
     $("#pr-sair-box").hidden = novo.fase === "fim";
     // A new play: its points and my strokes start over.
     const chave = `${novo.rodada}:${novo.desenhista}`;
-    if (chave !== lanceAtual) { ganhos = {}; opcoesDoLance = null; escolhida = null; lanceAtual = chave; }
+    if (chave !== lanceAtual) { ganhos = {}; opcoesDoLance = null; escolhida = null; pulou = false; lanceAtual = chave; }
     if (novo.fase === "fim") return telaFim();
     if (novo.fase === "espera") return telaEspera();
     // Strokes: the server's, except the drawer's own drawing in progress (never thrown away by
@@ -703,14 +798,16 @@
   }
   function receber(tipoEvento, d) {
     if (tipoEvento === "estado") return receberEstado(d);
+    if (tipoEvento === "recusado") return recusado();
     if (!est || d.seq <= seq) return; // already in the last `estado`
     seq = d.seq;
-    if (tipoEvento === "fim") return telaFim();
+    if (tipoEvento === "fim") return tela === "pedido" ? caiu() : telaFim();
     if (tela !== "ao-vivo") return;
+    if (tipoEvento === "pulou") { pulou = true; return; }
     if (tipoEvento === "traco") return receberTraco(d);
     if (tipoEvento === "desfazer") { tracos = tracos.filter((t) => t.id !== d.id); return pedirDesenho(); }
     if (tipoEvento === "limpar") { tracos = []; return pedirDesenho(); }
-    if (tipoEvento === "dica") { est.dica = d.dica; return telaAoVivo(); }
+    if (tipoEvento === "dica") { est.dica = d.dica; sis(`${nome(est.desenhista)} acendeu uma letra.`); return telaAoVivo(); }
     if (tipoEvento === "chute") return noFeed(`<b>${esc(nome(d.jogador))}:</b> ${esc(d.texto)}`);
     if (tipoEvento === "trave") return noFeed(`<b>Na trave!</b> “${esc(d.texto)}” passou perto.<small>Só você vê este aviso.</small>`, "trave");
     if (tipoEvento === "acerto") {
@@ -722,7 +819,7 @@
       return telaAoVivo();
     }
   }
-  const EVENTOS = ["estado", "traco", "desfazer", "limpar", "chute", "acerto", "trave", "dica", "fim"];
+  const EVENTOS = ["estado", "traco", "desfazer", "limpar", "chute", "acerto", "trave", "dica", "pulou", "recusado", "fim"];
   function conectar() {
     pararFonte();
     fonte = new EventSource(`${API}/salas/${SALA}/eventos?token=${encodeURIComponent(eu.token)}`);
@@ -751,7 +848,7 @@
     setTimeout(() => { checando = false; if (tela !== "fim" && tela !== "aviso") conectar(); }, espera);
   }
   // A cheap authenticated call with no effect: a red card for myself is always refused (422)
-  // when my token is good, 403 when it is not, 404 when the room is gone.
+  // when my token is good, 409 while my request waits, 403 when it is gone, 404 with the room.
   async function meuToken() {
     const { status } = await postar(`/salas/${SALA}/acao`, { token: eu.token, tipo: "cartao", alvo: eu.jogador });
     return status;
@@ -769,8 +866,9 @@
       }
       else if (html.includes('id="pr-sumula"')) location.reload();
       else if (r.ok && (await meuToken()) === 403) {
+        const pedia = eu.pendente;
         esquecer(); eu = null; est = null; tela = "";
-        telaEntrar("Seu lugar na sala caiu. Entre de novo com um apelido.");
+        telaEntrar(pedia ? "Seu pedido para entrar caiu. Peça de novo com um apelido." : "Seu lugar na sala caiu. Entre de novo com um apelido.");
       } else return reconectar();
     } catch {
       return reconectar();
@@ -786,6 +884,7 @@
     el.innerHTML = `${Math.floor(s / 60)}<span class="dp"></span>${String(s % 60).padStart(2, "0")}`;
     el.classList.toggle("fim", est.fase !== "intervalo" && s <= 10);
     subtitulo();
+    botaoDica();
   }
   setInterval(tic, 250);
 

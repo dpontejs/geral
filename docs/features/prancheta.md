@@ -1,7 +1,9 @@
 # Prancheta: desenhar e adivinhar em sala privada
 
-- **Data:** 2026-11-23
-- **Status:** entregue (PRs #84, #85, #86, #88, #90, #92 e a entrada em /jogos)
+- **Data:** 2026-11-23 (ajustes de 2026-11-24: pedir para entrar, 12 gizes, dica de quem desenha,
+  pular a vez)
+- **Status:** entregue (PRs #84, #85, #86, #88, #90, #92 e a entrada em /jogos); ajustes de
+  2026-11-24 em `feat/prancheta-sala-ajustes`
 - **ADRs:** — (sala em memória num processo só: registrado nas Decisões do PLAN)
 
 ## Objetivo
@@ -25,12 +27,26 @@ Um banco só de palavras de futebol, sem tema por time. Ao fim, a súmula fica n
   palavrão). Quem cria é o anfitrião e escolhe só as **rodadas** (1–3, fixas desde o início; cada
   jogador desenha uma vez por rodada). Dá para entrar no meio: vai para o fim da fila da rodada
   em curso (a partida fica um pouco mais longa).
+- **Pedir para entrar** (dev, 2026-11-24): só quem cria entra direto. Quem abre o link escolhe o
+  apelido e fica em "pedindo para entrar" até o anfitrião **aceitar** ou **recusar** (só ele vê os
+  pedidos). Aceito, entra como antes (no meio do jogo, fim da fila). Recusado, recebe um aviso
+  educado e o token do pedido deixa de valer (pode pedir de novo, com outro pedido). Pedido não
+  ocupa vaga dos 10 até ser aceito; no máximo 10 pedidos esperando (409). Aceitar com a sala cheia
+  dá 409 e o pedido continua. Se o anfitrião sai, o próximo herda os pedidos. Pedido sem conexão
+  de eventos por 30 s cai. O apelido do pedido não pode repetir o de um jogador nem o de outro
+  pedido.
 - **Fases do lance:** `escolha` (quem desenha escolhe 1 de 3 palavras: fácil, média, difícil;
   15 s, senão sorteia) → `desenho` (80 s) → `intervalo` (palavra revelada, 6 s) → próximo lance.
   O lance acaba antes se todos os presentes acertarem. Antes do 1º lance, `espera`; no fim, `fim`.
-- **Dicas automáticas:** a palavra aparece desde o início como lâmpadas apagadas, uma por letra;
-  espaço, hífen, ponto e dígito aparecem desde o início e não contam como letra. Aos 50% e aos 75%
-  do tempo acende uma letra ao acaso (no máximo 1/3 das letras). Quem desenha não pede dica.
+- **Dicas de quem desenha** (dev, 2026-11-24, no lugar das automáticas): a palavra aparece desde
+  o início como lâmpadas apagadas, uma por letra; espaço, hífen, ponto e dígito aparecem desde o
+  início e não contam como letra. Quem desenha tem o botão "dar dica", que acende uma letra ao
+  acaso: a 1ª fica liberada aos 50% do tempo, a 2ª aos 75% (uma por marco, acumulam se ele
+  esperar; nunca mais de 1/3 das letras, então palavra de 1–2 letras não tem dica e de 3–5 tem
+  uma). Dar é escolha dele; nada acende sozinho.
+- **Pular a vez** (dev, 2026-11-24): quem desenha pode pular na `escolha` ou no `desenho`. O lance
+  vai ao `intervalo` (a palavra aparece, se já tinha sido escolhida), os pontos já ganhos ficam,
+  ninguém perde nada e o jogo segue.
 - **Pontos:** o k-ésimo a acertar ganha `max(base − (k − 1), 2)`, com base 5/7/10 para
   fácil/média/difícil. Quem desenha ganha 2 por acerto (assistência). A súmula mostra pontos,
   gols (acertos) e assistências.
@@ -69,20 +85,23 @@ Um banco só de palavras de futebol, sem tema por time. Ao fim, a súmula fica n
   Sem `texto` repetido. `palavras.py`: `opcoes(rng, usadas) -> list[Palavra]` (3, uma por
   dificuldade, sem repetir na partida) e `julgar(chute, palavra) -> Literal["certo", "trave",
   "errado"]`.
-- **Traço:** coordenadas inteiras 0–1000 num quadro 4:3. `{"id": int, "cor": 0–7, "esp": 1|2|3,
+- **Traço:** coordenadas inteiras 0–1000 num quadro 4:3. `{"id": int, "cor": 0–12, "esp": 1|2|3,
   "pts": [[x, y], ...], "fim": bool}`; um traço chega em pedaços (≤ 64 pontos cada, mesmo `id`).
-  Cor 0 = apagador (cor do quadro). Desfazer tira o último `id`; limpar zera. Teto: 20 mil pontos
-  por desenho.
+  Cor 0 = apagador (cor do quadro); 1–12 = gizes (branco, amarelo, laranja, vermelho, rosa, azul,
+  verde, roxo, marrom, cinza, azul-escuro, preto; a paleta fica em 2 fileiras de 7 no celular).
+  Desfazer tira o último `id`; limpar zera. Teto: 20 mil pontos por desenho.
 - **Rotas** (prefixo `/api/jogos/prancheta`):
   - `GET /jogos/prancheta` (criar) e `GET /jogos/prancheta/s/{id}` (sala viva → jogo; encerrada →
     súmula; sem sala nem súmula → "a sala acabou ou o servidor reiniciou").
   - `POST /salas {apelido, rodadas}` → `{id, jogador, token}`; `id` = 6 caracteres base32.
-  - `POST /salas/{id}/entrar {apelido}` → `{jogador, token}`; 409 cheia/encerrada, 422 apelido.
+  - `POST /salas/{id}/entrar {apelido}` → `{jogador, token, pendente: true}`: é um **pedido**
+    (`jogador` = o id que ele terá se aceito); 409 muitos pedidos/encerrada, 422 apelido.
   - `POST /salas/{id}/acao {token, tipo, ...}`, `tipo` ∈ `comecar | escolher{indice} | traco{...}
-    | desfazer | limpar | chute{texto} | cartao{alvo} | tirar{alvo} | sair` (união discriminada
-    do Pydantic). 403 token inválido/expulso; 409 ação fora da vez/fase; 204 se aceita.
+    | desfazer | limpar | chute{texto} | cartao{alvo} | tirar{alvo} | sair | aceitar{pedido} |
+    recusar{pedido} | dica | pular` (união discriminada do Pydantic). 403 token inválido/expulso/
+    recusado; 409 ação fora da vez/fase, pedido ainda esperando ou dica ainda travada; 204 se aceita.
   - `GET /salas/{id}/eventos?token=` (SSE, `event:` = tipo, `data:` = JSON com `seq`). Reconectar
-    sempre recebe a foto de novo.
+    sempre recebe a foto de novo. O token de um pedido também ouve (para saber a resposta).
 - **Eventos (contrato de C, D e E):**
   - `estado` (ao conectar e a cada mudança de fase ou de jogadores): `{seq, voce, fase, rodada,
     rodadas, prazo, agora, desenhista, jogadores: [{id, apelido, pontos, gols, assist,
@@ -91,11 +110,17 @@ Um banco só de palavras de futebol, sem tema por time. Ao fim, a súmula fica n
     `null` se apagada (não-letras sempre visíveis). `opcoes`: só para quem desenha na `escolha`,
     `[{texto, dificuldade}]` na ordem fácil, média, difícil (`escolher{indice}` = 0–2), senão `null`.
     `palavra`: para quem desenha a partir do `desenho`, para todos no `intervalo` e no `fim`, senão
-    `null`. `tracos`: os traços inteiros do desenho atual.
+    `null`. `tracos`: os traços inteiros do desenho atual. `dicas`: só para quem desenha no
+    `desenho`, `{dadas, marcos: [ISO, ...]}` (quando cada dica libera), senão `null`. `pedidos`: só
+    para o anfitrião, `[{id, apelido}]`, senão `null`.
+  - `estado` de um **pedido** esperando: `{seq, voce, fase: "pedido", agora, apelido, anfitriao}`
+    (o apelido do anfitrião; nada da sala). Aceito, passa a receber o `estado` de jogador.
   - `traco` `{id, cor, esp, pts, fim}`: cada pedaço repassado como chegou, a todos **menos** quem
     desenha (ele já desenhou na tela). `desfazer {id}`, `limpar {}`.
   - `chute {jogador, texto}` (só os errados e longe); `acerto {jogador, pontos}`; `trave {texto}`
-    (privado); `dica {dica}`; `fim {sumula}` (o mesmo JSON gravado na tabela).
+    (privado); `dica {dica}` (a todos menos quem desenha, que recebe um `estado` novo);
+    `pulou {jogador}` (antes do `estado` do intervalo); `recusado {}` (só ao pedido, e o fluxo
+    dele fecha); `fim {sumula}` (o mesmo JSON gravado na tabela).
 - **Hub:** dicionário de salas em memória; um laço do lifespan chama `sala.avancar(agora)` a cada
   0,5 s e transmite o que mudou. Sala sem ninguém conectado por 10 min, ou com 3 h, é encerrada.
   `web/prancheta.py` expõe `criar_prancheta(db_path, now, sleep, limite_salas: RateLimiter) ->
@@ -116,7 +141,15 @@ Um banco só de palavras de futebol, sem tema por time. Ao fim, a súmula fica n
 - [ ] `test_quem_desenha_sai_lance_vai_ao_intervalo` e `test_anfitriao_passa_ao_mais_antigo`.
 - [ ] `test_trave_so_para_quem_chutou` e `test_julgar_normaliza_acento_e_apelido`.
 - [ ] `test_pontos_por_ordem_e_dificuldade` e `test_assistencia_de_quem_desenha`.
-- [ ] `test_dicas_aos_50_e_75_porcento` (com relógio injetado; nunca mais de 1/3 das letras).
+- [x] `test_dicas_so_quando_quem_desenha_pede`, `test_dica_liberada_aos_50_e_75_porcento`,
+  `test_dica_nunca_passa_de_um_terco` e `test_foto_de_quem_desenha_traz_os_marcos_das_dicas`
+  (com relógio injetado; substituem `test_dicas_aos_50_e_75_porcento`, de 2026-11-24).
+- [x] `test_quem_abre_o_link_pede_para_entrar`, `test_anfitriao_aceita_o_pedido`,
+  `test_anfitriao_recusa_o_pedido`, `test_novo_anfitriao_herda_os_pedidos`,
+  `test_pedidos_nao_ocupam_vaga_e_tem_teto`, `test_pedido_sem_conexao_cai_depois_de_30_s`; no
+  servidor, `test_quem_pede_espera_e_o_anfitriao_aceita` e `test_recusado_e_avisado_e_o_fluxo_fecha`.
+- [x] `test_quem_desenha_pula_e_o_lance_vai_ao_intervalo`, `test_quem_desenha_pula_na_escolha`,
+  `test_so_quem_desenha_pula_409`; `test_doze_gizes_e_o_apagador` e `test_dica_e_pular_pela_rota`.
 - [ ] `test_lance_acaba_quando_todos_acertam` e `test_vez_de_ausente_e_pulada`.
 - [ ] `test_entra_no_meio_vai_para_o_fim_da_fila` e `test_sala_cheia_409`.
 - [ ] `test_acao_fora_da_vez_409` e `test_token_de_outra_sala_403`.
@@ -131,6 +164,9 @@ Um banco só de palavras de futebol, sem tema por time. Ao fim, a súmula fica n
 `uv run pytest` (suíte segue em ~1 min: regras testadas sem servidor; SSE com relógio e `sleep`
 injetados, como `duel_events`). Depois, com o app local, um script Playwright abre 3 navegadores
 (um com tela de celular), cria a sala, entra, desenha, acerta, chega à súmula e tira fotos.
+Nos ajustes de 2026-11-24: pede para entrar, o anfitrião recusa um e aceita outro, paleta de 12
+gizes no PC e no celular de 390 px, botão de dica travado e liberado, e pular na escolha e no
+desenho.
 
 ## Fatias (um PR cada; subagentes em worktrees)
 

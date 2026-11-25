@@ -8,6 +8,7 @@
   <div class="wrap" id="pr" data-sala="{{ sala_id }}" data-url="{{ public_url }}">
     {% include "_game_tabs.html.j2" %}
     <div class="game-title"><h1>Prancheta</h1><button type="button" class="rules-open" aria-label="Como jogar">?</button></div>
+    <div class="pr-pedidos board" id="pr-pedidos" aria-live="polite" hidden></div>
     <div class="palco" id="palco" aria-live="polite">
       <noscript><div class="ticket"><h2>Precisa de JavaScript</h2><p>A Prancheta é ao vivo: ligue o JavaScript para criar ou entrar numa sala.</p></div></noscript>
     </div>
