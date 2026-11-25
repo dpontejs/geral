@@ -137,7 +137,8 @@ def test_traco_repassado_exceto_desenhista():
         traco(1, [[-1, 0]]),
         traco(1, [[0.5, 0]]),
         traco(1, [[0, 0, 0]]),
-        traco(1, [[0, 0]], cor=8),
+        traco(1, [[0, 0]], cor=13),
+        traco(1, [[0, 0]], cor=-1),
         traco(1, [[0, 0]], esp=4),
         {"tipo": "traco", "id": 1, "cor": 1, "esp": 1, "pts": [[0, 0]]},
         {"tipo": "traco", "id": "1", "cor": 1, "esp": 1, "pts": [[0, 0]], "fim": True},
@@ -370,34 +371,83 @@ def test_chute_rapido_demais_429():
     sala.agir(2, chute("rede"), em(2.5))
 
 
-def test_dicas_aos_50_e_75_porcento():
+DICA = {"tipo": "dica"}
+
+
+def test_dicas_so_quando_quem_desenha_pede():
     sala, _ = em_desenho(indice=2)  # Frasqueira, drawing from 1 s to 81 s
     assert sala.foto(2, em(1))["dica"] == [None] * 10
-    assert sala.avancar(em(40.9)) == []
-    eventos = sala.avancar(em(41))
-    assert [(e.tipo, e.exceto) for e in eventos] == [("dica", 1)]
+    assert sala.avancar(em(41)) == [] and sala.avancar(em(61)) == []  # nothing by itself
+    assert sala.foto(2, em(61))["dica"] == [None] * 10
+    eventos = sala.agir(1, DICA, em(61))
+    assert [(e.tipo, e.para, e.exceto) for e in eventos] == [("dica", None, 1), ("estado", 1, None)]
     acesas = [c for c in eventos[0].dados["dica"] if c]
     assert len(acesas) == 1 and acesas[0] in "Frasqueira"
-    assert sala.avancar(em(60.9)) == []
-    eventos = sala.avancar(em(61))
+    assert eventos[1].dados["dicas"]["dadas"] == 1
+    eventos = sala.agir(1, DICA, em(61.5))  # both thresholds passed: two hints to give
     dica = eventos[0].dados["dica"]
     assert sum(1 for c in dica if c) == 2
     assert all(c is None or c == "Frasqueira"[i] for i, c in enumerate(dica))
-    assert sala.foto(2, em(61))["dica"] == dica
-    assert [e.tipo for e in sala.avancar(em(80.9))] == []
+    assert sala.foto(2, em(62))["dica"] == dica
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(1, DICA, em(62))
+    assert _status(excinfo) == 409
+
+
+def test_dica_liberada_aos_50_e_75_porcento():
+    sala, _ = em_desenho(indice=2)
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(1, DICA, em(40.9))
+    assert _status(excinfo) == 409
+    sala.agir(1, DICA, em(41))
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(1, DICA, em(60.9))  # one hint per threshold
+    assert _status(excinfo) == 409
+    sala.agir(1, DICA, em(61))
+    assert sum(1 for c in sala.foto(2, em(61))["dica"] if c) == 2
+
+
+def test_foto_de_quem_desenha_traz_os_marcos_das_dicas():
+    sala, _ = em_desenho(indice=2)
+    assert sala.foto(1, em(2))["dicas"] == {
+        "dadas": 0,
+        "marcos": [em(41).isoformat(), em(61).isoformat()],
+    }
+    assert sala.foto(2, em(2))["dicas"] is None
+    curta, _ = em_desenho(banco=BancoDe("Gol"))
+    assert curta.foto(1, em(2))["dicas"]["marcos"] == [em(41).isoformat()]  # 1/3 of 3 letters
+    escolhendo, _ = sala_com(2)
+    escolhendo.agir(1, COMECAR, em(0))
+    assert escolhendo.foto(1, em(0))["dicas"] is None
+
+
+def test_so_quem_desenha_da_dica_409():
+    sala, _ = em_desenho(indice=2)
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(2, DICA, em(41))
+    assert _status(excinfo) == 409
+    escolhendo, _ = sala_com(2)
+    escolhendo.agir(1, COMECAR, em(0))
+    with pytest.raises(ErroSala) as excinfo:
+        escolhendo.agir(1, DICA, em(14))
+    assert _status(excinfo) == 409
 
 
 def test_dica_nunca_passa_de_um_terco():
     sala, _ = em_desenho(banco=BancoDe("Gol"))
-    assert len(sala.avancar(em(41))) == 1
-    assert sala.avancar(em(61)) == []
+    sala.agir(1, DICA, em(41))
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(1, DICA, em(61))
+    assert _status(excinfo) == 409
     assert sum(1 for c in sala.foto(2, em(61))["dica"] if c) == 1
 
 
 def test_dica_mostra_o_que_nao_e_letra():
     sala, _ = em_desenho(banco=BancoDe("7 a 1-0."))
     assert sala.foto(2, em(1))["dica"] == ["7", " ", None, " ", "1", "-", "0", "."]
-    assert sala.avancar(em(41)) == [] and sala.avancar(em(61)) == []
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(1, DICA, em(61))  # one letter: no hint at all
+    assert _status(excinfo) == 409
 
 
 def test_ultimo_acerto_encerra_o_lance():
@@ -457,7 +507,8 @@ def test_palavra_nunca_vaza():
     guarda(sala.agir(2, chute("torcida do ABC lá"), em(5)), 5)
     guarda(sala.agir(3, chute("arquibancada"), em(6)), 6)
     guarda(sala.agir(2, chute("Frasqueira"), em(7)), 7)
-    t = 7.0
+    guarda(sala.agir(1, {"tipo": "dica"}, em(41)), 41)
+    t = 41.0
     while sala.foto(1, em(t))["fase"] == "desenho":
         t += 0.5
         guarda(sala.avancar(em(t)), t)
@@ -765,3 +816,218 @@ def test_sumula_ordenada_por_pontos():
         ],
     }
     assert sala.foto(1, em(105))["palavra"] == "Impedimento"
+
+
+# --- 2026-11-24: mais cores, pedir para entrar e pular a vez ---
+
+
+def test_doze_gizes_e_o_apagador():
+    sala, _ = em_desenho()
+    for cor in range(13):
+        sala.agir(1, traco(cor + 1, [[10, 10]], cor=cor), em(2 + cor * 0.05))
+    assert [t["cor"] for t in sala.foto(2, em(3))["tracos"]] == list(range(13))
+
+
+def aceitar(pedido: int) -> dict:
+    return {"tipo": "aceitar", "pedido": pedido}
+
+
+def recusar(pedido: int) -> dict:
+    return {"tipo": "recusar", "pedido": pedido}
+
+
+def pedidos(sala, quem: int = 1, t: float = 0):
+    return sala.foto(quem, em(t))["pedidos"]
+
+
+def test_quem_abre_o_link_pede_para_entrar():
+    sala, _ = sala_com(2)
+    pedido, token, eventos = sala.pedir(" Novato ", em(1))
+    assert pedido == 3 and token
+    assert {e.para for e in eventos if e.tipo == "estado"} == {1, 2, 3}
+    assert pedidos(sala) == [{"id": 3, "apelido": "Novato"}]
+    assert pedidos(sala, 2) is None  # only the host sees the requests
+    assert ids(sala) == [1, 2]  # not a player yet
+    assert sala.foto(3, em(1)) == {
+        "seq": sala.foto(1, em(1))["seq"],
+        "voce": 3,
+        "fase": "pedido",
+        "agora": em(1).isoformat(),
+        "apelido": "Novato",
+        "anfitriao": "Ana",
+    }
+    assert sala.identificar(token) == 3 and sala.esta(3)
+    with pytest.raises(ErroSala) as excinfo:
+        sala.jogador(token)  # waiting: cannot act yet
+    assert _status(excinfo) == 409
+
+
+def test_anfitriao_aceita_o_pedido():
+    sala, _ = sala_com(2)
+    pedido, token, _ = sala.pedir("Novato", em(1))
+    sala.conectou(pedido, em(1))
+    eventos = sala.agir(1, aceitar(pedido), em(2))
+    assert {e.para for e in eventos if e.tipo == "estado"} == {1, 2, 3}
+    assert ids(sala) == [1, 2, 3] and pedidos(sala) == []
+    assert sala.jogador(token) == 3
+    foto = sala.foto(3, em(2))
+    assert foto["fase"] == "espera" and foto["voce"] == 3
+    assert foto["jogadores"][2]["presente"]
+    sala.agir(1, COMECAR, em(3))
+    assert _desenhistas(sala, 1000) == [1, 2, 3]
+
+
+def test_aceito_no_meio_vai_para_o_fim_da_fila():
+    sala, _ = sala_com(3)
+    sala.agir(1, COMECAR, em(0))
+    pedido, _, _ = sala.pedir("Novato", em(0.2))
+    sala.conectou(pedido, em(0.2))
+    sala.agir(1, aceitar(pedido), em(0.3))
+    assert _desenhistas(sala, 1000) == [1, 2, 3, 4]
+
+
+def test_anfitriao_recusa_o_pedido():
+    sala, _ = sala_com(2)
+    pedido, token, _ = sala.pedir("Novato", em(1))
+    eventos = sala.agir(1, recusar(pedido), em(2))
+    assert Evento("recusado", {"seq": eventos[0].dados["seq"]}, para=3) in eventos
+    assert {e.para for e in eventos if e.tipo == "estado"} == {1, 2}
+    assert pedidos(sala) == [] and ids(sala) == [1, 2]
+    assert not sala.esta(3)
+    for buscar in (sala.jogador, sala.identificar):
+        with pytest.raises(ErroSala) as excinfo:
+            buscar(token)
+        assert _status(excinfo) == 403
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(1, aceitar(pedido), em(3))  # too late
+    assert _status(excinfo) == 422
+
+
+@pytest.mark.parametrize("acao", [aceitar(3), recusar(3)])
+def test_so_anfitriao_responde_pedido_409(acao):
+    sala, _ = sala_com(2)
+    sala.pedir("Novato", em(1))
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(2, acao, em(2))
+    assert _status(excinfo) == 409
+
+
+@pytest.mark.parametrize("pedido", [2, 9, "3", None, True])
+def test_pedido_invalido_422(pedido):
+    sala, _ = sala_com(2)
+    sala.pedir("Novato", em(1))
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(1, {"tipo": "aceitar", "pedido": pedido}, em(2))
+    assert _status(excinfo) == 422
+
+
+def test_novo_anfitriao_herda_os_pedidos():
+    sala, _ = sala_com(3)
+    sala.pedir("Novato", em(1))
+    sala.agir(1, SAIR, em(2))
+    assert pedidos(sala, 2, 2) == [{"id": 4, "apelido": "Novato"}]
+    assert sala.foto(4, em(2))["anfitriao"] == "Bia"
+    sala.agir(2, aceitar(4), em(3))
+    assert ids(sala, 2, 3) == [2, 3, 4]
+
+
+def test_pedidos_nao_ocupam_vaga_e_tem_teto():
+    sala, _ = sala_com(9)
+    novos = [sala.pedir(f"Novo{i}", em(1))[0] for i in range(10)]
+    with pytest.raises(ErroSala) as excinfo:
+        sala.pedir("Mais um", em(1))
+    assert _status(excinfo) == 409
+    sala.agir(1, aceitar(novos[0]), em(2))
+    assert len(ids(sala, 1, 2)) == 10
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(1, aceitar(novos[1]), em(2))  # the room is full: the request waits
+    assert _status(excinfo) == 409
+    assert len(pedidos(sala, 1, 2)) == 9
+
+
+def test_apelido_de_pedido_nao_repete():
+    sala, _ = sala_com(2)
+    sala.pedir("Novato", em(1))
+    for apelido in ("bia", "NOVATO", "x", "porra"):
+        with pytest.raises(ErroSala) as excinfo:
+            sala.pedir(apelido, em(1))
+        assert _status(excinfo) == 422
+    with pytest.raises(ErroSala) as excinfo:
+        sala.entrar("Novato", em(1))
+    assert _status(excinfo) == 422
+
+
+def test_pedido_sem_conexao_cai_depois_de_30_s():
+    sala, _ = sala_com(2)
+    pedido, token, _ = sala.pedir("Novato", em(0))
+    outro, _, _ = sala.pedir("Outro", em(0))
+    sala.conectou(outro, em(1))
+    assert sala.avancar(em(29.9)) == []
+    eventos = sala.avancar(em(30))
+    assert {e.para for e in eventos if e.tipo == "estado"} == {1, 2, outro}
+    assert pedidos(sala, 1, 30) == [{"id": outro, "apelido": "Outro"}]
+    with pytest.raises(ErroSala) as excinfo:
+        sala.identificar(token)
+    assert _status(excinfo) == 403
+    sala.desconectou(outro, em(31))
+    sala.avancar(em(61))
+    assert pedidos(sala, 1, 61) == []
+
+
+def test_pedido_em_sala_encerrada_409():
+    sala, _ = sala_com(2)
+    sala.agir(1, COMECAR, em(0))
+    sala.agir(2, SAIR, em(1))
+    with pytest.raises(ErroSala) as excinfo:
+        sala.pedir("Novato", em(2))
+    assert _status(excinfo) == 409
+
+
+PULAR = {"tipo": "pular"}
+
+
+def test_quem_desenha_pula_e_o_lance_vai_ao_intervalo():
+    sala, _ = em_desenho(3)
+    sala.agir(2, chute("Bicicleta"), em(2))
+    eventos = sala.agir(1, PULAR, em(3))
+    assert eventos[0] == Evento("pulou", {"jogador": 1, "seq": eventos[0].dados["seq"]})
+    assert {e.para for e in eventos if e.tipo == "estado"} == {1, 2, 3}
+    foto = sala.foto(3, em(3))
+    assert (foto["fase"], foto["palavra"], foto["prazo"]) == (
+        "intervalo",
+        "Bicicleta",
+        em(9).isoformat(),
+    )
+    assert [(j["pontos"], j["gols"], j["assist"]) for j in foto["jogadores"]] == [
+        (2, 0, 1),
+        (5, 1, 0),
+        (0, 0, 0),
+    ]
+    sala.avancar(em(9))
+    assert sala.foto(2, em(9))["desenhista"] == 2
+    assert sala.sumula()["lances"][0] == {
+        "desenhista": "Ana",
+        "palavra": "Bicicleta",
+        "acertaram": ["Bia"],
+    }
+
+
+def test_quem_desenha_pula_na_escolha():
+    sala, _ = sala_com(3)
+    sala.agir(1, COMECAR, em(0))
+    sala.agir(1, PULAR, em(1))
+    foto = sala.foto(2, em(1))
+    assert (foto["fase"], foto["palavra"], foto["opcoes"]) == ("intervalo", None, None)
+    sala.avancar(em(7))
+    assert sala.foto(2, em(7))["desenhista"] == 2
+
+
+def test_so_quem_desenha_pula_409():
+    sala, _ = em_desenho(3)
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(2, PULAR, em(2))
+    assert _status(excinfo) == 409
+    sala.agir(1, PULAR, em(3))
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(1, PULAR, em(4))  # already in the break
+    assert _status(excinfo) == 409

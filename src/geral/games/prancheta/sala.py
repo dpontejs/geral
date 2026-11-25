@@ -14,6 +14,7 @@ from geral.games.prancheta.filtro import tem_palavrao
 from geral.games.prancheta.tipos import Banco, Palavra, normalizar
 
 MAX_JOGADORES = 10
+MAX_PEDIDOS = 10  # requests waiting for the host's answer
 TEMPO_ESCOLHA = timedelta(seconds=15)
 TEMPO_DESENHO = timedelta(seconds=80)
 TEMPO_INTERVALO = timedelta(seconds=6)
@@ -27,15 +28,17 @@ CHUTE_MAX = 40
 CHUTE_INTERVALO = timedelta(seconds=0.5)
 PEDACOS_POR_SEGUNDO = 40
 APELIDO_MIN, APELIDO_MAX = 2, 16
-CORES = range(8)
+CORES = range(13)  # 0 is the eraser, 1–12 the chalks
 ESPESSURAS = (1, 2, 3)
 COORDENADAS = range(1001)
 DIFICULDADES = ("facil", "media", "dificil")
+MARCOS_DICA = (0.5, 0.75)  # shares of the drawing time that unlock a hint each
 
 
 @dataclass
 class Evento:
-    tipo: str  # estado | traco | desfazer | limpar | chute | acerto | trave | dica | fim
+    # estado | traco | desfazer | limpar | chute | acerto | trave | dica | pulou | recusado | fim
+    tipo: str
     dados: dict  # the contract's JSON, already with "seq"
     para: int | None = None
     exceto: int | None = None
@@ -64,6 +67,17 @@ class _Jogador:
     pedacos: deque = field(default_factory=deque)
 
 
+@dataclass
+class _Pedido:
+    """Someone who opened the link and asked to join: waits for the host's answer."""
+
+    id: int  # the player id they get if accepted
+    apelido: str
+    token: str
+    desde: datetime  # last time the request had no events connection (or was made)
+    conexoes: int = 0
+
+
 def _eh_int(valor: object) -> bool:
     return isinstance(valor, int) and not isinstance(valor, bool)
 
@@ -81,6 +95,8 @@ class Sala:
         self._seq = 0
         self._jogadores: dict[int, _Jogador] = {}  # active players, in joining order
         self._tokens: dict[str, int] = {}
+        self._pedidos: dict[int, _Pedido] = {}  # waiting for the host, in arrival order
+        self._tokens_pedido: dict[str, int] = {}
         self._proximo_id = 1
         self._anfitriao: int | None = None
         self._fase = "espera"
@@ -105,19 +121,48 @@ class Sala:
     # --- entrada e identidade ---
 
     def entrar(self, apelido: str, agora: datetime) -> tuple[int, str, list[Evento]]:
+        """Joins at once: only the room's creator (everyone else asks with `pedir`)."""
         if self.encerrada:
             raise ErroSala(409, "room is over")
         if len(self._jogadores) >= MAX_JOGADORES:
             raise ErroSala(409, "room is full")
+        apelido = self._validar_apelido(apelido)
+        jogador = self._admitir(self._proximo_id, apelido, secrets.token_urlsafe(16), agora)
+        self._proximo_id += 1
+        return jogador.id, jogador.token, self._estados(agora)
+
+    def pedir(self, apelido: str, agora: datetime) -> tuple[int, str, list[Evento]]:
+        """Asks the host to join; the request's id is the player id it gets if accepted.
+
+        A request takes no seat until accepted. Its token opens the events stream (to learn the
+        answer) but acts on nothing.
+        """
+        if self.encerrada:
+            raise ErroSala(409, "room is over")
+        if len(self._pedidos) >= MAX_PEDIDOS:
+            raise ErroSala(409, "too many requests")
+        apelido = self._validar_apelido(apelido)
+        pedido = _Pedido(self._proximo_id, apelido, secrets.token_urlsafe(16), desde=agora)
+        self._proximo_id += 1
+        self._pedidos[pedido.id] = pedido
+        self._tokens_pedido[pedido.token] = pedido.id
+        return pedido.id, pedido.token, self._estados(agora)
+
+    def _validar_apelido(self, apelido: str) -> str:
         apelido = apelido.strip()
         if not APELIDO_MIN <= len(apelido) <= APELIDO_MAX:
             raise ErroSala(422, "nickname must have 2 to 16 characters")
         if tem_palavrao(apelido):
             raise ErroSala(422, "nickname not allowed")
-        if normalizar(apelido) in {normalizar(j.apelido) for j in self._jogadores.values()}:
+        em_uso = [*self._jogadores.values(), *self._pedidos.values()]
+        if normalizar(apelido) in {normalizar(j.apelido) for j in em_uso}:
             raise ErroSala(422, "nickname already in the room")
-        jogador = _Jogador(self._proximo_id, apelido, secrets.token_urlsafe(16), desde=agora)
-        self._proximo_id += 1
+        return apelido
+
+    def _admitir(
+        self, id_: int, apelido: str, token: str, desde: datetime, conexoes: int = 0
+    ) -> _Jogador:
+        jogador = _Jogador(id_, apelido, token, desde=desde, conexoes=conexoes)
         self._jogadores[jogador.id] = jogador
         self._todos[jogador.id] = jogador
         self._tokens[jogador.token] = jogador.id
@@ -125,17 +170,26 @@ class Sala:
             self._anfitriao = jogador.id
         if self._fase not in ("espera", "fim"):
             self._fila.append(jogador.id)
-        return jogador.id, jogador.token, self._estados(agora)
+        return jogador
 
     def esta(self, jogador: int) -> bool:
-        """The player is still in the room (not left, not sent off)."""
-        return jogador in self._jogadores
+        """Still has a place here: a player (not left, not sent off) or a request waiting."""
+        return jogador in self._jogadores or jogador in self._pedidos
 
     def jogador(self, token: str) -> int:
-        try:
+        """The player who acts with this token; a request still waiting cannot act (409)."""
+        if token in self._tokens:
             return self._tokens[token]
-        except KeyError:
-            raise ErroSala(403, "invalid token") from None
+        if token in self._tokens_pedido:
+            raise ErroSala(409, "waiting for the host")
+        raise ErroSala(403, "invalid token")
+
+    def identificar(self, token: str) -> int:
+        """Whoever may listen to the events with this token: a player or a request waiting."""
+        quem = self._tokens.get(token) or self._tokens_pedido.get(token)
+        if quem is None:
+            raise ErroSala(403, "invalid token")
+        return quem
 
     # --- ações ---
 
@@ -154,6 +208,10 @@ class Sala:
             "cartao": self._cartao,
             "tirar": self._tirar,
             "sair": self._sair,
+            "aceitar": self._aceitar,
+            "recusar": self._recusar,
+            "dica": self._dar_dica,
+            "pular": self._pular,
         }.get(acao.get("tipo"))
         if tratar is None:
             raise ErroSala(422, "unknown action")
@@ -285,6 +343,62 @@ class Sala:
     def _sair(self, jogador: _Jogador, acao: dict, agora: datetime) -> list[Evento]:
         return self._remover(jogador, agora, expulso=False)
 
+    def _pedido(self, jogador: _Jogador, acao: dict) -> _Pedido:
+        if jogador.id != self._anfitriao:
+            raise ErroSala(409, "only the host answers requests")
+        pedido = acao.get("pedido")
+        if not _eh_int(pedido) or pedido not in self._pedidos:
+            raise ErroSala(422, "invalid request")
+        return self._pedidos[pedido]
+
+    def _aceitar(self, jogador: _Jogador, acao: dict, agora: datetime) -> list[Evento]:
+        pedido = self._pedido(jogador, acao)
+        if len(self._jogadores) >= MAX_JOGADORES:
+            raise ErroSala(409, "room is full")
+        self._tirar_pedido(pedido)
+        self._admitir(pedido.id, pedido.apelido, pedido.token, pedido.desde, pedido.conexoes)
+        return self._depois_de_mudar(agora)
+
+    def _recusar(self, jogador: _Jogador, acao: dict, agora: datetime) -> list[Evento]:
+        pedido = self._pedido(jogador, acao)
+        self._tirar_pedido(pedido)
+        return [self._evento("recusado", {}, para=pedido.id), *self._estados(agora)]
+
+    def _tirar_pedido(self, pedido: _Pedido) -> None:
+        del self._pedidos[pedido.id]
+        del self._tokens_pedido[pedido.token]
+
+    def _dar_dica(self, jogador: _Jogador, acao: dict, agora: datetime) -> list[Evento]:
+        """Whoever draws lights one random unlit letter, once per threshold already passed."""
+        self._exigir_desenhista(jogador, "desenho")
+        liberadas = sum(1 for marco in self._marcos_dica() if marco <= agora)
+        if self._dicas_dadas >= liberadas:
+            raise ErroSala(409, "no hint to give now")
+        assert self._palavra is not None and self._dica is not None
+        apagadas = [i for i, c in enumerate(self._dica) if c is None]
+        i = self._rng.choice(apagadas)
+        self._dica[i] = self._palavra.texto[i]
+        self._dicas_dadas += 1
+        self._seq += 1
+        return [
+            self._evento("dica", {"dica": list(self._dica)}, exceto=jogador.id),
+            Evento("estado", self.foto(jogador.id, agora), para=jogador.id),
+        ]
+
+    def _marcos_dica(self) -> list[datetime]:
+        """When each hint unlocks; never more hints than 1/3 of the letters."""
+        if self._fase != "desenho" or self._palavra is None or self._prazo is None:
+            return []
+        letras = sum(1 for c in self._palavra.texto if c.isalpha())
+        inicio = self._prazo - TEMPO_DESENHO
+        return [inicio + TEMPO_DESENHO * m for m in MARCOS_DICA][: letras // 3]
+
+    def _pular(self, jogador: _Jogador, acao: dict, agora: datetime) -> list[Evento]:
+        """Whoever draws gives up the turn: the word is shown and the points stay."""
+        if self._fase not in ("escolha", "desenho") or jogador.id != self._desenhista:
+            raise ErroSala(409, "not your turn")
+        return [self._evento("pulou", {"jogador": jogador.id}), *self._ir_ao_intervalo(agora)]
+
     def _alvo(self, jogador: _Jogador, acao: dict) -> int:
         alvo = acao.get("alvo")
         if not _eh_int(alvo) or alvo not in self._jogadores or alvo == jogador.id:
@@ -339,6 +453,10 @@ class Sala:
     # --- conexão e relógio ---
 
     def conectou(self, jogador: int, agora: datetime) -> list[Evento]:
+        pedido = self._pedidos.get(jogador)
+        if pedido is not None:
+            pedido.conexoes += 1
+            return []
         j = self._jogadores.get(jogador)
         if j is None:
             return []
@@ -349,7 +467,7 @@ class Sala:
         return self._depois_de_mudar(agora)
 
     def desconectou(self, jogador: int, agora: datetime) -> list[Evento]:
-        j = self._jogadores.get(jogador)
+        j = self._jogadores.get(jogador) or self._pedidos.get(jogador)
         if j is None:
             return []
         j.conexoes = max(j.conexoes - 1, 0)
@@ -370,8 +488,13 @@ class Sala:
             j.presente = False
         if ausentes:
             eventos += self._depois_de_mudar(agora)
-        if self._fase == "desenho":
-            eventos += self._dicas(agora)
+        caidos = [
+            p for p in self._pedidos.values() if p.conexoes == 0 and agora - p.desde >= AUSENCIA
+        ]
+        for pedido in caidos:  # gave up waiting: the request falls with its token
+            self._tirar_pedido(pedido)
+        if caidos and not self.encerrada:
+            eventos += self._estados(agora)
         while not self.encerrada and self._prazo is not None and agora >= self._prazo:
             if self._fase == "escolha":
                 assert self._opcoes is not None
@@ -394,27 +517,6 @@ class Sala:
                 return self._encerrar(agora)
             self._rodada += 1
             self._fila = list(self._presentes())
-
-    def _dicas(self, agora: datetime) -> list[Evento]:
-        """Lights one random unlit letter at 50% and at 75% of the drawing time."""
-        assert self._prazo is not None and self._dica is not None
-        inicio = self._prazo - TEMPO_DESENHO
-        eventos = []
-        for numero, marco in enumerate((0.5, 0.75), start=1):
-            if self._dicas_dadas >= numero or agora < inicio + TEMPO_DESENHO * marco:
-                continue
-            self._dicas_dadas = numero
-            assert self._palavra is not None
-            letras = [i for i, c in enumerate(self._palavra.texto) if c.isalpha()]
-            apagadas = [i for i in letras if self._dica[i] is None]
-            if len(letras) - len(apagadas) >= len(letras) // 3:
-                continue
-            i = self._rng.choice(apagadas)
-            self._dica[i] = self._palavra.texto[i]
-            eventos.append(
-                self._evento("dica", {"dica": list(self._dica)}, exceto=self._desenhista)
-            )
-        return eventos
 
     def _iniciar_lance(self, desenhista: int, agora: datetime) -> list[Evento]:
         self._fase = "escolha"
@@ -501,6 +603,17 @@ class Sala:
         return [j.id for j in self._jogadores.values() if j.presente]
 
     def foto(self, jogador: int, agora: datetime) -> dict:
+        pedido = self._pedidos.get(jogador)
+        if pedido is not None:  # waiting: nothing of the room but who decides
+            anfitriao = self._jogadores.get(self._anfitriao or 0)
+            return {
+                "seq": self._seq,
+                "voce": jogador,
+                "fase": "pedido",
+                "agora": agora.isoformat(),
+                "apelido": pedido.apelido,
+                "anfitriao": anfitriao.apelido if anfitriao else None,
+            }
         desenha = jogador == self._desenhista
         presentes = set(self._presentes())
         ve_palavra = self._fase in ("intervalo", "fim") or (desenha and self._fase == "desenho")
@@ -530,6 +643,21 @@ class Sala:
                 for j in self._jogadores.values()
             ],
             "dica": list(self._dica) if self._dica is not None else None,
+            # only whoever draws: hints given and when each one unlocks
+            "dicas": (
+                {
+                    "dadas": self._dicas_dadas,
+                    "marcos": [m.isoformat() for m in self._marcos_dica()],
+                }
+                if desenha and self._fase == "desenho"
+                else None
+            ),
+            # only the host: who asked to join
+            "pedidos": (
+                [{"id": p.id, "apelido": p.apelido} for p in self._pedidos.values()]
+                if jogador == self._anfitriao
+                else None
+            ),
             "opcoes": (
                 [{"texto": p.texto, "dificuldade": p.dificuldade} for p in self._opcoes]
                 if desenha and self._fase == "escolha" and self._opcoes
@@ -540,12 +668,13 @@ class Sala:
         }
 
     def _estados(self, agora: datetime, tambem: tuple[int, ...] = ()) -> list[Evento]:
-        """One `estado` per player in the room (each sees their own view), all with one seq.
+        """One `estado` per player and request waiting (each sees their own view), one seq.
 
         `tambem` adds who just left or was sent off: their view no longer lists them.
         """
         self._seq += 1
-        return [Evento("estado", self.foto(j, agora), para=j) for j in (*self._jogadores, *tambem)]
+        quem = (*self._jogadores, *self._pedidos, *tambem)
+        return [Evento("estado", self.foto(j, agora), para=j) for j in quem]
 
     def _evento(self, tipo: str, dados: dict, **destino) -> Evento:
         self._seq += 1

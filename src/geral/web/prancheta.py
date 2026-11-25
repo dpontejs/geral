@@ -113,8 +113,38 @@ class Sair(_ComToken):
     tipo: Literal["sair"]
 
 
+class Aceitar(_ComToken):
+    tipo: Literal["aceitar"]
+    pedido: int
+
+
+class Recusar(_ComToken):
+    tipo: Literal["recusar"]
+    pedido: int
+
+
+class Dica(_ComToken):
+    tipo: Literal["dica"]
+
+
+class Pular(_ComToken):
+    tipo: Literal["pular"]
+
+
 Acao = Annotated[
-    Comecar | Escolher | Traco | Desfazer | Limpar | Chute | Cartao | Tirar | Sair,
+    Comecar
+    | Escolher
+    | Traco
+    | Desfazer
+    | Limpar
+    | Chute
+    | Cartao
+    | Tirar
+    | Sair
+    | Aceitar
+    | Recusar
+    | Dica
+    | Pular,
     Field(discriminator="tipo"),
 ]
 
@@ -299,7 +329,7 @@ class Prancheta:
             logger.info("Prancheta %s: dropping a stalled events connection", viva.sala.id)
             self._desligar(viva, conexao)
         for conexao in [c for c in viva.conexoes if not viva.sala.esta(c.jogador)]:
-            self._encerrar_fluxo(viva, conexao)  # left or sent off: their last view was sent
+            self._encerrar_fluxo(viva, conexao)  # left, sent off or refused: last word was sent
         for evento in eventos:
             if evento.tipo == "fim":
                 sala = viva.sala
@@ -368,15 +398,16 @@ class Prancheta:
 
         @router.post("/salas/{sala_id}/entrar")
         async def entrar(sala_id: str, corpo: Entrada):
+            """Asks the host to join: the token listens for the answer, then plays if accepted."""
             viva = self._salas.get(sala_id)
             if viva is None:
                 return _erro(404, "room not found")
             try:
-                jogador, token, eventos = viva.sala.entrar(corpo.apelido, self._now())
+                pedido, token, eventos = viva.sala.pedir(corpo.apelido, self._now())
             except ErroSala as erro:
                 return _erro(erro.status, erro.motivo)
             self._entregar(viva, eventos)
-            return {"jogador": jogador, "token": token}
+            return {"jogador": pedido, "token": token, "pendente": True}
 
         @router.post("/salas/{sala_id}/acao", status_code=204)
         async def agir(sala_id: str, corpo: Annotated[Acao, Body()]):
@@ -397,7 +428,7 @@ class Prancheta:
             if viva is None:
                 return _erro(404, "room not found")
             try:
-                jogador = viva.sala.jogador(token)
+                jogador = viva.sala.identificar(token)  # a request waiting listens too
             except ErroSala as erro:
                 return _erro(erro.status, erro.motivo)
             conexao = self._ligar(viva, jogador)
