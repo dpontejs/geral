@@ -833,7 +833,9 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       });
       ouvir(window, "keydown", (ev) => {
         const i = { ArrowLeft: 0, ArrowDown: 1, ArrowUp: 1, ArrowRight: 2 }[ev.key];
-        if (i !== undefined) terminar({ lado: ordem[i] });
+        if (i === undefined) return;
+        ev.preventDefault();
+        terminar({ lado: ordem[i] });
       });
     });
   }
@@ -1076,7 +1078,8 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     const theta = Math.atan2(-dir.x, dir.y) * 1.0;
     // Then down to the grass (not when he just jumped in the middle).
     const q = fica ? 0 : suave(entre(t, tl.tGolpe + 420 * lento, tl.tGolpe + 900 * lento));
-    g.grupo.rotation.set(0, 0, lerp(0, theta, k) + q * (Math.sign(theta) * Math.PI) / 2 * 0.25);
+    const virado = Math.atan2(estado.bolaEm.x, estado.bolaEm.z) * 0.6; // stance facing the ball
+    g.grupo.rotation.set(0, virado * (1 - k), lerp(0, theta, k) + q * (Math.sign(theta) * Math.PI) / 2 * 0.25);
     g.grupo.position.set(lerp(H0.x, quadrilAlvo.x, k), lerp(H0.y, quadrilAlvo.y, k) * (1 - q) + 0.32 * q, lerp(H0.z, quadrilAlvo.z, k));
     if (fica) g.grupo.position.y -= suave(entre(t, tl.tGolpe + 450 * lento, tl.tGolpe + 800 * lento)) * (quadrilAlvo.y - H0.y);
     const braco = -Math.PI * 0.95 * k;
@@ -1147,6 +1150,8 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     cobrancaAtual?.parar();
     posicionarJogadores();
     letreiro("");
+    estado.seguir = null;
+    posicionarCamera();
     const d = direcaoAoGol();
     const direita = new THREE.Vector3(-d.z, 0, d.x);
     const tl = {
@@ -1243,10 +1248,8 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
   /** The last kick again, slower, on the current camera. */
   function replay() {
     if (!ultimo) return Promise.resolve();
-    if (ultimo.modo === "faltas" && ultimo.falta) {
-      estado.modo = "faltas";
-      estado.falta = { ...ultimo.falta };
-    }
+    estado.modo = ultimo.modo;
+    estado.falta = ultimo.modo === "faltas" && ultimo.falta ? { ...ultimo.falta } : null;
     arrumar();
     const lento = 1.8;
     return rodarCobranca({ chute_em: performance.now() + 700 * lento, lance: ultimo.lance, lento, replay: true });
@@ -1305,6 +1308,12 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     destruir() {
       pedidoAtual?.();
       cobrancaAtual?.parar();
+      if (emTelaCheia()) document.exitFullscreen().catch(() => {});
+      cena.traverse((o) => {
+        o.geometry?.dispose();
+        for (const m of [].concat(o.material ?? [])) m.dispose();
+      });
+      renderer.forceContextLoss();
       estado.destruida = true;
       observador.disconnect();
       document.removeEventListener("fullscreenchange", aoTelaCheia);
