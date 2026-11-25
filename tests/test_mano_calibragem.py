@@ -25,10 +25,15 @@ def _lance_aleatorio(modo: str, rng: Random):
     return resolver(chute, defesa, rng, barreira=barreira, posicao=posicao)
 
 
+# the dev chose free kicks harder than penalties, with the same keeper (2026-11-25)
+FAIXAS = {"penaltis": (0.55, 0.65), "faltas": (0.45, 0.50)}
+
+
 @pytest.mark.parametrize("modo", ["penaltis", "faltas"])
 def test_calibragem(modo):
     rng = Random(2026)
     resultados = [_lance_aleatorio(modo, rng).resultado for _ in range(LANCES)]
     taxas = {r: resultados.count(r) / LANCES for r in sorted(set(resultados))}
     print(modo, taxas)
-    assert 0.55 <= taxas["gol"] <= 0.65
+    minimo, maximo = FAIXAS[modo]
+    assert minimo <= taxas["gol"] <= maximo

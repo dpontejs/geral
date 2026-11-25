@@ -20,11 +20,6 @@ TRAVE = 15
 ALTURA_PULO = 500
 P_ANGULO = 0.25
 ALCANCE_SAIDA = 90
-# Free kick: the keeper reaches less (lower dive, no top corner, shorter early start); a ball
-# he reaches is always saved. Without it the random wall keeps free kicks ~12 pp below
-# penalties (decision 2026-11-25).
-ALTURA_PULO_FALTA = 100
-ALCANCE_SAIDA_FALTA = 0
 ALTURA_BARREIRA = 450
 MEIA_LARGURA_POR_HOMEM = 55
 CURVA_CONTORNA = 0.3
@@ -113,21 +108,19 @@ def _terco(x: int) -> Lado:
     return "direita"
 
 
-def _alcanca(defesa: Defesa, x: int, y: int, falta: bool, rng: random.Random) -> bool:
-    """Whether the keeper's choice covers the ball at (x, y)."""
-    altura = ALTURA_PULO_FALTA if falta else ALTURA_PULO
-    alcance = ALCANCE_SAIDA_FALTA if falta else ALCANCE_SAIDA
+def _alcanca(defesa: Defesa, x: int, y: int, rng: random.Random) -> bool:
+    """Whether the keeper's choice covers the ball at (x, y): same keeper in both modes."""
     if _terco(x) == defesa.lado:
-        if defesa.lado == "fica" or y <= altura:
+        if defesa.lado == "fica" or y <= ALTURA_PULO:
             return True
-        return not falta and rng.random() < P_ANGULO
-    if not defesa.saida or y > altura:
+        return rng.random() < P_ANGULO
+    if not defesa.saida or y > ALTURA_PULO:
         return False
     if defesa.lado == "esquerda":
-        return x < TERCO + alcance
+        return x < TERCO + ALCANCE_SAIDA
     if defesa.lado == "direita":
-        return x >= 1000 - TERCO - alcance
-    return TERCO - alcance <= x < 1000 - TERCO + alcance
+        return x >= 1000 - TERCO - ALCANCE_SAIDA
+    return TERCO - ALCANCE_SAIDA <= x < 1000 - TERCO + ALCANCE_SAIDA
 
 
 def resolver(
@@ -161,8 +154,7 @@ def resolver(
     if resultado is None:
         resultado = _na_trave_ou_fora(*onde)
     if resultado is None:
-        alcancou = _alcanca(defesa, *onde, barreira is not None, rng)
-        resultado = "defesa" if alcancou else "gol"
+        resultado = "defesa" if _alcanca(defesa, *onde, rng) else "gol"
     return Lance(
         chute=chute,
         defesa=defesa,

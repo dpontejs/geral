@@ -5,10 +5,8 @@ from pydantic import ValidationError
 
 from geral.games.mano.regras import (
     ALCANCE_SAIDA,
-    ALCANCE_SAIDA_FALTA,
     ALTURA_BARREIRA,
     ALTURA_PULO,
-    ALTURA_PULO_FALTA,
     MEIA_LARGURA_POR_HOMEM,
     P_ANGULO,
     RUIDO,
@@ -180,25 +178,18 @@ def test_penalti_ignora_trajetoria_curva_e_posicao():
     assert b.posicao is None
 
 
-def test_na_falta_o_goleiro_alcanca_menos():
-    goleiro = Defesa(lado="esquerda", saida=False)
+def test_na_falta_o_goleiro_e_o_do_penalti():
     longe = Barreira(n=2, x=900)
-    baixa = Chute(alvo=(150, ALTURA_PULO_FALTA - 2 * RUIDO), barra=500, trajetoria="por_cima")
-    alta = Chute(alvo=(150, ALTURA_PULO_FALTA + 2 * RUIDO), barra=500, trajetoria="por_cima")
-    angulo = Chute(alvo=(120, 900), barra=500, trajetoria="por_cima")
-    assert ALTURA_PULO_FALTA < ALTURA_PULO
-    for s in range(200):
-        assert _falta(baixa, s, barreira=longe, defesa=goleiro).resultado == "defesa"
-        assert _falta(alta, s, barreira=longe, defesa=goleiro).resultado == "gol"
-        assert _falta(angulo, s, barreira=longe, defesa=goleiro).resultado == "gol"
-
-
-def test_na_falta_a_saida_alcanca_menos():
-    assert ALCANCE_SAIDA_FALTA < ALCANCE_SAIDA
-    chute = Chute(
-        alvo=(333 + ALCANCE_SAIDA_FALTA + 2 * RUIDO, 100), barra=500, trajetoria="por_cima"
-    )
-    goleiro = Defesa(lado="esquerda", saida=True)
-    for s in range(100):
-        lance = _falta(chute, s, barreira=Barreira(n=2, x=900), defesa=goleiro)
-        assert lance.resultado == "gol"
+    casos = [
+        (Chute(alvo=(150, ALTURA_PULO - 2 * RUIDO), barra=500), "esquerda", False),
+        (Chute(alvo=(120, 900), barra=500), "esquerda", False),
+        (Chute(alvo=(333 + ALCANCE_SAIDA - 2 * RUIDO, 300), barra=500), "esquerda", True),
+        (Chute(alvo=(500, 950), barra=500), "fica", False),
+    ]
+    for chute, lado, saida in casos:
+        defesa = Defesa(lado=lado, saida=saida)
+        falta = chute.model_copy(update={"trajetoria": "por_cima"})
+        for s in range(200):
+            penalti = resolver(chute, defesa, Random(s))
+            na_falta = _falta(falta, s, barreira=longe, defesa=defesa)
+            assert na_falta.resultado == penalti.resultado
