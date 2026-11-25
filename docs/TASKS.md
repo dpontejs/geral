@@ -87,6 +87,9 @@ El Ídolo, Destiny Eleven, Copero, GAMBETA, Missing 11).
   no link curto (`docs/features/prancheta.md`; PRs #84–#86, #88, #90, #92 e este)
   - [ ] Conferir num celular de verdade o teclado aberto sobre o campo de chute
   - [ ] Pedaço de traço reenviado depois de queda de rede duplica um trecho (raro; aceito por ora)
+- [x] **Mano a Mano**: batedor contra goleiro em 3D, pênaltis ou faltas, contra o bot ou por link,
+  com súmula por partida (`docs/features/mano-a-mano.md`; PRs #107–#112 e este)
+  - [ ] Conferir num celular de verdade deitado (toque na saída, tela cheia no Android)
 - [ ] **7a0 do clube**: montar o time dos sonhos de um clube com quem já vestiu a camisa e tentar
   vencer um mata-mata (o 7a0 original é só de seleções em Copas). Dados: a base do jogo da velha
   (5.495 jogadores com clubes, posição, período e fama) já basta para elencos e força; o diferencial
