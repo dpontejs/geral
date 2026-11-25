@@ -41,6 +41,13 @@ adversarios = ["atletico-mg", "gremio", "cruzeiro", "internacional", "sao-paulo"
 final = "corinthians"
 publicado = true
 
+# 7a0 da Geral (dev, 2026-11-24): o dado sorteia clube e época entre as edições publicadas; o
+# time misturado pega os `grandes`, do mais fraco ao mais forte pelo time de todos os tempos de
+# cada um (o motor ordena), e o mais forte é a final.
+[geral]
+nome = "Geral"
+grandes = ["corinthians", "santos", "sao-paulo", "gremio", "internacional", "cruzeiro", "atletico-mg"]
+
 [clube.abc]
 wikidata = "Q287129"
 nome = "ABC"
@@ -148,3 +155,8 @@ wikidata = "Q38568"
 nome = "Corinthians"
 origem = "velha"
 wikidata = "Q35933"
+
+[clube.santos]
+nome = "Santos"
+origem = "velha"
+wikidata = "Q80955"

@@ -21,6 +21,14 @@
     const m = /^(.*?)\s*\((.*)\)$/.exec(nome);
     return m ? { curto: m[1], completo: m[2] } : { curto: nome, completo: "" };
   };
+  const GERAL = jogo.edicao === "geral"; // the 7a0 da Geral: each era is a club's
+  // An era as the screen says it: "anos 90", or "Vasco · anos 90" in the Geral; `curto` for the
+  // pitch's small print ("Vasco · 90").
+  const rotuloDe = (epoca, curto = false) => {
+    const rotulo = curto && epoca.clube ? epoca.rotulo.replace(/^anos /, "") : epoca.rotulo;
+    return epoca.clube ? `${nomeDe(epoca.clube)} · ${rotulo}` : rotulo;
+  };
+  const seu = GERAL ? `sua ${jogo.nome}` : `seu ${jogo.nome}`;
   const RODADAS = 11;
   const JOGOS = 7;
   const LINHAS = ["ATA", "MEI", "DEF", "GOL"]; // pitch rows, top to bottom
@@ -191,11 +199,12 @@
     const modo = estado.modo === "almanaque" ? "Almanaque" : "Clássico";
     $("s7-rodada").textContent =
       `Rodada ${estado.rodada + 1} de ${RODADAS} · ${estado.esquema} · ${modo}`;
-    $("s7-epoca").textContent = `${jogo.nome} · ${o.epoca.rotulo}`;
+    $("s7-epoca").textContent = GERAL ? rotuloDe(o.epoca) : `${jogo.nome} · ${o.epoca.rotulo}`;
     const trocar = $("s7-trocar");
     trocar.textContent = `Trocar época (${o.trocas_restantes})`;
     trocar.disabled = o.trocas_restantes <= 0;
-    $("s7-oferta-titulo").textContent = `Quem jogou no ${jogo.nome} nos ${o.epoca.rotulo}`;
+    const clube = o.epoca.clube ? nomeDe(o.epoca.clube) : jogo.nome;
+    $("s7-oferta-titulo").textContent = `Quem jogou no ${clube} nos ${o.epoca.rotulo}`;
 
     const usados = new Set(estado.escolhas.map((e) => e.jogador));
     const lista = $("s7-lista");
@@ -243,7 +252,7 @@
       jogador: estado.escolhido.id,
       vaga: i,
     });
-    estado.vagas[i] = { jogador: estado.escolhido, epoca: estado.oferta.epoca.rotulo };
+    estado.vagas[i] = { jogador: estado.escolhido, epoca: rotuloDe(estado.oferta.epoca, true) };
     estado.rodada += 1;
     estado.escolhido = null;
     try {
@@ -336,7 +345,7 @@
     $("s7-gols-nos").textContent = "0";
     $("s7-gols-eles").textContent = "0";
     const rotulo = p.n === JOGOS ? "Final" : `Jogo ${p.n} de ${JOGOS}`;
-    $("s7-situacao").textContent = `${rotulo} · seu ${jogo.nome} × ${adversario} de todos os tempos`;
+    $("s7-situacao").textContent = `${rotulo} · ${seu} × ${adversario} de todos os tempos`;
     for (const g of p.gols) {
       if (!estado.simulando) await espera(PAUSA_GOL);
       if (g.nosso) nos += 1;
@@ -447,7 +456,7 @@
   function desenharCard(campanha) {
     const ps = campanha.partidas;
     const ultima = ps[ps.length - 1];
-    $("s7-kicker").textContent = `O 7a0 do ${jogo.nome}`;
+    $("s7-kicker").textContent = `O 7a0 ${jogo.do_nome}`;
     $("s7-titulo").textContent = campanha.campeao
       ? "Campeão invicto"
       : ultima.n === JOGOS
@@ -495,7 +504,9 @@
       marcas.append(selo);
     }
     const vagas = [];
-    for (const e of campanha.escalacao) vagas[e.vaga] = { jogador: e.jogador, epoca: e.epoca.rotulo };
+    for (const e of campanha.escalacao) {
+      vagas[e.vaga] = { jogador: e.jogador, epoca: rotuloDe(e.epoca, true) };
+    }
     desenharCampo($("s7-card-campo"), campanha.esquema, vagas, false);
   }
 
@@ -506,12 +517,12 @@
     if (codigo) {
       const url = `${location.origin}/jogos/7a0/c/${codigo}`;
       const texto =
-        `7a0 do ${jogo.nome}: ` +
+        `7a0 ${jogo.do_nome}: ` +
         (campanha.campeao ? "campeão invicto 🏆" : `caí no jogo ${campanha.partidas.length}`);
       compartilhar.onclick = async () => {
         if (navigator.share) {
           try {
-            await navigator.share({ title: "7a0 do clube", text: texto, url });
+            await navigator.share({ title: `7a0 ${jogo.do_nome}`, text: texto, url });
           } catch {
             /* closed the share sheet */
           }

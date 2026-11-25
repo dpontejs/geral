@@ -19,6 +19,9 @@ def chaves() -> dict:
         for citado in [slug, *edicao["adversarios"], edicao["final"]]:
             if citado not in data["clube"]:
                 raise ValueError(f"chaves.toml: {slug} cita {citado}, sem [clube.{citado}]")
+    for citado in data.get("geral", {}).get("grandes", []):
+        if citado not in data["clube"]:
+            raise ValueError(f"chaves.toml: geral cita {citado}, sem [clube.{citado}]")
     return data
 
 

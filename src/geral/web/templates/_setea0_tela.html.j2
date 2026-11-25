@@ -5,7 +5,7 @@
 
   {# 0. Start: mode and formation. #}
   <div class="s7-tela board match s7-inicio" id="s7-inicio"{% if compartilhada %} hidden{% endif %}>
-    <span class="lamp meta">Monte o time dos sonhos do {{ nome }}</span>
+    <span class="lamp meta">{% if edicao == "geral" %}Monte o time dos sonhos da Geral: o dado sorteia um clube e uma época por rodada{% else %}Monte o time dos sonhos do {{ nome }}{% endif %}</span>
     <fieldset id="s7-modos"><legend>Modo</legend>
       <button type="button" class="s7-modo" data-modo="classico" aria-pressed="true"><b>Clássico</b><span>As estrelas de cada jogador à vista e 3 trocas de época.</span></button>
       <button type="button" class="s7-modo" data-modo="almanaque" aria-pressed="false"><b>Almanaque</b><span>Sem estrelas e 1 troca: só ajuda quem conhece a história.</span></button>

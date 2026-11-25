@@ -36,6 +36,23 @@ ABC, Náutico e CSA têm o seu, com os rivais do Nordeste e o clássico local na
 5. Cada jogo acende no placar de lâmpadas os gols com minuto e autor ("34' Alberi"); botão
    "simular o resto". No fim, card com os 11, a década de cada um, a campanha e as marcas.
 
+## 7a0 da Geral (dev, 2026-11-24)
+
+- `/jogos/7a0/geral`, cartão "Geral" na escolha e na barra dos clubes; aberta quando há ao
+  menos um clube publicado.
+- O dado sorteia **clube e época** ("Vasco · anos 90") entre as edições publicadas: as épocas de
+  cada clube com as mesmas regras (≥ 1970, ralas se juntam, 5 posições), todas num só sorteio
+  (`Epoca.clube` diz de qual). Quem jogou em mais de um clube aparece em cada um, mas não entra
+  duas vezes (mesmo id).
+- Adversários: `[geral] grandes` em `chaves.toml` (Corinthians, Santos, São Paulo, Grêmio,
+  Internacional, Cruzeiro, Atlético-MG; Santos entrou na base pelo mesmo script). O motor os
+  ordena pelo time de todos os tempos: os 6 mais fracos em ordem crescente, o mais forte na
+  final. Sem bônus de clássico: a final é mais um degrau (`PASSO_FINAL_GERAL` = 0,02), então
+  continua ao menos tão forte quanto o 6º.
+- Régua: a média dos times de todos os tempos dos clubes da Geral, vezes `FATOR_GERAL` (1,05),
+  o único ajuste da Geral. Guloso fecha 7 a 0 em 21,6% nos dados de teste (o ABC de teste:
+  21%) e 12,5% nos reais (clubes reais: 9–17%); aleatório 0%.
+
 ## Dados (`src/geral/games/setea0/`)
 
 - **Elencos** (`setea0.json`, gerado por `scripts/import_setea0.py`): para cada edição, os
@@ -101,6 +118,8 @@ class Cobranca(BaseModel): resultado: Literal["gol", "defesa", "fora", "trave", 
   se decidir; o adversário cobra sozinho.
 - [ ] `test_motor_bate_os_penaltis`: `motor` dá o mesmo resultado em toda chamada (determinístico).
 - [ ] `test_placar_7_a_0_vira_marca_rara`.
+- [ ] `test_calibragem_da_geral` (guloso 10–30%, aleatório < 3%) e os de
+  `test_setea0_geral.py` (clube e época, jogador de dois clubes, grandes em ordem).
 - [ ] `test_link_abre_apos_mudar_os_dados`: guarda, troca `setea0.json`, o card segue igual.
 
 ## Verificação ponta a ponta
