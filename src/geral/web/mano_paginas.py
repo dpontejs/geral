@@ -26,6 +26,7 @@ REGRAS = [
 
 class Salas(Protocol):
     def viva(self, sala_id: str) -> bool: ...
+    def cheia(self, sala_id: str) -> bool: ...
     def sumula(self, id_: str) -> dict | None: ...
 
 
@@ -33,7 +34,8 @@ def paginas_mano(mano: Salas, render: Callable[..., Response]) -> APIRouter:
     router = APIRouter()
 
     def jogo(request: Request, sala_id: str = "") -> Response:
-        return render(request, "mano.html.j2", sala_id=sala_id, rules=REGRAS)
+        cheia = bool(sala_id) and mano.cheia(sala_id)
+        return render(request, "mano.html.j2", sala_id=sala_id, cheia=cheia, rules=REGRAS)
 
     @router.get("/jogos/mano", response_class=HTMLResponse)
     def criar(request: Request):

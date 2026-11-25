@@ -122,6 +122,16 @@ async def test_criar_e_entrar(tmp_path):
 
 
 @assincrono
+async def test_cheia_para_a_pagina_avisar_antes_do_apelido(tmp_path):
+    async with mesa(tmp_path) as m:
+        criada = await m.criar()
+        assert not m.mano.cheia(criada["id"])
+        await m.post(f"/salas/{criada['id']}/entrar", apelido="Bia")
+        assert m.mano.cheia(criada["id"])
+        assert not m.mano.cheia("zzzzzz")
+
+
+@assincrono
 async def test_corpo_invalido_422(tmp_path):
     async with mesa(tmp_path) as m:
         for corpo in (

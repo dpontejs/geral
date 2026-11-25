@@ -310,7 +310,7 @@ function rodarCobranca(k, chuteEmIso, agoraIso, base) {
   cobrando = k;
   pedido = "";
   saidaEnviada = false;
-  entregarLance?.(null);
+  entregarLance = null; // a kick that never got its lance: reiniciar() below stops it
   const lance = new Promise((resolve, reject) => {
     entregarLance = (l) => {
       entregarLance = null;
@@ -374,12 +374,15 @@ async function telaFim() {
   const primeira = tela !== "fim";
   tela = "fim";
   sairBox.hidden = true;
-  entregarLance?.(null);
+  entregarLance = null; // a W.O. mid-kick: the kick is stopped below, not failed
   if (cena) {
     if (primeira) {
+      // a W.O. can end the match mid-kick: its sign must not land over the final one
+      cena.reiniciar();
+      montado = "";
+      cobrando = "";
       cena.dica("");
-      const [a, b] = est.placar;
-      const venceu = a === b ? null : a > b ? 0 : 1;
+      const venceu = est.vencedor; // a W.O. wins even when behind on the score
       cena.letreiro(venceu === null ? "FIM DE JOGO" : venceu === est.voce ? "VOCÊ GANHOU" : "VOCÊ PERDEU");
     }
     if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
@@ -541,5 +544,6 @@ document.getElementById("mn-sair").addEventListener("click", async () => {
 });
 
 if (!SALA) telaCriar();
+else if (!eu && raiz.dataset.cheia) aviso("Sala cheia", "Essa sala já tem dois jogadores, ou é uma partida contra o bot. Crie a sua e chame alguém.");
 else if (!eu) telaEntrar();
 else conectar();

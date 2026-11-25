@@ -31,9 +31,13 @@ SUMULA = {
 class ManoFalso:
     """Only what the pages ask of the server's `Mano`."""
 
-    def __init__(self, vivas=(), sumulas=None) -> None:
+    def __init__(self, vivas=(), sumulas=None, cheias=()) -> None:
         self.vivas = set(vivas)
         self.sumulas = sumulas or {}
+        self.cheias = set(cheias)
+
+    def cheia(self, sala_id: str) -> bool:
+        return sala_id in self.cheias
 
     def viva(self, sala_id: str) -> bool:
         return sala_id in self.vivas
@@ -77,6 +81,14 @@ def test_link_de_sala_viva_abre_o_jogo(cliente):
     assert resposta.status_code == 200
     assert 'data-sala="k7m2qx"' in resposta.text
     assert "mano.js" in resposta.text
+
+
+def test_link_de_sala_cheia_avisa_sem_pedir_apelido(cliente):
+    """A full room (or a match against the bot): the page knows before the join form."""
+    cheia = cliente(ManoFalso(vivas={"k7m2qx"}, cheias={"k7m2qx"})).get("/jogos/mano/s/k7m2qx")
+    assert 'data-cheia="1"' in cheia.text
+    livre = cliente(ManoFalso(vivas={"k7m2qx"})).get("/jogos/mano/s/k7m2qx")
+    assert 'data-cheia=""' in livre.text
 
 
 def test_sala_viva_vale_mais_que_sumula(cliente):

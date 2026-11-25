@@ -451,6 +451,25 @@ def test_quem_sai_perde_por_wo():
     assert jogo.foto(1)["fase"] == "fim"
 
 
+def test_foto_do_fim_traz_o_vencedor_mesmo_por_wo():
+    """The page's end sign: whoever stays wins a W.O., even when behind on the score."""
+    jogo = Jogo()
+    assert jogo.foto(1)["vencedor"] is None  # mid-match
+    jogo.cobrar(GOL_ESQUERDA, "direita")
+    jogo.depois()
+    jogo.agir(0, "sair")
+    foto = jogo.foto(1)
+    assert foto["placar"] == [1, 0] and foto["vencedor"] == 1
+
+
+def test_sala_cheia_vale_tambem_contra_o_bot():
+    sozinha = Sala(SALA, "penaltis", None, T0, random.Random(1))
+    sozinha.entrar("Ana", T0)
+    assert not sozinha.cheia()
+    assert Jogo().sala.cheia()
+    assert Jogo(bot="facil").sala.cheia()
+
+
 def test_ausente_30s_perde_por_wo():
     jogo = Jogo()
     jogo.sala.desconectou(1, jogo.agora)
