@@ -10,6 +10,7 @@ from datetime import UTC, datetime, timedelta
 import pytest
 
 from geral.games.mano import bot as bot_mod
+from geral.games.mano import sala as sala_mod
 from geral.games.mano.sala import (
     CORRIDA,
     FOLGA,
@@ -22,9 +23,16 @@ from geral.games.mano.sala import (
 )
 
 T0 = datetime(2026, 11, 25, 20, 0, tzinfo=UTC)
+SORTEAR = sala_mod.sortear_primeiro
 SALA = "abc234"
 GOL_ESQUERDA = {"alvo": [150, 300], "barra": 500}  # left third, low: only "esquerda" saves it
 SAIDA = {"alvo": [380, 300], "barra": 500}  # middle third near the left: "esquerda" + exit
+
+
+@pytest.fixture(autouse=True)
+def ana_comeca(monkeypatch):
+    """Ana (player 0) kicks first, unless a test draws it for real or says otherwise."""
+    monkeypatch.setattr(sala_mod, "sortear_primeiro", lambda rng: 0)
 
 
 def _s(td: timedelta) -> float:
@@ -624,3 +632,81 @@ def test_no_replay_cada_um_mantem_o_papel_do_lance():
     assert jogo.foto(0)["papel"] == "batedor" and jogo.foto(1)["papel"] == "goleiro"
     jogo.depois()
     assert jogo.foto(0)["papel"] == "goleiro"
+
+
+def test_acao_recusada_nao_gasta_o_limite():
+    jogo = Jogo()
+    with pytest.raises(ErroSala) as erro:
+        jogo.agir(0, "defesa", lado="fica")  # the kicker does not dive: 409
+    assert erro.value.status == 409
+    jogo.agir(0, "chute", **GOL_ESQUERDA)  # at once: the refusal used no slot
+    with pytest.raises(ErroSala) as erro:
+        jogo.agir(0, "chute", alvo=[1200, 0], barra=500)
+    assert erro.value.status == 429  # an accepted action does
+
+
+def test_cobranca_inicio_traz_a_hora_do_servidor():
+    jogo = Jogo()
+    jogo.agir(0, "chute", **GOL_ESQUERDA)
+    jogo.andar(2)
+    (inicio,) = [e for e in jogo.agir(1, "defesa", lado="direita") if e.tipo == "cobranca_inicio"]
+    assert inicio.dados["agora"] == jogo.agora.isoformat()
+    assert inicio.dados["chute_em"] == (jogo.agora + CORRIDA).isoformat()
+
+
+def _primeiro_batedor(seed: int, bot: str | None = None) -> int:
+    jogo = Jogo(bot=bot, seed=seed)
+    return jogo.batedor()
+
+
+def test_quem_comeca_e_sorteado_por_partida(monkeypatch):
+    monkeypatch.setattr(sala_mod, "sortear_primeiro", SORTEAR)
+    primeiros = [_primeiro_batedor(seed) for seed in range(40)]
+    assert set(primeiros) == {0, 1}
+    assert primeiros == [_primeiro_batedor(seed) for seed in range(40)]  # same seed, same order
+    assert {_primeiro_batedor(seed, bot="facil") for seed in range(40)} == {0, 1}
+
+
+def test_revanche_sorteia_de_novo(monkeypatch):
+    monkeypatch.setattr(sala_mod, "sortear_primeiro", SORTEAR)
+    pares = set()
+    for seed in range(30):
+        jogo = Jogo(seed=seed)
+        antes = jogo.batedor()
+        jogo.jogar_3_a_0()
+        jogo.agir(0, "revanche")
+        jogo.agir(1, "revanche")
+        pares.add((antes, jogo.batedor()))
+    assert {depois for _, depois in pares} == {0, 1}
+    assert any(antes != depois for antes, depois in pares)
+
+
+def test_bia_comecando_cada_um_fica_na_sua_linha(monkeypatch):
+    monkeypatch.setattr(sala_mod, "sortear_primeiro", lambda rng: 1)
+    jogo = Jogo()
+    assert jogo.foto(1)["papel"] == "batedor" and jogo.foto(0)["papel"] == "goleiro"
+    cobranca = jogo.cobrar(GOL_ESQUERDA, "direita")  # Bia scores
+    assert cobranca["placar"] == [0, 1]
+    assert jogo.foto(0)["papel"] == "goleiro"  # the replay keeps the kick's roles
+    jogo.depois()
+    assert jogo.foto(0)["serie"] == [[], [True]]
+    assert jogo.foto(0)["papel"] == "batedor"
+    jogo.jogar_3_a_0()  # now Ana kicks first in each pair: Ana 3, Bia 1 + 0
+    (sumula,) = _fins(jogo.eventos)
+    assert sumula["placar"] == [3, 1]
+    assert [c["batedor"] for c in sumula["cobrancas"]][:3] == [1, 0, 1]
+    assert sumula["vencedor"] == 0
+
+
+def test_bia_comecando_quem_sai_perde(monkeypatch):
+    monkeypatch.setattr(sala_mod, "sortear_primeiro", lambda rng: 1)
+    jogo = Jogo()
+    (sumula,) = _fins(jogo.agir(0, "sair"))
+    assert sumula["wo"] is True and sumula["vencedor"] == 1
+
+
+def test_bot_comecando_ja_chutou(monkeypatch):
+    monkeypatch.setattr(sala_mod, "sortear_primeiro", lambda rng: 1)
+    jogo = Jogo(bot="facil")
+    foto = jogo.foto(0)
+    assert foto["papel"] == "goleiro" and foto["travou"]["outro"] is True

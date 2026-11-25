@@ -50,7 +50,7 @@ Nome provisório: "Mano a Mano" (decisão minha; o dev pode trocar).
   uniforme, saída na janela em 50%, barreira e trajetória uniformes.
 - **Disputa:** 5 cobranças para cada um, alternando os papéis, e acaba antes quando não dá mais
   para alcançar (como a disputa de verdade); empate → alternadas até alguém errar. Quem cria a
-  sala escolhe o modo.
+  sala escolhe o modo; quem começa batendo é sorteado a cada partida (dev, 2026-11-25).
 - **Bot:** `facil` escolhe ao acaso; `medio` tem manias (lado preferido); `dificil` lê o padrão
   do adversário (últimas escolhas dele na partida) e pula ou mira contra ele. Acerta a saída em
   30/50/70% por nível.
