@@ -67,7 +67,7 @@ tipo = "lance"
 
 [[palavra]]
 texto = "Impedimento"
-dificuldade = "facil"
+dificuldade = "media"
 tipo = "lance"
 
 [[palavra]]
@@ -129,11 +129,6 @@ dificuldade = "facil"
 tipo = "lance"
 
 [[palavra]]
-texto = "Virada"
-dificuldade = "facil"
-tipo = "lance"
-
-[[palavra]]
 texto = "Comemoração"
 dificuldade = "facil"
 tipo = "lance"
@@ -145,7 +140,7 @@ tipo = "lance"
 
 [[palavra]]
 texto = "Tiro de meta"
-dificuldade = "facil"
+dificuldade = "media"
 tipo = "lance"
 
 [[palavra]]
@@ -205,24 +200,18 @@ dificuldade = "media"
 tipo = "lance"
 
 [[palavra]]
-texto = "Letra"
-aceita = ["rabona"]
-dificuldade = "media"
-tipo = "lance"
-
-[[palavra]]
 texto = "Trivela"
 dificuldade = "media"
 tipo = "lance"
 
 [[palavra]]
 texto = "Barreira"
-dificuldade = "media"
+dificuldade = "facil"
 tipo = "lance"
 
 [[palavra]]
 texto = "Gol de falta"
-dificuldade = "media"
+dificuldade = "facil"
 tipo = "lance"
 
 [[palavra]]
@@ -241,11 +230,6 @@ dificuldade = "media"
 tipo = "lance"
 
 [[palavra]]
-texto = "Ponte"
-dificuldade = "media"
-tipo = "lance"
-
-[[palavra]]
 texto = "Rebote"
 dificuldade = "media"
 tipo = "lance"
@@ -257,11 +241,6 @@ dificuldade = "media"
 tipo = "lance"
 
 [[palavra]]
-texto = "Cera"
-dificuldade = "media"
-tipo = "lance"
-
-[[palavra]]
 texto = "Contra-ataque"
 dificuldade = "media"
 tipo = "lance"
@@ -269,11 +248,6 @@ tipo = "lance"
 [[palavra]]
 texto = "Cobrança de lateral"
 aceita = ["arremesso lateral"]
-dificuldade = "media"
-tipo = "lance"
-
-[[palavra]]
-texto = "Prorrogação"
 dificuldade = "media"
 tipo = "lance"
 
@@ -350,47 +324,12 @@ dificuldade = "dificil"
 tipo = "lance"
 
 [[palavra]]
-texto = "Banheira"
-dificuldade = "dificil"
-tipo = "lance"
-
-[[palavra]]
-texto = "Retranca"
-dificuldade = "dificil"
-tipo = "lance"
-
-[[palavra]]
-texto = "Ferrolho"
-dificuldade = "dificil"
-tipo = "lance"
-
-[[palavra]]
-texto = "Catimba"
-dificuldade = "dificil"
-tipo = "lance"
-
-[[palavra]]
-texto = "Lei da vantagem"
-dificuldade = "dificil"
-tipo = "lance"
-
-[[palavra]]
 texto = "Recuo para o goleiro"
 dificuldade = "dificil"
 tipo = "lance"
 
 [[palavra]]
 texto = "Linha burra"
-dificuldade = "dificil"
-tipo = "lance"
-
-[[palavra]]
-texto = "Ligação direta"
-dificuldade = "dificil"
-tipo = "lance"
-
-[[palavra]]
-texto = "Pressão alta"
 dificuldade = "dificil"
 tipo = "lance"
 
@@ -420,16 +359,6 @@ dificuldade = "dificil"
 tipo = "lance"
 
 [[palavra]]
-texto = "Tiro livre indireto"
-dificuldade = "dificil"
-tipo = "lance"
-
-[[palavra]]
-texto = "Bola ao chão"
-dificuldade = "dificil"
-tipo = "lance"
-
-[[palavra]]
 texto = "Pênalti perdido"
 dificuldade = "dificil"
 tipo = "lance"
@@ -440,14 +369,9 @@ dificuldade = "dificil"
 tipo = "lance"
 
 [[palavra]]
-texto = "Saída de bola"
-dificuldade = "dificil"
-tipo = "lance"
-
-[[palavra]]
 texto = "Sete a um"
 aceita = ["7 a 1"]
-dificuldade = "dificil"
+dificuldade = "media"
 tipo = "lance"
 
 [[palavra]]
@@ -457,21 +381,6 @@ tipo = "lance"
 
 [[palavra]]
 texto = "Bola fora"
-dificuldade = "facil"
-tipo = "lance"
-
-[[palavra]]
-texto = "Escorregão"
-dificuldade = "facil"
-tipo = "lance"
-
-[[palavra]]
-texto = "Aquecimento"
-dificuldade = "facil"
-tipo = "lance"
-
-[[palavra]]
-texto = "Alongamento"
 dificuldade = "facil"
 tipo = "lance"
 
@@ -496,22 +405,12 @@ dificuldade = "media"
 tipo = "lance"
 
 [[palavra]]
-texto = "Cara ou coroa"
-dificuldade = "media"
-tipo = "lance"
-
-[[palavra]]
 texto = "Troca de camisa"
 dificuldade = "media"
 tipo = "lance"
 
 [[palavra]]
 texto = "Volta olímpica"
-dificuldade = "media"
-tipo = "lance"
-
-[[palavra]]
-texto = "Cãibra"
 dificuldade = "media"
 tipo = "lance"
 
@@ -527,22 +426,96 @@ dificuldade = "dificil"
 tipo = "lance"
 
 [[palavra]]
-texto = "Escanteio curto"
-dificuldade = "dificil"
-tipo = "lance"
-
-[[palavra]]
 texto = "Gol de cobertura"
 dificuldade = "dificil"
 tipo = "lance"
 
 [[palavra]]
-texto = "Chute de primeira"
+texto = "Golaço"
+dificuldade = "facil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Gol de letra"
+aceita = ["de letra"]
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Bola no ângulo"
+aceita = ["gol no ângulo", "na gaveta"]
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Pênalti defendido"
+aceita = ["defesa de pênalti"]
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Gol de goleiro"
+dificuldade = "media"
+tipo = "lance"
+
+[[palavra]]
+texto = "Gol de joelho"
 dificuldade = "dificil"
 tipo = "lance"
 
 [[palavra]]
-texto = "Bola parada"
+texto = "Maracanaço"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Gol de peito"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Barreira pulando"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Goleiro adiantado"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Pênalti do Baggio"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Cabeçada do Zidane"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Carrinho por trás"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Tirar a camisa"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Embalando o bebê"
+aceita = ["comemoração do bebeto"]
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Defesa com o pé"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Bola nas duas traves"
 dificuldade = "dificil"
 tipo = "lance"
 
@@ -582,22 +555,12 @@ dificuldade = "facil"
 tipo = "objeto"
 
 [[palavra]]
-texto = "Medalha"
-dificuldade = "facil"
-tipo = "objeto"
-
-[[palavra]]
 texto = "Cartão vermelho"
 dificuldade = "facil"
 tipo = "objeto"
 
 [[palavra]]
 texto = "Cartão amarelo"
-dificuldade = "facil"
-tipo = "objeto"
-
-[[palavra]]
-texto = "Camisa 10"
 dificuldade = "facil"
 tipo = "objeto"
 
@@ -617,22 +580,12 @@ dificuldade = "facil"
 tipo = "objeto"
 
 [[palavra]]
-texto = "Cronômetro"
-dificuldade = "facil"
-tipo = "objeto"
-
-[[palavra]]
 texto = "Bandeira de escanteio"
 dificuldade = "facil"
 tipo = "objeto"
 
 [[palavra]]
 texto = "Meião"
-dificuldade = "facil"
-tipo = "objeto"
-
-[[palavra]]
-texto = "Uniforme"
 dificuldade = "facil"
 tipo = "objeto"
 
@@ -664,23 +617,7 @@ dificuldade = "media"
 tipo = "objeto"
 
 [[palavra]]
-texto = "Colete"
-dificuldade = "media"
-tipo = "objeto"
-
-[[palavra]]
-texto = "Cone"
-dificuldade = "media"
-tipo = "objeto"
-
-[[palavra]]
 texto = "Travessão"
-dificuldade = "media"
-tipo = "objeto"
-
-[[palavra]]
-texto = "Ângulo"
-aceita = ["gaveta"]
 dificuldade = "media"
 tipo = "objeto"
 
@@ -695,28 +632,23 @@ dificuldade = "media"
 tipo = "objeto"
 
 [[palavra]]
-texto = "Maca"
-dificuldade = "media"
-tipo = "objeto"
-
-[[palavra]]
 texto = "Cachecol"
 dificuldade = "media"
 tipo = "objeto"
 
 [[palavra]]
 texto = "Vuvuzela"
-dificuldade = "media"
+dificuldade = "facil"
 tipo = "objeto"
 
 [[palavra]]
 texto = "Álbum de figurinhas"
-dificuldade = "media"
+dificuldade = "facil"
 tipo = "objeto"
 
 [[palavra]]
 texto = "Figurinha"
-dificuldade = "media"
+dificuldade = "facil"
 tipo = "objeto"
 
 [[palavra]]
@@ -726,7 +658,7 @@ tipo = "objeto"
 
 [[palavra]]
 texto = "Futebol de botão"
-dificuldade = "media"
+dificuldade = "facil"
 tipo = "objeto"
 
 [[palavra]]
@@ -747,11 +679,6 @@ tipo = "objeto"
 
 [[palavra]]
 texto = "Bola de ouro"
-dificuldade = "media"
-tipo = "objeto"
-
-[[palavra]]
-texto = "Amarelinha"
 dificuldade = "media"
 tipo = "objeto"
 
@@ -791,11 +718,6 @@ dificuldade = "dificil"
 tipo = "objeto"
 
 [[palavra]]
-texto = "Tornozeleira"
-dificuldade = "dificil"
-tipo = "objeto"
-
-[[palavra]]
 texto = "Brasileirão"
 dificuldade = "dificil"
 tipo = "objeto"
@@ -816,17 +738,39 @@ dificuldade = "dificil"
 tipo = "objeto"
 
 [[palavra]]
-texto = "Escudo"
-dificuldade = "facil"
-tipo = "objeto"
-
-[[palavra]]
 texto = "Ônibus do time"
 dificuldade = "media"
 tipo = "objeto"
 
 [[palavra]]
 texto = "Estrela no escudo"
+dificuldade = "dificil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Travinha"
+aceita = ["golzinho"]
+dificuldade = "facil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Copa do Brasil"
+dificuldade = "media"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Bola de meia"
+dificuldade = "dificil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Trave de chinelo"
+aceita = ["gol de chinelo"]
+dificuldade = "dificil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Linha do VAR"
 dificuldade = "dificil"
 tipo = "objeto"
 
@@ -841,11 +785,6 @@ tipo = "estadio"
 
 [[palavra]]
 texto = "Maracanã"
-dificuldade = "facil"
-tipo = "estadio"
-
-[[palavra]]
-texto = "Gramado"
 dificuldade = "facil"
 tipo = "estadio"
 
@@ -871,11 +810,6 @@ tipo = "estadio"
 
 [[palavra]]
 texto = "Vestiário"
-dificuldade = "facil"
-tipo = "estadio"
-
-[[palavra]]
-texto = "Placar eletrônico"
 dificuldade = "facil"
 tipo = "estadio"
 
@@ -915,42 +849,6 @@ dificuldade = "media"
 tipo = "estadio"
 
 [[palavra]]
-texto = "Túnel"
-dificuldade = "media"
-tipo = "estadio"
-
-[[palavra]]
-texto = "Refletor"
-aceita = ["holofote"]
-dificuldade = "media"
-tipo = "estadio"
-
-[[palavra]]
-texto = "Bilheteria"
-dificuldade = "media"
-tipo = "estadio"
-
-[[palavra]]
-texto = "Catraca"
-dificuldade = "media"
-tipo = "estadio"
-
-[[palavra]]
-texto = "Alambrado"
-dificuldade = "media"
-tipo = "estadio"
-
-[[palavra]]
-texto = "Telão"
-dificuldade = "media"
-tipo = "estadio"
-
-[[palavra]]
-texto = "Cabine de imprensa"
-dificuldade = "media"
-tipo = "estadio"
-
-[[palavra]]
 texto = "Geral do Maracanã"
 aceita = ["a geral"]
 dificuldade = "dificil"
@@ -982,27 +880,40 @@ dificuldade = "dificil"
 tipo = "estadio"
 
 [[palavra]]
-texto = "Camarote"
-dificuldade = "dificil"
-tipo = "estadio"
-
-[[palavra]]
-texto = "Fosso"
-dificuldade = "dificil"
-tipo = "estadio"
-
-[[palavra]]
 texto = "Meia-lua"
 dificuldade = "dificil"
 tipo = "estadio"
 
 [[palavra]]
-texto = "Cadeira numerada"
+texto = "Cabine do VAR"
 dificuldade = "dificil"
 tipo = "estadio"
 
 [[palavra]]
-texto = "Cabine do VAR"
+texto = "Campo de futebol"
+aceita = ["campo"]
+dificuldade = "facil"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Itaquerão"
+aceita = ["arena corinthians", "neo química arena"]
+dificuldade = "dificil"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Allianz Parque"
+aceita = ["allianz"]
+dificuldade = "dificil"
+tipo = "estadio"
+
+[[palavra]]
+texto = "Beira-Rio"
+dificuldade = "dificil"
+tipo = "estadio"
+
+[[palavra]]
+texto = "São Januário"
 dificuldade = "dificil"
 tipo = "estadio"
 
@@ -1017,11 +928,6 @@ tipo = "torcida"
 
 [[palavra]]
 texto = "Torcedor"
-dificuldade = "facil"
-tipo = "torcida"
-
-[[palavra]]
-texto = "Hino"
 dificuldade = "facil"
 tipo = "torcida"
 
@@ -1057,16 +963,6 @@ dificuldade = "facil"
 tipo = "torcida"
 
 [[palavra]]
-texto = "Pipoca"
-dificuldade = "facil"
-tipo = "torcida"
-
-[[palavra]]
-texto = "Cachorro-quente"
-dificuldade = "facil"
-tipo = "torcida"
-
-[[palavra]]
 texto = "Ingresso"
 dificuldade = "facil"
 tipo = "torcida"
@@ -1088,11 +984,6 @@ tipo = "torcida"
 
 [[palavra]]
 texto = "Futebol de areia"
-dificuldade = "facil"
-tipo = "torcida"
-
-[[palavra]]
-texto = "Camisa autografada"
 dificuldade = "facil"
 tipo = "torcida"
 
@@ -1127,17 +1018,7 @@ dificuldade = "media"
 tipo = "torcida"
 
 [[palavra]]
-texto = "Amuleto"
-dificuldade = "media"
-tipo = "torcida"
-
-[[palavra]]
 texto = "Bolão"
-dificuldade = "media"
-tipo = "torcida"
-
-[[palavra]]
-texto = "Peneira"
 dificuldade = "media"
 tipo = "torcida"
 
@@ -1179,38 +1060,8 @@ dificuldade = "media"
 tipo = "torcida"
 
 [[palavra]]
-texto = "Caravana"
-dificuldade = "media"
-tipo = "torcida"
-
-[[palavra]]
-texto = "Fila do ingresso"
-dificuldade = "media"
-tipo = "torcida"
-
-[[palavra]]
 texto = "Bandeira na janela"
 dificuldade = "media"
-tipo = "torcida"
-
-[[palavra]]
-texto = "Churrasquinho"
-dificuldade = "dificil"
-tipo = "torcida"
-
-[[palavra]]
-texto = "Zica"
-dificuldade = "dificil"
-tipo = "torcida"
-
-[[palavra]]
-texto = "Secador"
-dificuldade = "dificil"
-tipo = "torcida"
-
-[[palavra]]
-texto = "Mesa redonda"
-dificuldade = "dificil"
 tipo = "torcida"
 
 [[palavra]]
@@ -1224,17 +1075,7 @@ dificuldade = "dificil"
 tipo = "torcida"
 
 [[palavra]]
-texto = "Concentração"
-dificuldade = "dificil"
-tipo = "torcida"
-
-[[palavra]]
 texto = "Preleção"
-dificuldade = "dificil"
-tipo = "torcida"
-
-[[palavra]]
-texto = "Camisa 12"
 dificuldade = "dificil"
 tipo = "torcida"
 
@@ -1274,11 +1115,6 @@ dificuldade = "facil"
 tipo = "torcida"
 
 [[palavra]]
-texto = "Bandeira"
-dificuldade = "facil"
-tipo = "torcida"
-
-[[palavra]]
 texto = "Torcida organizada"
 dificuldade = "media"
 tipo = "torcida"
@@ -1289,17 +1125,18 @@ dificuldade = "media"
 tipo = "torcida"
 
 [[palavra]]
-texto = "Hino nacional"
-dificuldade = "media"
+texto = "Campeão"
+aceita = ["é campeão"]
+dificuldade = "facil"
 tipo = "torcida"
 
 [[palavra]]
-texto = "Fogos de artifício"
-dificuldade = "media"
+texto = "Juiz ladrão"
+dificuldade = "facil"
 tipo = "torcida"
 
 [[palavra]]
-texto = "Camisa retrô"
+texto = "Sinalizador"
 dificuldade = "dificil"
 tipo = "torcida"
 
@@ -1345,17 +1182,7 @@ dificuldade = "facil"
 tipo = "jogador"
 
 [[palavra]]
-texto = "Craque"
-dificuldade = "facil"
-tipo = "jogador"
-
-[[palavra]]
 texto = "Artilheiro"
-dificuldade = "facil"
-tipo = "jogador"
-
-[[palavra]]
-texto = "Reserva"
 dificuldade = "facil"
 tipo = "jogador"
 
@@ -1405,27 +1232,7 @@ dificuldade = "media"
 tipo = "jogador"
 
 [[palavra]]
-texto = "Volante"
-dificuldade = "media"
-tipo = "jogador"
-
-[[palavra]]
 texto = "Centroavante"
-dificuldade = "media"
-tipo = "jogador"
-
-[[palavra]]
-texto = "Ponta"
-dificuldade = "media"
-tipo = "jogador"
-
-[[palavra]]
-texto = "Meia"
-dificuldade = "media"
-tipo = "jogador"
-
-[[palavra]]
-texto = "Camisa 9"
 dificuldade = "media"
 tipo = "jogador"
 
@@ -1510,11 +1317,6 @@ dificuldade = "media"
 tipo = "jogador"
 
 [[palavra]]
-texto = "Hulk"
-dificuldade = "media"
-tipo = "jogador"
-
-[[palavra]]
 texto = "Richarlison"
 aceita = ["pombo"]
 dificuldade = "media"
@@ -1523,11 +1325,6 @@ tipo = "jogador"
 [[palavra]]
 texto = "Quarto árbitro"
 dificuldade = "media"
-tipo = "jogador"
-
-[[palavra]]
-texto = "Líbero"
-dificuldade = "dificil"
 tipo = "jogador"
 
 [[palavra]]
@@ -1544,11 +1341,6 @@ tipo = "jogador"
 [[palavra]]
 texto = "Leônidas da Silva"
 aceita = ["diamante negro"]
-dificuldade = "dificil"
-tipo = "jogador"
-
-[[palavra]]
-texto = "Didi"
 dificuldade = "dificil"
 tipo = "jogador"
 
@@ -1587,32 +1379,39 @@ dificuldade = "dificil"
 tipo = "jogador"
 
 [[palavra]]
-texto = "Falcão"
-dificuldade = "dificil"
-tipo = "jogador"
-
-[[palavra]]
-texto = "Formiga"
-dificuldade = "dificil"
-tipo = "jogador"
-
-[[palavra]]
 texto = "Zidane"
 dificuldade = "dificil"
 tipo = "jogador"
 
 [[palavra]]
-texto = "Cabeça de área"
+texto = "Mbappé"
+dificuldade = "media"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Gabigol"
+aceita = ["gabriel barbosa"]
+dificuldade = "media"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Casemiro"
 dificuldade = "dificil"
 tipo = "jogador"
 
 [[palavra]]
-texto = "Careca"
+texto = "Thiago Silva"
 dificuldade = "dificil"
 tipo = "jogador"
 
 [[palavra]]
-texto = "Categoria de base"
+texto = "Alisson"
+dificuldade = "dificil"
+tipo = "jogador"
+
+[[palavra]]
+texto = "Edmundo"
+aceita = ["animal"]
 dificuldade = "dificil"
 tipo = "jogador"
 
@@ -1634,11 +1433,6 @@ tipo = "tecnico"
 [[palavra]]
 texto = "Felipão"
 aceita = ["felipe scolari", "luiz felipe scolari"]
-dificuldade = "media"
-tipo = "tecnico"
-
-[[palavra]]
-texto = "Auxiliar técnico"
 dificuldade = "media"
 tipo = "tecnico"
 
@@ -1670,12 +1464,19 @@ dificuldade = "dificil"
 tipo = "tecnico"
 
 [[palavra]]
-texto = "Preparador físico"
+texto = "Tite"
+dificuldade = "media"
+tipo = "tecnico"
+
+[[palavra]]
+texto = "Luxemburgo"
+aceita = ["vanderlei luxemburgo"]
 dificuldade = "dificil"
 tipo = "tecnico"
 
 [[palavra]]
-texto = "Roupeiro"
+texto = "Renato Gaúcho"
+aceita = ["renato portaluppi"]
 dificuldade = "dificil"
 tipo = "tecnico"
 
@@ -1700,53 +1501,7 @@ dificuldade = "facil"
 tipo = "apelido"
 
 [[palavra]]
-texto = "Zebra"
-dificuldade = "facil"
-tipo = "apelido"
-
-[[palavra]]
-texto = "Lanterna"
-aceita = ["lanterninha"]
-dificuldade = "media"
-tipo = "apelido"
-
-[[palavra]]
-texto = "Chocolate"
-dificuldade = "media"
-tipo = "apelido"
-
-[[palavra]]
-texto = "Garçom"
-dificuldade = "media"
-tipo = "apelido"
-
-[[palavra]]
-texto = "Matador"
-dificuldade = "media"
-tipo = "apelido"
-
-[[palavra]]
-texto = "Xerife"
-dificuldade = "media"
-tipo = "apelido"
-
-[[palavra]]
-texto = "Maestro"
-dificuldade = "media"
-tipo = "apelido"
-
-[[palavra]]
-texto = "Canhoto"
-dificuldade = "media"
-tipo = "apelido"
-
-[[palavra]]
 texto = "Cabeça de bagre"
-dificuldade = "dificil"
-tipo = "apelido"
-
-[[palavra]]
-texto = "Freguês"
 dificuldade = "dificil"
 tipo = "apelido"
 
@@ -1766,33 +1521,8 @@ dificuldade = "dificil"
 tipo = "apelido"
 
 [[palavra]]
-texto = "Barbante"
-dificuldade = "dificil"
-tipo = "apelido"
-
-[[palavra]]
 texto = "Gorduchinha"
 dificuldade = "dificil"
-tipo = "apelido"
-
-[[palavra]]
-texto = "Cartola"
-dificuldade = "dificil"
-tipo = "apelido"
-
-[[palavra]]
-texto = "Boleiro"
-dificuldade = "dificil"
-tipo = "apelido"
-
-[[palavra]]
-texto = "Fominha"
-dificuldade = "dificil"
-tipo = "apelido"
-
-[[palavra]]
-texto = "Coringa"
-dificuldade = "media"
 tipo = "apelido"
 
 # ============================================================
@@ -1802,7 +1532,7 @@ tipo = "apelido"
 [[palavra]]
 texto = "Seleção Brasileira"
 aceita = ["seleção"]
-dificuldade = "media"
+dificuldade = "facil"
 tipo = "clube"
 
 [[palavra]]
