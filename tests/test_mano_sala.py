@@ -624,3 +624,23 @@ def test_no_replay_cada_um_mantem_o_papel_do_lance():
     assert jogo.foto(0)["papel"] == "batedor" and jogo.foto(1)["papel"] == "goleiro"
     jogo.depois()
     assert jogo.foto(0)["papel"] == "goleiro"
+
+
+def test_acao_recusada_nao_gasta_o_limite():
+    jogo = Jogo()
+    with pytest.raises(ErroSala) as erro:
+        jogo.agir(0, "defesa", lado="fica")  # the kicker does not dive: 409
+    assert erro.value.status == 409
+    jogo.agir(0, "chute", **GOL_ESQUERDA)  # at once: the refusal used no slot
+    with pytest.raises(ErroSala) as erro:
+        jogo.agir(0, "chute", alvo=[1200, 0], barra=500)
+    assert erro.value.status == 429  # an accepted action does
+
+
+def test_cobranca_inicio_traz_a_hora_do_servidor():
+    jogo = Jogo()
+    jogo.agir(0, "chute", **GOL_ESQUERDA)
+    jogo.andar(2)
+    (inicio,) = [e for e in jogo.agir(1, "defesa", lado="direita") if e.tipo == "cobranca_inicio"]
+    assert inicio.dados["agora"] == jogo.agora.isoformat()
+    assert inicio.dados["chute_em"] == (jogo.agora + CORRIDA).isoformat()

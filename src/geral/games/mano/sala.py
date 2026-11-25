@@ -170,9 +170,10 @@ class Sala:
         j = self._jogadores[jogador]
         if j.ultima_acao is not None and agora - j.ultima_acao < INTERVALO_ACAO:
             raise ErroSala(429, "too many actions")
-        j.ultima_acao = agora
         dados = {k: v for k, v in acao.items() if k != "tipo"}
-        return tratar(jogador, dados, agora)
+        eventos = tratar(jogador, dados, agora)
+        j.ultima_acao = agora  # only an accepted action uses the slot
+        return eventos
 
     def _exigir(self, jogador: int, fase: str, papel: str) -> None:
         if self._fase != fase:
@@ -373,7 +374,11 @@ class Sala:
         self._prazo = self._chute_em
         return [
             *self._estados(agora),
-            self._evento("cobranca_inicio", {"chute_em": self._chute_em.isoformat()}),
+            self._evento(
+                "cobranca_inicio",
+                # the server's clock now, so the client can move `chute_em` to its own
+                {"chute_em": self._chute_em.isoformat(), "agora": agora.isoformat()},
+            ),
         ]
 
     def _chute_ao_acaso(self) -> Chute:
