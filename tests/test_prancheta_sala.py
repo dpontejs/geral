@@ -747,7 +747,8 @@ def test_menos_de_dois_presentes_vai_ao_fim():
     sala.desconectou(2, em(2))
     eventos = sala.avancar(em(32))
     assert [e.tipo for e in eventos].count("fim") == 1
-    assert sala.encerrada
+    assert sala.foto(1, em(32))["fase"] == "fim"
+    assert not sala.encerrada  # open for another game (2026-11-25)
 
 
 def test_espera_nao_acaba_quando_sai_gente():
@@ -762,16 +763,16 @@ def test_fim_uma_vez_so():
     eventos = sala.agir(2, SAIR, em(2))
     fins = [e for e in eventos if e.tipo == "fim"]
     assert len(fins) == 1 and fins[0].para is None
-    assert sala.encerrada
     assert sala.foto(1, em(2))["fase"] == "fim"
     assert sala.avancar(em(500)) == []
     assert sala.desconectou(1, em(500)) == []
-    assert sala.avancar(em(600)) == []
+    sala.avancar(em(602))  # 10 min with no next game: the room closes
+    assert sala.encerrada and sala.avancar(em(700)) == []
     with pytest.raises(ErroSala) as excinfo:
-        sala.agir(1, SAIR, em(601))
+        sala.agir(1, SAIR, em(603))
     assert _status(excinfo) == 409
     with pytest.raises(ErroSala) as excinfo:
-        sala.entrar("Novo", em(601))
+        sala.entrar("Novo", em(603))
     assert _status(excinfo) == 409
 
 
@@ -811,7 +812,9 @@ def test_sumula_ordenada_por_pontos():
     sumula = sala.sumula()
     assert fim[0]["sumula"] == sumula
     assert sumula == {
-        "id": "abc234",
+        "id": "abc234-1",
+        "sala": "abc234",
+        "partida": 1,
         "jogadores": [
             {"apelido": "Bia", "pontos": 11, "gols": 1, "assist": 1},
             {"apelido": "Caio", "pontos": 10, "gols": 1, "assist": 0},
@@ -985,9 +988,10 @@ def test_pedido_sem_conexao_cai_depois_de_30_s():
 def test_pedido_em_sala_encerrada_409():
     sala, _ = sala_com(2)
     sala.agir(1, COMECAR, em(0))
-    sala.agir(2, SAIR, em(1))
+    sala.agir(2, SAIR, em(1))  # the end; the room closes 10 min later
+    sala.avancar(em(601))
     with pytest.raises(ErroSala) as excinfo:
-        sala.pedir("Novato", em(2))
+        sala.pedir("Novato", em(602))
     assert _status(excinfo) == 409
 
 
@@ -1185,3 +1189,133 @@ def test_balde_conta_no_limite_por_segundo():
     with pytest.raises(ErroSala) as excinfo:
         sala.agir(1, balde(99, [1, 1]), em(2.5))
     assert _status(excinfo) == 429
+
+
+# --- 2026-11-25: nova partida na mesma sala ---
+
+
+def nova(rodadas: int = 1) -> dict:
+    return {"tipo": "nova_partida", "rodadas": rodadas}
+
+
+def no_fim(n: int = 3):
+    """A 1-round game where player 2 scores on Bicicleta, then everyone else times out."""
+    sala, tokens = em_desenho(n)
+    sala.agir(2, chute("bicicleta"), em(2))
+    t = 2.0
+    while sala.foto(1, em(t))["fase"] != "fim":
+        t += 0.5
+        sala.avancar(em(t))
+    return sala, tokens, t
+
+
+def test_fim_deixa_a_sala_aberta_para_nova_partida():
+    sala, _, t = no_fim()
+    foto = sala.foto(2, em(t))
+    assert not sala.encerrada
+    assert (foto["fase"], foto["partida"], foto["sumula"]) == ("fim", 1, "abc234-1")
+    assert sala.sumula()["id"] == "abc234-1"
+    assert (sala.sumula()["sala"], sala.sumula()["partida"]) == ("abc234", 1)
+
+
+def test_sumula_so_no_fim():
+    sala, _ = em_desenho()
+    assert sala.foto(2, em(2))["sumula"] is None
+    assert sala.foto(2, em(2))["partida"] == 1
+
+
+def test_anfitriao_comeca_nova_partida():
+    sala, tokens, t = no_fim()
+    palavras_1 = [lance["palavra"] for lance in sala.sumula()["lances"]]
+    eventos = sala.agir(1, nova(2), em(t + 5))
+    assert {e.para for e in eventos if e.tipo == "estado"} == {1, 2, 3}
+    foto = sala.foto(2, em(t + 5))
+    assert (foto["fase"], foto["rodada"], foto["rodadas"], foto["partida"]) == ("espera", 0, 2, 2)
+    assert (foto["desenhista"], foto["palavra"], foto["tracos"], foto["sumula"]) == (
+        None,
+        None,
+        [],
+        None,
+    )
+    assert [(j["apelido"], j["pontos"], j["gols"], j["assist"]) for j in foto["jogadores"]] == [
+        ("Ana", 0, 0, 0),
+        ("Bia", 0, 0, 0),
+        ("Caio", 0, 0, 0),
+    ]
+    assert sala.jogador(tokens[3]) == 3  # same seats, same tokens
+    sala.agir(1, COMECAR, em(t + 6))
+    opcoes = sala.foto(1, em(t + 6))["opcoes"]
+    assert not {o["texto"] for o in opcoes} & set(palavras_1)  # no word again in this room
+    sala.agir(1, {"tipo": "escolher", "indice": 0}, em(t + 7))
+    eventos = sala.agir(1, SAIR, em(t + 8))  # host leaves; 2 still play
+    assert sala.foto(2, em(t + 8))["fase"] == "intervalo"
+    eventos = sala.encerrar(em(t + 9))
+    [fim] = [e.dados["sumula"] for e in eventos if e.tipo == "fim"]
+    assert (fim["id"], fim["sala"], fim["partida"]) == ("abc234-2", "abc234", 2)
+    assert [lance["desenhista"] for lance in fim["lances"]] == ["Ana"]
+    assert [j["apelido"] for j in fim["jogadores"]] == ["Ana", "Bia", "Caio"]
+    assert sala.partida_desde == em(t + 5)
+
+
+def test_nova_partida_so_do_anfitriao_e_so_no_fim():
+    sala, _ = sala_com(3)
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(1, nova(), em(0))  # still waiting for the first
+    assert _status(excinfo) == 409
+    sala, _, t = no_fim()
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(2, nova(), em(t))
+    assert _status(excinfo) == 409
+    for rodadas in (0, 4, "2", None, True):
+        with pytest.raises(ErroSala) as excinfo:
+            sala.agir(1, {"tipo": "nova_partida", "rodadas": rodadas}, em(t))
+        assert _status(excinfo) == 422
+    sala.agir(1, nova(3), em(t))
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(1, nova(3), em(t))  # already waiting
+    assert _status(excinfo) == 409
+
+
+def test_nova_partida_tira_ausentes_e_mantem_pedidos():
+    sala, tokens, t = no_fim(4)
+    pedido, _, _ = sala.pedir("Novato", em(t))
+    sala.conectou(pedido, em(t))
+    sala.desconectou(4, em(t))
+    sala.avancar(em(t + 30))  # Davi is absent now
+    sala.agir(1, nova(), em(t + 31))
+    foto = sala.foto(1, em(t + 31))
+    assert [j["apelido"] for j in foto["jogadores"]] == ["Ana", "Bia", "Caio"]
+    assert foto["pedidos"] == [{"id": pedido, "apelido": "Novato"}]
+    with pytest.raises(ErroSala) as excinfo:
+        sala.jogador(tokens[4])
+    assert _status(excinfo) == 403
+    sala.agir(1, aceitar(pedido), em(t + 32))
+    assert [j["apelido"] for j in sala.foto(1, em(t + 32))["jogadores"]][-1] == "Novato"
+
+
+def test_no_fim_da_para_pedir_aceitar_e_sair():
+    sala, _, t = no_fim(2)
+    pedido, _, _ = sala.pedir("Novato", em(t))
+    sala.agir(1, aceitar(pedido), em(t + 1))
+    sala.agir(2, SAIR, em(t + 2))
+    foto = sala.foto(1, em(t + 2))
+    assert foto["fase"] == "fim"
+    assert [j["apelido"] for j in foto["jogadores"]] == ["Ana", "Novato"]
+    assert [j["apelido"] for j in sala.sumula()["jogadores"]] == ["Bia", "Ana"]  # who played
+
+
+def test_sala_fecha_dez_minutos_depois_do_fim():
+    sala, _, t = no_fim()
+    assert sala.avancar(em(t + 599)) == [] and not sala.encerrada
+    assert sala.avancar(em(t + 600)) == [] and sala.encerrada
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(1, nova(), em(t + 601))
+    assert _status(excinfo) == 409
+
+
+def test_encerrar_no_fim_ou_na_espera_da_nova_partida_so_fecha():
+    sala, _, t = no_fim()
+    assert sala.encerrar(em(t + 1)) == [] and sala.encerrada
+    sala, _, t = no_fim()
+    sala.agir(1, nova(), em(t + 1))
+    assert sala.encerrar(em(t + 2)) == [] and sala.encerrada

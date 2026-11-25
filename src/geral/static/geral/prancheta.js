@@ -521,7 +521,7 @@
     p.textContent = texto;
     p.hidden = false;
   }
-  function aviso(titulo, texto, sumula = false) {
+  function aviso(titulo, texto, sumula = "") {
     tela = "aviso";
     pararFonte();
     $("#pr-sair-box").hidden = true;
@@ -530,7 +530,7 @@
     palco.innerHTML = `<div class="espera so">
       ${placar({ meta: SALA ? `Sala ${esc(SALA)}` : "Prancheta", aviso: esc(titulo) })}
       <div class="ticket"><h2>${esc(titulo)}</h2><p>${esc(texto)}</p>
-        <div class="acoes"><a class="btn lamp-btn" href="/jogos/prancheta">Nova sala</a>${sumula ? `<a class="btn secondary" href="/jogos/prancheta/s/${esc(SALA)}">Ver a súmula</a>` : ""}</div></div>
+        <div class="acoes"><a class="btn lamp-btn" href="/jogos/prancheta">Nova sala</a>${sumula ? `<a class="btn secondary" href="/jogos/prancheta/s/${esc(sumula)}">Ver a súmula</a>` : ""}</div></div>
     </div>`;
   }
 
@@ -563,7 +563,7 @@
   // The host's answer box: who asked to join, over whatever screen is on.
   function mostrarPedidos() {
     const caixa = $("#pr-pedidos");
-    const lista = est && est.pedidos && tela !== "fim" && tela !== "aviso" ? est.pedidos : [];
+    const lista = est && est.pedidos && tela !== "aviso" ? est.pedidos : [];
     caixa.hidden = !lista.length;
     trocar(caixa, lista.length ? `<p class="lamp pr-pedidos-tit">Pede${lista.length > 1 ? "m" : ""} para entrar</p><ul>${lista.map((p) =>
       `<li data-pedido="${p.id}"><b>${esc(p.apelido)}</b><span class="pr-pedido-nota" hidden></span><button class="btn lamp-btn" type="button" data-resposta="aceitar">Aceitar</button><button class="btn secondary" type="button" data-resposta="recusar">Recusar</button></li>`).join("")}</ul>` : "");
@@ -853,27 +853,36 @@
     aviso("Você saiu da sala", "Seus pontos ficam na súmula quando a partida acabar.");
   });
 
-  // ---- the end: the súmula, as the room's link shows it ---------------------------------------
+  // ---- the end: this game's súmula, and the host's next game in the same room ---------------
+  // The room stays open (and this page keeps listening) until the host starts another game or
+  // 10 minutes go by. The súmula is this game's own, at its own link (`est.sumula`).
+  let fimDe = null; // which game's súmula is on screen
+  let rodadasNova = 0;
   async function telaFim() {
-    if (tela === "fim") return;
+    if (tela === "fim" && fimDe === est.sumula) return caixaRevanche();
     tela = "fim";
-    pararFonte();
+    const id = (fimDe = est.sumula);
+    rodadasNova = est.rodadas;
     $("#pr-sair-box").hidden = true;
-    $("#pr-pedidos").hidden = true;
     const ord = [...est.jogadores].sort((a, b) => b.pontos - a.pontos);
     palco.className = "palco";
     palco.innerHTML = `<div class="placar board campeao"><span class="lamp">Fim de jogo${ord.length ? ` · ${esc(ord[0].apelido)}` : ""}</span><span class="lamp n">${ord.length ? ord[0].pontos : 0} pts</span></div>
+      <div class="ticket pr-revanche" id="pr-revanche"></div>
       <div class="ticket pr-fechando"><h2>Súmula</h2><p>Fechando a súmula…</p></div>`;
-    // The súmula is written as the room ends: ask the room's link until it shows it.
+    caixaRevanche();
+    // The súmula is written as the game ends: ask its link until it shows it.
     for (let tentativa = 0; tentativa < 8; tentativa++) {
       try {
-        const r = await fetch(`/jogos/prancheta/s/${SALA}`, { cache: "no-store" });
+        const r = await fetch(`/jogos/prancheta/s/${encodeURIComponent(id)}`, { cache: "no-store" });
         const html = await r.text();
         const sumula = new DOMParser().parseFromString(html, "text/html").getElementById("pr-sumula");
+        if (tela !== "fim" || fimDe !== id) return; // the next game began meanwhile
         if (sumula) {
+          const caixa = $("#pr-revanche");
           palco.innerHTML = sumula.innerHTML;
+          const topo = palco.querySelector(".placar");
+          if (topo) topo.after(caixa); else palco.prepend(caixa);
           palco.querySelectorAll("[data-copiar]").forEach((b) => b.addEventListener("click", () => copiar(b)));
-          esquecer();
           return;
         }
       } catch {
@@ -881,8 +890,51 @@
       }
       await new Promise((ok) => setTimeout(ok, 750));
     }
-    palco.querySelector(".pr-fechando p").innerHTML = `A súmula fica no link da sala. <a href="/jogos/prancheta/s/${esc(SALA)}">Abrir a súmula</a>`;
+    const fechando = palco.querySelector(".pr-fechando p");
+    if (fechando) fechando.innerHTML = `A súmula fica no link desta partida. <a href="/jogos/prancheta/s/${esc(id)}">Abrir a súmula</a>`;
   }
+  // The host chooses the rounds and starts again; everyone else waits for them, or leaves.
+  function caixaRevanche() {
+    const caixa = $("#pr-revanche");
+    if (!caixa || !est || est.fase !== "fim") return;
+    const anfitriao = est.jogadores.find((j) => j.anfitriao);
+    const souAnfitriao = anfitriao && souEu(anfitriao.id);
+    const presentes = est.jogadores.filter((j) => j.presente).length;
+    const sair = `<button class="btn secondary" type="button" data-fim="sair">Sair da sala</button>`;
+    trocar(caixa, souAnfitriao
+      ? `<h2>Nova partida</h2>
+        <p>Mesma sala e mesma turma, placar zerado. Quem estiver ausente sai; quem pediu para entrar continua esperando a sua resposta.</p>
+        <fieldset class="campo-f"><legend>Rodadas · cada um desenha uma vez por rodada</legend><div class="chips">
+          ${[1, 2, 3].map((n) => `<button class="chip" type="button" data-fim-rodadas="${n}" aria-pressed="${n === rodadasNova}">${n}</button>`).join("")}</div></fieldset>
+        <div class="acoes"><button class="btn lamp-btn" type="button" data-fim="nova">Nova partida</button>${sair}</div>
+        <p class="fine">${presentes < 2 ? "Para começar a próxima, precisa de mais alguém na sala: aceite um pedido ou mande o link. " : ""}Sem nova partida, a sala fecha 10 minutos depois do fim.</p>`
+      : `<h2>Esperando o anfitrião</h2>
+        <p>${anfitriao ? esc(anfitriao.apelido) : "O anfitrião"} pode começar outra partida com a mesma turma. Deixe esta página aberta: quando começar, a sala abre aqui.</p>
+        <p class="pr-aguarde"><span class="lampadinha"></span><span class="lampadinha"></span><span class="lampadinha"></span> esperando a próxima</p>
+        <div class="acoes">${sair}</div>`);
+  }
+  palco.addEventListener("click", async (e) => {
+    const chip = e.target.closest("[data-fim-rodadas]");
+    if (chip) {
+      rodadasNova = +chip.dataset.fimRodadas;
+      palco.querySelectorAll("[data-fim-rodadas]").forEach((c) => c.setAttribute("aria-pressed", c === chip));
+      $("#pr-revanche").__html = null; // the chips changed by hand: redraw from state next time
+      return;
+    }
+    const b = e.target.closest("[data-fim]");
+    if (!b) return;
+    if (b.dataset.fim === "nova") {
+      b.disabled = true;
+      if ((await acao("nova_partida", { rodadas: rodadasNova })) !== 204) b.disabled = false;
+    } else if (b.dataset.fim === "sair") {
+      if (!confirm("Sair da sala? A súmula desta partida fica no link dela.")) return;
+      const id = fimDe;
+      saindo = true;
+      await acao("sair");
+      esquecer();
+      aviso("Você saiu da sala", "A súmula desta partida fica no link dela.", id);
+    }
+  });
 
   // ---- what the server says ---------------------------------------------------------------------
   function narrar(antes, agora) {
@@ -932,7 +984,7 @@
     }
     $("#pr-sair-box").hidden = novo.fase === "fim";
     // A new play: its points and my strokes start over.
-    const chave = `${novo.rodada}:${novo.desenhista}`;
+    const chave = `${novo.partida}:${novo.rodada}:${novo.desenhista}`;
     if (chave !== lanceAtual) { ganhos = {}; opcoesDoLance = null; escolhida = null; pulou = false; lanceAtual = chave; }
     if (novo.fase === "fim") return telaFim();
     if (novo.fase === "espera") return telaEspera();
@@ -955,7 +1007,7 @@
     if (tipoEvento === "recusado") return recusado();
     if (!est || d.seq <= seq) return; // already in the last `estado`
     seq = d.seq;
-    if (tipoEvento === "fim") return tela === "pedido" ? caiu() : telaFim();
+    if (tipoEvento === "fim") return; // the `estado` just before it already shows the end
     if (tela !== "ao-vivo") return;
     if (tipoEvento === "pulou") { pulou = true; return; }
     if (tipoEvento === "traco") return receberTraco(d);
@@ -1000,7 +1052,7 @@
   function reconectar() {
     const espera = Math.min(30000, 1000 * 2 ** tentativas);
     tentativas++;
-    setTimeout(() => { checando = false; if (tela !== "fim" && tela !== "aviso") conectar(); }, espera);
+    setTimeout(() => { checando = false; if (tela !== "aviso") conectar(); }, espera);
   }
   // A cheap authenticated call with no effect: a red card for myself is always refused (422)
   // when my token is good, 409 while my request waits, 403 when it is gone, 404 with the room.
@@ -1009,7 +1061,7 @@
     return status;
   }
   async function caiu() {
-    if (checando || tela === "fim" || tela === "aviso") return;
+    if (checando || tela === "aviso") return;
     checando = true;
     pararFonte();
     try {

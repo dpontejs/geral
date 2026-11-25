@@ -1,10 +1,11 @@
 {% extends "base.html.j2" %}
-{% block title %}Súmula da sala {{ sala_id }} · Prancheta · Geral{% endblock %}
+{% block title %}Súmula da sala {{ sumula.sala or sala_id }} · Prancheta · Geral{% endblock %}
 {% block head %}<link rel="stylesheet" href="/static/geral/jogos.css?v={{ asset_version }}">
 <link rel="stylesheet" href="/static/geral/prancheta.css?v={{ asset_version }}">{% endblock %}
 {% block content %}
 {# What is left of a room at its short link: points and plays, never a drawing. #}
-{% set link = public_url ~ "/jogos/prancheta/s/" ~ sala_id %}
+{# each game's own link: a room's link shows its last game, this one stays #}
+{% set link = public_url ~ "/jogos/prancheta/s/" ~ (sumula.id or sala_id) %}
 <section class="jogo wall pr">
   <div class="wrap">
     {% include "_game_tabs.html.j2" %}

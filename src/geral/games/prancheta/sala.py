@@ -19,6 +19,8 @@ TEMPO_ESCOLHA = timedelta(seconds=15)
 TEMPO_DESENHO = timedelta(seconds=80)
 TEMPO_INTERVALO = timedelta(seconds=6)
 AUSENCIA = timedelta(seconds=30)
+ESPERA_FIM = timedelta(minutes=10)  # a finished game waits this long for the host's next one
+RODADAS = range(1, 4)
 BASE = {"facil": 5, "media": 7, "dificil": 10}
 PISO = 2
 ASSISTENCIA = 2
@@ -111,7 +113,8 @@ class Sala:
         self.id = id
         self.rodadas = rodadas
         self.criada_em = agora
-        self.encerrada = False
+        self.partida_desde = agora  # when the current game began (the súmula's `criada_em`)
+        self.encerrada = False  # closed for good: no next game; the hub drops it
         self._banco = banco
         self._rng = rng
         self._seq = 0
@@ -139,6 +142,7 @@ class Sala:
         self._votos: dict[int, set[int]] = {}  # target -> who voted against them
         self._lances: list[dict] = []
         self._lance_registrado = True
+        self._partida = 1  # games played in this room, each with its own súmula
 
     # --- entrada e identidade ---
 
@@ -186,7 +190,8 @@ class Sala:
     ) -> _Jogador:
         jogador = _Jogador(id_, apelido, token, desde=desde, conexoes=conexoes)
         self._jogadores[jogador.id] = jogador
-        self._todos[jogador.id] = jogador
+        if self._fase != "fim":  # the finished game's súmula lists only who played it
+            self._todos[jogador.id] = jogador
         self._tokens[jogador.token] = jogador.id
         if self._anfitriao is None:
             self._anfitriao = jogador.id
@@ -235,6 +240,7 @@ class Sala:
             "recusar": self._recusar,
             "dica": self._dar_dica,
             "pular": self._pular,
+            "nova_partida": self._nova_partida,
         }.get(acao.get("tipo"))
         if tratar is None:
             raise ErroSala(422, "unknown action")
@@ -448,6 +454,49 @@ class Sala:
             raise ErroSala(409, "not your turn")
         return [self._evento("pulou", {"jogador": jogador.id}), *self._ir_ao_intervalo(agora)]
 
+    def _nova_partida(self, jogador: _Jogador, acao: dict, agora: datetime) -> list[Evento]:
+        """The host starts another game in the same room, back in `espera`, scores at zero.
+
+        Who is absent leaves (token and all); requests waiting stay; words already played in this
+        room are not offered again while the bank has others. The last game's súmula is kept.
+        """
+        if jogador.id != self._anfitriao:
+            raise ErroSala(409, "only the host starts another game")
+        if self._fase != "fim":
+            raise ErroSala(409, "the game is not over")
+        rodadas = acao.get("rodadas")
+        if not _eh_int(rodadas) or rodadas not in RODADAS:
+            raise ErroSala(422, "rounds must be 1 to 3")
+        for ausente in [j for j in self._jogadores.values() if not j.presente]:
+            del self._jogadores[ausente.id]
+            del self._tokens[ausente.token]
+            self._votos.pop(ausente.id, None)
+            for votantes in self._votos.values():
+                votantes.discard(ausente.id)
+        for j in self._jogadores.values():
+            j.pontos = j.gols = j.assist = 0
+            j.acertou = False
+        self._todos = dict(self._jogadores)
+        self._expulsos = set()
+        self._lances = []
+        self._lance_registrado = True
+        self._partida += 1
+        self.partida_desde = agora
+        self.rodadas = rodadas
+        self._fase = "espera"
+        self._rodada = 0
+        self._fila = []
+        self._prazo = None
+        self._desenhista = None
+        self._palavra = None
+        self._opcoes = None
+        self._dica = None
+        self._dicas_dadas = 0
+        self._acertaram = []
+        self._tracos = {}
+        self._total_pontos = 0
+        return self._estados(agora)
+
     def _alvo(self, jogador: _Jogador, acao: dict) -> int:
         alvo = acao.get("alvo")
         if not _eh_int(alvo) or alvo not in self._jogadores or alvo == jogador.id:
@@ -485,7 +534,7 @@ class Sala:
             candidatos = presentes or list(self._jogadores)
             self._anfitriao = candidatos[0] if candidatos else None
         if self._fase in ("escolha", "desenho", "intervalo") and len(presentes) < 2:
-            return self._encerrar(agora, tambem)
+            return self._fim_de_partida(agora, tambem)
         em_lance = self._fase in ("escolha", "desenho")
         if (em_lance and self._desenhista not in presentes) or (
             self._fase == "desenho" and self._todos_acertaram()
@@ -552,6 +601,9 @@ class Sala:
                 eventos += self._ir_ao_intervalo(agora)
             elif self._fase == "intervalo":
                 eventos += self._proximo_lance(agora)
+            elif self._fase == "fim":  # nobody started another game: the room closes
+                self.encerrada = True
+                self._prazo = None
         return eventos
 
     # --- fases ---
@@ -563,7 +615,7 @@ class Sala:
                 if candidato in self._presentes():
                     return self._iniciar_lance(candidato, agora)
             if self._rodada >= self.rodadas:
-                return self._encerrar(agora)
+                return self._fim_de_partida(agora)
             self._rodada += 1
             self._fila = list(self._presentes())
 
@@ -600,20 +652,22 @@ class Sala:
         return self._estados(agora, tambem)
 
     def encerrar(self, agora: datetime) -> list[Evento]:
-        """The hub's cleanup: a game in progress goes to `fim`; a room still waiting just closes."""
-        if self._fase == "espera":
-            self.encerrada = True
-            return []
-        return self._encerrar(agora)
-
-    def _encerrar(self, agora: datetime, tambem: tuple[int, ...] = ()) -> list[Evento]:
+        """The hub's cleanup, for good: a game in progress goes to `fim` first; else it closes."""
         if self.encerrada:
+            return []
+        eventos = [] if self._fase in ("espera", "fim") else self._fim_de_partida(agora)
+        self.encerrada = True
+        self._prazo = None
+        return eventos
+
+    def _fim_de_partida(self, agora: datetime, tambem: tuple[int, ...] = ()) -> list[Evento]:
+        """The game is over: its súmula goes out; the room waits for the host's next game."""
+        if self._fase == "fim":
             return []
         self._registrar_lance()
         self._fase = "fim"
-        self._prazo = None
+        self._prazo = agora + ESPERA_FIM
         self._opcoes = None
-        self.encerrada = True
         return [
             *self._estados(agora, tambem),
             self._evento("fim", {"sumula": self.sumula()}),
@@ -638,7 +692,9 @@ class Sala:
             key=lambda j: -j.pontos,
         )
         return {
-            "id": self.id,
+            "id": self.id_sumula,
+            "sala": self.id,
+            "partida": self._partida,
             "jogadores": [
                 {"apelido": j.apelido, "pontos": j.pontos, "gols": j.gols, "assist": j.assist}
                 for j in jogadores
@@ -647,6 +703,11 @@ class Sala:
         }
 
     # --- leitura ---
+
+    @property
+    def id_sumula(self) -> str:
+        """Each game in the room has its own súmula, at its own link."""
+        return f"{self.id}-{self._partida}"
 
     def _presentes(self) -> list[int]:
         return [j.id for j in self._jogadores.values() if j.presente]
@@ -672,6 +733,9 @@ class Sala:
             "fase": self._fase,
             "rodada": self._rodada,
             "rodadas": self.rodadas,
+            "partida": self._partida,
+            # only at the end: this game's súmula (the room's link stays on the live room)
+            "sumula": self.id_sumula if self._fase == "fim" else None,
             "prazo": self._prazo.isoformat() if self._prazo else None,
             "agora": agora.isoformat(),
             "desenhista": self._desenhista,

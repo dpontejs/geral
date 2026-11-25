@@ -644,7 +644,7 @@ async def test_fim_grava_sumula(tmp_path):
         _ate_o_fim(m, 6 + 15 + 80 + 6)  # Bia's turn: no choice, no guess, then the end
 
         *_, (tipo, fim) = await ouvinte.ate(lambda t, d: t == "fim")
-        assert await ouvinte.proximo() is None  # the stream closes after the end
+        assert m.prancheta.viva(sala)  # open for another game: the stream goes on
         assert m.prancheta.sumula(sala) == fim["sumula"]
         assert fim["sumula"]["jogadores"] == [
             {"apelido": "Bia", "pontos": 5, "gols": 1, "assist": 0},
@@ -652,7 +652,7 @@ async def test_fim_grava_sumula(tmp_path):
         ]
         assert [lance["desenhista"] for lance in fim["sumula"]["lances"]] == ["Ana", "Bia"]
         [(id_, criada_em, encerrada_em, _)] = _linhas(m)
-        assert id_ == sala and criada_em == T0.isoformat()
+        assert id_ == f"{sala}-1" and criada_em == T0.isoformat()
         assert encerrada_em == m.relogio().isoformat()
 
 
@@ -664,11 +664,11 @@ async def test_sumula_gravada_uma_vez(tmp_path):
         assert (await m.agir(sala, tokens[2], "sair")).status_code == 204  # alone: the end
         primeira = _linhas(m)
         assert len(primeira) == 1
-        assert (await m.agir(sala, tokens[1], "sair")).status_code == 404  # out of memory
+        assert (await m.agir(sala, tokens[1], "sair")).status_code == 204  # still open at fim
         _ate_o_fim(m, 3)
         m.relogio.andar(3 * 3600)
         m.prancheta.passo()
-        m.prancheta._gravar(sala, T0, m.relogio(), {"outra": "versao"})  # a second write
+        m.prancheta._gravar(f"{sala}-1", sala, T0, m.relogio(), {"outra": "versao"})  # again
         assert _linhas(m) == primeira
 
 
@@ -731,9 +731,9 @@ async def test_viva_e_sumula(tmp_path):
         await m.em_desenho(sala, tokens)
         await m.agir(sala, tokens[1], "tirar", alvo=3)
         await m.agir(sala, tokens[2], "sair")
-        assert not m.prancheta.viva(sala)
+        assert m.prancheta.viva(sala)  # at fim, waiting for the host's next game
         sumula = m.prancheta.sumula(sala)
-        assert sumula["id"] == sala
+        assert sumula["id"] == f"{sala}-1" and m.prancheta.sumula(f"{sala}-1") == sumula
         assert [j["apelido"] for j in sumula["jogadores"]] == ["Ana", "Bia"]  # 3 was sent off
 
 
@@ -851,3 +851,85 @@ def test_token_some_do_access_log(tmp_path):
     assert f"{API}/salas/abc234/eventos?token=***&x=1" in mensagem
     Mesa(tmp_path)
     assert len([f for f in acesso.filters if isinstance(f, hub.SemToken)]) == 1  # added once
+
+
+# --- 2026-11-25: nova partida na mesma sala ---
+
+
+async def _jogar_ate_o_fim(m: Mesa, sala: str, tokens: dict[int, str]) -> None:
+    """Ana draws the easy word and Bia scores; then Bia's turn times out: the end (1 round)."""
+    await m.em_desenho(sala, tokens)
+    palavra = (await m.foto(sala, tokens[1]))["palavra"]
+    m.relogio.andar(1)
+    assert (await m.agir(sala, tokens[2], "chute", texto=palavra)).status_code == 204
+    _ate_o_fim(m, 6 + 15 + 80 + 6)
+
+
+@assincrono
+async def test_nova_partida_pela_rota(tmp_path):
+    async with mesa(tmp_path) as m:
+        sala, tokens = await m.sala_com(2)
+        await m.ouvir(sala, tokens[1])
+        bia = await m.ouvir(sala, tokens[2])
+        await _jogar_ate_o_fim(m, sala, tokens)
+        *_, (_, fim) = await bia.ate(lambda t, d: t == "fim")
+        assert fim["sumula"]["id"] == f"{sala}-1"
+        assert m.prancheta.viva(sala)
+        assert (await m.agir(sala, tokens[2], "nova_partida", rodadas=1)).status_code == 409
+        assert (await m.agir(sala, tokens[1], "nova_partida", rodadas=4)).status_code == 422
+        assert (await m.agir(sala, tokens[1], "nova_partida", rodadas=1)).status_code == 204
+        *_, (_, espera) = await bia.ate(lambda t, d: t == "estado" and d["fase"] == "espera")
+        assert (espera["partida"], espera["sumula"]) == (2, None)
+        assert [j["pontos"] for j in espera["jogadores"]] == [0, 0]
+
+        await _jogar_ate_o_fim(m, sala, tokens)
+        *_, (_, fim) = await bia.ate(lambda t, d: t == "fim")
+        assert fim["sumula"]["id"] == f"{sala}-2"
+        assert [linha[0] for linha in _linhas(m)] == [f"{sala}-1", f"{sala}-2"]
+        assert m.prancheta.sumula(sala) == fim["sumula"]  # the room's link: the last one
+        assert m.prancheta.sumula(f"{sala}-1")["partida"] == 1
+        assert m.prancheta.sumula(f"{sala}-1")["lances"][0]["palavra"] == "Bicicleta"
+        assert m.prancheta.sumula(f"{sala}-2")["lances"][0]["palavra"] != "Bicicleta"
+
+
+@assincrono
+async def test_sala_fecha_dez_minutos_depois_do_fim(tmp_path):
+    async with mesa(tmp_path) as m:
+        sala, tokens = await m.sala_com(2)
+        ouvinte = await m.ouvir(sala, tokens[1])
+        await m.ouvir(sala, tokens[2])
+        await _jogar_ate_o_fim(m, sala, tokens)
+        await ouvinte.ate(lambda t, d: t == "fim")
+        _ate_o_fim(m, 599)
+        assert m.prancheta.viva(sala)
+        _ate_o_fim(m, 1)
+        assert not m.prancheta.viva(sala)
+        while (evento := await ouvinte.proximo()) is not None:  # its streams end
+            assert evento[0] in {"estado", "comentario"}
+        assert m.prancheta.sumula(sala)["id"] == f"{sala}-1"
+        assert (await m.agir(sala, tokens[1], "nova_partida", rodadas=1)).status_code == 404
+
+
+def test_tabela_antiga_ganha_a_coluna_da_sala(tmp_path):
+    """A súmula saved before 2026-11-25 (its id is the room's) still opens at the room's link."""
+    with closing(sqlite3.connect(tmp_path / "geral.db")) as db, db:
+        db.execute(
+            "CREATE TABLE prancheta_sumulas (id TEXT PRIMARY KEY, criada_em TEXT NOT NULL,"
+            " encerrada_em TEXT NOT NULL, dados TEXT NOT NULL)"
+        )
+        db.execute(
+            "INSERT INTO prancheta_sumulas VALUES ('velha1', ?, ?, ?)",
+            ("2026-11-20T20:00:00+00:00", "2026-11-20T20:30:00+00:00")
+            + (json.dumps({"id": "velha1", "jogadores": [], "lances": []}),),
+        )
+    for _ in range(2):  # starting twice migrates once
+        prancheta = criar_prancheta(
+            tmp_path / "geral.db",
+            Relogio(),
+            RateLimiter(20, timedelta(hours=1)),
+            banco=BancoFalso(),
+            rng=random.Random(7),
+        )
+    assert prancheta.sumula("velha1")["id"] == "velha1"
+    prancheta._gravar("velha1-2", "velha1", T0, T0, {"id": "velha1-2"})
+    assert prancheta.sumula("velha1")["id"] == "velha1-2"

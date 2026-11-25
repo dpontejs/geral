@@ -314,3 +314,6 @@
 @media (max-width: 899px) {
   .pr .bandeja .linha { flex-basis: 100%; }
 }
+
+/* ---- 2026-11-25: another game in the same room ------------------------------------------------ */
+.pr .pr-revanche { max-width: 780px; width: 100%; align-self: center; gap: 12px; }

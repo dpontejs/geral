@@ -39,14 +39,15 @@ def paginas_prancheta(prancheta: Salas, render: Callable[..., Response]) -> APIR
 
     @router.get("/jogos/prancheta/s/{sala_id}", response_class=HTMLResponse)
     def sala(request: Request, sala_id: str):
-        # A room that just ended may still be in memory: its súmula wins.
+        # A live room (also at the end of a game, waiting for the next) is the game; else the
+        # súmula of that game, or the room's last one.
+        if prancheta.viva(sala_id):
+            return jogo(request, sala_id)
         sumula = prancheta.sumula(sala_id)
         if sumula is not None:
             return render(
                 request, "prancheta_sumula.html.j2", sala_id=sala_id, sumula=sumula, rules=REGRAS
             )
-        if prancheta.viva(sala_id):
-            return jogo(request, sala_id)
         return render(
             request,
             "message.html.j2",
