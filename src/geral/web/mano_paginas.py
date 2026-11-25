@@ -24,7 +24,17 @@ REGRAS = [
 ]
 
 
+# Without the free-kick mode (MANO_FALTAS off): the same rules, minus what only free kicks have.
+REGRAS_SEM_FALTAS = [
+    "Batedor contra goleiro, um de cada vez: crie a sala e mande o link para um amigo, ou jogue "
+    "contra o bot.",
+    *(r for r in REGRAS[1:] if "barreira" not in r),
+]
+
+
 class Salas(Protocol):
+    faltas: bool
+
     def viva(self, sala_id: str) -> bool: ...
     def cheia(self, sala_id: str) -> bool: ...
     def sumula(self, id_: str) -> dict | None: ...
@@ -35,7 +45,17 @@ def paginas_mano(mano: Salas, render: Callable[..., Response]) -> APIRouter:
 
     def jogo(request: Request, sala_id: str = "") -> Response:
         cheia = bool(sala_id) and mano.cheia(sala_id)
-        return render(request, "mano.html.j2", sala_id=sala_id, cheia=cheia, rules=REGRAS)
+        return render(
+            request,
+            "mano.html.j2",
+            sala_id=sala_id,
+            cheia=cheia,
+            faltas=mano.faltas,
+            rules=regras(),
+        )
+
+    def regras() -> list[str]:
+        return REGRAS if mano.faltas else REGRAS_SEM_FALTAS
 
     @router.get("/jogos/mano", response_class=HTMLResponse)
     def criar(request: Request):
@@ -50,7 +70,7 @@ def paginas_mano(mano: Salas, render: Callable[..., Response]) -> APIRouter:
         sumula = mano.sumula(sala_id)
         if sumula is not None:
             return render(
-                request, "mano_sumula.html.j2", sala_id=sala_id, sumula=sumula, rules=REGRAS
+                request, "mano_sumula.html.j2", sala_id=sala_id, sumula=sumula, rules=regras()
             )
         return render(
             request,

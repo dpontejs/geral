@@ -31,7 +31,8 @@ SUMULA = {
 class ManoFalso:
     """Only what the pages ask of the server's `Mano`."""
 
-    def __init__(self, vivas=(), sumulas=None, cheias=()) -> None:
+    def __init__(self, vivas=(), sumulas=None, cheias=(), faltas=True) -> None:
+        self.faltas = faltas
         self.vivas = set(vivas)
         self.sumulas = sumulas or {}
         self.cheias = set(cheias)
@@ -201,3 +202,11 @@ def test_cena_importada_com_a_versao_dos_arquivos(store, mailer, clock):
     html = make_client(store, mailer, clock).get("/jogos/mano").text
     assert '<script type="importmap">' in html
     assert '"/static/geral/mano-cena.js": "/static/geral/mano-cena.js?v=' in html
+
+
+def test_sem_faltas_a_pagina_nem_oferece_nem_explica(cliente):
+    ligada = cliente(ManoFalso()).get("/jogos/mano").text
+    assert 'data-faltas="1"' in ligada and "barreira" in ligada
+    desligada = cliente(ManoFalso(faltas=False)).get("/jogos/mano").text
+    assert 'data-faltas=""' in desligada
+    assert "barreira" not in desligada and "pênaltis ou faltas" not in desligada

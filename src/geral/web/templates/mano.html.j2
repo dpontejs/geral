@@ -9,7 +9,7 @@
 {# The screens (create, join, waiting, the end) are drawn by mano.js from the server's `estado`;
    the 3D scene lives in #mn-cena and stays put between kicks. #}
 <section class="jogo wall mano">
-  <div class="wrap" id="mano" data-sala="{{ sala_id }}" data-cheia="{{ "1" if cheia else "" }}" data-url="{{ public_url }}">
+  <div class="wrap" id="mano" data-sala="{{ sala_id }}" data-cheia="{{ "1" if cheia else "" }}" data-faltas="{{ "1" if faltas else "" }}" data-url="{{ public_url }}">
     {% include "_game_tabs.html.j2" %}
     <div class="game-title"><h1>Mano a Mano</h1><button type="button" class="rules-open" aria-label="Como jogar">?</button></div>
     <div class="mn-palco" id="mn-palco" hidden><div id="mn-cena"></div></div>

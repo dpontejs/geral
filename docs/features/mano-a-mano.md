@@ -1,7 +1,8 @@
 # Mano a Mano: batedor contra goleiro, por link ou contra o bot
 
 - **Data:** 2026-11-25
-- **Status:** entregue (PRs #107–#112 e o da tela)
+- **Status:** entregue (PRs #107–#114); **faltas desligadas** por `MANO_FALTAS` (padrão `False`)
+  até o dev refinar (2026-11-25): a página só oferece pênaltis e a API recusa `modo: "faltas"` (422)
 - **ADRs:** — (Three.js como primeira dependência de front: nas Decisões do PLAN)
 
 ## Objetivo

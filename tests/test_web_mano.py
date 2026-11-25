@@ -39,13 +39,14 @@ def ana_comeca(monkeypatch):
 class Mesa:
     """The test's table: the app with only the Mano's router, a fake clock and helpers."""
 
-    def __init__(self, tmp_path, limite: int = 20) -> None:
+    def __init__(self, tmp_path, limite: int = 20, faltas: bool = True) -> None:
         self.relogio = Relogio(T0)
         self.mano = criar_mano(
             tmp_path / "geral.db",
             self.relogio,
             RateLimiter(limite, timedelta(hours=1)),
             rng=random.Random(7),
+            faltas=faltas,
         )
         self.app = FastAPI()
         self.app.include_router(self.mano.router)
@@ -451,9 +452,28 @@ def test_token_some_do_access_log(tmp_path):
 
 
 def test_app_liga_o_mano(store, mailer, clock):
-    with make_client(store, mailer, clock, MANO_LACO=True) as cliente:  # loop on and off
+    with make_client(store, mailer, clock, MANO_LACO=True, MANO_FALTAS=True) as cliente:
         resposta = cliente.post(
             f"{API}/salas", json={"apelido": "Ana", "modo": "faltas", "bot": "medio"}
         )
         assert resposta.status_code == 201
         assert cliente.get("/jogos/mano").status_code == 200  # the page came in slice 4
+
+
+def test_app_sem_faltas_por_padrao(store, mailer, clock):
+    """Free kicks are off until the dev refines them (2026-11-25): MANO_FALTAS turns them on."""
+    with make_client(store, mailer, clock) as cliente:
+        corpo = {"apelido": "Ana", "bot": "medio"}
+        assert cliente.post(f"{API}/salas", json={**corpo, "modo": "faltas"}).status_code == 422
+        assert cliente.post(f"{API}/salas", json={**corpo, "modo": "penaltis"}).status_code == 201
+        assert 'data-faltas=""' in cliente.get("/jogos/mano").text
+
+
+@assincrono
+async def test_criar_falta_desligada_da_422(tmp_path):
+    async with mesa(tmp_path, faltas=False) as m:
+        resposta = await m.post("/salas", "10.0.0.1", apelido="Ana", modo="faltas", bot=None)
+        assert resposta.status_code == 422
+        assert (
+            await m.post("/salas", "10.0.0.1", apelido="Ana", modo="penaltis", bot=None)
+        ).status_code == 201
