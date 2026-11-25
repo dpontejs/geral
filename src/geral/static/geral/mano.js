@@ -327,11 +327,13 @@ function rodarCobranca(k, chuteEmIso, agoraIso, base) {
 }
 
 function telaJogo() {
+  const deRevanche = tela === "fim"; // the rematch began: back up to the scene
   if (tela !== "jogo") {
     tela = "jogo";
     palco.innerHTML = palco.__html = "";
   }
   garantirCena();
+  if (deRevanche) palcoCena.scrollIntoView({ block: "start", behavior: "smooth" });
   sairBox.hidden = false;
   const strip = faixaStrip();
   if (palco.__html !== strip) palco.innerHTML = palco.__html = strip;
@@ -339,10 +341,13 @@ function telaJogo() {
   const fase = est.fase;
   if (fase === "resultado") {
     // The kick just taken: its lance, if the event was lost (a reconnect, a background tab);
-    // after a reload, with no run-up to show, at least the sign.
-    if (entregarLance && est.ultimo) entregarLance(est.ultimo);
+    // after a reload, or a reconnect that missed the whole kick, at least the sign, with the
+    // ball on its spot (a free kick's, not the penalty mark).
+    if (entregarLance && est.ultimo && cobrando === anterior()) entregarLance(est.ultimo);
     else if (cobrando !== anterior() && est.ultimo && letreiroDe !== anterior()) {
+      entregarLance = null; // a kick still waiting is an older one: its lance is not this
       letreiroDe = anterior();
+      montar(anterior());
       cena.letreiro(LETREIROS[est.ultimo.resultado] ?? "");
     }
     return;
