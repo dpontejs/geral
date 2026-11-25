@@ -9,6 +9,7 @@ from geral.games.mano.regras import (
     ALTURA_PULO,
     MEIA_LARGURA_POR_HOMEM,
     P_ANGULO,
+    P_DEFESA_FALTA,
     RUIDO,
     cobertura,
     faixa_boa,
@@ -151,3 +152,14 @@ def test_posicao_desvia_a_bola():
 def test_falta_sem_trajetoria_da_erro():
     with pytest.raises(ValueError):
         _falta(Chute(alvo=(500, 700), barra=500))
+
+
+def test_goleiro_tapado_na_falta_defende_so_em_parte():
+    chute = Chute(alvo=(150, 300), barra=500, trajetoria="por_cima")
+    defesa = Defesa(lado="esquerda", saida=False)
+    longe = Barreira(n=2, x=900)
+    defesas = sum(
+        resolver(chute, defesa, Random(s), barreira=longe, posicao=MEIA_LUA).resultado == "defesa"
+        for s in range(2000)
+    )
+    assert abs(defesas / 2000 - P_DEFESA_FALTA) <= 0.05
