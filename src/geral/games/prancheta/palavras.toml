@@ -211,7 +211,7 @@ tipo = "lance"
 
 [[palavra]]
 texto = "Gol de falta"
-dificuldade = "media"
+dificuldade = "facil"
 tipo = "lance"
 
 [[palavra]]
@@ -468,6 +468,57 @@ texto = "Maracanaço"
 dificuldade = "dificil"
 tipo = "lance"
 
+[[palavra]]
+texto = "Gol de peito"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Barreira pulando"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Goleiro adiantado"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Pênalti do Baggio"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Cabeçada do Zidane"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Carrinho por trás"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Tirar a camisa"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Embalando o bebê"
+aceita = ["comemoração do bebeto"]
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Defesa com o pé"
+dificuldade = "dificil"
+tipo = "lance"
+
+[[palavra]]
+texto = "Bola nas duas traves"
+dificuldade = "dificil"
+tipo = "lance"
+
 # ============================================================
 # objeto: Objetos, equipamento e taças.
 # ============================================================
@@ -587,7 +638,7 @@ tipo = "objeto"
 
 [[palavra]]
 texto = "Vuvuzela"
-dificuldade = "media"
+dificuldade = "facil"
 tipo = "objeto"
 
 [[palavra]]
@@ -607,7 +658,7 @@ tipo = "objeto"
 
 [[palavra]]
 texto = "Futebol de botão"
-dificuldade = "media"
+dificuldade = "facil"
 tipo = "objeto"
 
 [[palavra]]
@@ -715,6 +766,11 @@ tipo = "objeto"
 [[palavra]]
 texto = "Trave de chinelo"
 aceita = ["gol de chinelo"]
+dificuldade = "dificil"
+tipo = "objeto"
+
+[[palavra]]
+texto = "Linha do VAR"
 dificuldade = "dificil"
 tipo = "objeto"
 
@@ -857,22 +913,7 @@ dificuldade = "dificil"
 tipo = "estadio"
 
 [[palavra]]
-texto = "Castelão"
-dificuldade = "dificil"
-tipo = "estadio"
-
-[[palavra]]
 texto = "São Januário"
-dificuldade = "dificil"
-tipo = "estadio"
-
-[[palavra]]
-texto = "Ilha do Retiro"
-dificuldade = "dificil"
-tipo = "estadio"
-
-[[palavra]]
-texto = "Barradão"
 dificuldade = "dificil"
 tipo = "estadio"
 
@@ -1354,12 +1395,6 @@ dificuldade = "media"
 tipo = "jogador"
 
 [[palavra]]
-texto = "Ademir da Guia"
-aceita = ["divino"]
-dificuldade = "dificil"
-tipo = "jogador"
-
-[[palavra]]
 texto = "Casemiro"
 dificuldade = "dificil"
 tipo = "jogador"
@@ -1377,32 +1412,6 @@ tipo = "jogador"
 [[palavra]]
 texto = "Edmundo"
 aceita = ["animal"]
-dificuldade = "dificil"
-tipo = "jogador"
-
-[[palavra]]
-texto = "Raí"
-dificuldade = "dificil"
-tipo = "jogador"
-
-[[palavra]]
-texto = "Marcelinho Carioca"
-aceita = ["pé de anjo"]
-dificuldade = "dificil"
-tipo = "jogador"
-
-[[palavra]]
-texto = "Cruyff"
-dificuldade = "dificil"
-tipo = "jogador"
-
-[[palavra]]
-texto = "Haaland"
-dificuldade = "dificil"
-tipo = "jogador"
-
-[[palavra]]
-texto = "Cássio"
 dificuldade = "dificil"
 tipo = "jogador"
 
@@ -1457,17 +1466,6 @@ tipo = "tecnico"
 [[palavra]]
 texto = "Tite"
 dificuldade = "media"
-tipo = "tecnico"
-
-[[palavra]]
-texto = "Abel Ferreira"
-dificuldade = "dificil"
-tipo = "tecnico"
-
-[[palavra]]
-texto = "Jorge Jesus"
-aceita = ["mister"]
-dificuldade = "dificil"
 tipo = "tecnico"
 
 [[palavra]]
