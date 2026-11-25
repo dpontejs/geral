@@ -77,3 +77,24 @@
   .mn-letreiro.blink { animation: mn-pisca .45s steps(1) 3; }
   @keyframes mn-pisca { 50% { opacity: .15; } }
 }
+
+/* ---- the page around the scene (slice 4): create, wait, play, the end ---------------------- */
+/* The scene fits the window: 16:9, never taller than the screen (a phone on its side). */
+.mano .mn-palco { display: flex; justify-content: center; }
+.mano .mn-palco[hidden] { display: none; }
+.mano #mn-cena { width: min(100%, calc((100svh - 16px) * 16 / 9)); scroll-margin-top: 8px; }
+.mano #mn-cena.mn-cheia, .mano #mn-cena:fullscreen { width: 100vw; }
+.mano .palco { display: flex; flex-direction: column; gap: 10px; }
+.mano .mn-strip { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 10px 16px; padding: 10px 14px; border: 3px solid #000; }
+.mano .mn-strip .lamp { font-size: clamp(15px, 2.4vw, 20px); }
+.mano .mn-strip .mn-contra { opacity: .85; }
+.mano .mn-strip .btn { margin-left: auto; }
+.mano .mn-strip .btn + .btn { margin-left: 0; }
+.mano .mn-alerta { margin: 0; padding: 8px 10px; background: var(--paper); color: var(--ink); border: 3px solid var(--ink); font-weight: 600; }
+.mano .mn-revanche { width: 100%; max-width: 780px; align-self: center; }
+.mano .mn-revanche .mn-strip { justify-content: flex-start; }
+.mano .mn-sumula-viva { display: flex; flex-direction: column; gap: 14px; }
+.mano .sumula tr.venceu td { background: rgba(255, 194, 26, .35); }
+.mano .lances li.mn-gol .pal { color: var(--ink); }
+.mano .lances li:not(.mn-gol) .pal { color: var(--ink-soft); }
+.mano .mn-grande { white-space: nowrap; }

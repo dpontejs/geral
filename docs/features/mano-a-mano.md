@@ -1,7 +1,7 @@
 # Mano a Mano: batedor contra goleiro, por link ou contra o bot
 
 - **Data:** 2026-11-25
-- **Status:** proposta
+- **Status:** entregue (PRs #107–#112 e o da tela)
 - **ADRs:** — (Three.js como primeira dependência de front: nas Decisões do PLAN)
 
 ## Objetivo

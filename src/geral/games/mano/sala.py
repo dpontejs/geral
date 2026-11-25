@@ -153,6 +153,10 @@ class Sala:
             raise ErroSala(403, "invalid token")
         return self._tokens[token]
 
+    def cheia(self) -> bool:
+        """Two players already (or one and the bot): nobody else gets in."""
+        return len(self._jogadores) >= 2
+
     def esta(self, jogador: int) -> bool:
         """Still in the room: has not left."""
         return any(j.token in self._tokens for j in self._jogadores if j.id == jogador)
@@ -522,6 +526,8 @@ class Sala:
                 and (self._jogadores[outro].revanche or self._jogadores[outro].bot),
             },
             "sumula": f"{self.id}-{self._partida}" if self._fase == "fim" else None,
+            # the room's winner at the end (a W.O. wins even when behind on the score)
+            "vencedor": self._vencedor() if self._fase == "fim" else None,
             "jogadores": [
                 {
                     "apelido": j.apelido,

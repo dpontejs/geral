@@ -1,0 +1,24 @@
+{% extends "base.html.j2" %}
+{% block title %}Mano a Mano · Geral{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/geral/jogos.css?v={{ asset_version }}">
+<link rel="stylesheet" href="/static/geral/prancheta.css?v={{ asset_version }}">
+<link rel="stylesheet" href="/static/geral/mano.css?v={{ asset_version }}">
+{# mano.js imports the scene by its plain path: this pins it to the deploy's version. #}
+<script type="importmap">{"imports": {"/static/geral/mano-cena.js": "/static/geral/mano-cena.js?v={{ asset_version }}", "/static/geral/mano-faixa.js": "/static/geral/mano-faixa.js?v={{ asset_version }}"}}</script>{% endblock %}
+{% block content %}
+{# The screens (create, join, waiting, the end) are drawn by mano.js from the server's `estado`;
+   the 3D scene lives in #mn-cena and stays put between kicks. #}
+<section class="jogo wall mano">
+  <div class="wrap" id="mano" data-sala="{{ sala_id }}" data-cheia="{{ "1" if cheia else "" }}" data-url="{{ public_url }}">
+    {% include "_game_tabs.html.j2" %}
+    <div class="game-title"><h1>Mano a Mano</h1><button type="button" class="rules-open" aria-label="Como jogar">?</button></div>
+    <div class="mn-palco" id="mn-palco" hidden><div id="mn-cena"></div></div>
+    <div class="palco pr" id="palco" aria-live="polite">
+      <noscript><div class="ticket"><h2>Precisa de JavaScript</h2><p>O Mano a Mano é ao vivo: ligue o JavaScript para criar ou entrar numa sala.</p></div></noscript>
+    </div>
+    <p class="credit pr">Sala privada: só entra quem tem o link. Reiniciar o servidor encerra as salas abertas.<span id="mn-sair-box" hidden> · <button type="button" class="pr-sair" id="mn-sair">Sair da sala</button></span></p>
+    {% set rules_key = "mano" %}{% include "_regras.html.j2" %}
+  </div>
+</section>
+<script type="module" src="/static/geral/mano.js?v={{ asset_version }}"></script>
+{% endblock %}

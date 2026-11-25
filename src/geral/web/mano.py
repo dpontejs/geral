@@ -157,6 +157,11 @@ class Mano:
         viva = self._salas.get(sala_id)
         return viva is not None and not viva.sala.encerrada
 
+    def cheia(self, sala_id: str) -> bool:
+        """A live room with no seat left (two players, or one and the bot)."""
+        viva = self._salas.get(sala_id)
+        return viva is not None and viva.sala.cheia()
+
     def sumula(self, id_: str) -> dict | None:
         """A match's súmula by its own id, or a room's last one by the room's id; else None."""
         with closing(sqlite3.connect(self.db_path, timeout=ESPERA_DB)) as db:
