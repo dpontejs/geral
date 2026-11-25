@@ -12,10 +12,12 @@ from contextlib import asynccontextmanager, closing
 from datetime import UTC, datetime, timedelta
 
 import httpx
+import pytest
 from fastapi import FastAPI
 from sse_kit import Ouvinte, Relogio, assincrono
 from webkit import make_client
 
+from geral.games.mano import sala as sala_mod
 from geral.games.mano.sala import CORRIDA, FOLGA, JANELA, PRAZO_ESCOLHA, RESULTADO
 from geral.web.app import RateLimiter
 from geral.web.mano import criar_mano
@@ -26,6 +28,12 @@ T0 = datetime(2026, 11, 25, 20, 0, tzinfo=UTC)
 GOL = {"alvo": [150, 300], "barra": 500}  # left third, low: only "esquerda" saves it
 SAIDA = {"alvo": [380, 300], "barra": 500}  # middle third near the left: "esquerda" + exit
 VOO = (CORRIDA + JANELA + FOLGA).total_seconds()
+
+
+@pytest.fixture(autouse=True)
+def ana_comeca(monkeypatch):
+    """Ana (player 0) kicks first: the draw itself is tested in test_mano_sala."""
+    monkeypatch.setattr(sala_mod, "sortear_primeiro", lambda rng: 0)
 
 
 class Mesa:

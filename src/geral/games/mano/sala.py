@@ -52,6 +52,11 @@ APELIDO_BOT: dict[Nivel, str] = {
 EM_JOGO = ("barreira", "escolha", "corrida", "voo", "resultado")
 
 
+def sortear_primeiro(rng: random.Random) -> int:
+    """Who kicks first in a match (the room's player 0 or 1), drawn from the match's Random."""
+    return rng.randint(0, 1)
+
+
 @dataclass
 class Evento:
     tipo: str  # estado | cobranca_inicio | cobranca | fim
@@ -97,6 +102,8 @@ class Sala:
         self.encerrada = False  # closed for good: the hub drops it
         self._rng_sala = rng  # seeds one `Random` per match (the bot's habit lives in it)
         self._rng = random.Random(rng.getrandbits(64))
+        # the room's player who is the Disputa's player 0 (kicks first), drawn per match
+        self._primeiro = sortear_primeiro(self._rng)
         self._seq = 0
         self._jogadores: list[_Jogador] = []
         self._tokens: dict[str, int] = {}
@@ -240,6 +247,7 @@ class Sala:
         self._partida += 1
         self.partida_desde = agora
         self._rng = random.Random(self._rng_sala.getrandbits(64))
+        self._primeiro = sortear_primeiro(self._rng)
         self._disputa = Disputa()
         self._lances = []
         for j in self._jogadores:
@@ -331,7 +339,7 @@ class Sala:
         if self.modo == "penaltis":
             return self._ir_a_escolha(None, agora)
         self._posicao = Posicao(nome=self._rng.choice(POSICOES), desvio=self._rng.randint(-80, 80))
-        goleiro = self._jogadores[1 - self._disputa.batedor()]
+        goleiro = self._jogadores[1 - self._batedor()]
         if goleiro.bot:
             assert self.nivel is not None
             return self._ir_a_escolha(bot.armar(self.nivel, self._rng), agora)
@@ -343,7 +351,7 @@ class Sala:
         self._barreira = barreira
         self._fase = "escolha"
         self._prazo = agora + PRAZO_ESCOLHA
-        batedor = self._disputa.batedor()
+        batedor = self._batedor()
         if self.nivel is not None:  # the bot (player 1) locks at once
             # what it reads: the human's kicks when it keeps, the human's dives when it kicks,
             # that is, the past kicks where the human held the role it faces now
@@ -360,9 +368,18 @@ class Sala:
                 self._defesa = bot.defender(self.nivel, historico, self._rng)
         return self._estados(agora)
 
+    def _sala(self, indice: int) -> int:
+        """A Disputa's player index as the room's (and back: the map is its own inverse)."""
+        return indice ^ self._primeiro
+
+    def _batedor(self) -> int:
+        """The room's player who kicks now."""
+        return self._sala(self._disputa.batedor())
+
     def _lances_por_batedor(self) -> list[tuple[int, Lance]]:
+        """Each kick of the match with the room's player who took it."""
         return [
-            (quem, lance)
+            (self._sala(quem), lance)
             for (quem, _), lance in zip(self._disputa.cobrancas, self._lances, strict=True)
         ]
 
@@ -396,7 +413,7 @@ class Sala:
     def _resolver(self, agora: datetime) -> list[Evento]:
         assert self._chute is not None and self._defesa is not None
         defesa = self._defesa
-        if not self._jogadores[1 - self._disputa.batedor()].bot:
+        if not self._jogadores[1 - self._batedor()].bot:
             defesa = Defesa(lado=defesa.lado, saida=bool(self._saida))
         lance = resolver(
             self._chute, defesa, self._rng, barreira=self._barreira, posicao=self._posicao
@@ -414,7 +431,7 @@ class Sala:
 
     def _wo(self, perdedor: int, agora: datetime) -> list[Evento]:
         if not self._disputa.acabou():
-            self._disputa.wo(perdedor)
+            self._disputa.wo(self._sala(perdedor))
         return self._fim(agora)
 
     def _fim(self, agora: datetime) -> list[Evento]:
@@ -428,13 +445,18 @@ class Sala:
         if len(self._jogadores) < 2 or self._fase in ("espera", "fim"):
             return None
         if self._fase == "resultado":  # the replay: the roles of the kick just taken
-            batedor = self._disputa.cobrancas[-1][0]
+            batedor = self._sala(self._disputa.cobrancas[-1][0])
         else:
-            batedor = self._disputa.batedor()
+            batedor = self._batedor()
         return "batedor" if jogador == batedor else "goleiro"
 
+    def _vencedor(self) -> int | None:
+        vencedor = self._disputa.vencedor()
+        return None if vencedor is None else self._sala(vencedor)
+
     def _placar(self) -> list[int]:
-        return list(self._disputa.placar())
+        gols = self._disputa.placar()
+        return [gols[self._sala(0)], gols[self._sala(1)]]
 
     def _sumula(self) -> dict:
         return {
@@ -444,7 +466,7 @@ class Sala:
             "modo": self.modo,
             "jogadores": [{"apelido": j.apelido, "bot": j.bot} for j in self._jogadores],
             "placar": self._placar(),
-            "vencedor": self._disputa.vencedor(),
+            "vencedor": self._vencedor(),
             "wo": self._disputa.perdedor_wo is not None,
             "cobrancas": [
                 {"batedor": quem, "resultado": lance.resultado, "onde": list(lance.onde)}
@@ -472,7 +494,7 @@ class Sala:
                 escolha = {"lado": meu.lado}
         serie: list[list[bool]] = [[], []]
         for quem, gol in self._disputa.cobrancas:
-            serie[quem].append(gol)
+            serie[self._sala(quem)].append(gol)
         return {
             "seq": self._seq,
             "voce": jogador,
