@@ -33,6 +33,8 @@ Nome provisório: "Mano a Mano" (decisão minha; o dev pode trocar).
 - **Falta:** antes das escolhas, o goleiro arma a **barreira** (2 a 5 jogadores, posição na linha),
   que o batedor vê. A barreira bloqueia a `rasteira` e a `pelo_lado` que passam por ela; `por_cima`
   com força baixa demais bate nela, alta demais sai. Posições sorteadas: meia-lua, entradas da área.
+- Na falta o goleiro é o mesmo do pênalti; a barreira é o que torna a falta mais difícil. Bola
+  alcançada é sempre defendida (dev, 2026-11-25).
 - **Barra (minha decisão):** um só valor `barra` 0–1000, uma parada. No pênalti é precisão: fora
   da faixa boa, desvia. Na falta `por_cima` é também força: abaixo da faixa bate na barreira,
   acima sai por cima. Força não existe à parte.
@@ -43,9 +45,9 @@ Nome provisório: "Mano a Mano" (decisão minha; o dev pode trocar).
   servidor, 1,5 s à frente: corrida do batedor). Janela de 600 ms a partir de `chute_em`; o
   servidor só resolve e manda `cobranca` (escolhas + resultado) quando a janela fecha.
 - **Prazos:** 10 s para a barreira e para cada escolha; acabou, escolha ao acaso.
-- **Equilíbrio:** ~60% de gols com os dois lados aleatórios, definidos como: `alvo` uniforme na
-  boca do gol, `barra` uniforme, lado do goleiro uniforme, saída na janela em 50%, barreira e
-  trajetória uniformes.
+- **Equilíbrio:** ~60% no pênalti, ~45–50% na falta (dev, 2026-11-25), com os dois lados
+  aleatórios, definidos como: `alvo` uniforme na boca do gol, `barra` uniforme, lado do goleiro
+  uniforme, saída na janela em 50%, barreira e trajetória uniformes.
 - **Disputa:** 5 cobranças para cada um, alternando os papéis, e acaba antes quando não dá mais
   para alcançar (como a disputa de verdade); empate → alternadas até alguém errar. Quem cria a
   sala escolhe o modo.
@@ -84,7 +86,8 @@ Nome provisório: "Mano a Mano" (decisão minha; o dev pode trocar).
 - [ ] `test_barra_fora_da_faixa_desvia` e `test_faixa_estreita_perto_da_trave`.
 - [ ] `test_saida_no_tempo_alcanca_o_vizinho` e `test_saida_fora_da_janela_nao_conta`.
 - [ ] `test_barreira_bloqueia_rasteira` e `test_por_cima_fraco_bate_na_barreira`.
-- [ ] `test_calibragem`: 10 mil lances aleatórios × aleatórios → 55–65% de gols, nos dois modos.
+- [ ] `test_calibragem`: 10 mil lances aleatórios × aleatórios → 55–65% de gols no pênalti e
+  45–50% na falta.
 - [ ] `test_bot_dificil_pune_quem_repete`: batedor que sempre mira à esquerda marca < 40% contra ele.
 - [ ] `test_disputa_alternada_e_morte_subita` e `test_prazo_estourado_escolhe_ao_acaso`.
 - [ ] `test_sala_cheia_409`, `test_token_de_outra_sala_403`, `test_acao_fora_da_fase_409`.
