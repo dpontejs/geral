@@ -31,6 +31,7 @@ class Settings(BaseSettings):
     CENTRAL_REFRESH: int = 600
     CENTRAL_SNAPSHOT: str | None = None
     PRANCHETA_LACO: bool = True  # the Prancheta's rooms loop in the web app (off in the tests)
+    MANO_LACO: bool = True  # the Mano a Mano's rooms loop in the web app (off in the tests)
     NOTIFY_EMAIL: str | None = None  # gets an e-mail whenever someone confirms a subscription
     # A single-team app that moved in (docs/adr/0001): its sent e-mails keep working. Its tokens
     # (signed with its secret) act on LEGACY_TEAM; its old hosts send the home page to the Geral.

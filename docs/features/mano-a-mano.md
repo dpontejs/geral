@@ -81,18 +81,18 @@ Nome provisório: "Mano a Mano" (decisão minha; o dev pode trocar).
 
 ## Critérios de aceite (como testes)
 
-- [ ] `test_escolha_nunca_vaza`: dado o batedor travado, quando o goleiro recebe eventos, então nada traz o alvo até `cobranca`.
-- [ ] `test_goleiro_no_lado_certo_defende_ate_meia_altura` e `test_angulo_so_em_parte`.
-- [ ] `test_barra_fora_da_faixa_desvia` e `test_faixa_estreita_perto_da_trave`.
-- [ ] `test_saida_no_tempo_alcanca_o_vizinho` e `test_saida_fora_da_janela_nao_conta`.
-- [ ] `test_barreira_bloqueia_rasteira` e `test_por_cima_fraco_bate_na_barreira`.
-- [ ] `test_calibragem`: 10 mil lances aleatórios × aleatórios → 55–65% de gols no pênalti e
+- [x] `test_escolha_nunca_vaza`: dado o batedor travado, quando o goleiro recebe eventos, então nada traz o alvo até `cobranca`.
+- [x] `test_goleiro_no_lado_certo_defende_ate_meia_altura` e `test_angulo_so_em_parte`.
+- [x] `test_barra_fora_da_faixa_desvia` e `test_faixa_estreita_perto_da_trave`.
+- [x] `test_saida_no_tempo_alcanca_o_vizinho` e `test_saida_fora_da_janela_nao_conta`.
+- [x] `test_barreira_bloqueia_rasteira` e `test_por_cima_fraco_bate_na_barreira`.
+- [x] `test_calibragem`: 10 mil lances aleatórios × aleatórios → 55–65% de gols no pênalti e
   45–50% na falta.
-- [ ] `test_bot_dificil_pune_quem_repete`: batedor que sempre mira à esquerda marca < 40% contra ele.
-- [ ] `test_disputa_alternada_e_morte_subita` e `test_prazo_estourado_escolhe_ao_acaso`.
-- [ ] `test_sala_cheia_409`, `test_token_de_outra_sala_403`, `test_acao_fora_da_fase_409`.
-- [ ] `test_revanche_zera_e_grava_sumula_de_cada_partida` e `test_quem_sai_perde_por_wo`.
-- [ ] `test_disputa_acaba_quando_nao_da_mais_para_alcancar`.
+- [x] `test_bot_dificil_pune_quem_repete`: batedor que sempre mira à esquerda marca < 40% contra ele.
+- [x] `test_disputa_alternada_e_morte_subita` e `test_prazo_estourado_escolhe_ao_acaso`.
+- [x] `test_sala_cheia_409`, `test_token_de_outra_sala_403`, `test_acao_fora_da_fase_409`.
+- [x] `test_revanche_zera_e_grava_sumula_de_cada_partida` e `test_quem_sai_perde_por_wo`.
+- [x] `test_disputa_acaba_quando_nao_da_mais_para_alcancar`.
 
 ## Verificação ponta a ponta
 

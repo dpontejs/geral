@@ -73,6 +73,7 @@ from geral.web.banners import BannerStore
 from geral.web.bolao import TZ, BolaoStore
 from geral.web.carreira_placar import PlacarStore
 from geral.web.mailer import Mailer, MailError, mailer_from_settings
+from geral.web.mano import criar_mano
 from geral.web.notes import NoteStore
 from geral.web.palette import club_palette
 from geral.web.prancheta import criar_prancheta
@@ -123,6 +124,7 @@ STATIC = Path(__file__).resolve().parents[1] / "static"
 # The scoreboard clock: Brasília time, no daylight saving since 2019 (no tzdata in the image).
 DUELS_PER_NETWORK = 20  # jogo da velha duels created per network per hour
 SALAS_POR_REDE = 20  # Prancheta rooms created per network per hour
+MANO_SALAS_POR_REDE = 20  # Mano a Mano rooms created per network per hour
 CARREIRAS_POR_REDE = 60  # Carreira careers counted in the Fábrica de craques per network per hour
 SETEA0_POR_REDE = 30  # 7a0 campaigns kept for a share link per network per hour
 SETEA0_ATUALIZADO = "O 7a0 foi atualizado enquanto você jogava. Comece um time novo."
@@ -369,6 +371,8 @@ def create_app(
     setea0_limiter = RateLimiter(SETEA0_POR_REDE, timedelta(hours=1))
     # Prancheta: live rooms in memory (one process), the súmulas in the same SQLite.
     prancheta = criar_prancheta(store.path, now, RateLimiter(SALAS_POR_REDE, timedelta(hours=1)))
+    # Mano a Mano: the same, its own rooms and súmulas.
+    mano = criar_mano(store.path, now, RateLimiter(MANO_SALAS_POR_REDE, timedelta(hours=1)))
     catalog = teams if teams is not None else load_teams()
     # Teams people can see and join; unlisted ones (moving in) still work for links and the API.
     listed = {slug: team for slug, team in catalog.items() if team.listed}
@@ -642,14 +646,17 @@ def create_app(
             refresher = Refresher(central_file, settings.CENTRAL_REFRESH)
             refresher.start()
         laco = asyncio.create_task(prancheta.rodar()) if settings.PRANCHETA_LACO else None
+        laco_mano = asyncio.create_task(mano.rodar()) if settings.MANO_LACO else None
         yield
-        if laco:
-            laco.cancel()
+        for tarefa in (laco, laco_mano):
+            if tarefa:
+                tarefa.cancel()
         if refresher:
             refresher.stop()
 
     app = FastAPI(docs_url=None, redoc_url=None, openapi_url=None, lifespan=lifespan)
     app.include_router(prancheta.router)
+    app.include_router(mano.router)
     app.include_router(
         paginas_prancheta(
             prancheta,
