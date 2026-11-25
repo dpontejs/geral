@@ -286,3 +286,31 @@
 .pr .pr-pedidos .btn.secondary { border-width: 2px; }
 .pr .pr-pedido-nota { font: 700 11px/1 var(--body); text-transform: uppercase; letter-spacing: .06em; color: var(--cartao); }
 .pr #pr-dica[hidden] + #pr-pular { flex: 1 1 0; }
+
+/* ---- 2026-11-25: line, rectangle, ellipse and bucket ------------------------------------------ */
+/* The tools: chalk drawings on slate buttons, each with its name under it. */
+.pr .bandeja .formas { display: flex; gap: 5px; }
+.pr .ferr.forma { width: auto; min-width: 56px; height: 48px; padding: 4px 5px 3px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; }
+.pr .ferr.forma span { font: 800 10px/1 var(--display); text-transform: uppercase; letter-spacing: .04em; color: #F3F1EA; white-space: nowrap; }
+.pr .ferr.forma[aria-pressed="true"] span { color: var(--lamp); }
+.pr .ferr.forma[aria-pressed="true"] svg { stroke: var(--lamp); }
+.pr .ferr.forma[aria-pressed="true"] svg [fill="#F3F1EA"] { fill: var(--lamp); }
+.pr .lousa.pode[data-forma="balde"] canvas { cursor: cell; }
+@media (max-width: 899px) {
+  .pr .bandeja .formas { flex-basis: 100%; justify-content: center; }
+  .pr .ferr.forma { flex: 1 1 0; min-width: 0; max-width: 72px; height: 46px; }
+}
+/* Sizes and undo/clear share a row: under the tools on a computer, under the chalks on a phone. */
+.pr .bandeja .linha { display: flex; gap: 6px 10px; align-items: center; justify-content: center; flex-wrap: wrap; }
+@media (min-width: 900px) {
+  .pr .bandeja { display: grid; grid-template-columns: auto auto; grid-template-areas: "formas cores" "linha cores";
+    justify-content: center; align-items: center; gap: 6px 18px; }
+  .pr .bandeja .formas { grid-area: formas; }
+  .pr .bandeja .cores { grid-area: cores; }
+  .pr .bandeja .linha { grid-area: linha; justify-content: space-between; }
+  .pr .bandeja .linha .ferr { height: 34px; }
+  .pr .bandeja .linha .ferr:not(.txt) { width: 34px; }
+}
+@media (max-width: 899px) {
+  .pr .bandeja .linha { flex-basis: 100%; }
+}
