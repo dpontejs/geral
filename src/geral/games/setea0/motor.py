@@ -55,20 +55,48 @@ def _memo[T](dados: Dados, chave: tuple, fazer: Callable[[], T]) -> T:
     return guardado[1][chave]
 
 
+# The 7a0 da Geral (dev, 2026-11-24): the die draws a club and one of its eras among the
+# published editions; the mixed team plays the grandes of `chaves.toml` `[geral]`.
+GERAL = "geral"
+
+
+def clubes_da_geral(dados: Dados) -> list[str]:
+    """The clubs whose eras the Geral draws: the published editions that have a squad."""
+    return [
+        slug
+        for slug, edicao in chaves()["edicao"].items()
+        if edicao.get("publicado") and slug in dados.clubes
+    ]
+
+
+def _clubes(dados: Dados, edicao: str) -> list[str]:
+    """The squads an edition picks from: its own, or every Geral club."""
+    if edicao == GERAL:
+        return clubes_da_geral(dados)
+    if edicao not in dados.clubes:
+        raise JogadaInvalida(f"edição sem 7a0: {edicao}")
+    return [edicao]
+
+
 def epocas_do_clube(dados: Dados, edicao: str) -> list[Epoca]:
-    """The eras the die can draw for the club, oldest first."""
+    """The eras the die can draw for the edition, oldest first (club by club in the Geral)."""
     return [e for e, _ in _por_epoca(dados, edicao)]
 
 
 def _por_epoca(dados: Dados, edicao: str) -> list[tuple[Epoca, list[Jogador]]]:
-    if edicao not in dados.clubes:
-        raise JogadaInvalida(f"edição sem 7a0: {edicao}")
+    clubes = _clubes(dados, edicao)
 
     def fazer() -> list[tuple[Epoca, list[Jogador]]]:
-        jogadores = dados.clubes[edicao].jogadores
-        return [(e, [j for j in jogadores if e.contem(j)]) for e in epocas(jogadores)]
+        feitas = []
+        for slug in clubes:
+            jogadores = dados.clubes[slug].jogadores
+            for e in epocas(jogadores):
+                if edicao == GERAL:
+                    e = Epoca(inicio=e.inicio, fim=e.fim, rotulo=e.rotulo, clube=slug)
+                feitas.append((e, [j for j in jogadores if e.contem(j)]))
+        return feitas
 
-    return _memo(dados, ("epocas", edicao), fazer)
+    return _memo(dados, ("epocas", edicao, tuple(clubes)), fazer)
 
 
 def _epoca_sorteada(eras: list[Epoca], semente: str, rodada: int, troca: int) -> tuple[int, Random]:
@@ -181,6 +209,10 @@ def escalar(
 # bonus. Relative, so a club of stars and a club of 60s face the same climb.
 FATORES = (0.63, 0.65, 0.67, 0.69, 0.71, 0.73)
 BONUS_CLASSICO = 0.03
+# The Geral: no derby; the final is one more step of the ladder, and the whole ladder is scaled
+# by FATOR_GERAL against the mean of its clubs' all-time XIs (`test_calibragem_da_geral`).
+PASSO_FINAL_GERAL = 0.02
+FATOR_GERAL = 1.05  # greedy: 21.6% on the test data (the fake ABC: 21%), 12.5% on the real
 LAMBDA = 1.35  # goals per side when the teams are level
 K = 1.5  # how hard the strength ratio bends the scoring
 PESO_GOL: dict[Posicao, int] = {"ATA": 5, "MEI": 3, "LAT": 1, "ZAG": 1, "GOL": 0}
@@ -240,15 +272,28 @@ def _escalados_do_adversario(time: list[Jogador]) -> list[Escalado]:
 
 
 def adversarios(dados: Dados, edicao: str) -> list[str]:
-    """The 7 opponents of an edition, the derby last."""
+    """The 7 opponents of an edition, the derby last; the Geral's grandes weakest first."""
+    if edicao == GERAL:
+        return _memo(dados, ("grandes",), lambda: _grandes_em_ordem(dados))
     chave = chaves()["edicao"].get(edicao)
     if chave is None:
         raise JogadaInvalida(f"edição sem 7a0: {edicao}")
     return [*chave["adversarios"], chave["final"]]
 
 
+def _grandes_em_ordem(dados: Dados) -> list[str]:
+    grandes = chaves()["geral"]["grandes"]
+    return sorted(grandes, key=lambda slug: (referencia(dados, slug), slug))
+
+
 def referencia(dados: Dados, edicao: str) -> float:
-    """The club's own all-time XI, the yardstick its opponents are measured against."""
+    """The club's own all-time XI, the yardstick its opponents are measured against; for the
+    Geral, the mean of its clubs' ones."""
+    if edicao == GERAL:
+        clubes = clubes_da_geral(dados)
+        if not clubes:
+            raise JogadaInvalida("a Geral não tem clubes publicados")
+        return sum(referencia(dados, slug) for slug in clubes) / len(clubes)
 
     def fazer() -> float:
         time = _escalados_do_adversario(adversario(dados, edicao))
@@ -257,12 +302,15 @@ def referencia(dados: Dados, edicao: str) -> float:
     return _memo(dados, ("referencia", edicao), fazer)
 
 
-def fator(n: int) -> float:
+def fator(n: int, edicao: str = "") -> float:
+    if edicao == GERAL:
+        degrau = FATORES[n - 1] if n < JOGOS else FATORES[-1] + PASSO_FINAL_GERAL
+        return degrau * FATOR_GERAL
     return FATORES[n - 1] if n < JOGOS else FATORES[-1] + BONUS_CLASSICO
 
 
 def forca_do_adversario(dados: Dados, edicao: str, n: int) -> float:
-    return referencia(dados, edicao) * fator(n)
+    return referencia(dados, edicao) * fator(n, edicao)
 
 
 def _poisson(rng: Random, lam: float) -> int:
@@ -356,10 +404,15 @@ def _media_dos_goleiros(dados: Dados, edicao: str, reserva: float) -> float:
     """The club's keepers' mean strength: a keeper is judged against the club's other keepers."""
 
     def fazer() -> float:
-        forcas = [j.forca for j in dados.clubes[edicao].jogadores if "GOL" in j.posicoes]
+        forcas = [
+            j.forca
+            for slug in _clubes(dados, edicao)
+            for j in dados.clubes[slug].jogadores
+            if "GOL" in j.posicoes
+        ]
         return sum(forcas) / len(forcas) if forcas else reserva
 
-    return _memo(dados, ("goleiros", edicao), fazer)
+    return _memo(dados, ("goleiros", edicao, tuple(_clubes(dados, edicao))), fazer)
 
 
 class _Contexto:
@@ -380,7 +433,7 @@ class _Contexto:
         rng = Random(f"{self.semente}:jogo:{n}")
         slug = self.slugs[n - 1]
         time_deles = _escalados_do_adversario(adversario(self.dados, slug))
-        razao = self.nossa / fator(n)
+        razao = self.nossa / fator(n, self.edicao)
         nosso, deles = _poisson(rng, LAMBDA * razao**K), _poisson(rng, LAMBDA / razao**K)
         total = min(nosso + deles, 90)
         lados = [True] * nosso + [False] * deles
@@ -420,6 +473,7 @@ class _Contexto:
                     disputa=resultado,
                     cobrador=cobrador.nome,
                     chance=min(99, round(cobrador.forca * self.escala)),
+                    gols=gols,
                 )
         return Partida(
             n=n,

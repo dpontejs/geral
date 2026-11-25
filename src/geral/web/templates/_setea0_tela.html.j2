@@ -5,7 +5,7 @@
 
   {# 0. Start: mode and formation. #}
   <div class="s7-tela board match s7-inicio" id="s7-inicio"{% if compartilhada %} hidden{% endif %}>
-    <span class="lamp meta">Monte o time dos sonhos do {{ nome }}</span>
+    <span class="lamp meta">{% if edicao == "geral" %}Monte o time dos sonhos da Geral: o dado sorteia um clube e uma época por rodada{% else %}Monte o time dos sonhos do {{ nome }}{% endif %}</span>
     <fieldset id="s7-modos"><legend>Modo</legend>
       <button type="button" class="s7-modo" data-modo="classico" aria-pressed="true"><b>Clássico</b><span>As estrelas de cada jogador à vista e 3 trocas de época.</span></button>
       <button type="button" class="s7-modo" data-modo="almanaque" aria-pressed="false"><b>Almanaque</b><span>Sem estrelas e 1 troca: só ajuda quem conhece a história.</span></button>
@@ -36,7 +36,7 @@
   {# 2. Games: the old board, one game at a time. #}
   <div class="s7-tela" id="s7-jogos" hidden>
     <div class="board match">
-      <div class="s7-campanha" id="s7-campanha"></div>
+      <div class="s7-topo"><div class="s7-campanha" id="s7-campanha"></div><span class="s7-relogio" id="s7-relogio" aria-hidden="true">0'</span></div>
       <div class="teams">
         <div class="row"><span class="lamp team" id="s7-nos"></span><span class="lamp goals" id="s7-gols-nos"></span></div>
         <div class="row"><span class="lamp team" id="s7-eles"></span><span class="lamp goals" id="s7-gols-eles"></span></div>
@@ -44,6 +44,7 @@
       <ul class="s7-gols" id="s7-gols"></ul>
       <div class="s7-pontos" id="s7-pontos" hidden></div>
       <span class="lamp meta" id="s7-situacao"></span>
+      <div class="s7-adv" id="s7-adv" hidden></div>
     </div>
     <div class="s7-penalti" id="s7-penalti" hidden>
       <div class="s7-pontos s7-pontos-pen" id="s7-pontos-pen"></div>

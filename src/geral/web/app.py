@@ -1749,30 +1749,73 @@ def create_app(
             if edicao.get("publicado") or previa
         ]
 
+    def setea0_geral_aberta() -> bool:
+        """The 7a0 da Geral draws from the published clubs: open once one is published."""
+        return any(e.get("publicado") for e in setea0_dados.chaves()["edicao"].values())
+
     def setea0_nome(slug: str) -> str:
         chaves = setea0_dados.chaves()
+        if slug == setea0_motor.GERAL:
+            return chaves["geral"]["nome"]
         clube = chaves["edicao"].get(slug) or chaves["clube"].get(slug) or {}
         return clube.get("nome", slug)
 
-    def setea0_chave(edicao: str) -> dict:
-        """The bracket in order (6 games, then the derby) and every name the screen shows."""
-        do_clube = setea0_dados.chaves()["edicao"].get(edicao)
-        if not do_clube:
-            return {}
-        chave = [*do_clube["adversarios"], do_clube["final"]]
-        return {"chave": chave, "adversarios": {slug: setea0_nome(slug) for slug in chave}}
+    def setea0_escalacao(dados, slug: str) -> dict:
+        """An opponent's all-time XI as the board shows it: formation, the 11 by slot and,
+        when its source has them, the years its players span."""
+        time = setea0_motor.adversario(dados, slug)
+        esquema = setea0_motor.ESQUEMA_ADVERSARIO
+        passagens = [p for j in time for p in j.passagens]
+        return {
+            "esquema": esquema,
+            "jogadores": [
+                {"posicao": vaga, "nome": j.nome}
+                for vaga, j in zip(SETEA0_ESQUEMAS[esquema], time, strict=True)
+            ],
+            "anos": setea0_anos(passagens),
+        }
 
-    def setea0_pagina(request: Request, edicao: str, status: int = 200, **jogo) -> HTMLResponse:
+    def setea0_chave(edicao: str) -> dict:
+        """The bracket in order (6 games, then the final), every name the screen shows and
+        each opponent's lineup."""
+        dados = setea0_dados.carregar()
+        if edicao == setea0_motor.GERAL:
+            chave = setea0_motor.adversarios(dados, edicao)
+            clubes = setea0_motor.clubes_da_geral(dados)  # the eras name their club
+        else:
+            do_clube = setea0_dados.chaves()["edicao"].get(edicao)
+            if not do_clube:
+                return {}
+            chave, clubes = [*do_clube["adversarios"], do_clube["final"]], []
+        return {
+            "chave": chave,
+            "adversarios": {slug: setea0_nome(slug) for slug in [*chave, *clubes]},
+            "escalacoes": {slug: setea0_escalacao(dados, slug) for slug in chave},
+        }
+
+    def setea0_barra() -> list[tuple[str, str]]:
+        """The editions bar: the Geral first, then the clubs."""
+        geral = [(setea0_motor.GERAL, setea0_nome(setea0_motor.GERAL))]
+        return (geral if setea0_geral_aberta() else []) + [
+            (s, setea0_nome(s)) for s in setea0_edicoes()
+        ]
+
+    def setea0_pagina(
+        request: Request, edicao: str, status: int = 200, escolha: bool = False, **jogo
+    ) -> HTMLResponse:
+        artigo = "da" if edicao == setea0_motor.GERAL else "do"  # "7a0 da Geral", "do ABC"
         dados = (
             {
                 "edicao": edicao,
                 "nome": setea0_nome(edicao),
+                "do_nome": f"{artigo} {setea0_nome(edicao)}",
+                "escolha": escolha,
                 "esquemas": {nome: list(vagas) for nome, vagas in SETEA0_ESQUEMAS.items()},
                 "modos": {modo: {"trocas": trocas} for modo, trocas in SETEA0_MODOS.items()},
                 "marcas": setea0_motor.textos_das_marcas(),
                 "url": public_url,
             }
-            | setea0_chave(edicao)
+            | ({} if escolha else setea0_chave(edicao))
             | jogo
         )
         return page(
@@ -1784,7 +1827,7 @@ def create_app(
             team=listed.get(edicao),
             club=club_palette(listed.get(edicao)),
             compartilhada=jogo.get("compartilhada"),
-            edicoes_7a0=[(s, setea0_nome(s)) for s in setea0_edicoes()],
+            edicoes_7a0=setea0_barra(),
             jogo=dados,
         )
 
@@ -1815,7 +1858,8 @@ def create_app(
             }
             for s in edicoes
         ]
-        return setea0_pagina(request, "geral", clubes=clubes)
+        geral = setea0_geral_aberta()
+        return setea0_pagina(request, "geral", escolha=True, clubes=clubes, geral=geral)
 
     @app.get("/jogos/7a0/c/{codigo}", response_class=HTMLResponse)
     def setea0_compartilhada(request: Request, codigo: str):
@@ -1827,25 +1871,32 @@ def create_app(
             campanha = None
         if campanha is None:
             return setea0_nao_achado(request)
+        clubes = [e.epoca.clube for e in campanha.escalacao if e.epoca.clube]  # the Geral's
         compartilhada = {
             "codigo": codigo,
             "campanha": campanha.model_dump(mode="json"),
-            "adversarios": {p.adversario: setea0_nome(p.adversario) for p in campanha.partidas},
+            "adversarios": {
+                slug: setea0_nome(slug)
+                for slug in [*(p.adversario for p in campanha.partidas), *clubes]
+            },
         }
         return setea0_pagina(request, campanha.edicao, compartilhada=compartilhada)
 
     @app.get("/jogos/7a0/{edicao}", response_class=HTMLResponse)
     def setea0_jogo(request: Request, edicao: str):
-        if edicao not in setea0_edicoes():
+        if edicao not in setea0_edicoes() and not setea0_geral_aberto(edicao):
             return setea0_nao_achado(request)
         return setea0_pagina(request, edicao)
 
+    def setea0_geral_aberto(edicao: str) -> bool:
+        return edicao == setea0_motor.GERAL and setea0_geral_aberta()
+
     def setea0_conferir(edicao: str, versao: str | None):
         """The data, or the response that ends the call (404 edition, 409 data changed)."""
-        if edicao not in setea0_edicoes():
+        if edicao not in setea0_edicoes() and not setea0_geral_aberto(edicao):
             return None, JSONResponse({"detail": "edition not found"}, status_code=404)
         dados = setea0_dados.carregar()
-        if edicao not in dados.clubes:
+        if edicao not in dados.clubes and not setea0_motor.clubes_da_geral(dados):
             return None, JSONResponse({"detail": "edition not found"}, status_code=404)
         if versao and versao != dados.versao:
             return None, JSONResponse(
@@ -1863,7 +1914,7 @@ def create_app(
             rodada = setea0_motor.oferta(dados, edicao, semente, body.rodada, body.troca, body.modo)
         except Setea0Invalida as invalida:
             return JSONResponse({"detail": str(invalida)}, status_code=422)
-        idolos = setea0_idolos().get(edicao, set())
+        idolos = setea0_idolos().get(rodada.epoca.clube or edicao, set())
         estrelas = body.modo != "almanaque"
 
         def nome_em_ordem(j) -> tuple[str, str]:
@@ -1872,7 +1923,7 @@ def create_app(
         return {
             "semente": semente,
             "versao": dados.versao,
-            "epoca": {"rotulo": rodada.epoca.rotulo},
+            "epoca": {"rotulo": rodada.epoca.rotulo, "clube": rodada.epoca.clube},
             "jogadores": [
                 {
                     "id": j.id,

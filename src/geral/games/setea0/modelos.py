@@ -48,6 +48,7 @@ class Epoca(BaseModel):
     inicio: int  # first decade, 1960
     fim: int  # last decade, inclusive
     rotulo: str
+    clube: str | None = None  # the club's slug in the 7a0 da Geral, whose eras mix clubs
 
     def contem(self, jogador: Jogador) -> bool:
         return any(self.inicio <= d <= self.fim for d in jogador.decadas())
@@ -157,6 +158,7 @@ class PedidoDePenalti(BaseModel):
     disputa: Disputa
     cobrador: str
     chance: int  # the kicker's strength, the minigame's difficulty
+    gols: list[Gol] = []  # the drawn match's goals, for the board's clock
 
 
 class Campanha(BaseModel):

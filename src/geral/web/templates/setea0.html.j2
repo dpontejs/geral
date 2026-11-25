@@ -1,5 +1,5 @@
 {% extends "base.html.j2" %}
-{% set label = jogo.nome if jogo.edicao != "geral" else "Geral" %}
+{% set label = "Geral" if jogo.escolha else jogo.nome %}
 {% block title %}7a0 · {{ label }} · Geral{% endblock %}
 {% block head %}<link rel="stylesheet" href="/static/geral/jogos.css?v={{ asset_version }}">
 <link rel="stylesheet" href="/static/geral/setea0.css?v={{ asset_version }}">{% endblock %}
@@ -7,10 +7,20 @@
 <section class="jogo wall">
   <div class="wrap" data-edition="{{ edition }}">
     {% include "_game_tabs.html.j2" %}
-    <div class="game-title"><h1>7a0{% if jogo.edicao != "geral" %} do {{ jogo.nome }}{% endif %}</h1></div>
-    {% if jogo.edicao == "geral" %}
-    <p class="lead s7-lead">Escolha o seu clube. O dado sorteia uma época por rodada, você escala um jogador de cada uma e monta o time dos sonhos com quem já vestiu a camisa. Depois vem o mata-mata: 7 jogos, 7 vitórias, e a final é sempre o clássico.</p>
+    <div class="game-title"><h1>7a0{% if not jogo.escolha %} {{ jogo.do_nome }}{% endif %}</h1></div>
+    {% if jogo.escolha %}
+    <p class="lead s7-lead">Escolha o seu clube. O dado sorteia uma época por rodada, você escala um jogador de cada uma e monta o time dos sonhos com quem já vestiu a camisa. Depois vem o mata-mata: 7 jogos, 7 vitórias, e a final é sempre o clássico. Na Geral, o dado sorteia também o clube, e o time misturado enfrenta os grandes.</p>
     <div class="hub-grid">
+      {% if jogo.geral %}
+      <article class="board hub-card s7-geral">
+        <a class="hub-main" href="/jogos/7a0/geral">
+          <span class="lamp tag">Todos os clubes</span>
+          <h2 class="lamp title">Geral</h2>
+          <p>O dado sorteia clube e época. Final contra o mais forte dos grandes.</p>
+          <span class="go">Montar o time →</span>
+        </a>
+      </article>
+      {% endif %}
       {% for c in jogo.clubes %}
       <article class="board hub-card s7-clube">
         <a class="hub-main" href="{{ c.url }}">
@@ -23,14 +33,14 @@
       {% endfor %}
     </div>
     {% endif %}
-    {% if jogo.edicao != "geral" %}
+    {% if not jogo.escolha %}
     <nav class="editions" aria-label="Clubes do 7a0">
       {% for slug, nome in edicoes_7a0 %}<a href="/jogos/7a0/{{ slug }}"{% if slug == jogo.edicao %} aria-current="page"{% endif %}>{{ nome }}</a>{% endfor %}
     </nav>
     {% endif %}
     <script type="application/json" id="s7-data">{{ jogo | tojson }}</script>
-    {% if jogo.edicao != "geral" %}
-    {% with nome = jogo.nome, edicao = jogo.edicao %}{% include "_setea0_tela.html.j2" %}{% endwith %}
+    {% if not jogo.escolha %}
+    {% with nome = jogo.nome, do_nome = jogo.do_nome, edicao = jogo.edicao %}{% include "_setea0_tela.html.j2" %}{% endwith %}
     {% endif %}
   </div>
 </section>

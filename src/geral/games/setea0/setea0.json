@@ -1,5 +1,5 @@
 {
- "versao": "e5c563e9e945",
+ "versao": "ac09a253b413",
  "clubes": {
   "abc": {
    "nome": "ABC",
@@ -100842,6 +100842,6031 @@
      ],
      "passagens": [],
      "forca": 73
+    }
+   ]
+  },
+  "santos": {
+   "nome": "Santos",
+   "jogadores": [
+    {
+     "id": "Q100879633",
+     "nome": "Ângelo Gabriel",
+     "posicoes": [
+      "ATA",
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 77
+    },
+    {
+     "id": "Q102331",
+     "nome": "Sócrates",
+     "posicoes": [
+      "MEI",
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 91
+    },
+    {
+     "id": "Q10263789",
+     "nome": "Dalmo Gaspar",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 63
+    },
+    {
+     "id": "Q10268489",
+     "nome": "Douglas da Silva Franklin",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q1027483",
+     "nome": "Apodi",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 76
+    },
+    {
+     "id": "Q10279121",
+     "nome": "Fabiano Bolla Lora",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q1028083",
+     "nome": "Caíco",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 78
+    },
+    {
+     "id": "Q10281320",
+     "nome": "Fernando Diniz",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 69
+    },
+    {
+     "id": "Q10295275",
+     "nome": "Rildo",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q10303961",
+     "nome": "Moreira",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 51
+    },
+    {
+     "id": "Q10308048",
+     "nome": "Cassiá",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q10312199",
+     "nome": "João Schmidt",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 75
+    },
+    {
+     "id": "Q1031647",
+     "nome": "Willian Bigode",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 69
+    },
+    {
+     "id": "Q1031999",
+     "nome": "Thiago Ribeiro",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 68
+    },
+    {
+     "id": "Q10325034",
+     "nome": "Marcello Troisi",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q10325178",
+     "nome": "Marcelo Veiga",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q10325395",
+     "nome": "Preto",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q10327357",
+     "nome": "Matheus Ferraz Pereira",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 72
+    },
+    {
+     "id": "Q10332893",
+     "nome": "Zezinho",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q10334297",
+     "nome": "Márcio Careca",
+     "posicoes": [
+      "ZAG",
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q10334300",
+     "nome": "Márcio Fernandes",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q10336442",
+     "nome": "Neuciano Gusmão",
+     "posicoes": [
+      "MEI",
+      "ZAG",
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 66
+    },
+    {
+     "id": "Q1033738",
+     "nome": "Teleco",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q10338466",
+     "nome": "Nílson Dias",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 51
+    },
+    {
+     "id": "Q10346518",
+     "nome": "Pagão",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 67
+    },
+    {
+     "id": "Q10353737",
+     "nome": "Preto Casagrande",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q10359210",
+     "nome": "Remo Januzzi",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q10396285",
+     "nome": "Élder Campos",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q10425550",
+     "nome": "Luiz Henrique",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q104718063",
+     "nome": "Brandãozinho II",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q10532749",
+     "nome": "Paulo Henrique",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q10550211",
+     "nome": "Júlio César",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q10552612",
+     "nome": "Jubal Rocha Mendes Júnior",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 68
+    },
+    {
+     "id": "Q10553677",
+     "nome": "Jerri",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q10555964",
+     "nome": "Neilton Mestzk",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 70
+    },
+    {
+     "id": "Q106961103",
+     "nome": "Danilo Boza",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q1071060",
+     "nome": "Juary",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 72
+    },
+    {
+     "id": "Q1091521",
+     "nome": "Carlinhos",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 70
+    },
+    {
+     "id": "Q109428",
+     "nome": "Diego Ribas",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 89
+    },
+    {
+     "id": "Q1103844",
+     "nome": "Cláudio Pitbull",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 64
+    },
+    {
+     "id": "Q110818507",
+     "nome": "Rwan Cruz",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q110823206",
+     "nome": "Lucas Pires Silva",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 63
+    },
+    {
+     "id": "Q114125",
+     "nome": "Rogério Gaúcho",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 63
+    },
+    {
+     "id": "Q114405335",
+     "nome": "Deivid Washington",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 72
+    },
+    {
+     "id": "Q1150175",
+     "nome": "Tuta",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q1150828",
+     "nome": "Cícero Santos",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 68
+    },
+    {
+     "id": "Q116560",
+     "nome": "Gil",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 85
+    },
+    {
+     "id": "Q11690790",
+     "nome": "Cláudio César de Aguiar Mauriz",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q11714061",
+     "nome": "Irno Lubke",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 51
+    },
+    {
+     "id": "Q11767129",
+     "nome": "Manoel Maria",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q11771751",
+     "nome": "Mauro Cabeção",
+     "posicoes": [
+      "ZAG",
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q11781298",
+     "nome": "Millon",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q1185500",
+     "nome": "Durval",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 67
+    },
+    {
+     "id": "Q1185832",
+     "nome": "Germano Borovicz Cardoso Schweger",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 73
+    },
+    {
+     "id": "Q1188407",
+     "nome": "Jardel Nivaldo Vieira",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 73
+    },
+    {
+     "id": "Q1200809",
+     "nome": "Desmond Armstrong",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 70
+    },
+    {
+     "id": "Q1220623",
+     "nome": "Diego Ângelo",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q1255932",
+     "nome": "José Róbson do Nascimento",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 76
+    },
+    {
+     "id": "Q12897",
+     "nome": "Pelé",
+     "posicoes": [
+      "ATA",
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 91
+    },
+    {
+     "id": "Q131693296",
+     "nome": "Robinho Jr.",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q1323111",
+     "nome": "Kléber Pereira",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 66
+    },
+    {
+     "id": "Q1324439",
+     "nome": "Leandro de Oliveira da Luz",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q13459484",
+     "nome": "Claudinei Oliveira",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q1362325",
+     "nome": "Nelsinho Baptista",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 79
+    },
+    {
+     "id": "Q13646572",
+     "nome": "Gabigol",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 88
+    },
+    {
+     "id": "Q1365589",
+     "nome": "Weldon Santos de Andrade",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 68
+    },
+    {
+     "id": "Q1404865",
+     "nome": "Cláudio Olinto de Carvalho",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 70
+    },
+    {
+     "id": "Q14244926",
+     "nome": "Henrique Dourado",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 63
+    },
+    {
+     "id": "Q142794",
+     "nome": "Neymar",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 91
+    },
+    {
+     "id": "Q14325335",
+     "nome": "Lucas Otávio",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q1433020",
+     "nome": "Odvan",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 70
+    },
+    {
+     "id": "Q1440166",
+     "nome": "Basílio",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 75
+    },
+    {
+     "id": "Q1440374",
+     "nome": "Gilmar Silva Santos",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 77
+    },
+    {
+     "id": "Q15075773",
+     "nome": "Jean Mota",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 64
+    },
+    {
+     "id": "Q1507803",
+     "nome": "George Lucas",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 64
+    },
+    {
+     "id": "Q15207061",
+     "nome": "Lucas Lima",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 82
+    },
+    {
+     "id": "Q1526974",
+     "nome": "Márcio Santos",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 87
+    },
+    {
+     "id": "Q15690175",
+     "nome": "Mayke",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 69
+    },
+    {
+     "id": "Q1573378",
+     "nome": "José Antônio Martins Galvão",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 76
+    },
+    {
+     "id": "Q1573490",
+     "nome": "José Rodolfo Pires Ribeiro",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 80
+    },
+    {
+     "id": "Q1580384",
+     "nome": "Maikon Leite",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q15830952",
+     "nome": "Cléber Reis",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 64
+    },
+    {
+     "id": "Q15830962",
+     "nome": "Demetrios Montanini",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q15830967",
+     "nome": "Diego Cardoso",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q15831098",
+     "nome": "Leo Cittadini",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 63
+    },
+    {
+     "id": "Q15831126",
+     "nome": "Misael Bueno",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q15831179",
+     "nome": "Stéfano Yuri",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q15831180",
+     "nome": "Serginho",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 73
+    },
+    {
+     "id": "Q15964397",
+     "nome": "Sérgio Antônio Soler de Oliveira Júnior",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 76
+    },
+    {
+     "id": "Q16039917",
+     "nome": "Roberto Bocaleri",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q1609225",
+     "nome": "Válber Roel de Oliveira",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 59
+    },
+    {
+     "id": "Q1614422",
+     "nome": "Leo Lima",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 64
+    },
+    {
+     "id": "Q1615346",
+     "nome": "Lucio Flavio",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q16230077",
+     "nome": "José Carlos Cracco Neto",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 73
+    },
+    {
+     "id": "Q16234987",
+     "nome": "Madson Ferreira dos Santos",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q1627338",
+     "nome": "Madson Formagini Caridade",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q16336922",
+     "nome": "Bida",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q1634101",
+     "nome": "Wellington Paulista",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 68
+    },
+    {
+     "id": "Q1645814",
+     "nome": "Gérson da Silva",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 67
+    },
+    {
+     "id": "Q1647420",
+     "nome": "Renan dos Santos",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 61
+    },
+    {
+     "id": "Q1648860",
+     "nome": "Velloso",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 59
+    },
+    {
+     "id": "Q1649599",
+     "nome": "Cabralzinho",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q16501375",
+     "nome": "Ary Patusca",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q16731977",
+     "nome": "Marcos Guilherme",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 72
+    },
+    {
+     "id": "Q16733124",
+     "nome": "Nailson",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q16941056",
+     "nome": "Walter Ferraz de Negreiros",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q1694253",
+     "nome": "Paulo Isidoro",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 76
+    },
+    {
+     "id": "Q17037424",
+     "nome": "Jorge Eduardo",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q17362445",
+     "nome": "Válter Marciano",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 69
+    },
+    {
+     "id": "Q17385902",
+     "nome": "Everton Cebolinha",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 87
+    },
+    {
+     "id": "Q17466192",
+     "nome": "Hudson",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 63
+    },
+    {
+     "id": "Q17489822",
+     "nome": "Paulo Ricardo",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q17490178",
+     "nome": "Joel Tagueu",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 66
+    },
+    {
+     "id": "Q176043",
+     "nome": "Octávio Moraes",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 67
+    },
+    {
+     "id": "Q17619227",
+     "nome": "Patrick",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 64
+    },
+    {
+     "id": "Q17622063",
+     "nome": "Maxi Rolón",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 70
+    },
+    {
+     "id": "Q17686274",
+     "nome": "Kaique",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 69
+    },
+    {
+     "id": "Q1771539",
+     "nome": "Olavo Martins de Oliveira",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 62
+    },
+    {
+     "id": "Q178599",
+     "nome": "Jorge Fucile",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 81
+    },
+    {
+     "id": "Q18014853",
+     "nome": "Auro",
+     "posicoes": [
+      "ZAG",
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 67
+    },
+    {
+     "id": "Q180735",
+     "nome": "Fabinho Soldado",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 80
+    },
+    {
+     "id": "Q180968",
+     "nome": "Reinaldo da Cruz Oliveira",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 80
+    },
+    {
+     "id": "Q181000",
+     "nome": "Magnum",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 79
+    },
+    {
+     "id": "Q181080",
+     "nome": "Pita",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 89
+    },
+    {
+     "id": "Q181098",
+     "nome": "Jamelli",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 89
+    },
+    {
+     "id": "Q181168",
+     "nome": "Bernardo Fernandes da Silva",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 88
+    },
+    {
+     "id": "Q181204",
+     "nome": "Paulinho McLaren",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 78
+    },
+    {
+     "id": "Q18124360",
+     "nome": "Clóvis",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q18124412",
+     "nome": "Wanderson de Jesus Martins",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 66
+    },
+    {
+     "id": "Q181259",
+     "nome": "Guga",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 78
+    },
+    {
+     "id": "Q18127731",
+     "nome": "Philipe Sampaio",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 66
+    },
+    {
+     "id": "Q18394141",
+     "nome": "Thiago Maia",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 76
+    },
+    {
+     "id": "Q18637281",
+     "nome": "Daniel Guedes",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q18719710",
+     "nome": "Eduardo Bauermann",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 66
+    },
+    {
+     "id": "Q19519846",
+     "nome": "Zé Rafael",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 68
+    },
+    {
+     "id": "Q19667573",
+     "nome": "Thiago Brito",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q19668602",
+     "nome": "Lucas Crispim",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q196897",
+     "nome": "Zetti",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 84
+    },
+    {
+     "id": "Q197553",
+     "nome": "Sérgio Manoel Júnior",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 88
+    },
+    {
+     "id": "Q197574",
+     "nome": "Robert da Silva Almeida",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 89
+    },
+    {
+     "id": "Q19757644",
+     "nome": "Rafael Longuine",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q197578",
+     "nome": "Oséas",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 89
+    },
+    {
+     "id": "Q197583",
+     "nome": "Alessandro Cambalhota",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 89
+    },
+    {
+     "id": "Q197584",
+     "nome": "Henrique",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 78
+    },
+    {
+     "id": "Q197586",
+     "nome": "Fábio Alves Félix",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 78
+    },
+    {
+     "id": "Q197591",
+     "nome": "Marcel",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 77
+    },
+    {
+     "id": "Q197875",
+     "nome": "Edi Andradina",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 79
+    },
+    {
+     "id": "Q19818652",
+     "nome": "Luan Peres",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 69
+    },
+    {
+     "id": "Q1982005",
+     "nome": "Michael",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q1985395",
+     "nome": "Sergio Santín",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 68
+    },
+    {
+     "id": "Q1986747",
+     "nome": "André Felippe Seixas Dias",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q1987355",
+     "nome": "Almir Pernambuquinho",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 67
+    },
+    {
+     "id": "Q1989261",
+     "nome": "Toninho Guerreiro",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 69
+    },
+    {
+     "id": "Q1993533",
+     "nome": "Airton Pavilhão",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 64
+    },
+    {
+     "id": "Q19956526",
+     "nome": "Bruno Henrique",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 84
+    },
+    {
+     "id": "Q19958173",
+     "nome": "Índio",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q20048114",
+     "nome": "Jorge Marco de Oliveira Moraes",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 81
+    },
+    {
+     "id": "Q20048349",
+     "nome": "Romário Guilherme dos Santos",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q20048357",
+     "nome": "Ronaldo Mendes",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q20048828",
+     "nome": "Rodinei",
+     "posicoes": [
+      "ZAG",
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 69
+    },
+    {
+     "id": "Q2006955",
+     "nome": "Orestes",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q2007167",
+     "nome": "Bruno Rodrigo",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 63
+    },
+    {
+     "id": "Q2011790",
+     "nome": "Paulo Almeida",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 69
+    },
+    {
+     "id": "Q201301",
+     "nome": "Leonardo Manzi",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q2015351",
+     "nome": "Dejan Petković",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 78
+    },
+    {
+     "id": "Q2018503",
+     "nome": "Márcio Ivanildo da Silva",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q202592",
+     "nome": "Breitner",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 61
+    },
+    {
+     "id": "Q2035459",
+     "nome": "Willian Arão",
+     "posicoes": [
+      "ZAG",
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 79
+    },
+    {
+     "id": "Q2037738",
+     "nome": "Pedro Silva",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q20630871",
+     "nome": "Mateus Lima",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q20641147",
+     "nome": "Marquinhos",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q20641386",
+     "nome": "Renan Mota",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 67
+    },
+    {
+     "id": "Q20641619",
+     "nome": "Vitor Bueno",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 72
+    },
+    {
+     "id": "Q20641639",
+     "nome": "Wesley Souza",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q2065676",
+     "nome": "Fricson George",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q2065799",
+     "nome": "Carlos Frontini",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q20664286",
+     "nome": "Marcelo Fernandes",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q2070423",
+     "nome": "Antônio Carlos Zago",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 90
+    },
+    {
+     "id": "Q207407",
+     "nome": "Elano",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 89
+    },
+    {
+     "id": "Q20745204",
+     "nome": "Rafael Ratão",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 75
+    },
+    {
+     "id": "Q2080536",
+     "nome": "Cássio Alves de Barros",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 70
+    },
+    {
+     "id": "Q208687",
+     "nome": "Nilmar",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 88
+    },
+    {
+     "id": "Q2087275",
+     "nome": "Hugo de León",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 72
+    },
+    {
+     "id": "Q2089039",
+     "nome": "Marcos Assunção",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 80
+    },
+    {
+     "id": "Q2092969",
+     "nome": "Pintado",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 75
+    },
+    {
+     "id": "Q2093023",
+     "nome": "Eduardo Marques",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 74
+    },
+    {
+     "id": "Q2093124",
+     "nome": "Luís Augusto Osório Romão do Nascimento",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 75
+    },
+    {
+     "id": "Q210026",
+     "nome": "Fumagalli",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 77
+    },
+    {
+     "id": "Q210103",
+     "nome": "Ânderson Lima",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 78
+    },
+    {
+     "id": "Q210114",
+     "nome": "Jean Carlo Witte",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 80
+    },
+    {
+     "id": "Q210125",
+     "nome": "Lopes Tigrão",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 79
+    },
+    {
+     "id": "Q210142",
+     "nome": "Geílson",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 79
+    },
+    {
+     "id": "Q210279",
+     "nome": "Tomás Rincón",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 81
+    },
+    {
+     "id": "Q2119081",
+     "nome": "Wladimir Rodrigues dos Santos",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 67
+    },
+    {
+     "id": "Q21245150",
+     "nome": "Matheus Ribeiro",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q212491",
+     "nome": "Zé Elias",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 81
+    },
+    {
+     "id": "Q2128790",
+     "nome": "Eliseu Godoy",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q2133247",
+     "nome": "Calvet",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 69
+    },
+    {
+     "id": "Q215890",
+     "nome": "Dunga",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 91
+    },
+    {
+     "id": "Q215952",
+     "nome": "Emerson Ferreira da Rosa",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 90
+    },
+    {
+     "id": "Q2161289",
+     "nome": "Rodrigo Costa",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q216142",
+     "nome": "Alex Rodrigo Dias da Costa",
+     "posicoes": [
+      "ZAG",
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 90
+    },
+    {
+     "id": "Q21621018",
+     "nome": "Jean Chera",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q217868",
+     "nome": "Vítor Júnior",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 78
+    },
+    {
+     "id": "Q217882",
+     "nome": "Rodrigo Souto",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 77
+    },
+    {
+     "id": "Q217974",
+     "nome": "Almir de Souza Fraga",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 88
+    },
+    {
+     "id": "Q2197636",
+     "nome": "Cláudio",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 73
+    },
+    {
+     "id": "Q22004329",
+     "nome": "Fernando Medeiros",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q22162707",
+     "nome": "Diego Silva",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q223229",
+     "nome": "Doni Marangon",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 88
+    },
+    {
+     "id": "Q2256207",
+     "nome": "Ranielli",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 74
+    },
+    {
+     "id": "Q225837",
+     "nome": "Freddy Rincón",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 81
+    },
+    {
+     "id": "Q2269083",
+     "nome": "Vágner Rogério Nunes",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 69
+    },
+    {
+     "id": "Q22703917",
+     "nome": "Lucas Veríssimo",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 81
+    },
+    {
+     "id": "Q2277552",
+     "nome": "Argel Fuchs",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 88
+    },
+    {
+     "id": "Q22814274",
+     "nome": "Luiz Felipe",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 61
+    },
+    {
+     "id": "Q2286817",
+     "nome": "Sílvio",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q2294406",
+     "nome": "Jonas Eduardo Américo",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 83
+    },
+    {
+     "id": "Q2308830",
+     "nome": "Neto",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 75
+    },
+    {
+     "id": "Q2314547",
+     "nome": "Narciso dos Santos",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 72
+    },
+    {
+     "id": "Q2314727",
+     "nome": "Fabão",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 80
+    },
+    {
+     "id": "Q2316179",
+     "nome": "Fábio Santos",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 89
+    },
+    {
+     "id": "Q2339388",
+     "nome": "Emmanuele Del Vecchio",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 70
+    },
+    {
+     "id": "Q2340528",
+     "nome": "Flávio Minuano",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 70
+    },
+    {
+     "id": "Q2347923",
+     "nome": "Gilmar Popoca",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 61
+    },
+    {
+     "id": "Q2348982",
+     "nome": "Cláudio Adão",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 72
+    },
+    {
+     "id": "Q2352091",
+     "nome": "Carlos Galván",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 61
+    },
+    {
+     "id": "Q2356803",
+     "nome": "Fabiano Pereira da Costa",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q2392947",
+     "nome": "Luciano de Souza",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q2398451",
+     "nome": "Triguinho",
+     "posicoes": [
+      "ZAG",
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q24007572",
+     "nome": "Yuri Lima",
+     "posicoes": [
+      "ZAG",
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q24062438",
+     "nome": "Walterson",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q24062447",
+     "nome": "Thaciano",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q24084736",
+     "nome": "Gregore",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 64
+    },
+    {
+     "id": "Q2410089",
+     "nome": "Paulo Roberto Curtis Costa",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 61
+    },
+    {
+     "id": "Q24150738",
+     "nome": "Matheus Nolasco",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q2420612",
+     "nome": "Walter Montillo",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 69
+    },
+    {
+     "id": "Q2421738",
+     "nome": "Feitiço",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q2429057",
+     "nome": "Dinho",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 62
+    },
+    {
+     "id": "Q2431036",
+     "nome": "Tiago Bernardi",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q2435624",
+     "nome": "Gérson Magrão",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 67
+    },
+    {
+     "id": "Q24452270",
+     "nome": "Diogo Vitor",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q2445366",
+     "nome": "Dorval",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 70
+    },
+    {
+     "id": "Q2447197",
+     "nome": "Joel Camargo",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 82
+    },
+    {
+     "id": "Q2448647",
+     "nome": "Nunes do Flamengo",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 73
+    },
+    {
+     "id": "Q2448967",
+     "nome": "Albeiro Usuriaga",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 70
+    },
+    {
+     "id": "Q2449583",
+     "nome": "Lima",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 79
+    },
+    {
+     "id": "Q2451217",
+     "nome": "Zé Love",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 68
+    },
+    {
+     "id": "Q2451450",
+     "nome": "Kayke Moreno",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 77
+    },
+    {
+     "id": "Q2451488",
+     "nome": "Fernando Uribe",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 63
+    },
+    {
+     "id": "Q2452835",
+     "nome": "Leo",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 75
+    },
+    {
+     "id": "Q245852",
+     "nome": "Rodrigo Tabata",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 72
+    },
+    {
+     "id": "Q2463272",
+     "nome": "Nelson Tapia",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 73
+    },
+    {
+     "id": "Q2466806",
+     "nome": "Ronaldo Guiaro",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 76
+    },
+    {
+     "id": "Q2469661",
+     "nome": "Armandinho",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 75
+    },
+    {
+     "id": "Q2469796",
+     "nome": "Willian José",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 80
+    },
+    {
+     "id": "Q2469877",
+     "nome": "Carlos Germano",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 79
+    },
+    {
+     "id": "Q247050",
+     "nome": "Mariano Trípodi",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 74
+    },
+    {
+     "id": "Q247497",
+     "nome": "Zé Sérgio",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 88
+    },
+    {
+     "id": "Q2502029",
+     "nome": "Leonardo Moura",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 64
+    },
+    {
+     "id": "Q2529972",
+     "nome": "Júnior Moraes",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 78
+    },
+    {
+     "id": "Q2538809",
+     "nome": "Luiz Alberto",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 73
+    },
+    {
+     "id": "Q2538947",
+     "nome": "Sylvio Hoffmann",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 75
+    },
+    {
+     "id": "Q2557344",
+     "nome": "Marcinho Guerreiro",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q2558474",
+     "nome": "Djalma Dias",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 69
+    },
+    {
+     "id": "Q2563823",
+     "nome": "João Justino Amaral dos Santos",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 80
+    },
+    {
+     "id": "Q2564432",
+     "nome": "André Luiz Moreira",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 75
+    },
+    {
+     "id": "Q2565981",
+     "nome": "Mengálvio",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 78
+    },
+    {
+     "id": "Q2570605",
+     "nome": "Vanderlei Eustáquio de Oliveira",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 76
+    },
+    {
+     "id": "Q257606",
+     "nome": "Gylmar dos Santos Neves",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 89
+    },
+    {
+     "id": "Q2576274",
+     "nome": "Francisco Jesuíno Avanzi",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 78
+    },
+    {
+     "id": "Q2600663",
+     "nome": "Cuca",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 79
+    },
+    {
+     "id": "Q2602055",
+     "nome": "Pedro Paulo de Oliveira",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 69
+    },
+    {
+     "id": "Q2604412",
+     "nome": "Aranha",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 61
+    },
+    {
+     "id": "Q2605913",
+     "nome": "Alex da Silva",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 66
+    },
+    {
+     "id": "Q2610142",
+     "nome": "Patricio Rodríguez",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 61
+    },
+    {
+     "id": "Q2617906",
+     "nome": "Agustín Cejas",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 68
+    },
+    {
+     "id": "Q2625446",
+     "nome": "César Maluco",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 76
+    },
+    {
+     "id": "Q2626107",
+     "nome": "João Pedro Galvão",
+     "posicoes": [
+      "MEI",
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 75
+    },
+    {
+     "id": "Q2626651",
+     "nome": "Neto",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 61
+    },
+    {
+     "id": "Q2629254",
+     "nome": "Alcindo Martha de Freitas",
+     "posicoes": [
+      "ATA",
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 78
+    },
+    {
+     "id": "Q262954",
+     "nome": "Marcelinho Paraíba",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 81
+    },
+    {
+     "id": "Q2634082",
+     "nome": "Ezequiel Miralles",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q2655572",
+     "nome": "Charles",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 67
+    },
+    {
+     "id": "Q2667775",
+     "nome": "Baiano",
+     "posicoes": [
+      "ZAG",
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 67
+    },
+    {
+     "id": "Q2709912",
+     "nome": "Silva Batuta",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 78
+    },
+    {
+     "id": "Q2712599",
+     "nome": "Veludo",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 74
+    },
+    {
+     "id": "Q2712930",
+     "nome": "Alfredo Ramos",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 73
+    },
+    {
+     "id": "Q2714027",
+     "nome": "Euclydes Barbosa",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 75
+    },
+    {
+     "id": "Q2714418",
+     "nome": "Walter de Sousa Goulart",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 75
+    },
+    {
+     "id": "Q2719042",
+     "nome": "Fábio Costa",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 67
+    },
+    {
+     "id": "Q2722553",
+     "nome": "Arouca",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 75
+    },
+    {
+     "id": "Q2735135",
+     "nome": "Alessandro Nunes",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 67
+    },
+    {
+     "id": "Q273766",
+     "nome": "Éder Aleixo",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 85
+    },
+    {
+     "id": "Q275836",
+     "nome": "Tomo Sugawara",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 79
+    },
+    {
+     "id": "Q2761481",
+     "nome": "Eugenio Mena",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 80
+    },
+    {
+     "id": "Q2761538",
+     "nome": "Bechara",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 61
+    },
+    {
+     "id": "Q2771056",
+     "nome": "Bruno Marinho",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q27804547",
+     "nome": "Arthur Gomes",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 67
+    },
+    {
+     "id": "Q28051537",
+     "nome": "Ismael Mafra Cabral",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q28051603",
+     "nome": "Theodorico Haroldo de Oliveira",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q28076364",
+     "nome": "Dudu",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q28113132",
+     "nome": "Guilherme Augusto Vieira dos Santos",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q28363884",
+     "nome": "Hayner",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q283706",
+     "nome": "Dodô",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 89
+    },
+    {
+     "id": "Q284708",
+     "nome": "Flávio Pinto de Souza",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 67
+    },
+    {
+     "id": "Q28474511",
+     "nome": "Zé Ivaldo",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 61
+    },
+    {
+     "id": "Q2858179",
+     "nome": "José Luis dos Santos Pinto",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 61
+    },
+    {
+     "id": "Q28748046",
+     "nome": "Rony",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 86
+    },
+    {
+     "id": "Q28853715",
+     "nome": "Diego Pituca",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 67
+    },
+    {
+     "id": "Q29052566",
+     "nome": "Matheus Oliveira",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q29097",
+     "nome": "Renato Dirnei Florêncio",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 86
+    },
+    {
+     "id": "Q29224175",
+     "nome": "Jandrei",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 63
+    },
+    {
+     "id": "Q295262",
+     "nome": "Carlos Alberto Torres",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 90
+    },
+    {
+     "id": "Q2975841",
+     "nome": "Rodrigo Tiuí",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 76
+    },
+    {
+     "id": "Q29919582",
+     "nome": "Matheus Jesus",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 72
+    },
+    {
+     "id": "Q30094592",
+     "nome": "Rodolfo Filemon",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q30094616",
+     "nome": "Felipe Rodrigues",
+     "posicoes": [
+      "ZAG",
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q3031471",
+     "nome": "Tiago Luís",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 64
+    },
+    {
+     "id": "Q3035331",
+     "nome": "Kennedy Nagoli",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q3046202",
+     "nome": "Manoel Messias Barbosa da Silva",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q3047582",
+     "nome": "Edimílson",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q3064982",
+     "nome": "Val Baiano",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q3083900",
+     "nome": "Leandro Rodrigues",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 74
+    },
+    {
+     "id": "Q3088450",
+     "nome": "Paulo César Arruda Parente",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 72
+    },
+    {
+     "id": "Q311872",
+     "nome": "Philippe Coutinho",
+     "posicoes": [
+      "MEI",
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 91
+    },
+    {
+     "id": "Q313277",
+     "nome": "César Luis Menotti",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 84
+    },
+    {
+     "id": "Q313835",
+     "nome": "Paulo Henrique Ganso",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 87
+    },
+    {
+     "id": "Q315079",
+     "nome": "Ricardo Oliveira",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 87
+    },
+    {
+     "id": "Q316436",
+     "nome": "César Sampaio",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 90
+    },
+    {
+     "id": "Q316457",
+     "nome": "Cristian Ledesma",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 81
+    },
+    {
+     "id": "Q316836",
+     "nome": "Nenê",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 80
+    },
+    {
+     "id": "Q31763164",
+     "nome": "Robson Bambu",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 69
+    },
+    {
+     "id": "Q3178444",
+     "nome": "Victor Ferraz",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q318383",
+     "nome": "Bryan Ruiz",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 84
+    },
+    {
+     "id": "Q322691",
+     "nome": "Rodrigo Possebon",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 77
+    },
+    {
+     "id": "Q3245329",
+     "nome": "Evaldo",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 72
+    },
+    {
+     "id": "Q3245931",
+     "nome": "Musashi Mizushima",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 79
+    },
+    {
+     "id": "Q326476",
+     "nome": "Jonas Gonçalves Oliveira",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 87
+    },
+    {
+     "id": "Q327404",
+     "nome": "César",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q3291857",
+     "nome": "Vladimir",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 63
+    },
+    {
+     "id": "Q33026801",
+     "nome": "Raniel",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 61
+    },
+    {
+     "id": "Q33103770",
+     "nome": "João Paulo Silva Martins",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q331434",
+     "nome": "André Beleza",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q331953",
+     "nome": "Kazuyoshi Miura",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 85
+    },
+    {
+     "id": "Q335916",
+     "nome": "Anderson Carvalho",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 77
+    },
+    {
+     "id": "Q3383427",
+     "nome": "Adriano Pagode",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 63
+    },
+    {
+     "id": "Q339583",
+     "nome": "Rivaldo Barbosa de Souza",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q342489",
+     "nome": "Careca",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 91
+    },
+    {
+     "id": "Q3436853",
+     "nome": "Roberto Brum",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q3438459",
+     "nome": "Rodrigo Fernandes Alflen",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q3468241",
+     "nome": "Renê Júnior",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 63
+    },
+    {
+     "id": "Q350756",
+     "nome": "Luizão",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 90
+    },
+    {
+     "id": "Q3567581",
+     "nome": "Leandro Moura",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 88
+    },
+    {
+     "id": "Q359152",
+     "nome": "Wilson Francisco Alves",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 67
+    },
+    {
+     "id": "Q3615361",
+     "nome": "Ânderson Luís Schweitzer",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q3616201",
+     "nome": "Andrei Frascarelli",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q3646999",
+     "nome": "Neto Berola",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q3649564",
+     "nome": "Caetano Calil",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q3695155",
+     "nome": "Campos",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 64
+    },
+    {
+     "id": "Q3698923",
+     "nome": "Crystian Souza",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q3718763",
+     "nome": "Rosimar Amancio",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 66
+    },
+    {
+     "id": "Q372086",
+     "nome": "Leopoldo Luque",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 83
+    },
+    {
+     "id": "Q372092",
+     "nome": "Zito",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 88
+    },
+    {
+     "id": "Q3742285",
+     "nome": "Felipe Garcia dos Prazeres",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q3742911",
+     "nome": "Fernando Ferretti",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 64
+    },
+    {
+     "id": "Q3750981",
+     "nome": "Eloi",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q3755365",
+     "nome": "Pereira",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q378101",
+     "nome": "Marcelinho Carioca",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 90
+    },
+    {
+     "id": "Q380116",
+     "nome": "Ady",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q3804866",
+     "nome": "Sérgio Guedes",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 64
+    },
+    {
+     "id": "Q3810719",
+     "nome": "Andrade",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q3810729",
+     "nome": "João Paulo",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q381394",
+     "nome": "Nelson Cuevas",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 78
+    },
+    {
+     "id": "Q381597",
+     "nome": "Domingos",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 63
+    },
+    {
+     "id": "Q381729",
+     "nome": "Müller",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 90
+    },
+    {
+     "id": "Q382069",
+     "nome": "Giovanni Silva de Oliveira",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 83
+    },
+    {
+     "id": "Q3823746",
+     "nome": "Elton Giovanni Machado",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q3824542",
+     "nome": "Macedo",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q3829237",
+     "nome": "Leandro Donizete",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q3845720",
+     "nome": "Marcelo Martelotte",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q3849814",
+     "nome": "Marquinhos Gabriel",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 64
+    },
+    {
+     "id": "Q3858102",
+     "nome": "Milton da Cunha Mendonça",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q3869199",
+     "nome": "Márcio Rossini",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q3869209",
+     "nome": "Mário Sérgio Santos Costa",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 69
+    },
+    {
+     "id": "Q38794",
+     "nome": "Rildo da Costa Menezes",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 79
+    },
+    {
+     "id": "Q3886008",
+     "nome": "Orlando Lelé",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 54
+    },
+    {
+     "id": "Q3928947",
+     "nome": "Rafael Galhardo",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 61
+    },
+    {
+     "id": "Q3928980",
+     "nome": "Rafael Pinheiro",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 68
+    },
+    {
+     "id": "Q3940042",
+     "nome": "Rodrigo Mancha",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 75
+    },
+    {
+     "id": "Q3940086",
+     "nome": "Roger José de Noronha Silva",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q39667548",
+     "nome": "Arthur Melo",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 90
+    },
+    {
+     "id": "Q3979295",
+     "nome": "Sérgio Luís de Araújo",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q3991094",
+     "nome": "Tiago Alves",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 74
+    },
+    {
+     "id": "Q3993105",
+     "nome": "Toninho Carlos",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 54
+    },
+    {
+     "id": "Q4007591",
+     "nome": "Valdir Bigode",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q4008532",
+     "nome": "Vanderlei Farias da Silva",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 66
+    },
+    {
+     "id": "Q4017657",
+     "nome": "Wagner Diniz",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q4019016",
+     "nome": "Werley",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q4027512",
+     "nome": "Carlos de Jesus Euzébio",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q4056962",
+     "nome": "Chico Formiga",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 54
+    },
+    {
+     "id": "Q4097194",
+     "nome": "Bruno Aguiar",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q4118453",
+     "nome": "Alemão",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 64
+    },
+    {
+     "id": "Q41187064",
+     "nome": "Orinho",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q42728914",
+     "nome": "Rodrygo",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 91
+    },
+    {
+     "id": "Q4282225",
+     "nome": "Marcos Rogério Ricci Lopes",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 64
+    },
+    {
+     "id": "Q428431",
+     "nome": "Ricardo Rocha",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 85
+    },
+    {
+     "id": "Q43252427",
+     "nome": "Yuri Alberto",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 78
+    },
+    {
+     "id": "Q4336518",
+     "nome": "Orlando Pingo de Ouro",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q437329",
+     "nome": "Danilo Luiz da Silva",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 90
+    },
+    {
+     "id": "Q4373959",
+     "nome": "Éder Lima",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 72
+    },
+    {
+     "id": "Q438483",
+     "nome": "Orlando Peçanha",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 86
+    },
+    {
+     "id": "Q4399058",
+     "nome": "Rubens Cardoso",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q441769",
+     "nome": "Víctor Aristizábal",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 80
+    },
+    {
+     "id": "Q4419138",
+     "nome": "Marcelo Silva",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q4419689",
+     "nome": "Vinícius Simon",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q443423",
+     "nome": "Rodolfo Rodríguez",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 78
+    },
+    {
+     "id": "Q445541",
+     "nome": "Edmundo",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 90
+    },
+    {
+     "id": "Q44573041",
+     "nome": "Emerson",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q4485280",
+     "nome": "Flávio Dias",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q455557",
+     "nome": "Borges",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 89
+    },
+    {
+     "id": "Q458481",
+     "nome": "Aílton",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 76
+    },
+    {
+     "id": "Q460029",
+     "nome": "Alcides Araújo Alves",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 75
+    },
+    {
+     "id": "Q463460",
+     "nome": "Mauro Ramos",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 87
+    },
+    {
+     "id": "Q463751",
+     "nome": "Júlio Sérgio",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 75
+    },
+    {
+     "id": "Q464419",
+     "nome": "Clodoaldo",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 87
+    },
+    {
+     "id": "Q4707707",
+     "nome": "Alan Santos",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q4716957",
+     "nome": "Alex Ely",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q4720800",
+     "nome": "Alexandre Alves da Silva",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q4720844",
+     "nome": "Alexandre Gallo",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 78
+    },
+    {
+     "id": "Q4727127",
+     "nome": "Alison Lopes",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 64
+    },
+    {
+     "id": "Q47314",
+     "nome": "Jorginho Putinatti",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 88
+    },
+    {
+     "id": "Q4754176",
+     "nome": "Anderson Salles",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q47582419",
+     "nome": "Leonardo",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 70
+    },
+    {
+     "id": "Q4759819",
+     "nome": "André Astorga",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q47760",
+     "nome": "Edu Marangon",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 89
+    },
+    {
+     "id": "Q4776359",
+     "nome": "Antoninho Fernandes",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q4777659",
+     "nome": "Antônio Dumas",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 61
+    },
+    {
+     "id": "Q4833250",
+     "nome": "Aílton Lira",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q4918849",
+     "nome": "Carlos Roberto",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 59
+    },
+    {
+     "id": "Q49385977",
+     "nome": "Guilherme Nunes",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q495081",
+     "nome": "Mauricio Molina",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 69
+    },
+    {
+     "id": "Q495325",
+     "nome": "Felipe Azevedo",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 64
+    },
+    {
+     "id": "Q495816",
+     "nome": "Masakiyo Maezono",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 84
+    },
+    {
+     "id": "Q496376",
+     "nome": "Leandro Machado",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 74
+    },
+    {
+     "id": "Q4979292",
+     "nome": "Bruno Malias",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q4979352",
+     "nome": "Bruno Peres",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 76
+    },
+    {
+     "id": "Q503242",
+     "nome": "Fabiano Eller",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 78
+    },
+    {
+     "id": "Q50365518",
+     "nome": "Messias Rodrigues da Silva Júnior",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q5041766",
+     "nome": "Carlos Sánchez",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 81
+    },
+    {
+     "id": "Q50505162",
+     "nome": "Victor Yan Souza Santos",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q508075",
+     "nome": "Bruno Uvini",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 84
+    },
+    {
+     "id": "Q508316",
+     "nome": "Deivid de Souza",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 72
+    },
+    {
+     "id": "Q508434",
+     "nome": "Angelo Sormani",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 76
+    },
+    {
+     "id": "Q508690",
+     "nome": "Ceará",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 70
+    },
+    {
+     "id": "Q509491",
+     "nome": "Pepe",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 87
+    },
+    {
+     "id": "Q509812",
+     "nome": "Viola",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 85
+    },
+    {
+     "id": "Q513648",
+     "nome": "Jonathan Cícero Moreira",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 77
+    },
+    {
+     "id": "Q514375",
+     "nome": "Cléber Santana",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 80
+    },
+    {
+     "id": "Q514376",
+     "nome": "Athirson",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 74
+    },
+    {
+     "id": "Q518525",
+     "nome": "André Balada",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 79
+    },
+    {
+     "id": "Q5186316",
+     "nome": "Ávalos",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q519030",
+     "nome": "Antonio de Nigris",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 70
+    },
+    {
+     "id": "Q521024",
+     "nome": "Pinga",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 63
+    },
+    {
+     "id": "Q521785",
+     "nome": "Mauro Sérgio Viriato Mendes",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 62
+    },
+    {
+     "id": "Q5218404",
+     "nome": "Daniel Paulista",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q522003",
+     "nome": "Wendel Geraldo Maurício e Silva",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 72
+    },
+    {
+     "id": "Q5230371",
+     "nome": "Davi Rancan",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q523604",
+     "nome": "Araken Patusca",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 80
+    },
+    {
+     "id": "Q52427585",
+     "nome": "Jean Lucas",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 78
+    },
+    {
+     "id": "Q5274224",
+     "nome": "Dido",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 61
+    },
+    {
+     "id": "Q5274750",
+     "nome": "Diego Monar",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q527594",
+     "nome": "Rodrigo Fabri",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 76
+    },
+    {
+     "id": "Q5277173",
+     "nome": "Dimba",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q5301924",
+     "nome": "Douglas Renato de Jesus",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q5301945",
+     "nome": "Douglas Rodrigues",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q5320297",
+     "nome": "Dênis",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q5340298",
+     "nome": "Edson Borges",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q5340762",
+     "nome": "Eduardo Sasha",
+     "posicoes": [
+      "MEI",
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 74
+    },
+    {
+     "id": "Q5360309",
+     "nome": "Eli Sabiá",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q5360745",
+     "nome": "Elierce Barbosa de Souza",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 73
+    },
+    {
+     "id": "Q53678050",
+     "nome": "Onitlasi Moraes",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q5370912",
+     "nome": "Emerson Palmieri",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 83
+    },
+    {
+     "id": "Q5371727",
+     "nome": "Emiliano Vecchio",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q5396224",
+     "nome": "Erwin Ávalos",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q5403852",
+     "nome": "Vladimir Hernández",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 63
+    },
+    {
+     "id": "Q5415601",
+     "nome": "Evando Camillato",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q5417418",
+     "nome": "Betão",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q5419018",
+     "nome": "Ewerton Páscoa",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q5427729",
+     "nome": "Fabiano",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q5483970",
+     "nome": "Francisco Sousa dos Santos",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 73
+    },
+    {
+     "id": "Q55081327",
+     "nome": "Pablo Thomaz",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q5511320",
+     "nome": "Fábio Baiano",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q551192",
+     "nome": "Alex Sandro",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 90
+    },
+    {
+     "id": "Q552995",
+     "nome": "Kléber de Carvalho Correia",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 76
+    },
+    {
+     "id": "Q5553315",
+     "nome": "Ramiro",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q5554895",
+     "nome": "Geuvânio",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q55584717",
+     "nome": "Lucas Áfrico",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q5565583",
+     "nome": "Giva",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q55734624",
+     "nome": "Gil",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q559474",
+     "nome": "Edu Dracena",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 81
+    },
+    {
+     "id": "Q560329",
+     "nome": "Maicon Pereira Roque",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 76
+    },
+    {
+     "id": "Q5615958",
+     "nome": "Camacho",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q5615961",
+     "nome": "Guilherme Choco",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q561613",
+     "nome": "Roniéliton Pereira Santos",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 88
+    },
+    {
+     "id": "Q5621422",
+     "nome": "Gustavo Henrique",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 69
+    },
+    {
+     "id": "Q562347",
+     "nome": "Gustavo Nery",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 76
+    },
+    {
+     "id": "Q5642463",
+     "nome": "Halisson",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q56863226",
+     "nome": "Willian Maranhão",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q56876908",
+     "nome": "Kaio Jorge",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 81
+    },
+    {
+     "id": "Q5703972",
+     "nome": "Heleno Faísca",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q57167",
+     "nome": "Zé Roberto",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 88
+    },
+    {
+     "id": "Q5768435",
+     "nome": "Élder Granja",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q58011469",
+     "nome": "Felipe Jonatan",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q58441",
+     "nome": "Robinho",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 91
+    },
+    {
+     "id": "Q5844335",
+     "nome": "Tuffy Neujm",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 59
+    },
+    {
+     "id": "Q585743",
+     "nome": "Alfredo Mostarda",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 76
+    },
+    {
+     "id": "Q5873250",
+     "nome": "Gabriel Carabajal",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q589843",
+     "nome": "Luis Bolaños",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 64
+    },
+    {
+     "id": "Q59206576",
+     "nome": "Gustavo Nonato",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 61
+    },
+    {
+     "id": "Q5938594",
+     "nome": "Rómulo Otero",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 68
+    },
+    {
+     "id": "Q59656423",
+     "nome": "Lucas Lourenço",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q599624",
+     "nome": "Thiago Carleto",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 69
+    },
+    {
+     "id": "Q600887",
+     "nome": "William Júnior Salles de Lima Souza",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 61
+    },
+    {
+     "id": "Q6016671",
+     "nome": "Nilton Batata",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q605965",
+     "nome": "Marquinhos Santos",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q606319",
+     "nome": "Francisco Carlos Martins Vidal",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 64
+    },
+    {
+     "id": "Q60842145",
+     "nome": "Gabriel Menino",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 75
+    },
+    {
+     "id": "Q608775",
+     "nome": "Caio Ribeiro",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 72
+    },
+    {
+     "id": "Q611933",
+     "nome": "Tcheco",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 66
+    },
+    {
+     "id": "Q612073",
+     "nome": "Coutinho",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 86
+    },
+    {
+     "id": "Q612205",
+     "nome": "Edinho",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 67
+    },
+    {
+     "id": "Q61336080",
+     "nome": "Sandry Roberto",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q615668",
+     "nome": "Rafael Cabral",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 87
+    },
+    {
+     "id": "Q6158093",
+     "nome": "Urubatão Nunes",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 51
+    },
+    {
+     "id": "Q61594859",
+     "nome": "Sabino",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q616009",
+     "nome": "Danilinho",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 66
+    },
+    {
+     "id": "Q61642127",
+     "nome": "Jobson Souza Santos",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q617528",
+     "nome": "Marinho Peres",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 79
+    },
+    {
+     "id": "Q617816",
+     "nome": "Ramón Mifflin",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 69
+    },
+    {
+     "id": "Q61995785",
+     "nome": "Wagner Leonardo",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q625816",
+     "nome": "Luizinho",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q62733",
+     "nome": "Leandro Damião",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 88
+    },
+    {
+     "id": "Q6278277",
+     "nome": "Jorginho Cantinflas",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 64
+    },
+    {
+     "id": "Q6291614",
+     "nome": "Juninho",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q6293566",
+     "nome": "Nilson",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 73
+    },
+    {
+     "id": "Q63385964",
+     "nome": "Luiz Henrique",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q64010056",
+     "nome": "Alex",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q646568",
+     "nome": "Russo",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 70
+    },
+    {
+     "id": "Q648744",
+     "nome": "Christian Cueva",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 81
+    },
+    {
+     "id": "Q6509623",
+     "nome": "Leandrinho",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 61
+    },
+    {
+     "id": "Q6509749",
+     "nome": "Leandro Silva",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q65122784",
+     "nome": "Paulinho",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 61
+    },
+    {
+     "id": "Q656298",
+     "nome": "Julio César Manzur",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 76
+    },
+    {
+     "id": "Q65666360",
+     "nome": "João Lucas",
+     "posicoes": [
+      "ZAG",
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q660159",
+     "nome": "Evandro Goebel",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 70
+    },
+    {
+     "id": "Q66685929",
+     "nome": "Kaique Rocha",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q6696465",
+     "nome": "Lúcio Bala",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q6696793",
+     "nome": "Luciano Castán",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q677919",
+     "nome": "Luciano Henrique",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q6789152",
+     "nome": "Matt Okoh",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q6794003",
+     "nome": "Maurício Copertino",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q682277",
+     "nome": "Renato Abreu",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 67
+    },
+    {
+     "id": "Q6833685",
+     "nome": "Michael Quiñónez",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q687389",
+     "nome": "Everton Costa",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q694542",
+     "nome": "Mazinho Oliveira",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 89
+    },
+    {
+     "id": "Q695858",
+     "nome": "Paulo Rink",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 74
+    },
+    {
+     "id": "Q6990300",
+     "nome": "Nelsi Morais",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q69949602",
+     "nome": "Tailson",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q704736",
+     "nome": "Somália",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 61
+    },
+    {
+     "id": "Q713886",
+     "nome": "Giuliano",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 84
+    },
+    {
+     "id": "Q7155118",
+     "nome": "Paulinho Kobayashi",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q7155246",
+     "nome": "Paulinho",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 64
+    },
+    {
+     "id": "Q7155289",
+     "nome": "Paulo Ricardo",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q7159513",
+     "nome": "Pedro Castro",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q717218",
+     "nome": "Ebert Willian Amâncio",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 70
+    },
+    {
+     "id": "Q718903",
+     "nome": "Antônio Monteiro Dutra",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 77
+    },
+    {
+     "id": "Q718946",
+     "nome": "Marcos Aurélio de Oliveira Lima",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 77
+    },
+    {
+     "id": "Q718952",
+     "nome": "Claudio Maldonado",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 70
+    },
+    {
+     "id": "Q7200050",
+     "nome": "Piá",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q720549",
+     "nome": "Jair da Costa",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 86
+    },
+    {
+     "id": "Q721804",
+     "nome": "Marcelo Antônio Guedes Filho",
+     "posicoes": [
+      "ZAG",
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 80
+    },
+    {
+     "id": "Q724210",
+     "nome": "Saulo",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q7282056",
+     "nome": "Rafael Caldeira",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q72886",
+     "nome": "Ricardinho",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 87
+    },
+    {
+     "id": "Q7308932",
+     "nome": "Reginaldo Araújo",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q7312533",
+     "nome": "Renan Rocha",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q731260",
+     "nome": "Serginho Chulapa",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 84
+    },
+    {
+     "id": "Q7322659",
+     "nome": "Ricardo Goulart",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 78
+    },
+    {
+     "id": "Q7351831",
+     "nome": "Roberto Júnior",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 61
+    },
+    {
+     "id": "Q735449",
+     "nome": "Heleno de Freitas",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 76
+    },
+    {
+     "id": "Q7357320",
+     "nome": "Rodrigo César Castro Cabral",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q7357330",
+     "nome": "Rodrigo Fernandes Valete",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q7358841",
+     "nome": "Roger Gaúcho",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 72
+    },
+    {
+     "id": "Q7359601",
+     "nome": "Rogério Conceição",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q736325",
+     "nome": "Alan Kardec",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 72
+    },
+    {
+     "id": "Q7365698",
+     "nome": "Roni",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q7386520",
+     "nome": "Róbson Michael Signorini",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q745370",
+     "nome": "Éder Ceccon",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 73
+    },
+    {
+     "id": "Q75059692",
+     "nome": "Gabriel Veron",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 73
+    },
+    {
+     "id": "Q776388",
+     "nome": "Tato",
+     "posicoes": [
+      "ATA",
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 54
+    },
+    {
+     "id": "Q777266",
+     "nome": "André",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 53
+    },
+    {
+     "id": "Q7783861",
+     "nome": "Thiago de Jesús dos Santos",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q779177",
+     "nome": "Juan",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 70
+    },
+    {
+     "id": "Q781905",
+     "nome": "Adaílton",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 68
+    },
+    {
+     "id": "Q786966",
+     "nome": "Aílton Júnior",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 58
+    },
+    {
+     "id": "Q7900244",
+     "nome": "Urbano Caldeira",
+     "posicoes": [
+      "ZAG",
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q7912499",
+     "nome": "Valmir",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q7932978",
+     "nome": "Vinícius",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q794628",
+     "nome": "Felipe Anderson",
+     "posicoes": [
+      "MEI",
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 88
+    },
+    {
+     "id": "Q7981437",
+     "nome": "Wellington",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 70
+    },
+    {
+     "id": "Q7982368",
+     "nome": "Wendel Santana Pereira Santos",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q7983911",
+     "nome": "Douglas Dias",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q8078540",
+     "nome": "Éverson",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 68
+    },
+    {
+     "id": "Q823057",
+     "nome": "Bernardo Vieira de Souza",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 61
+    },
+    {
+     "id": "Q850284",
+     "nome": "Bruno Moraes",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 67
+    },
+    {
+     "id": "Q85757277",
+     "nome": "Dodi",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 66
+    },
+    {
+     "id": "Q886577",
+     "nome": "Victor Andrade",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 72
+    },
+    {
+     "id": "Q887974",
+     "nome": "Alberto Luiz de Souza",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 76
+    },
+    {
+     "id": "Q887980",
+     "nome": "Rychely",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 77
+    },
+    {
+     "id": "Q887992",
+     "nome": "Axel Rodrigues",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 88
+    },
+    {
+     "id": "Q888006",
+     "nome": "Daniel da Silva",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 88
+    },
+    {
+     "id": "Q888023",
+     "nome": "Claiton",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 73
+    },
+    {
+     "id": "Q888032",
+     "nome": "Renatinho",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 76
+    },
+    {
+     "id": "Q8919570",
+     "nome": "Adesvaldo José de Lima",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q892981",
+     "nome": "Hélio Hermito Zampier Neto",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 66
+    },
+    {
+     "id": "Q8946364",
+     "nome": "Diego Barcelos",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 61
+    },
+    {
+     "id": "Q905206",
+     "nome": "Diego Tardelli",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 84
+    },
+    {
+     "id": "Q9138173",
+     "nome": "Abel Verônico",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 62
+    },
+    {
+     "id": "Q9149416",
+     "nome": "Amauri da Silva",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 54
+    },
+    {
+     "id": "Q9162107",
+     "nome": "Tite",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 54
+    },
+    {
+     "id": "Q9184764",
+     "nome": "Carlyle",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 54
+    },
+    {
+     "id": "Q9195821",
+     "nome": "Constantino Mollitsas",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q9197535",
+     "nome": "Castelhano",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 45
+    },
+    {
+     "id": "Q922118",
+     "nome": "Rodrigo Lima",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 75
+    },
+    {
+     "id": "Q923302",
+     "nome": "Ramos Delgado",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 73
+    },
+    {
+     "id": "Q923402",
+     "nome": "Alan Patrick",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 72
+    },
+    {
+     "id": "Q923478",
+     "nome": "Nadson",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 64
+    },
+    {
+     "id": "Q925323",
+     "nome": "Wesley Lopes Beltrame",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 74
+    },
+    {
+     "id": "Q929023",
+     "nome": "Ronaldão",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 89
+    },
+    {
+     "id": "Q9297712",
+     "nome": "Jean",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 50
+    },
+    {
+     "id": "Q9322639",
+     "nome": "Ronaldo Drummond",
+     "posicoes": [
+      "ATA",
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 56
+    },
+    {
+     "id": "Q9336874",
+     "nome": "Silas Ferreira de Souza",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 54
+    },
+    {
+     "id": "Q934674",
+     "nome": "Edwin Valencia",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 69
+    },
+    {
+     "id": "Q935220",
+     "nome": "David Cortes da Silva",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 80
+    },
+    {
+     "id": "Q9368957",
+     "nome": "Vitor Braga",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 48
+    },
+    {
+     "id": "Q9370705",
+     "nome": "Válter Vasconcelos",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 51
+    },
+    {
+     "id": "Q937157",
+     "nome": "Valdo",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 90
+    },
+    {
+     "id": "Q937218",
+     "nome": "Guilherme Santos",
+     "posicoes": [
+      "LAT"
+     ],
+     "passagens": [],
+     "forca": 77
+    },
+    {
+     "id": "Q938963",
+     "nome": "Ibson",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 70
+    },
+    {
+     "id": "Q939069",
+     "nome": "Diogo Luís Santo",
+     "posicoes": [
+      "ATA",
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 70
+    },
+    {
+     "id": "Q9393589",
+     "nome": "Álvaro Valente",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 59
+    },
+    {
+     "id": "Q939542",
+     "nome": "David Braz",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 69
+    },
+    {
+     "id": "Q940810",
+     "nome": "André Luís",
+     "posicoes": [
+      "ZAG"
+     ],
+     "passagens": [],
+     "forca": 64
+    },
+    {
+     "id": "Q950670",
+     "nome": "Bóvio",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 67
+    },
+    {
+     "id": "Q952261",
+     "nome": "Arnaldo da Silveira",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 64
+    },
+    {
+     "id": "Q952754",
+     "nome": "Juan Cazares",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 70
+    },
+    {
+     "id": "Q960226",
+     "nome": "Juan Carlos Henao",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 67
+    },
+    {
+     "id": "Q965766",
+     "nome": "Adiel de Oliveira Amorim",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 77
+    },
+    {
+     "id": "Q970194",
+     "nome": "Sebastián Pinto",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 67
+    },
+    {
+     "id": "Q972671",
+     "nome": "Edmar Bernardes dos Santos",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 74
+    },
+    {
+     "id": "Q972750",
+     "nome": "Wason Rentería",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 66
+    },
+    {
+     "id": "Q974847",
+     "nome": "Roberto Costa",
+     "posicoes": [
+      "GOL"
+     ],
+     "passagens": [],
+     "forca": 64
+    },
+    {
+     "id": "Q978042",
+     "nome": "Jair Rosa Pinto",
+     "posicoes": [
+      "MEI"
+     ],
+     "passagens": [],
+     "forca": 82
+    },
+    {
+     "id": "Q98534760",
+     "nome": "Marcos Leonardo",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 77
+    },
+    {
+     "id": "Q993576",
+     "nome": "Bruno Mezenga",
+     "posicoes": [
+      "ATA"
+     ],
+     "passagens": [],
+     "forca": 68
     }
    ]
   }

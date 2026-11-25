@@ -327,6 +327,22 @@ def test_empate_pede_cobranca_do_torcedor():
     assert pedidos == len(r.disputa.nossas) >= 3
 
 
+def test_pedido_de_penalti_traz_os_gols_do_jogo():
+    """The board plays the drawn match on its clock before the shootout (dev, 2026-11-24)."""
+    for i in range(400):
+        semente = f"e{i}"
+        es = escolhas_validas(semente)
+        r = motor.jogo(DADOS, "abc", semente, "classico", "4-4-2", es, [], 1)
+        if isinstance(r, PedidoDePenalti) and r.nosso > 0:
+            break
+    else:
+        raise AssertionError("no scoring draw in 400 seeds")
+    assert len(r.gols) == r.nosso + r.deles
+    assert sum(g.nosso for g in r.gols) == r.nosso
+    final = motor.jogo(DADOS, "abc", semente, "classico", "4-4-2", es, [[MOTOR] * 20], 1)
+    assert final.gols == r.gols
+
+
 def test_motor_bate_os_penaltis():
     semente, es = _semente_com_empate()
     a = motor.jogo(DADOS, "abc", semente, "classico", "4-4-2", es, [[MOTOR] * 40], 1)

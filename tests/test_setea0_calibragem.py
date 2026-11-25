@@ -1,6 +1,6 @@
 """The 7a0 difficulty, in one pass of 1000 seeds per team (engine takes every penalty)."""
 
-from setea0_fake import dados_de_teste
+from setea0_fake import dados_de_teste, dados_geral_de_teste
 from setea0_times import aleatorias, gulosas, zagueiro_no_gol
 
 from geral.games.setea0 import motor
@@ -41,3 +41,12 @@ def test_zagueiro_no_gol_poe_um_zagueiro_no_gol():
     )
     assert escalados[0].jogador.posicoes == ["ZAG"]  # slot 0 is the goal
     assert any(e.jogador.posicoes == ["GOL"] for e in escalados[3:5])
+
+
+def test_calibragem_da_geral():
+    """The Geral (dev, 2026-11-24): clubs and eras mixed, against the grandes; same targets."""
+    geral = dados_geral_de_teste()
+    guloso, _ = _taxas(geral, motor.GERAL, gulosas)
+    aleatorio, _ = _taxas(geral, motor.GERAL, aleatorias)
+    assert 0.10 <= guloso <= 0.30, guloso
+    assert aleatorio < 0.03, aleatorio

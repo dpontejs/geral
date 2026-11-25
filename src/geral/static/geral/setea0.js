@@ -21,10 +21,22 @@
     const m = /^(.*?)\s*\((.*)\)$/.exec(nome);
     return m ? { curto: m[1], completo: m[2] } : { curto: nome, completo: "" };
   };
+  const GERAL = jogo.edicao === "geral"; // the 7a0 da Geral: each era is a club's
+  // An era as the screen says it: "anos 90", or "Vasco · anos 90" in the Geral; `curto` for the
+  // pitch's small print ("Vasco · 90").
+  const rotuloDe = (epoca, curto = false) => {
+    const rotulo = curto && epoca.clube ? epoca.rotulo.replace(/^anos /, "") : epoca.rotulo;
+    return epoca.clube ? `${nomeDe(epoca.clube)} · ${rotulo}` : rotulo;
+  };
+  const seu = GERAL ? `sua ${jogo.nome}` : `seu ${jogo.nome}`;
   const RODADAS = 11;
   const JOGOS = 7;
   const LINHAS = ["ATA", "MEI", "DEF", "GOL"]; // pitch rows, top to bottom
-  const PAUSA_GOL = 400; // ms between goals lighting up
+  // A match on the board's clock: 0' to 90' at MINUTO ms a minute, each goal lighting up when
+  // the clock reaches it and holding the clock PAUSA_GOL ms (6 s plus 1.2 s a goal: about
+  // 8-10 s for the usual 2-3 goals).
+  const MINUTO = 65;
+  const PAUSA_GOL = 1200;
   const espera = (ms) => new Promise((r) => setTimeout(r, ms));
   // The page stays put while things change; it only scrolls when what changed is out of view
   // above (the Central's rule), or with `abaixo`, also when it sits below the screen.
@@ -52,6 +64,7 @@
     disputaDoJogo: {}, // game n -> index in cobrancas
     n: 1,
     simulando: false,
+    jogando: false, // a game is on its way or on the clock
     ocupado: false, // a request is on its way: taps on the offer, slots and reroll wait for it
   });
 
@@ -191,11 +204,12 @@
     const modo = estado.modo === "almanaque" ? "Almanaque" : "Clássico";
     $("s7-rodada").textContent =
       `Rodada ${estado.rodada + 1} de ${RODADAS} · ${estado.esquema} · ${modo}`;
-    $("s7-epoca").textContent = `${jogo.nome} · ${o.epoca.rotulo}`;
+    $("s7-epoca").textContent = GERAL ? rotuloDe(o.epoca) : `${jogo.nome} · ${o.epoca.rotulo}`;
     const trocar = $("s7-trocar");
     trocar.textContent = `Trocar época (${o.trocas_restantes})`;
     trocar.disabled = o.trocas_restantes <= 0;
-    $("s7-oferta-titulo").textContent = `Quem jogou no ${jogo.nome} nos ${o.epoca.rotulo}`;
+    const clube = o.epoca.clube ? nomeDe(o.epoca.clube) : jogo.nome;
+    $("s7-oferta-titulo").textContent = `Quem jogou no ${clube} nos ${o.epoca.rotulo}`;
 
     const usados = new Set(estado.escolhas.map((e) => e.jogador));
     const lista = $("s7-lista");
@@ -243,7 +257,7 @@
       jogador: estado.escolhido.id,
       vaga: i,
     });
-    estado.vagas[i] = { jogador: estado.escolhido, epoca: estado.oferta.epoca.rotulo };
+    estado.vagas[i] = { jogador: estado.escolhido, epoca: rotuloDe(estado.oferta.epoca, true) };
     estado.rodada += 1;
     estado.escolhido = null;
     try {
@@ -292,8 +306,16 @@
     jogar();
   }
 
+  // While the clock runs only "simular o resto" stays, the way to skip; between games both.
+  function acoes(quais) {
+    $("s7-acoes").hidden = quais === "nenhuma";
+    $("s7-proximo").hidden = quais !== "todas";
+    $("s7-simular").hidden = estado.simulando;
+  }
+
   async function jogar() {
-    $("s7-acoes").hidden = true;
+    estado.jogando = true;
+    acoes(estado.simulando ? "nenhuma" : "simular");
     let r;
     try {
       r = await chamar("jogo", {
@@ -306,17 +328,69 @@
         n: estado.n,
       });
     } catch (erro) {
-      $("s7-acoes").hidden = false;
+      estado.jogando = false;
+      acoes("todas");
       return falhar(erro);
     }
     if (r.pedido) return penalti(r.pedido, r.adversario.nome);
     fecharPenalti();
     await mostrarPartida(r.partida, r.adversario.nome);
-    if (r.fim) return terminar(r.campanha, r.codigo);
+    if (r.fim) {
+      estado.jogando = false;
+      return terminar(r.campanha, r.codigo);
+    }
     estado.n += 1;
     if (estado.simulando) return jogar();
-    $("s7-situacao").textContent += ` · próximo: ${nomeDe(proximoAdversario())}`;
-    $("s7-acoes").hidden = false;
+    const proximo = proximoAdversario();
+    $("s7-situacao").textContent += ` · próximo: ${nomeDe(proximo)}`;
+    escalacao(proximo, "Próximo");
+    estado.jogando = false;
+    acoes("todas");
+  }
+
+  // The opponent's all-time XI, compact, on the board: formation, then one row a line.
+  function escalacao(slug, rotulo) {
+    const caixa = $("s7-adv");
+    const time = (jogo.escalacoes || {})[slug];
+    caixa.hidden = !time;
+    if (!time) return;
+    caixa.replaceChildren();
+    const quando = time.anos ? ` (${time.anos})` : "";
+    const titulo = rotulo
+      ? `${rotulo}: ${nomeDe(slug)} de todos os tempos${quando} · ${time.esquema}`
+      : `Escalação do ${nomeDe(slug)}${quando} · ${time.esquema}`;
+    caixa.append(el("span", "titulo", titulo));
+    for (const linha of [...LINHAS].reverse()) {
+      const nomes = time.jogadores
+        .filter((j) => linhaDe(j.posicao) === linha)
+        .map((j) => partes(j.nome).curto);
+      if (!nomes.length) continue;
+      const fila = el("span", "fila");
+      fila.append(el("b", "", linha), el("span", "", nomes.join(" · ")));
+      caixa.append(fila);
+    }
+  }
+
+  // Plays the clock to 90', calling `gol` as each goal's minute comes; "simular o resto"
+  // (estado.simulando) runs out the clock at once.
+  async function relogio(gols, gol) {
+    const mostrador = $("s7-relogio");
+    let i = 0;
+    let inicio = performance.now(); // moved forward by each goal's pause: the clock stops
+    for (let minuto = 0; minuto <= 90 && !estado.simulando; ) {
+      mostrador.textContent = `${minuto}'`;
+      while (i < gols.length && gols[i].minuto <= minuto && !estado.simulando) {
+        gol(gols[i++], true);
+        await espera(PAUSA_GOL);
+        inicio += PAUSA_GOL;
+      }
+      if (minuto === 90) break;
+      await espera(MINUTO / 2);
+      // by elapsed time, not by ticks: timers run late and would stretch the match
+      minuto = Math.min(90, Math.floor((performance.now() - inicio) / MINUTO));
+    }
+    while (i < gols.length) gol(gols[i++], false);
+    mostrador.textContent = "90'";
   }
 
   function proximoAdversario() {
@@ -324,27 +398,48 @@
     return chave[estado.n - 1] || "";
   }
 
-  async function mostrarPartida(p, adversario) {
-    partidas.push(p);
-    lampadas($("s7-campanha"), partidas, p.n);
+  // The match on the clock: the score from 0 × 0, each goal at its minute. A drawn match is
+  // played once, before its shootout's first kick (`jogados`).
+  const jogados = new Set();
+
+  async function jogarNoRelogio(n, slug, adversario, gols) {
+    lampadas($("s7-campanha"), partidas, n);
     $("s7-nos").textContent = jogo.nome;
     $("s7-eles").textContent = adversario;
-    const gols = $("s7-gols");
-    gols.replaceChildren();
+    const lista = $("s7-gols");
+    $("s7-pontos").hidden = true;
+    escalacao(slug, ""); // the status line already says who and which game
+    if (jogados.has(n)) return;
+    jogados.add(n);
+    lista.replaceChildren();
     let nos = 0;
     let eles = 0;
     $("s7-gols-nos").textContent = "0";
     $("s7-gols-eles").textContent = "0";
-    const rotulo = p.n === JOGOS ? "Final" : `Jogo ${p.n} de ${JOGOS}`;
-    $("s7-situacao").textContent = `${rotulo} · seu ${jogo.nome} × ${adversario} de todos os tempos`;
-    for (const g of p.gols) {
-      if (!estado.simulando) await espera(PAUSA_GOL);
+    const rotulo = n === JOGOS ? "Final" : `Jogo ${n} de ${JOGOS}`;
+    $("s7-situacao").textContent = `${rotulo} · ${seu} × ${adversario} de todos os tempos`;
+    await relogio(gols, (g, aceso) => {
       if (g.nosso) nos += 1;
       else eles += 1;
-      $("s7-gols-nos").textContent = String(nos);
-      $("s7-gols-eles").textContent = String(eles);
-      gols.append(el("li", g.nosso ? "nosso" : "deles", `${g.minuto}' ${partes(g.autor).curto}`));
-    }
+      const placar = $(g.nosso ? "s7-gols-nos" : "s7-gols-eles");
+      placar.textContent = String(g.nosso ? nos : eles);
+      const li = el("li", g.nosso ? "nosso" : "deles", `${g.minuto}' ${partes(g.autor).curto}`);
+      lista.append(li);
+      if (aceso) {
+        for (const node of [placar, li]) {
+          node.classList.add("aceso");
+          setTimeout(() => node.classList.remove("aceso"), PAUSA_GOL);
+        }
+      }
+    });
+  }
+
+  async function mostrarPartida(p, adversario) {
+    await jogarNoRelogio(p.n, p.adversario, adversario, p.gols);
+    partidas.push(p); // only now: the lamp would tell the result before the clock did
+    lampadas($("s7-campanha"), partidas, p.n);
+    const gols = $("s7-gols");
+    const rotulo = p.n === JOGOS ? "Final" : `Jogo ${p.n} de ${JOGOS}`;
     $("s7-pontos").hidden = true;
     if (p.disputa) {
       const feitos = (lado) => lado.filter(Boolean).length;
@@ -395,13 +490,16 @@
       lista.push({ resultado: "motor" });
       return jogar();
     }
+    await jogarNoRelogio(pedido.n, pedido.adversario, adversario, pedido.gols || []);
+    if (estado.simulando) {
+      // "simular o resto" during the drawn match: the engine takes this shootout too
+      lista.push({ resultado: "motor" });
+      return jogar();
+    }
+    acoes("nenhuma"); // the minigame has its own "deixar o motor bater"
     const feitos = (lado) => lado.filter(Boolean).length;
-    lampadas($("s7-campanha"), partidas, pedido.n);
-    $("s7-nos").textContent = jogo.nome;
-    $("s7-eles").textContent = adversario;
     $("s7-gols-nos").textContent = String(pedido.nosso);
     $("s7-gols-eles").textContent = String(pedido.deles);
-    $("s7-gols").replaceChildren();
     pontos(pedido.disputa, adversario);
     $("s7-situacao").textContent =
       `Pênaltis: ${jogo.nome} ${feitos(pedido.disputa.nossas)} × ` +
@@ -436,10 +534,13 @@
     $("s7-pen-jogo").replaceChildren();
   }
 
-  $("s7-proximo").addEventListener("click", () => jogar());
+  $("s7-proximo").addEventListener("click", () => {
+    if (!estado.jogando) jogar();
+  });
   $("s7-simular").addEventListener("click", () => {
     estado.simulando = true;
-    jogar();
+    acoes("nenhuma");
+    if (!estado.jogando) jogar(); // else the running clock sees it and runs out
   });
 
   // --- 3. card -------------------------------------------------------------------------------
@@ -447,7 +548,7 @@
   function desenharCard(campanha) {
     const ps = campanha.partidas;
     const ultima = ps[ps.length - 1];
-    $("s7-kicker").textContent = `O 7a0 do ${jogo.nome}`;
+    $("s7-kicker").textContent = `O 7a0 ${jogo.do_nome}`;
     $("s7-titulo").textContent = campanha.campeao
       ? "Campeão invicto"
       : ultima.n === JOGOS
@@ -495,7 +596,9 @@
       marcas.append(selo);
     }
     const vagas = [];
-    for (const e of campanha.escalacao) vagas[e.vaga] = { jogador: e.jogador, epoca: e.epoca.rotulo };
+    for (const e of campanha.escalacao) {
+      vagas[e.vaga] = { jogador: e.jogador, epoca: rotuloDe(e.epoca, true) };
+    }
     desenharCampo($("s7-card-campo"), campanha.esquema, vagas, false);
   }
 
@@ -506,12 +609,12 @@
     if (codigo) {
       const url = `${location.origin}/jogos/7a0/c/${codigo}`;
       const texto =
-        `7a0 do ${jogo.nome}: ` +
+        `7a0 ${jogo.do_nome}: ` +
         (campanha.campeao ? "campeão invicto 🏆" : `caí no jogo ${campanha.partidas.length}`);
       compartilhar.onclick = async () => {
         if (navigator.share) {
           try {
-            await navigator.share({ title: "7a0 do clube", text: texto, url });
+            await navigator.share({ title: `7a0 ${jogo.do_nome}`, text: texto, url });
           } catch {
             /* closed the share sheet */
           }
