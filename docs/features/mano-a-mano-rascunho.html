@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Mano a Mano · Geral (rascunho)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Display:wght@700;800;900&family=Big+Shoulders+Stencil+Display:wght@800&family=Doto:wght@900&family=Barlow:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="../../src/geral/static/geral/mano.css">
+<style>
+/* Rascunho da fatia 3: a cena sem servidor, com eventos falsos e um resolvedor falso em JS
+   (a regra de verdade é Python, fatia 1). Servir da raiz do repo: python -m http.server. */
+:root {
+  --paper: #EFE4CC; --concrete-lt: #B9B5AC; --ink: #14231A; --ink-soft: #3F3C36;
+  --ticket: #E3B23C; --board: #0B0B0A; --lamp: #FFC21A; --lamp-off: #1D1C18;
+  --turf: #0E3320; --pitch: #1F7A3D; --wash: #D3E2C6;
+  --display: "Big Shoulders Display", "Arial Narrow", Impact, sans-serif;
+  --stencil: "Big Shoulders Stencil Display", "Big Shoulders Display", Impact, sans-serif;
+  --dots: "Doto", ui-monospace, monospace;
+  --body: "Barlow", "Helvetica Neue", Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+html { background: var(--turf); }
+body { margin: 0; background: var(--board); color: var(--paper); font: 17px/1.5 var(--body); }
+.wrap { max-width: 1180px; margin: 0 auto; padding: 0 max(16px, env(safe-area-inset-left, 0px)); }
+header { background: var(--turf); }
+header .wrap { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-block: 12px; }
+header b { font: 800 34px/1 var(--stencil); letter-spacing: .04em; }
+header span { font: 900 18px/1 var(--dots); color: var(--lamp); text-transform: uppercase; letter-spacing: .1em; }
+main .wrap { padding-block: 18px 30px; display: flex; flex-direction: column; gap: 14px; }
+h1 { font: 900 clamp(34px, 6vw, 60px)/.95 var(--display); text-transform: uppercase; margin: 0; color: var(--lamp); }
+.painel { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.painel .rot { font: 800 14px/1 var(--display); text-transform: uppercase; letter-spacing: .08em; color: var(--concrete-lt); margin-right: 4px; }
+.chip { font: 700 14px/1 var(--body); padding: 9px 12px; min-height: 40px; border: 2px solid var(--paper); background: transparent; color: var(--paper); cursor: pointer; }
+.chip[aria-pressed="true"] { background: var(--lamp); border-color: var(--lamp); color: var(--ink); }
+.btn { font: 900 22px/1 var(--display); text-transform: uppercase; letter-spacing: .06em; background: var(--lamp); color: var(--ink); border: 0; padding: 13px 22px; cursor: pointer; }
+.nota { font-size: 14px; color: var(--concrete-lt); margin: 0; }
+</style>
+</head>
+<body>
+<header><div class="wrap"><b>GERAL</b><span>Joguinhos</span></div></header>
+<main><div class="wrap">
+  <h1>Mano a Mano</h1>
+  <div class="painel" id="painel">
+    <span class="rot">Câmera</span>
+    <button class="chip" data-papel="batedor" aria-pressed="true">Ser batedor</button>
+    <button class="chip" data-papel="goleiro" aria-pressed="false">Ser goleiro</button>
+    <span class="rot">Modo</span>
+    <button class="chip" data-modo="penaltis" aria-pressed="true">Pênaltis</button>
+    <button class="chip" data-modo="faltas" aria-pressed="false">Faltas</button>
+  </div>
+  <div id="cena"></div>
+  <p class="nota">Rascunho sem servidor: eventos e resultado falsos. A regra de verdade é a da fatia 1.</p>
+</div></main>
+<script type="module">
+import { criarCena, POSICOES } from "../../src/geral/static/geral/mano-cena.js";
+
+const cena = criarCena(document.getElementById("cena"), { papel: "batedor", modo: "penaltis" });
+window.__mano = { cena };
+
+const painel = document.getElementById("painel");
+function marcar(attr, valor) {
+  for (const b of painel.querySelectorAll(`[data-${attr}]`)) b.setAttribute("aria-pressed", String(b.dataset[attr] === valor));
+}
+const sortear = (lista) => lista[Math.floor(Math.random() * lista.length)];
+painel.addEventListener("click", (ev) => {
+  const b = ev.target.closest("button");
+  if (!b) return;
+  if (b.dataset.papel) { cena.trocarPapel(b.dataset.papel); marcar("papel", b.dataset.papel); }
+  if (b.dataset.modo === "penaltis") { cena.trocarModo("penaltis"); marcar("modo", "penaltis"); }
+  if (b.dataset.modo === "faltas") {
+    cena.posicionarFalta({ nome: sortear(Object.keys(POSICOES)), barreira: { n: 2 + Math.floor(Math.random() * 4), x: 200 + Math.random() * 600 } });
+    marcar("modo", "faltas");
+  }
+});
+</script>
+</body>
+</html>
