@@ -13,17 +13,18 @@ from geral.games.mano.tipos import Barreira, Chute, Defesa, Lado, Lance, Posicao
 FAIXA_MIN = 250
 FAIXA_MAX = 500
 FAIXA_POR_DIST = 3
-FATOR_FALTA = 0.9
+FATOR_FALTA = 0.95
 DESVIO_POR_ERRO = 0.8
 RUIDO = 10
 TRAVE = 15
 ALTURA_PULO = 500
 P_ANGULO = 0.25
 ALCANCE_SAIDA = 90
-# In a free kick the keeper starts screened by his own wall: a ball he covers is saved only
-# this often. Without it the random wall (~17% of the kicks) keeps free kicks ~12 pp below
-# penalties and no shared constant puts both modes in 55-65%.
-P_DEFESA_FALTA = 0.4
+# Free kick: the keeper reaches less (lower dive, no top corner, shorter early start); a ball
+# he reaches is always saved. Without it the random wall keeps free kicks ~12 pp below
+# penalties (decision 2026-11-25).
+ALTURA_PULO_FALTA = 100
+ALCANCE_SAIDA_FALTA = 0
 ALTURA_BARREIRA = 450
 MEIA_LARGURA_POR_HOMEM = 55
 CURVA_CONTORNA = 0.3
@@ -73,11 +74,24 @@ def _onde_na_falta(chute: Chute) -> tuple[float, float]:
     return _desviar(chute.alvo, erro)
 
 
-def _na_barreira(chute: Chute, barreira: Barreira, x: int, y: int) -> bool:
+def curva_certa(barreira: Barreira, chega: int) -> int:
+    """Sign a ``pelo_lado`` curve needs to end at ``chega`` behind the wall: it bends away
+    from the wall's centre (positive bends right as the kicker sees it); 0 = either works."""
+    return (chega > barreira.x) - (chega < barreira.x)
+
+
+def _contorna(chute: Chute, barreira: Barreira, desvio: int) -> bool:
+    if chute.trajetoria != "pelo_lado" or abs(chute.curva) < CURVA_CONTORNA:
+        return False
+    sinal = curva_certa(barreira, chute.alvo[0] + desvio)
+    return sinal == 0 or (chute.curva > 0) == (sinal > 0)
+
+
+def _na_barreira(chute: Chute, barreira: Barreira, desvio: int, x: int, y: int) -> bool:
     inicio, fim = cobertura(barreira)
     if not (inicio <= x <= fim and y <= ALTURA_BARREIRA):
         return False
-    return not (chute.trajetoria == "pelo_lado" and abs(chute.curva) >= CURVA_CONTORNA)
+    return not _contorna(chute, barreira, desvio)
 
 
 def _na_trave_ou_fora(x: int, y: int) -> Resultado | None:
@@ -99,19 +113,21 @@ def _terco(x: int) -> Lado:
     return "direita"
 
 
-def _alcanca(defesa: Defesa, x: int, y: int, rng: random.Random) -> bool:
+def _alcanca(defesa: Defesa, x: int, y: int, falta: bool, rng: random.Random) -> bool:
     """Whether the keeper's choice covers the ball at (x, y)."""
+    altura = ALTURA_PULO_FALTA if falta else ALTURA_PULO
+    alcance = ALCANCE_SAIDA_FALTA if falta else ALCANCE_SAIDA
     if _terco(x) == defesa.lado:
-        if defesa.lado == "fica" or y <= ALTURA_PULO:
+        if defesa.lado == "fica" or y <= altura:
             return True
-        return rng.random() < P_ANGULO
-    if not defesa.saida or y > ALTURA_PULO:
+        return not falta and rng.random() < P_ANGULO
+    if not defesa.saida or y > altura:
         return False
     if defesa.lado == "esquerda":
-        return x < TERCO + ALCANCE_SAIDA
+        return x < TERCO + alcance
     if defesa.lado == "direita":
-        return x >= 1000 - TERCO - ALCANCE_SAIDA
-    return TERCO - ALCANCE_SAIDA <= x < 1000 - TERCO + ALCANCE_SAIDA
+        return x >= 1000 - TERCO - alcance
+    return TERCO - alcance <= x < 1000 - TERCO + alcance
 
 
 def resolver(
@@ -122,26 +138,31 @@ def resolver(
     barreira: Barreira | None = None,
     posicao: Posicao | None = None,
 ) -> Lance:
-    """Resolve a penalty, or a free kick when a ``barreira`` is given."""
-    falta = barreira is not None
-    if falta and chute.trajetoria is None:
-        raise ValueError("a free kick needs a trajetoria")
-    x, y = _onde_na_falta(chute) if falta else _desviar(chute.alvo, _erro(chute, falta=False))
+    """Resolve a free kick when a ``barreira`` is given, else a penalty.
+
+    A penalty ignores ``trajetoria``, ``curva`` and ``posicao``.
+    """
+    if barreira is None:
+        x, y = _desviar(chute.alvo, _erro(chute, falta=False))
+        posicao = None
+    else:
+        if chute.trajetoria is None:
+            raise ValueError("a free kick needs a trajetoria")
+        x, y = _onde_na_falta(chute)
     x += rng.uniform(-RUIDO, RUIDO)
     y += rng.uniform(-RUIDO, RUIDO)
-    if chute.trajetoria == "rasteira":
+    desvio = posicao.desvio if posicao else 0
+    if barreira is not None and chute.trajetoria == "rasteira":
         y = min(y, ALTURA_RASTEIRA)
-    onde = (round(x) + (posicao.desvio if posicao else 0), max(0, round(y)))
+    onde = (round(x) + desvio, max(0, round(y)))
     resultado: Resultado | None = None
-    tapado = False
-    if barreira is not None and _na_barreira(chute, barreira, *onde):
+    if barreira is not None and _na_barreira(chute, barreira, desvio, *onde):
         resultado = "barreira"
     if resultado is None:
         resultado = _na_trave_ou_fora(*onde)
     if resultado is None:
-        resultado = "defesa" if _alcanca(defesa, *onde, rng) else "gol"
-        if resultado == "defesa" and falta and rng.random() >= P_DEFESA_FALTA:
-            resultado, tapado = "gol", True
+        alcancou = _alcanca(defesa, *onde, barreira is not None, rng)
+        resultado = "defesa" if alcancou else "gol"
     return Lance(
         chute=chute,
         defesa=defesa,
@@ -149,5 +170,4 @@ def resolver(
         posicao=posicao,
         onde=onde,
         resultado=resultado,
-        tapado=tapado,
     )

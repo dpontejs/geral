@@ -42,4 +42,3 @@ class Lance(BaseModel):
     posicao: Posicao | None
     onde: tuple[int, int]
     resultado: Resultado
-    tapado: bool = False  # free kick: the keeper reached the ball but, screened, let it in

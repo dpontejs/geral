@@ -5,11 +5,12 @@ from pydantic import ValidationError
 
 from geral.games.mano.regras import (
     ALCANCE_SAIDA,
+    ALCANCE_SAIDA_FALTA,
     ALTURA_BARREIRA,
     ALTURA_PULO,
+    ALTURA_PULO_FALTA,
     MEIA_LARGURA_POR_HOMEM,
     P_ANGULO,
-    P_DEFESA_FALTA,
     RUIDO,
     cobertura,
     faixa_boa,
@@ -98,8 +99,14 @@ BARREIRA = Barreira(n=4, x=500)
 MEIA_LUA = Posicao(nome="meia_lua", desvio=0)
 
 
-def _falta(chute: Chute, semente: int = 0, barreira: Barreira = BARREIRA, posicao=MEIA_LUA):
-    return resolver(chute, LONGE, Random(semente), barreira=barreira, posicao=posicao)
+def _falta(
+    chute: Chute,
+    semente: int = 0,
+    barreira: Barreira = BARREIRA,
+    posicao=MEIA_LUA,
+    defesa: Defesa = LONGE,
+):
+    return resolver(chute, defesa, Random(semente), barreira=barreira, posicao=posicao)
 
 
 def test_cobertura_cortada_no_gol():
@@ -121,8 +128,8 @@ def test_rasteira_fora_da_barreira_segue():
 
 
 def test_pelo_lado_com_pouca_curva_bate_na_barreira():
-    reta = Chute(alvo=(450, 300), barra=500, trajetoria="pelo_lado", curva=0.2)
-    curvada = Chute(alvo=(450, 300), barra=500, trajetoria="pelo_lado", curva=0.8)
+    reta = Chute(alvo=(450, 300), barra=500, trajetoria="pelo_lado", curva=-0.2)
+    curvada = Chute(alvo=(450, 300), barra=500, trajetoria="pelo_lado", curva=-0.8)
     assert _falta(reta, 2).resultado == "barreira"
     assert _falta(curvada, 2).resultado != "barreira"
 
@@ -154,26 +161,44 @@ def test_falta_sem_trajetoria_da_erro():
         _falta(Chute(alvo=(500, 700), barra=500))
 
 
-def test_goleiro_tapado_na_falta_defende_so_em_parte():
-    chute = Chute(alvo=(150, 300), barra=500, trajetoria="por_cima")
-    defesa = Defesa(lado="esquerda", saida=False)
+def test_curva_do_lado_errado_bate_na_barreira():
+    # wall at 500 covers 280-720: right of its centre bends right (+), left of it bends left (-)
+    for alvo_x, certa in ((620, 0.8), (380, -0.8)):
+        acerta = Chute(alvo=(alvo_x, 300), barra=500, trajetoria="pelo_lado", curva=certa)
+        erra = Chute(alvo=(alvo_x, 300), barra=500, trajetoria="pelo_lado", curva=-certa)
+        assert _falta(acerta, 6).resultado != "barreira"
+        assert _falta(erra, 6).resultado == "barreira"
+
+
+def test_penalti_ignora_trajetoria_curva_e_posicao():
+    simples = Chute(alvo=(500, 800), barra=500)
+    enfeitado = Chute(alvo=(500, 800), barra=500, trajetoria="rasteira", curva=0.9)
+    torta = Posicao(nome="entrada_direita", desvio=80)
+    a = resolver(simples, LONGE, Random(7))
+    b = resolver(enfeitado, LONGE, Random(7), posicao=torta)
+    assert b.onde == a.onde and b.resultado == a.resultado
+    assert b.posicao is None
+
+
+def test_na_falta_o_goleiro_alcanca_menos():
+    goleiro = Defesa(lado="esquerda", saida=False)
     longe = Barreira(n=2, x=900)
-    defesas = sum(
-        resolver(chute, defesa, Random(s), barreira=longe, posicao=MEIA_LUA).resultado == "defesa"
-        for s in range(2000)
+    baixa = Chute(alvo=(150, ALTURA_PULO_FALTA - 2 * RUIDO), barra=500, trajetoria="por_cima")
+    alta = Chute(alvo=(150, ALTURA_PULO_FALTA + 2 * RUIDO), barra=500, trajetoria="por_cima")
+    angulo = Chute(alvo=(120, 900), barra=500, trajetoria="por_cima")
+    assert ALTURA_PULO_FALTA < ALTURA_PULO
+    for s in range(200):
+        assert _falta(baixa, s, barreira=longe, defesa=goleiro).resultado == "defesa"
+        assert _falta(alta, s, barreira=longe, defesa=goleiro).resultado == "gol"
+        assert _falta(angulo, s, barreira=longe, defesa=goleiro).resultado == "gol"
+
+
+def test_na_falta_a_saida_alcanca_menos():
+    assert ALCANCE_SAIDA_FALTA < ALCANCE_SAIDA
+    chute = Chute(
+        alvo=(333 + ALCANCE_SAIDA_FALTA + 2 * RUIDO, 100), barra=500, trajetoria="por_cima"
     )
-    assert abs(defesas / 2000 - P_DEFESA_FALTA) <= 0.05
-
-
-def test_lance_marca_quando_o_goleiro_chegou_mas_estava_tapado():
-    chute = Chute(alvo=(150, 300), barra=500, trajetoria="por_cima")
-    defesa = Defesa(lado="esquerda", saida=False)
-    lances = [
-        resolver(chute, defesa, Random(s), barreira=Barreira(n=2, x=900), posicao=MEIA_LUA)
-        for s in range(200)
-    ]
-    gols = [lance for lance in lances if lance.resultado == "gol"]
-    assert gols and all(lance.tapado for lance in gols)
-    assert not any(lance.tapado for lance in lances if lance.resultado == "defesa")
-    penalti = resolver(Chute(alvo=(150, 300), barra=500), LONGE, Random(1))
-    assert penalti.tapado is False
+    goleiro = Defesa(lado="esquerda", saida=True)
+    for s in range(100):
+        lance = _falta(chute, s, barreira=Barreira(n=2, x=900), defesa=goleiro)
+        assert lance.resultado == "gol"

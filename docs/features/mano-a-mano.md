@@ -33,6 +33,8 @@ Nome provisório: "Mano a Mano" (decisão minha; o dev pode trocar).
 - **Falta:** antes das escolhas, o goleiro arma a **barreira** (2 a 5 jogadores, posição na linha),
   que o batedor vê. A barreira bloqueia a `rasteira` e a `pelo_lado` que passam por ela; `por_cima`
   com força baixa demais bate nela, alta demais sai. Posições sorteadas: meia-lua, entradas da área.
+- Na falta o goleiro alcança menos (pulo mais baixo, sem ângulo); bola alcançada é sempre
+  defendida (decisão 2026-11-25).
 - **Barra (minha decisão):** um só valor `barra` 0–1000, uma parada. No pênalti é precisão: fora
   da faixa boa, desvia. Na falta `por_cima` é também força: abaixo da faixa bate na barreira,
   acima sai por cima. Força não existe à parte.
@@ -46,10 +48,6 @@ Nome provisório: "Mano a Mano" (decisão minha; o dev pode trocar).
 - **Equilíbrio:** ~60% de gols com os dois lados aleatórios, definidos como: `alvo` uniforme na
   boca do gol, `barra` uniforme, lado do goleiro uniforme, saída na janela em 50%, barreira e
   trajetória uniformes.
-- **Goleiro tapado na falta (minha decisão na fatia 1, a confirmar com o dev):** na falta, a bola
-  que o goleiro alcança só vira defesa em 40% (`P_DEFESA_FALTA`); o resto entra e o `Lance` sai
-  com `tapado=True` para o replay mostrar. Sem isso a barreira (bloqueia ~17% das faltas) deixa a
-  falta ~12 pp abaixo do pênalti e nenhuma constante comum põe os dois modos em 55–65%.
 - **Disputa:** 5 cobranças para cada um, alternando os papéis, e acaba antes quando não dá mais
   para alcançar (como a disputa de verdade); empate → alternadas até alguém errar. Quem cria a
   sala escolhe o modo.
