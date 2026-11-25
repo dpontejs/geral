@@ -33,8 +33,13 @@ ABC, Náutico e CSA têm o seu, com os rivais do Nordeste e o clássico local na
 4. Empate vai à disputa de pênaltis (5 + alternadas): o torcedor bate as cobranças do seu time no
    minijogo da Carreira (`penalti.js`); o motor faz o goleiro e as cobranças do adversário. Botão
    "deixar o motor bater" (essa cobrança ou o resto da disputa).
-5. Cada jogo acende no placar de lâmpadas os gols com minuto e autor ("34' Alberi"); botão
-   "simular o resto". No fim, card com os 11, a década de cada um, a campanha e as marcas.
+5. Cada jogo corre num relógio de 0' a 90' no placar de lâmpadas (65 ms por minuto); cada gol
+   acende quando o relógio chega ao minuto dele ("34' Alberi") e segura o relógio 1,2 s, uns
+   8–10 s por jogo (dev, 2026-11-24; antes os gols acendiam a cada 400 ms). O empate corre no
+   relógio antes da disputa (`PedidoDePenalti` traz os gols). "Simular o resto" fica à vista
+   durante o relógio e é o jeito de pular. O placar mostra a escalação do adversário (esquema e
+   os 11 por linha) durante o jogo e a do próximo entre os jogos (dev, 2026-11-24). No fim, card
+   com os 11, a década de cada um, a campanha e as marcas.
 
 ## 7a0 da Geral (dev, 2026-11-24)
 
@@ -120,6 +125,7 @@ class Cobranca(BaseModel): resultado: Literal["gol", "defesa", "fora", "trave", 
 - [ ] `test_placar_7_a_0_vira_marca_rara`.
 - [ ] `test_calibragem_da_geral` (guloso 10–30%, aleatório < 3%) e os de
   `test_setea0_geral.py` (clube e época, jogador de dois clubes, grandes em ordem).
+- [ ] `test_pedido_de_penalti_traz_os_gols_do_jogo`.
 - [ ] `test_link_abre_apos_mudar_os_dados`: guarda, troca `setea0.json`, o card segue igual.
 
 ## Verificação ponta a ponta

@@ -158,6 +158,7 @@ class PedidoDePenalti(BaseModel):
     disputa: Disputa
     cobrador: str
     chance: int  # the kicker's strength, the minigame's difficulty
+    gols: list[Gol] = []  # the drawn match's goals, for the board's clock
 
 
 class Campanha(BaseModel):

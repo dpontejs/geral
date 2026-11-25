@@ -473,6 +473,7 @@ class _Contexto:
                     disputa=resultado,
                     cobrador=cobrador.nome,
                     chance=min(99, round(cobrador.forca * self.escala)),
+                    gols=gols,
                 )
         return Partida(
             n=n,
