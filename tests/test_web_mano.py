@@ -446,4 +446,4 @@ def test_app_liga_o_mano(store, mailer, clock):
             f"{API}/salas", json={"apelido": "Ana", "modo": "faltas", "bot": "medio"}
         )
         assert resposta.status_code == 201
-        assert cliente.get("/jogos/mano").status_code == 404  # no page until slice 4
+        assert cliente.get("/jogos/mano").status_code == 200  # the page came in slice 4

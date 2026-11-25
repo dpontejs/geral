@@ -1,0 +1,24 @@
+{% extends "base.html.j2" %}
+{% block title %}Súmula da sala {{ sumula.sala or sala_id }} · Mano a Mano · Geral{% endblock %}
+{% block head %}<link rel="stylesheet" href="/static/geral/jogos.css?v={{ asset_version }}">
+<link rel="stylesheet" href="/static/geral/prancheta.css?v={{ asset_version }}">
+<link rel="stylesheet" href="/static/geral/mano.css?v={{ asset_version }}">{% endblock %}
+{% block content %}
+{# What is left of a match at its link: the score and every kick. #}
+<section class="jogo wall pr mano">
+  <div class="wrap">
+    {% include "_game_tabs.html.j2" %}
+    <div class="game-title"><h1>Mano a Mano</h1><button type="button" class="rules-open" aria-label="Como jogar">?</button></div>
+    <div class="palco" id="mn-sumula">
+      {% include "_mano_sumula.html.j2" %}
+    </div>
+    <p class="credit">Sala privada: só entra quem tem o link.</p>
+    {% set rules_key = "mano" %}{% include "_regras.html.j2" %}
+  </div>
+</section>
+<script>
+  document.querySelectorAll("[data-copiar]").forEach((botao) => botao.addEventListener("click", async () => {
+    try { await navigator.clipboard.writeText(botao.dataset.copiar); botao.textContent = "Copiado"; } catch { /* the link is on screen */ }
+  }));
+</script>
+{% endblock %}

@@ -37,6 +37,9 @@ from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 from jinja2 import select_autoescape
 from pydantic import AwareDatetime, BaseModel, Field, model_validator
+from starlette.datastructures import MutableHeaders
+from starlette.middleware.gzip import GZipMiddleware
+from starlette.types import ASGIApp, Message, Receive, Scope, Send
 
 from geral.central.build import SLUGS as SERIE_SLUGS
 from geral.central.page import band_colors, short_day, short_time
@@ -74,6 +77,7 @@ from geral.web.bolao import TZ, BolaoStore
 from geral.web.carreira_placar import PlacarStore
 from geral.web.mailer import Mailer, MailError, mailer_from_settings
 from geral.web.mano import criar_mano
+from geral.web.mano_paginas import paginas_mano
 from geral.web.notes import NoteStore
 from geral.web.palette import club_palette
 from geral.web.prancheta import criar_prancheta
@@ -151,6 +155,33 @@ templates.env.globals["asset_version"] = _asset_version()
 templates.env.globals["band_colors"] = band_colors
 templates.env.filters["short_day"] = short_day
 templates.env.filters["short_time"] = short_time
+
+
+class VendorCache:
+    """`/static/vendor/`: pinned libraries (Three.js), zipped and cached for a year.
+
+    Only this prefix: the rest of /static revalidates by its `?v=` and the live streams must
+    never be buffered by a compressor. A new library version goes to a new path.
+    """
+
+    PREFIXO = "/static/vendor/"
+    CACHE = "public, max-age=31536000, immutable"
+
+    def __init__(self, app: ASGIApp) -> None:
+        self.app = app
+        self.gzip = GZipMiddleware(app, minimum_size=1000)
+
+    async def __call__(self, scope: Scope, receive: Receive, send: Send) -> None:
+        if scope["type"] != "http" or not scope["path"].startswith(self.PREFIXO):
+            await self.app(scope, receive, send)
+            return
+
+        async def com_cache(message: Message) -> None:
+            if message["type"] == "http.response.start" and message["status"] == 200:
+                MutableHeaders(scope=message)["Cache-Control"] = self.CACHE
+            await send(message)
+
+        await self.gzip(scope, receive, com_cache)
 
 
 class RateLimiter:
@@ -620,6 +651,14 @@ def create_app(
                 "editions": {"geral": True},  # no team edition
                 "number": None,  # live rooms: no game of the day
             },
+            {
+                "path": "mano",
+                "name": "Mano a Mano",
+                "desc": "Batedor contra goleiro: pênaltis ou faltas contra o bot ou contra um "
+                "amigo, numa sala que você manda pelo link.",
+                "editions": {"geral": True},  # no team edition
+                "number": None,  # live rooms: no game of the day
+            },
         ]
 
     def game_tabs(current: str, edition: str) -> list[dict]:
@@ -663,6 +702,11 @@ def create_app(
             lambda r, n, s=200, **c: page(r, n, s, tabs=game_tabs("prancheta", "geral"), **c),
         )
     )
+    app.include_router(
+        paginas_mano(
+            mano, lambda r, n, s=200, **c: page(r, n, s, tabs=game_tabs("mano", "geral"), **c)
+        )
+    )
     if legacy_team:
         # Old e-mails load the moved-in app's brand from the root of /static.
         for name in ("logo-email.png", "icon-512.png", "og-image.png"):
@@ -674,6 +718,7 @@ def create_app(
 
     # Brands (mascot, e-mail logo, link preview) of the hub and of every team.
     app.mount("/static", StaticFiles(directory=STATIC), name="static")
+    app.add_middleware(VendorCache)  # pinned libraries: zipped and cached for a year
 
     @app.api_route("/", methods=["GET", "HEAD"], response_class=HTMLResponse)
     def index(request: Request):
