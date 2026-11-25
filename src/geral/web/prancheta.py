@@ -84,6 +84,14 @@ class Traco(_ComToken):
     esp: int
     pts: list[list[int]] = Field(max_length=64)
     fim: bool
+    forma: Literal["livre", "reta", "ret", "circ"] = "livre"
+
+
+class Balde(_ComToken):
+    tipo: Literal["balde"]
+    id: int
+    cor: int
+    pt: list[int] = Field(min_length=2, max_length=2)
 
 
 class Desfazer(_ComToken):
@@ -135,6 +143,7 @@ Acao = Annotated[
     Comecar
     | Escolher
     | Traco
+    | Balde
     | Desfazer
     | Limpar
     | Chute

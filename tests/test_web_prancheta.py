@@ -223,8 +223,8 @@ async def mesa(tmp_path, **kw):
         await m.fechar()
 
 
-def traco(id_: int, pts: list[list[int]], fim: bool = True) -> dict:
-    return {"id": id_, "cor": 1, "esp": 2, "pts": pts, "fim": fim}
+def traco(id_: int, pts: list[list[int]], fim: bool = True, forma: str = "livre") -> dict:
+    return {"id": id_, "forma": forma, "cor": 1, "esp": 2, "pts": pts, "fim": fim}
 
 
 def presenca(foto: dict) -> dict[int, bool]:
@@ -423,6 +423,32 @@ async def test_reconectar_recebe_tracos_do_desenho_atual(tmp_path):
         await m.agir(sala, tokens[1], "desfazer")
         foto = await m.foto(sala, tokens[3])
         assert foto["tracos"] == [traco(1, [[1, 1], [2, 2], [3, 3]])]
+
+
+@assincrono
+async def test_formas_e_balde_pela_rota(tmp_path):
+    async with mesa(tmp_path) as m:
+        sala, tokens = await m.sala_com(2)
+        chuta = await m.ouvir(sala, tokens[2])
+        await m.em_desenho(sala, tokens)
+        reta = traco(1, [[10, 10], [900, 600]], forma="reta")
+        assert (await m.agir(sala, tokens[1], "traco", **reta)).status_code == 204
+        sem_forma = {k: v for k, v in traco(2, [[5, 5]]).items() if k != "forma"}
+        assert (await m.agir(sala, tokens[1], "traco", **sem_forma)).status_code == 204
+        balde = {"id": 3, "cor": 2, "pt": [400, 300]}
+        assert (await m.agir(sala, tokens[1], "balde", **balde)).status_code == 204
+        *_, (tipo, dados) = await chuta.ate(lambda t, d: t == "balde")
+        assert {k: v for k, v in dados.items() if k != "seq"} == balde
+        invalidos = [
+            ("traco", traco(4, [[1, 1], [2, 2]], forma="estrela")),
+            ("traco", traco(4, [[1, 1]], forma="circ")),
+            ("balde", {"id": 4, "cor": 2, "pt": [1, 2, 3]}),
+            ("balde", {"id": 4, "cor": 2}),
+        ]
+        for tipo, corpo in invalidos:
+            assert (await m.agir(sala, tokens[1], tipo, **corpo)).status_code == 422
+        foto = await m.foto(sala, tokens[2])
+        assert foto["tracos"] == [reta, traco(2, [[5, 5]]), balde]
 
 
 @assincrono

@@ -24,6 +24,8 @@ PISO = 2
 ASSISTENCIA = 2
 PEDACO_MAX = 64
 PONTOS_MAX = 20_000
+FORMAS = ("livre", "reta", "ret", "circ")  # free chalk, then shapes given by 2 points
+CUSTO_BALDE = 500  # what a fill weighs against PONTOS_MAX: at most 40 fills a drawing
 CHUTE_MAX = 40
 CHUTE_INTERVALO = timedelta(seconds=0.5)
 PEDACOS_POR_SEGUNDO = 40
@@ -37,7 +39,8 @@ MARCOS_DICA = (0.5, 0.75)  # shares of the drawing time that unlock a hint each
 
 @dataclass
 class Evento:
-    # estado | traco | desfazer | limpar | chute | acerto | trave | dica | pulou | recusado | fim
+    # estado | traco | balde | desfazer | limpar | chute | acerto | trave | dica | pulou |
+    # recusado | fim
     tipo: str
     dados: dict  # the contract's JSON, already with "seq"
     para: int | None = None
@@ -80,6 +83,25 @@ class _Pedido:
 
 def _eh_int(valor: object) -> bool:
     return isinstance(valor, int) and not isinstance(valor, bool)
+
+
+def _eh_ponto(valor: object) -> bool:
+    return (
+        isinstance(valor, list)
+        and len(valor) == 2
+        and all(_eh_int(c) and c in COORDENADAS for c in valor)
+    )
+
+
+def _custo(item: dict) -> int:
+    """What a drawn item weighs against PONTOS_MAX."""
+    return CUSTO_BALDE if "pt" in item else len(item["pts"])
+
+
+def _copia(item: dict) -> dict:
+    if "pt" in item:
+        return {**item, "pt": list(item["pt"])}
+    return {**item, "pts": [list(p) for p in item["pts"]]}
 
 
 class Sala:
@@ -202,6 +224,7 @@ class Sala:
             "comecar": self._comecar,
             "escolher": self._escolher,
             "traco": self._traco,
+            "balde": self._balde,
             "desfazer": self._desfazer,
             "limpar": self._limpar,
             "chute": self._chute,
@@ -235,8 +258,10 @@ class Sala:
         return self._comecar_desenho(self._opcoes[indice], agora)
 
     def _traco(self, jogador: _Jogador, acao: dict, agora: datetime) -> list[Evento]:
+        """A piece of free chalk (continued by `id`), or a whole shape: start and end points."""
         self._exigir_desenhista(jogador, "desenho")
         id_, cor, esp, pts, fim = (acao.get(k) for k in ("id", "cor", "esp", "pts", "fim"))
+        forma = acao.get("forma", "livre")
         valido = (
             _eh_int(id_)
             and _eh_int(cor)
@@ -244,40 +269,64 @@ class Sala:
             and _eh_int(esp)
             and esp in ESPESSURAS
             and isinstance(fim, bool)
+            and isinstance(forma, str)
+            and forma in FORMAS
             and isinstance(pts, list)
             and len(pts) <= PEDACO_MAX
-            and all(
-                isinstance(p, list)
-                and len(p) == 2
-                and all(_eh_int(c) and c in COORDENADAS for c in p)
-                for p in pts
-            )
+            and all(_eh_ponto(p) for p in pts)
         )
+        atual = self._tracos.get(id_) if valido else None
+        if valido and forma != "livre":
+            valido = len(pts) == 2 and fim and atual is None
+        elif atual is not None:
+            valido = atual.get("forma") == "livre"
         if not valido:
             raise ErroSala(422, "invalid stroke")
-        if self._total_pontos + len(pts) > PONTOS_MAX:
+        self._cobrar(jogador, len(pts), agora)
+        if atual is None:
+            self._tracos[id_] = {
+                "id": id_,
+                "forma": forma,
+                "cor": cor,
+                "esp": esp,
+                "pts": list(pts),
+                "fim": fim,
+            }
+        else:
+            atual["pts"].extend(pts)
+            atual["fim"] = fim
+        dados = {"id": id_, "forma": forma, "cor": cor, "esp": esp, "pts": pts, "fim": fim}
+        return [self._evento("traco", dados, exceto=jogador.id)]
+
+    def _balde(self, jogador: _Jogador, acao: dict, agora: datetime) -> list[Evento]:
+        """Paint bucket: fills the region around `pt`; every screen floods the same board."""
+        self._exigir_desenhista(jogador, "desenho")
+        id_, cor, pt = (acao.get(k) for k in ("id", "cor", "pt"))
+        valido = _eh_int(id_) and _eh_int(cor) and cor in CORES and _eh_ponto(pt)
+        if not valido or id_ in self._tracos:
+            raise ErroSala(422, "invalid fill")
+        self._cobrar(jogador, CUSTO_BALDE, agora)
+        dados = {"id": id_, "cor": cor, "pt": list(pt)}
+        self._tracos[id_] = dados
+        return [self._evento("balde", dict(dados), exceto=jogador.id)]
+
+    def _cobrar(self, jogador: _Jogador, custo: int, agora: datetime) -> None:
+        """Counts an item against the drawing's ceiling and the drawer's pieces per second."""
+        if self._total_pontos + custo > PONTOS_MAX:
             raise ErroSala(422, "drawing is too long")
         while jogador.pedacos and agora - jogador.pedacos[0] >= timedelta(seconds=1):
             jogador.pedacos.popleft()
         if len(jogador.pedacos) >= PEDACOS_POR_SEGUNDO:
             raise ErroSala(429, "too many stroke pieces")
         jogador.pedacos.append(agora)
-        self._total_pontos += len(pts)
-        atual = self._tracos.get(id_)
-        if atual is None:
-            self._tracos[id_] = {"id": id_, "cor": cor, "esp": esp, "pts": list(pts), "fim": fim}
-        else:
-            atual["pts"].extend(pts)
-            atual["fim"] = fim
-        dados = {"id": id_, "cor": cor, "esp": esp, "pts": pts, "fim": fim}
-        return [self._evento("traco", dados, exceto=jogador.id)]
+        self._total_pontos += custo
 
     def _desfazer(self, jogador: _Jogador, acao: dict, agora: datetime) -> list[Evento]:
         self._exigir_desenhista(jogador, "desenho")
         if not self._tracos:
             return []
         id_, traco = self._tracos.popitem()
-        self._total_pontos -= len(traco["pts"])
+        self._total_pontos -= _custo(traco)
         return [self._evento("desfazer", {"id": id_}, exceto=jogador.id)]
 
     def _limpar(self, jogador: _Jogador, acao: dict, agora: datetime) -> list[Evento]:
@@ -664,7 +713,7 @@ class Sala:
                 else None
             ),
             "palavra": self._palavra.texto if ve_palavra and self._palavra else None,
-            "tracos": [{**t, "pts": [list(p) for p in t["pts"]]} for t in self._tracos.values()],
+            "tracos": [_copia(t) for t in self._tracos.values()],
         }
 
     def _estados(self, agora: datetime, tambem: tuple[int, ...] = ()) -> list[Evento]:

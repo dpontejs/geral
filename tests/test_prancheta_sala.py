@@ -114,6 +114,7 @@ def test_traco_repassado_exceto_desenhista():
             "traco",
             {
                 "id": 7,
+                "forma": "livre",
                 "cor": 1,
                 "esp": 2,
                 "pts": [[0, 0], [1000, 750]],
@@ -125,7 +126,14 @@ def test_traco_repassado_exceto_desenhista():
     ]
     sala.agir(1, traco(7, [[500, 500]]), em(2.1))
     assert sala.foto(2, em(3))["tracos"] == [
-        {"id": 7, "cor": 1, "esp": 2, "pts": [[0, 0], [1000, 750], [500, 500]], "fim": True}
+        {
+            "id": 7,
+            "forma": "livre",
+            "cor": 1,
+            "esp": 2,
+            "pts": [[0, 0], [1000, 750], [500, 500]],
+            "fim": True,
+        }
     ]
 
 
@@ -729,8 +737,8 @@ def test_reconectar_recebe_tracos_do_desenho_atual():
     sala.desconectou(2, em(3))
     sala.conectou(2, em(4))
     assert sala.foto(2, em(4))["tracos"] == [
-        {"id": 1, "cor": 1, "esp": 2, "pts": [[1, 1], [2, 2]], "fim": True},
-        {"id": 2, "cor": 0, "esp": 3, "pts": [[3, 3]], "fim": True},
+        {"id": 1, "forma": "livre", "cor": 1, "esp": 2, "pts": [[1, 1], [2, 2]], "fim": True},
+        {"id": 2, "forma": "livre", "cor": 0, "esp": 3, "pts": [[3, 3]], "fim": True},
     ]
 
 
@@ -1031,3 +1039,149 @@ def test_so_quem_desenha_pula_409():
     with pytest.raises(ErroSala) as excinfo:
         sala.agir(1, PULAR, em(4))  # already in the break
     assert _status(excinfo) == 409
+
+
+# --- 2026-11-25: reta, retângulo, círculo e balde ---
+
+
+def forma(id_: int, tipo: str, pts: list[list[int]], cor: int = 1, esp: int = 2) -> dict:
+    return {**traco(id_, pts, cor=cor, esp=esp), "forma": tipo}
+
+
+def balde(id_: int, pt: list[int], cor: int = 2) -> dict:
+    return {"tipo": "balde", "id": id_, "cor": cor, "pt": pt}
+
+
+def test_traco_sem_forma_e_livre():
+    sala, _ = em_desenho()
+    eventos = sala.agir(1, traco(1, [[1, 1]]), em(2))
+    assert eventos[0].dados["forma"] == "livre"
+    assert sala.foto(2, em(2))["tracos"][0]["forma"] == "livre"
+
+
+@pytest.mark.parametrize("tipo", ["reta", "ret", "circ"])
+def test_formas_de_dois_pontos(tipo):
+    sala, _ = em_desenho()
+    seq = sala.foto(2, em(2))["seq"]
+    eventos = sala.agir(1, forma(3, tipo, [[100, 200], [600, 700]], cor=4, esp=3), em(2))
+    esperado = {
+        "id": 3,
+        "forma": tipo,
+        "cor": 4,
+        "esp": 3,
+        "pts": [[100, 200], [600, 700]],
+        "fim": True,
+    }
+    assert eventos == [Evento("traco", {**esperado, "seq": seq + 1}, exceto=1)]
+    assert sala.foto(2, em(3))["tracos"] == [esperado]
+
+
+@pytest.mark.parametrize(
+    "acao",
+    [
+        forma(1, "quadrado", [[0, 0], [1, 1]]),
+        forma(1, "reta", [[0, 0]]),
+        forma(1, "ret", [[0, 0], [1, 1], [2, 2]]),
+        {**forma(1, "circ", [[0, 0], [1, 1]]), "fim": False},
+        forma(1, "reta", [[0, 0], [1001, 1]]),
+        {**forma(1, "reta", [[0, 0], [1, 1]]), "forma": 1},
+    ],
+)
+def test_forma_invalida_422(acao):
+    sala, _ = em_desenho()
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(1, acao, em(2))
+    assert _status(excinfo) == 422
+    assert sala.foto(2, em(2))["tracos"] == []
+
+
+def test_forma_nao_reaproveita_id():
+    sala, _ = em_desenho()
+    sala.agir(1, traco(1, [[1, 1]], fim=False), em(2))
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(1, forma(1, "reta", [[0, 0], [5, 5]]), em(2.1))
+    assert _status(excinfo) == 422
+    sala.agir(1, forma(2, "reta", [[0, 0], [5, 5]]), em(2.2))
+    with pytest.raises(ErroSala) as excinfo:  # a line is not continued like free chalk
+        sala.agir(1, traco(2, [[6, 6]]), em(2.3))
+    assert _status(excinfo) == 422
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(1, balde(2, [9, 9]), em(2.4))
+    assert _status(excinfo) == 422
+    assert [t["pts"] for t in sala.foto(2, em(3))["tracos"]] == [[[1, 1]], [[0, 0], [5, 5]]]
+
+
+def test_balde_repassado_e_na_foto_em_ordem():
+    sala, _ = em_desenho()
+    sala.agir(1, forma(1, "circ", [[100, 100], [400, 400]]), em(2))
+    seq = sala.foto(2, em(2))["seq"]
+    eventos = sala.agir(1, balde(2, [250, 250], cor=3), em(2.1))
+    assert eventos == [
+        Evento("balde", {"id": 2, "cor": 3, "pt": [250, 250], "seq": seq + 1}, exceto=1)
+    ]
+    sala.agir(1, traco(3, [[5, 5]]), em(2.2))
+    tracos = sala.foto(2, em(3))["tracos"]
+    assert [t["id"] for t in tracos] == [1, 2, 3]
+    assert tracos[1] == {"id": 2, "cor": 3, "pt": [250, 250]}
+
+
+@pytest.mark.parametrize(
+    "acao",
+    [
+        balde(1, [0, 1001]),
+        balde(1, [0]),
+        balde(1, [0, 0], cor=13),
+        {"tipo": "balde", "id": "1", "cor": 1, "pt": [0, 0]},
+        {"tipo": "balde", "id": 1, "cor": 1},
+    ],
+)
+def test_balde_invalido_422(acao):
+    sala, _ = em_desenho()
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(1, acao, em(2))
+    assert _status(excinfo) == 422
+
+
+def test_balde_fora_da_vez_409():
+    sala, _ = em_desenho()
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(2, balde(1, [5, 5]), em(2))
+    assert _status(excinfo) == 409
+
+
+def test_desfazer_e_limpar_com_formas_e_balde():
+    sala, _ = em_desenho()
+    sala.agir(1, forma(1, "ret", [[10, 10], [500, 500]]), em(2))
+    sala.agir(1, balde(2, [100, 100]), em(2.1))
+    eventos = sala.agir(1, {"tipo": "desfazer"}, em(3))
+    assert [(e.tipo, e.dados["id"]) for e in eventos] == [("desfazer", 2)]
+    assert [t["id"] for t in sala.foto(2, em(3))["tracos"]] == [1]
+    sala.agir(1, balde(3, [100, 100]), em(3.1))
+    sala.agir(1, {"tipo": "limpar"}, em(4))
+    assert sala.foto(2, em(4))["tracos"] == []
+
+
+def test_balde_e_formas_contam_no_teto():
+    """A fill weighs 500 points (40 fill a drawing); a shape weighs its 2 points."""
+    sala, _ = em_desenho()
+    for i in range(40):
+        sala.agir(1, balde(i, [1, 1]), em(2 + i * 0.05))
+    for acao in (balde(99, [1, 1]), forma(99, "reta", [[1, 1], [2, 2]])):
+        with pytest.raises(ErroSala) as excinfo:
+            sala.agir(1, acao, em(5))
+        assert _status(excinfo) == 422
+    sala.agir(1, {"tipo": "desfazer"}, em(6))  # the last fill gives its 500 back
+    for i in range(250):
+        sala.agir(1, forma(100 + i, "reta", [[1, 1], [2, 2]]), em(7 + i * 0.05))
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(1, forma(999, "circ", [[1, 1], [2, 2]]), em(30))
+    assert _status(excinfo) == 422
+
+
+def test_balde_conta_no_limite_por_segundo():
+    sala, _ = em_desenho()
+    for i in range(40):
+        sala.agir(1, balde(i, [1, 1]) if i % 2 else traco(i, [[1, 1]]), em(2))
+    with pytest.raises(ErroSala) as excinfo:
+        sala.agir(1, balde(99, [1, 1]), em(2.5))
+    assert _status(excinfo) == 429

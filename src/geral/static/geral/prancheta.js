@@ -93,7 +93,13 @@
   const quemChuta = () => presentes().filter((j) => j.id !== est.desenhista);
   const restam = () => (est && est.prazo ? Math.max(0, Math.ceil((Date.parse(est.prazo) - (Date.now() + diferenca)) / 1000)) : 0);
 
-  // ---- the board: strokes in 0–1000 on both axes of a 4:3 board ---------------------------
+  // ---- the board: items in 0–1000 on both axes of a 4:3 board ------------------------------
+  // Every screen paints the same picture on a fixed 1000×750 board off screen, replaying the items
+  // in order, and scales it to the visible canvas: so the paint bucket floods the same region on a
+  // phone and on a computer. Next to it, a twin board painted in solid colours (no chalk grain)
+  // is where the bucket looks for the region's edges: the grain's holes would let it leak.
+  // An item is free chalk or a shape ({id, forma, cor, esp, pts, fim}) or a fill ({id, cor, pt}).
+  const LW = 1000, LH = 750, TOM = 28; // the fill's tolerance, per premultiplied channel
   let tracos = [], lousa = null, cv = null, ctx = null, sujo = false, padroes = {};
   function mulberry(a) {
     return () => {
@@ -103,54 +109,166 @@
       return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
     };
   }
-  function padrao(cor) {
+  const tela2d = (leitura = false) => {
+    const c = document.createElement("canvas"); c.width = LW; c.height = LH;
+    return c.getContext("2d", leitura ? { willReadFrequently: true } : undefined);
+  };
+  // The board as already painted (`base`, items done) and the same plus what is still being drawn
+  // (`vista`); each with its solid twin. `feitos` are the items already on `base`, in order.
+  let base = null, vista = null, mascara = null, feitos = [];
+  function camadas() {
+    if (base) return;
+    base = { g: tela2d(), s: tela2d(true) };
+    vista = { g: tela2d(), s: tela2d(true) };
+    mascara = tela2d(true);
+  }
+  // A fill wears a lighter grain than a line: on a large area the line's specks read as noise.
+  function padrao(cor, leve = false) {
     // a little grain so the line looks like chalk, not marker
-    if (padroes[cor]) return padroes[cor];
+    const chave = `${cor}${leve ? ":leve" : ""}`;
+    if (padroes[chave]) return padroes[chave];
     const c = document.createElement("canvas"); c.width = c.height = 64;
     const g = c.getContext("2d"); g.fillStyle = cor; g.fillRect(0, 0, 64, 64);
     const r = mulberry(cor.length * 97 + cor.charCodeAt(1));
-    for (let i = 0; i < 420; i++) g.clearRect(Math.floor(r() * 64), Math.floor(r() * 64), 1, 1);
-    g.globalAlpha = 0.25; g.fillStyle = "#000";
-    for (let i = 0; i < 160; i++) g.fillRect(Math.floor(r() * 64), Math.floor(r() * 64), 1, 1);
-    return (padroes[cor] = ctx.createPattern(c, "repeat"));
+    for (let i = 0; i < (leve ? 200 : 420); i++) g.clearRect(Math.floor(r() * 64), Math.floor(r() * 64), 1, 1);
+    g.globalAlpha = leve ? 0.16 : 0.25; g.fillStyle = "#000";
+    for (let i = 0; i < (leve ? 70 : 160); i++) g.fillRect(Math.floor(r() * 64), Math.floor(r() * 64), 1, 1);
+    const p = base.g.createPattern(c, "repeat");
+    if (p.setTransform) p.setTransform(new DOMMatrix().scale(1.5)); // grain still reads on a phone
+    return (padroes[chave] = p);
   }
   function ajustarCanvas() {
     if (!lousa) return;
     const r = devicePixelRatio || 1, w = lousa.clientWidth, h = lousa.clientHeight;
     cv.width = Math.round(w * r); cv.height = Math.round(h * r);
-    ctx.setTransform(r, 0, 0, r, 0, 0); padroes = {}; desenhar();
+    ctx.setTransform(r, 0, 0, r, 0, 0); desenhar();
   }
   function pedirDesenho() {
     if (!sujo) { sujo = true; requestAnimationFrame(() => { sujo = false; desenhar(); }); }
   }
+  const pronto = (t) => Boolean(t.pt) || t.fim;
   function desenhar() {
     if (!ctx) return;
+    camadas();
+    // `base` holds a prefix of the items: if undo, clear or a new `estado` changed it, start over
+    if (feitos.length > tracos.length || feitos.some((t, i) => tracos[i] !== t)) {
+      for (const g of [base.g, base.s]) g.clearRect(0, 0, LW, LH);
+      feitos = [];
+    }
+    while (feitos.length < tracos.length && pronto(tracos[feitos.length])) {
+      const t = tracos[feitos.length];
+      pintar(base, t); feitos.push(t);
+    }
+    let pronta = base.g.canvas;
+    if (feitos.length < tracos.length) {
+      const resto = tracos.slice(feitos.length);
+      decalcar(base.g, vista.g);
+      if (resto.some((t) => t.pt)) decalcar(base.s, vista.s); // only a fill reads the solid twin
+      for (const t of resto) pintar(vista, t);
+      pronta = vista.g.canvas;
+    }
     const w = lousa.clientWidth, h = lousa.clientHeight;
     ctx.clearRect(0, 0, w, h);
-    ctx.lineCap = ctx.lineJoin = "round";
-    for (const t of tracos) {
-      const p = t.pts.map(([x, y]) => [(x / 1000) * w, (y / 1000) * h]);
-      if (!p.length) continue;
-      ctx.globalCompositeOperation = t.cor === 0 ? "destination-out" : "source-over";
-      ctx.strokeStyle = ctx.fillStyle = t.cor === 0 ? "#000" : padrao(CORES[t.cor] || CORES[1]);
-      ctx.lineWidth = Math.max(2, (ESP[t.esp] || ESP[2]) * w * (t.cor === 0 ? 2.4 : 1));
-      ctx.beginPath();
-      if (p.length === 1) { ctx.arc(p[0][0], p[0][1], ctx.lineWidth / 2, 0, 7); ctx.fill(); continue; }
-      ctx.moveTo(p[0][0], p[0][1]);
+    ctx.imageSmoothingQuality = "high";
+    ctx.drawImage(pronta, 0, 0, w, h);
+  }
+  function decalcar(de, para) {
+    para.globalCompositeOperation = "copy";
+    para.drawImage(de.canvas, 0, 0);
+    para.globalCompositeOperation = "source-over";
+  }
+  function pintar(camada, t) {
+    if (t.pt) return encher(camada, t);
+    for (const [g, solido] of [[camada.g, false], [camada.s, true]]) {
+      g.globalCompositeOperation = t.cor === 0 ? "destination-out" : "source-over";
+      g.strokeStyle = g.fillStyle = t.cor === 0 ? "#000" : solido ? CORES[t.cor] || CORES[1] : padrao(CORES[t.cor] || CORES[1]);
+      tracar(g, t);
+      g.globalCompositeOperation = "source-over";
+    }
+  }
+  function tracar(g, t) {
+    const p = t.pts.map(([x, y]) => [x, (y * LH) / 1000]);
+    if (!p.length) return;
+    g.lineCap = g.lineJoin = "round";
+    g.lineWidth = Math.max(2, (ESP[t.esp] || ESP[2]) * LW * (t.cor === 0 ? 2.4 : 1));
+    const ponto = () => { g.beginPath(); g.arc(p[0][0], p[0][1], g.lineWidth / 2, 0, 7); g.fill(); };
+    const forma = t.forma || "livre";
+    if (p.length === 1 || (forma !== "livre" && p[0][0] === p[1][0] && p[0][1] === p[1][1])) return ponto();
+    g.beginPath();
+    if (forma === "reta") {
+      g.moveTo(p[0][0], p[0][1]); g.lineTo(p[1][0], p[1][1]);
+    } else if (forma === "ret") {
+      g.rect(Math.min(p[0][0], p[1][0]), Math.min(p[0][1], p[1][1]), Math.abs(p[1][0] - p[0][0]), Math.abs(p[1][1] - p[0][1]));
+    } else if (forma === "circ") {
+      g.ellipse((p[0][0] + p[1][0]) / 2, (p[0][1] + p[1][1]) / 2, Math.abs(p[1][0] - p[0][0]) / 2, Math.abs(p[1][1] - p[0][1]) / 2, 0, 0, 2 * Math.PI);
+    } else {
+      g.moveTo(p[0][0], p[0][1]);
       for (let i = 1; i < p.length - 1; i++) {
         // through the midpoints: a smooth line from a jittery finger
-        ctx.quadraticCurveTo(p[i][0], p[i][1], (p[i][0] + p[i + 1][0]) / 2, (p[i][1] + p[i + 1][1]) / 2);
+        g.quadraticCurveTo(p[i][0], p[i][1], (p[i][0] + p[i + 1][0]) / 2, (p[i][1] + p[i + 1][1]) / 2);
       }
-      ctx.lineTo(p.at(-1)[0], p.at(-1)[1]);
-      ctx.stroke();
+      g.lineTo(p.at(-1)[0], p.at(-1)[1]);
     }
-    ctx.globalCompositeOperation = "source-over";
+    g.stroke();
   }
-  const totalPts = () => tracos.reduce((n, t) => n + t.pts.length, 0);
+  // The paint bucket: the region of the solid twin around the point (scanline flood, with a small
+  // tolerance for the edges' smoothing), grown by a pixel so it tucks under the outline, painted
+  // in chalk on the board and in solid colour on the twin. The eraser's bucket clears the region.
+  function encher(camada, t) {
+    const x0 = Math.min(LW - 1, Math.max(0, Math.round(t.pt[0])));
+    const y0 = Math.min(LH - 1, Math.max(0, Math.round((t.pt[1] * LH) / 1000)));
+    const d = camada.s.getImageData(0, 0, LW, LH).data;
+    const pm = (k, c) => (d[k + c] * d[k + 3]) / 255;
+    const k0 = (y0 * LW + x0) * 4, alvo = [pm(k0, 0), pm(k0, 1), pm(k0, 2), d[k0 + 3]];
+    const dentro = new Uint8Array(LW * LH);
+    const igual = (i) => {
+      const k = i * 4;
+      return Math.abs(d[k + 3] - alvo[3]) <= TOM && Math.abs(pm(k, 0) - alvo[0]) <= TOM && Math.abs(pm(k, 1) - alvo[1]) <= TOM && Math.abs(pm(k, 2) - alvo[2]) <= TOM;
+    };
+    const livre = (x, y) => !dentro[y * LW + x] && igual(y * LW + x);
+    const pilha = [x0, y0];
+    while (pilha.length) {
+      const y = pilha.pop(), x = pilha.pop();
+      if (!livre(x, y)) continue;
+      let l = x, r = x;
+      while (l > 0 && livre(l - 1, y)) l--;
+      while (r < LW - 1 && livre(r + 1, y)) r++;
+      for (let i = l; i <= r; i++) dentro[y * LW + i] = 1;
+      for (const ny of [y - 1, y + 1]) {
+        if (ny < 0 || ny >= LH) continue;
+        for (let i = l; i <= r; i++) if (livre(i, ny) && (i === l || !livre(i - 1, ny))) pilha.push(i, ny);
+      }
+    }
+    const img = mascara.createImageData(LW, LH), m = img.data;
+    for (let y = 0; y < LH; y++) {
+      for (let x = 0; x < LW; x++) {
+        const i = y * LW + x;
+        if (dentro[i] || (x > 0 && dentro[i - 1]) || (x < LW - 1 && dentro[i + 1]) || (y > 0 && dentro[i - LW]) || (y < LH - 1 && dentro[i + LW])) m[i * 4 + 3] = 255;
+      }
+    }
+    for (const [g, tinta] of [[camada.s, CORES[t.cor] || CORES[1]], [camada.g, t.cor === 0 ? null : padrao(CORES[t.cor] || CORES[1], true)]]) {
+      mascara.putImageData(img, 0, 0);
+      if (t.cor === 0) {
+        g.globalCompositeOperation = "destination-out";
+      } else {
+        mascara.globalCompositeOperation = "source-in";
+        mascara.fillStyle = tinta;
+        mascara.fillRect(0, 0, LW, LH);
+        mascara.globalCompositeOperation = "source-over";
+      }
+      g.drawImage(mascara.canvas, 0, 0);
+      g.globalCompositeOperation = "source-over";
+    }
+  }
+  const BALDE = 500; // what a fill weighs against the ceiling, as on the server
+  const custo = (t) => (t.pt ? BALDE : t.pts.length);
+  const totalPts = () => tracos.reduce((n, t) => n + custo(t), 0);
 
-  // Drawing with mouse, pen or finger. Pieces of ≤64 points go out every ~50 ms, one at a time,
-  // in order; a refused piece (429) stays and joins the next one, so the line is never lost.
-  let ferramenta = { cor: 1, esp: 2 }, atual = null, idTraco = 0, fila = [], enviando = false;
+  // Drawing with mouse, pen or finger. Free chalk goes out in pieces of ≤64 points every ~50 ms,
+  // one at a time, in order; a refused piece (429) stays and joins the next one, so the line is
+  // never lost. A shape follows the finger on my screen only and goes out once, on release; a
+  // fill goes out on the tap.
+  let ferramenta = { cor: 1, esp: 2, forma: "livre" }, atual = null, idTraco = 0, fila = [], enviando = false;
   function ligarDesenho() {
     const pt = (e) => {
       const r = cv.getBoundingClientRect();
@@ -160,22 +278,42 @@
       ];
     };
     cv.addEventListener("pointerdown", (e) => {
-      if (!podeDesenhar() || atual || totalPts() >= TETO) return;
+      if (!podeDesenhar() || atual) return;
+      const { cor, esp, forma } = ferramenta;
+      if (totalPts() + (forma === "balde" ? BALDE : 2) > TETO) return;
       e.preventDefault();
+      if (forma === "balde") {
+        const t = { id: ++idTraco, cor, pt: pt(e) };
+        tracos.push(t); fila.push({ tipo: "balde", t, enviado: 0 }); return pedirDesenho();
+      }
       cv.setPointerCapture(e.pointerId);
-      atual = { id: ++idTraco, cor: ferramenta.cor, esp: ferramenta.esp, pts: [pt(e)], fim: false };
-      tracos.push(atual); fila.push({ tipo: "traco", t: atual, enviado: 0 }); pedirDesenho();
+      const p = pt(e);
+      atual = { id: ++idTraco, forma, cor, esp, pts: forma === "livre" ? [p] : [p, [...p]], fim: false };
+      tracos.push(atual);
+      if (forma === "livre") fila.push({ tipo: "traco", t: atual, enviado: 0 });
+      pedirDesenho();
     });
     cv.addEventListener("pointermove", (e) => {
       if (!atual) return;
+      const eventos = e.getCoalescedEvents ? e.getCoalescedEvents() : [e];
+      if (atual.forma !== "livre") {
+        atual.pts[1] = pt(eventos.at(-1) || e); // the shape's live preview
+        return pedirDesenho();
+      }
       let n = totalPts();
-      for (const ev of e.getCoalescedEvents ? e.getCoalescedEvents() : [e]) {
+      for (const ev of eventos) {
         const p = pt(ev), u = atual.pts.at(-1);
         if (Math.abs(p[0] - u[0]) + Math.abs(p[1] - u[1]) >= 3 && n < TETO) { atual.pts.push(p); n++; }
       }
       pedirDesenho();
     });
-    const solta = () => { if (atual) { atual.fim = true; atual = null; } };
+    const solta = () => {
+      if (!atual) return;
+      atual.fim = true;
+      if (atual.forma !== "livre") fila.push({ tipo: "traco", t: atual, enviado: 0 });
+      atual = null;
+      pedirDesenho();
+    };
     cv.addEventListener("pointerup", solta);
     cv.addEventListener("pointercancel", solta);
     cv.addEventListener("lostpointercapture", solta);
@@ -189,7 +327,9 @@
       const t = item.t, pts = t.pts.slice(item.enviado, item.enviado + PEDACO);
       const fim = t.fim && item.enviado + pts.length >= t.pts.length;
       if (!pts.length && !fim) return; // waiting for the finger
-      corpo = { id: t.id, cor: t.cor, esp: t.esp, pts, fim };
+      corpo = { id: t.id, forma: t.forma, cor: t.cor, esp: t.esp, pts, fim };
+    } else if (item.tipo === "balde") {
+      corpo = { id: item.t.id, cor: item.t.cor, pt: item.t.pt };
     }
     enviando = true;
     item.emVoo = true; // from here on the server may have it: undoing must tell the server
@@ -219,7 +359,7 @@
   function limpar() {
     if (atual) return;
     tracos = [];
-    fila = fila.filter((it) => it.tipo !== "traco" || it.enviado > 0);
+    fila = fila.filter((it) => it.tipo === "desfazer" || it.tipo === "limpar" || it.enviado > 0);
     fila.push({ tipo: "limpar" });
     pedirDesenho();
   }
@@ -228,6 +368,7 @@
     if (t) { t.pts.push(...p.pts); t.fim = p.fim; } else tracos.push({ ...p, pts: [...p.pts] });
     pedirDesenho();
   }
+  const copiaItem = (t) => (t.pt ? { id: t.id, cor: t.cor, pt: [...t.pt] } : { ...t, pts: t.pts.map((p) => [...p]) });
 
   // ---- pieces of the screen ------------------------------------------------------------------
   function placar({ meta, palavra, aviso, relogio = "" }) {
@@ -246,11 +387,21 @@
   const acesa = (texto) => [...texto].map((t) => ({ t, k: tipo(t) }));
   const daDica = (dica) => dica.map((t) => (t === null ? { k: "apagada" } : { t, k: tipo(t) }));
 
+  // The tools: free chalk, line, rectangle, ellipse and the bucket, drawn in chalk on the slate.
+  const SVG = (corpo) => `<svg width="26" height="22" viewBox="0 0 26 22" aria-hidden="true" fill="none" stroke="#F3F1EA" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">${corpo}</svg>`;
+  const FORMAS = [
+    ["livre", "Giz", SVG('<path d="M3 16c3-9 6 2 9-5s6 3 11-6"/>')],
+    ["reta", "Reta", SVG('<path d="M4 18L22 4"/>')],
+    ["ret", "Retângulo", SVG('<rect x="3.5" y="4.5" width="19" height="13"/>')],
+    ["circ", "Círculo", SVG('<ellipse cx="13" cy="11" rx="9.5" ry="7"/>')],
+    ["balde", "Balde", SVG('<path d="M5 9h13l-1.6 10H6.6z"/><path d="M7.5 9c0-5 8-5 8 0"/><path d="M22 7.5c1.3 2 1.9 3 1 4-.8.8-2.1.2-2.1-1 0-1 1.1-3 1.1-3z" fill="#F3F1EA" stroke-width="1.4"/>')],
+  ];
   function bandeja() {
+    const formas = FORMAS.map(([f, nome, svg]) => `<button class="ferr forma" type="button" data-forma="${f}" aria-label="${nome}" title="${nome}" aria-pressed="${f === ferramenta.forma}">${svg}<span>${nome}</span></button>`).join("");
     const cores = CORES.map((c, i) => (i === 0 ? "" : `<button class="ferr" type="button" data-cor="${i}" aria-label="${NOMES_COR[i]}" aria-pressed="${i === ferramenta.cor}"><span class="giz" style="--c:${c}"></span></button>`)).join("");
     const borracha = `<button class="ferr" type="button" data-cor="0" aria-label="Apagador" aria-pressed="${ferramenta.cor === 0}"><svg width="24" height="20" viewBox="0 0 24 20"><rect x="2" y="5" width="20" height="10" rx="1" fill="#E8E2D2" stroke="#14231A" stroke-width="2"/><rect x="2" y="11" width="20" height="4" fill="#7a6a52"/></svg></button>`;
     const esps = [1, 2, 3].map((e) => `<button class="ferr" type="button" data-esp="${e}" aria-label="Traço ${["", "fino", "médio", "grosso"][e]}" aria-pressed="${e === ferramenta.esp}"><span class="esp" style="width:${[0, 5, 10, 17][e]}px;height:${[0, 5, 10, 17][e]}px"></span></button>`).join("");
-    return `<div class="grupo cores">${cores}${borracha}</div><div class="grupo">${esps}</div><div class="grupo"><button class="ferr txt" type="button" data-faz="desfazer">Desfazer</button><button class="ferr txt" type="button" data-faz="limpar">Limpar</button></div>`;
+    return `<div class="grupo formas" role="group" aria-label="Ferramenta">${formas}</div><div class="grupo cores">${cores}${borracha}</div><div class="linha"><div class="grupo esps">${esps}</div><div class="grupo faz"><button class="ferr txt" type="button" data-faz="desfazer">Desfazer</button><button class="ferr txt" type="button" data-faz="limpar">Limpar</button></div></div>`;
   }
   function cartoes(j) {
     return j.cartoes ? `<span class="vermelho"></span><span class="longo">${j.cartoes} de ${j.cartoes_para_sair} · </span>` : "";
@@ -496,7 +647,7 @@
         <div class="entrada" id="nota"><span class="nota" id="nota-texto"></span></div>
         <div class="entrada vez" id="vez"><button class="btn lamp-btn" type="button" id="pr-dica"></button><button class="btn secondary" type="button" id="pr-pular">Pular a vez</button></div>
       </div>`;
-    lousa = $("#lousa"); cv = $("canvas", lousa); ctx = cv.getContext("2d"); padroes = {};
+    lousa = $("#lousa"); cv = $("canvas", lousa); ctx = cv.getContext("2d"); feitos = [];
     observadores.forEach((o) => o.disconnect()); // the last stage's, if any
     observadores = [new ResizeObserver(ajustarCanvas), new ResizeObserver(encaixar)];
     observadores[0].observe(lousa);
@@ -507,10 +658,13 @@
       if (!b) return;
       if (b.dataset.cor) ferramenta.cor = +b.dataset.cor;
       if (b.dataset.esp) ferramenta.esp = +b.dataset.esp;
+      if (b.dataset.forma) ferramenta.forma = b.dataset.forma;
       if (b.dataset.faz === "desfazer") desfazer();
       if (b.dataset.faz === "limpar") limpar();
       $("#bandeja").querySelectorAll("[data-cor]").forEach((x) => x.setAttribute("aria-pressed", +x.dataset.cor === ferramenta.cor));
       $("#bandeja").querySelectorAll("[data-esp]").forEach((x) => x.setAttribute("aria-pressed", +x.dataset.esp === ferramenta.esp));
+      $("#bandeja").querySelectorAll("[data-forma]").forEach((x) => x.setAttribute("aria-pressed", x.dataset.forma === ferramenta.forma));
+      lousa.dataset.forma = ferramenta.forma;
     });
     $("#sobre").addEventListener("click", async (e) => {
       const b = e.target.closest(".opcao");
@@ -787,7 +941,7 @@
     const meuDesenho = novo.fase === "desenho" && souEu(novo.desenhista) && antes && antes.fase === "desenho" && antes.desenhista === novo.desenhista && antes.rodada === novo.rodada;
     if (!meuDesenho) {
       atual = null; fila = [];
-      tracos = novo.tracos.map((t) => ({ ...t, pts: t.pts.map((p) => [...p]) }));
+      tracos = novo.tracos.map(copiaItem);
       idTraco = Math.max(0, ...tracos.map((t) => t.id));
     }
     const estava = tela === "ao-vivo";
@@ -805,6 +959,7 @@
     if (tela !== "ao-vivo") return;
     if (tipoEvento === "pulou") { pulou = true; return; }
     if (tipoEvento === "traco") return receberTraco(d);
+    if (tipoEvento === "balde") { tracos.push(copiaItem(d)); return pedirDesenho(); }
     if (tipoEvento === "desfazer") { tracos = tracos.filter((t) => t.id !== d.id); return pedirDesenho(); }
     if (tipoEvento === "limpar") { tracos = []; return pedirDesenho(); }
     if (tipoEvento === "dica") { est.dica = d.dica; sis(`${nome(est.desenhista)} acendeu uma letra.`); return telaAoVivo(); }
@@ -819,7 +974,7 @@
       return telaAoVivo();
     }
   }
-  const EVENTOS = ["estado", "traco", "desfazer", "limpar", "chute", "acerto", "trave", "dica", "pulou", "recusado", "fim"];
+  const EVENTOS = ["estado", "traco", "balde", "desfazer", "limpar", "chute", "acerto", "trave", "dica", "pulou", "recusado", "fim"];
   function conectar() {
     pararFonte();
     fonte = new EventSource(`${API}/salas/${SALA}/eventos?token=${encodeURIComponent(eu.token)}`);

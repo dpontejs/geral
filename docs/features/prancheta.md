@@ -1,7 +1,7 @@
 # Prancheta: desenhar e adivinhar em sala privada
 
 - **Data:** 2026-11-23 (ajustes de 2026-11-24: pedir para entrar, 12 gizes, dica de quem desenha,
-  pular a vez)
+  pular a vez; 2026-11-25: reta, retângulo, círculo e balde)
 - **Status:** entregue (PRs #84, #85, #86, #88, #90, #92 e a entrada em /jogos); ajustes de
   2026-11-24 em `feat/prancheta-sala-ajustes`
 - **ADRs:** — (sala em memória num processo só: registrado nas Decisões do PLAN)
@@ -17,7 +17,8 @@ Um banco só de palavras de futebol, sem tema por time. Ao fim, a súmula fica n
 
 - Salas públicas, lista de salas, conta/login, ranking geral, partida contra o computador.
 - Guardar desenhos (a súmula não tem desenho: nada de usuário para moderar depois).
-- Balde de tinta, formas prontas, desenho por imagem colada.
+- Desenho por imagem colada. (Balde de tinta e formas prontas saíram desta lista em 2026-11-25,
+  decisão do dev: ver "Ferramentas de desenho".)
 - Sobreviver a deploy: reiniciar o processo derruba as salas abertas (a página avisa).
 - Mais de um processo do uvicorn (o hub é em memória; hoje o Dockerfile roda um só).
 
@@ -65,6 +66,12 @@ Um banco só de palavras de futebol, sem tema por time. Ao fim, a súmula fica n
   lance, o lance vai para o `intervalo` e os pontos já ganhos ficam. O anfitrião passa ao jogador
   presente mais antigo quando sai, é expulso ou fica ausente. Menos de 2 presentes no jogo = `fim`.
 
+- **Ferramentas de desenho** (dev, 2026-11-25): além do giz livre, quem desenha tem **reta**,
+  **retângulo** e **círculo/elipse** (só o contorno) e o **balde** (pinta a região fechada em volta
+  do toque). As formas seguem o dedo com prévia só na tela de quem desenha e vão uma vez, ao
+  soltar; o balde vai no toque. Cor e espessura valem para todas; com o apagador, a forma apaga e o
+  balde limpa a região. Desfazer tira o último item (traço, forma ou balde); limpar zera tudo.
+
 ## Contratos
 
 - **Módulos:** `geral/games/prancheta/` (`sala.py` regras puras com relógio injetado, `filtro.py`
@@ -85,11 +92,25 @@ Um banco só de palavras de futebol, sem tema por time. Ao fim, a súmula fica n
   Sem `texto` repetido. `palavras.py`: `opcoes(rng, usadas) -> list[Palavra]` (3, uma por
   dificuldade, sem repetir na partida) e `julgar(chute, palavra) -> Literal["certo", "trave",
   "errado"]`.
-- **Traço:** coordenadas inteiras 0–1000 num quadro 4:3. `{"id": int, "cor": 0–12, "esp": 1|2|3,
-  "pts": [[x, y], ...], "fim": bool}`; um traço chega em pedaços (≤ 64 pontos cada, mesmo `id`).
-  Cor 0 = apagador (cor do quadro); 1–12 = gizes (branco, amarelo, laranja, vermelho, rosa, azul,
-  verde, roxo, marrom, cinza, azul-escuro, preto; a paleta fica em 2 fileiras de 7 no celular).
-  Desfazer tira o último `id`; limpar zera. Teto: 20 mil pontos por desenho.
+- **Traço:** coordenadas inteiras 0–1000 num quadro 4:3. `{"id": int, "forma": "livre"|"reta"|
+  "ret"|"circ", "cor": 0–12, "esp": 1|2|3, "pts": [[x, y], ...], "fim": bool}` (`forma` ausente =
+  `livre`, como antes de 2026-11-25). O giz livre chega em pedaços (≤ 64 pontos cada, mesmo `id`);
+  uma forma chega inteira, num pedaço só, com 2 pontos (início e fim; no `circ`, os cantos da caixa
+  da elipse) e `fim: true`, e o `id` dela não pode ser de item que já existe (422).
+  **Balde:** `{"id": int, "cor": 0–12, "pt": [x, y]}`, ação e evento `balde`. Traços, formas e
+  baldes dividem a mesma sequência de `id` e a mesma lista `tracos` do `estado`, em ordem (o balde
+  se reconhece por ter `pt`). Cor 0 = apagador (cor do quadro); 1–12 = gizes (branco, amarelo,
+  laranja, vermelho, rosa, azul, verde, roxo, marrom, cinza, azul-escuro, preto; a paleta fica em 2
+  fileiras de 7 no celular). Desfazer tira o último `id`; limpar zera. Teto: 20 mil pontos por
+  desenho; uma forma pesa os seus 2 pontos e um balde pesa 500 (no máximo 40 baldes por desenho,
+  porque cada um repinta o quadro inteiro ao refazer). Forma e balde contam no limite de pedaços
+  por segundo.
+- **Mesmo desenho em toda tela:** cada navegador pinta o quadro num canvas fora da tela de tamanho
+  fixo (1000×750, o mesmo espaço das coordenadas), refazendo os itens em ordem, e escala para o
+  canvas visível. O balde procura a borda numa cópia gêmea pintada em cor lisa (sem o grão do giz,
+  cujos furinhos deixariam a tinta vazar), com tolerância pequena para a suavização das bordas, e
+  cresce 1 px para encostar no contorno. A tinta sai com o grão do giz, mais leve que o do traço.
+  Navegadores diferentes podem divergir em um pixel na borda (suavização), nunca na região.
 - **Rotas** (prefixo `/api/jogos/prancheta`):
   - `GET /jogos/prancheta` (criar) e `GET /jogos/prancheta/s/{id}` (sala viva → jogo; encerrada →
     súmula; sem sala nem súmula → "a sala acabou ou o servidor reiniciou").
@@ -97,7 +118,7 @@ Um banco só de palavras de futebol, sem tema por time. Ao fim, a súmula fica n
   - `POST /salas/{id}/entrar {apelido}` → `{jogador, token, pendente: true}`: é um **pedido**
     (`jogador` = o id que ele terá se aceito); 409 muitos pedidos/encerrada, 422 apelido.
   - `POST /salas/{id}/acao {token, tipo, ...}`, `tipo` ∈ `comecar | escolher{indice} | traco{...}
-    | desfazer | limpar | chute{texto} | cartao{alvo} | tirar{alvo} | sair | aceitar{pedido} |
+    | balde{id, cor, pt} | desfazer | limpar | chute{texto} | cartao{alvo} | tirar{alvo} | sair | aceitar{pedido} |
     recusar{pedido} | dica | pular` (união discriminada do Pydantic). 403 token inválido/expulso/
     recusado; 409 ação fora da vez/fase, pedido ainda esperando ou dica ainda travada; 204 se aceita.
   - `GET /salas/{id}/eventos?token=` (SSE, `event:` = tipo, `data:` = JSON com `seq`). Reconectar
@@ -115,8 +136,9 @@ Um banco só de palavras de futebol, sem tema por time. Ao fim, a súmula fica n
     para o anfitrião, `[{id, apelido}]`, senão `null`.
   - `estado` de um **pedido** esperando: `{seq, voce, fase: "pedido", agora, apelido, anfitriao}`
     (o apelido do anfitrião; nada da sala). Aceito, passa a receber o `estado` de jogador.
-  - `traco` `{id, cor, esp, pts, fim}`: cada pedaço repassado como chegou, a todos **menos** quem
-    desenha (ele já desenhou na tela). `desfazer {id}`, `limpar {}`.
+  - `traco` `{id, forma, cor, esp, pts, fim}`: cada pedaço repassado como chegou, a todos **menos**
+    quem desenha (ele já desenhou na tela). `balde {id, cor, pt}`, idem. `desfazer {id}`,
+    `limpar {}`.
   - `chute {jogador, texto}` (só os errados e longe); `acerto {jogador, pontos}`; `trave {texto}`
     (privado); `dica {dica}` (a todos menos quem desenha, que recebe um `estado` novo);
     `pulou {jogador}` (antes do `estado` do intervalo); `recusado {}` (só ao pedido, e o fluxo
@@ -150,6 +172,11 @@ Um banco só de palavras de futebol, sem tema por time. Ao fim, a súmula fica n
   servidor, `test_quem_pede_espera_e_o_anfitriao_aceita` e `test_recusado_e_avisado_e_o_fluxo_fecha`.
 - [x] `test_quem_desenha_pula_e_o_lance_vai_ao_intervalo`, `test_quem_desenha_pula_na_escolha`,
   `test_so_quem_desenha_pula_409`; `test_doze_gizes_e_o_apagador` e `test_dica_e_pular_pela_rota`.
+- [x] Ferramentas (2026-11-25): `test_formas_de_dois_pontos`, `test_forma_invalida_422`,
+  `test_forma_nao_reaproveita_id`, `test_balde_repassado_e_na_foto_em_ordem`,
+  `test_balde_invalido_422`, `test_desfazer_e_limpar_com_formas_e_balde`,
+  `test_balde_e_formas_contam_no_teto`, `test_traco_sem_forma_e_livre`; no servidor,
+  `test_formas_e_balde_pela_rota`.
 - [ ] `test_lance_acaba_quando_todos_acertam` e `test_vez_de_ausente_e_pulada`.
 - [ ] `test_entra_no_meio_vai_para_o_fim_da_fila` e `test_sala_cheia_409`.
 - [ ] `test_acao_fora_da_vez_409` e `test_token_de_outra_sala_403`.
@@ -167,6 +194,9 @@ injetados, como `duel_events`). Depois, com o app local, um script Playwright ab
 Nos ajustes de 2026-11-24: pede para entrar, o anfitrião recusa um e aceita outro, paleta de 12
 gizes no PC e no celular de 390 px, botão de dica travado e liberado, e pular na escolha e no
 desenho.
+Nas ferramentas de 2026-11-25: bandeja no PC e no celular de 390 px, uma cena com cada ferramenta
+vista por quem chuta em outro tamanho de tela (miniaturas iguais), prévia da forma, desfazer e
+recarregar a página (o desenho se refaz igual a partir de `tracos`).
 
 ## Fatias (um PR cada; subagentes em worktrees)
 
