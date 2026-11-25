@@ -149,6 +149,7 @@ class Mesa:
         self.app = FastAPI()
         self.app.include_router(self.prancheta.router)
         self.ouvintes: list[Ouvinte] = []
+        self.anfitrioes: dict[str, str] = {}  # the creator's token, by room
 
     def cliente(self, ip: str = "10.0.0.1") -> httpx.AsyncClient:
         transporte = httpx.ASGITransport(self.app, client=(ip, 1234))
@@ -158,13 +159,21 @@ class Mesa:
         async with self.cliente() as c:
             resposta = await c.post(f"{API}/salas", json={"apelido": apelido, "rodadas": rodadas})
         assert resposta.status_code == 201, resposta.text
+        self.anfitrioes[resposta.json()["id"]] = resposta.json()["token"]
         return resposta.json()
 
-    async def entrar(self, sala: str, apelido: str) -> dict:
+    async def pedir(self, sala: str, apelido: str) -> dict:
         async with self.cliente() as c:
             resposta = await c.post(f"{API}/salas/{sala}/entrar", json={"apelido": apelido})
         assert resposta.status_code == 200, resposta.text
         return resposta.json()
+
+    async def entrar(self, sala: str, apelido: str) -> dict:
+        """Asks to join and the creator (still the host) accepts."""
+        pedido = await self.pedir(sala, apelido)
+        aceite = await self.agir(sala, self.anfitrioes[sala], "aceitar", pedido=pedido["jogador"])
+        assert aceite.status_code == 204, aceite.text
+        return pedido
 
     async def agir(self, sala: str, token: str, tipo: str, **campos) -> httpx.Response:
         async with self.cliente() as c:
@@ -288,7 +297,7 @@ async def test_acao_fora_da_vez_409(tmp_path):
         assert (await m.agir(sala, tokens[1], "comecar")).status_code == 204
         assert (await m.agir(sala, tokens[2], "escolher", indice=0)).status_code == 409
         assert (await m.agir(sala, tokens[1], "escolher", indice=5)).status_code == 422
-        assert (await m.agir(sala, tokens[1], "pular")).status_code == 422  # unknown action
+        assert (await m.agir(sala, tokens[1], "voar")).status_code == 422  # unknown action
 
 
 @assincrono
@@ -510,6 +519,74 @@ async def test_expulso_tem_a_conexao_fechada(tmp_path):
         m.relogio.andar(600)
         m.prancheta.passo()  # no spectator keeps the room alive
         assert not m.prancheta.viva(sala)
+
+
+# --- pedir para entrar, dica e pular ---
+
+
+@assincrono
+async def test_quem_pede_espera_e_o_anfitriao_aceita(tmp_path):
+    async with mesa(tmp_path) as m:
+        sala, tokens = await m.sala_com(2)
+        anfitriao = await m.ouvir(sala, tokens[1])
+        await anfitriao.proximo()
+        pedido = await m.pedir(sala, "Novato")
+        assert pedido == {"jogador": 3, "token": pedido["token"], "pendente": True}
+        espera = await m.ouvir(sala, pedido["token"])
+        tipo, dados = await espera.proximo()
+        assert tipo == "estado" and dados["fase"] == "pedido" and dados["anfitriao"] == "Ana"
+        assert "jogadores" not in dados
+        *_, (_, visto) = await anfitriao.ate(lambda t, d: t == "estado" and d["pedidos"])
+        assert visto["pedidos"] == [{"id": 3, "apelido": "Novato"}]
+        resposta = await m.agir(sala, pedido["token"], "chute", texto="bola")
+        assert resposta.status_code == 409 and resposta.json() == {"erro": "waiting for the host"}
+        assert (await m.agir(sala, tokens[2], "aceitar", pedido=3)).status_code == 409
+        assert (await m.agir(sala, tokens[1], "aceitar", pedido=3)).status_code == 204
+        *_, (_, dentro) = await espera.ate(lambda t, d: t == "estado" and d["fase"] == "espera")
+        assert [j["apelido"] for j in dentro["jogadores"]] == ["Ana", "Bia", "Novato"]
+        assert dentro["jogadores"][2]["presente"]
+        assert (await m.agir(sala, pedido["token"], "cartao", alvo=2)).status_code == 204
+
+
+@assincrono
+async def test_recusado_e_avisado_e_o_fluxo_fecha(tmp_path):
+    async with mesa(tmp_path) as m, m.cliente() as c:
+        sala, tokens = await m.sala_com(2)
+        pedido = await m.pedir(sala, "Novato")
+        espera = await m.ouvir(sala, pedido["token"])
+        await espera.proximo()
+        assert (await m.agir(sala, tokens[1], "recusar", pedido=3)).status_code == 204
+        lidos = []
+        while (evento := await espera.proximo()) is not None:
+            lidos.append(evento)
+        assert [t for t, _ in lidos] == ["recusado"]
+        assert (await m.agir(sala, pedido["token"], "sair")).status_code == 403
+        eventos = await c.get(f"{API}/salas/{sala}/eventos", params={"token": pedido["token"]})
+        assert eventos.status_code == 403
+
+
+@assincrono
+async def test_dica_e_pular_pela_rota(tmp_path):
+    async with mesa(tmp_path) as m:
+        sala, tokens = await m.sala_com(3)
+        chuta = await m.ouvir(sala, tokens[2])
+        await m.em_desenho(sala, tokens)
+        assert (await m.agir(sala, tokens[1], "dica")).status_code == 409  # not yet
+        m.relogio.andar(40)
+        assert (await m.agir(sala, tokens[1], "dica")).status_code == 204
+        *_, (_, dica) = await chuta.ate(lambda t, d: t == "dica")
+        assert sum(1 for c in dica["dica"] if c) == 1
+        assert (
+            await m.agir(sala, tokens[1], "traco", **dict(traco(1, [[1, 1]]), cor=12))
+        ).status_code == 204
+        assert (
+            await m.agir(sala, tokens[1], "traco", **dict(traco(2, [[1, 1]]), cor=13))
+        ).status_code == 422
+        assert (await m.agir(sala, tokens[2], "pular")).status_code == 409
+        assert (await m.agir(sala, tokens[1], "pular")).status_code == 204
+        lidos = await chuta.ate(lambda t, d: t == "estado" and d["fase"] == "intervalo")
+        assert ("pulou", {"jogador": 1, "seq": _seq(lidos, "pulou")}) in lidos
+        assert lidos[-1][1]["palavra"] == "Bicicleta"
 
 
 # --- laço, súmula e limpeza ---

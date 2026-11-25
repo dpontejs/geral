@@ -11,12 +11,14 @@ from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse, Response
 
 REGRAS = [
-    "Crie a sala, escolha quantas rodadas e mande o link no grupo. De 2 a 10 jogadores.",
-    "Na sua vez, escolha uma de 3 palavras e desenhe na prancheta. Nada de escrever a palavra.",
+    "Crie a sala, escolha quantas rodadas e mande o link no grupo. De 2 a 10 jogadores. Quem "
+    "abre o link pede para entrar e o anfitrião aceita.",
+    "Na sua vez, escolha uma de 3 palavras e desenhe na prancheta. Nada de escrever a palavra. "
+    "Não quer desenhar essa? Pule a vez.",
     "Os outros chutam. Quanto mais cedo e mais difícil a palavra, mais pontos; quem desenha "
     "ganha 2 por acerto.",
-    '"Na trave" quer dizer que você chegou perto: só você vê. Aos 40 e aos 20 segundos acende '
-    "uma letra.",
+    '"Na trave" quer dizer que você chegou perto: só você vê. Quem desenha pode acender uma '
+    "letra aos 40 e outra aos 20 segundos, se quiser.",
 ]
 
 

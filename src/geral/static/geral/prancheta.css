@@ -254,3 +254,35 @@
 .pr .palavra .l { text-transform: uppercase; }
 .pr .acoes .btn { display: inline-flex; align-items: center; justify-content: center; }
 @media (max-width: 899px) { .pr .pr-so-pc { display: none; } }
+
+/* ---- 2026-11-24: twelve chalks, the drawer's hint and skip, asking to join -------------------- */
+/* Twelve chalks and the eraser: two rows of seven, so the tray fits a 390px phone. */
+.pr .bandeja .cores { display: grid; grid-template-columns: repeat(7, auto); gap: 5px; justify-content: center; }
+/* The drawer's own buttons, in the guess box's place. */
+.pr .entrada.vez { gap: 6px; }
+.pr .entrada.vez .btn { flex: 1 1 0; min-width: 0; font-size: 18px; padding: 10px 10px; display: inline-flex; align-items: center; justify-content: center; gap: 7px; white-space: nowrap; }
+.pr .entrada.vez .btn.lamp-btn { background: var(--lamp); color: var(--ink); border: 3px solid var(--ink); }
+.pr .entrada.vez .btn.lamp-btn:hover:not(:disabled) { background: #000; color: var(--lamp); }
+.pr .entrada.vez .btn.secondary { flex: 0 0 auto; background: var(--paper); color: var(--ink); border: 3px solid var(--ink); }
+.pr .entrada.vez .btn.secondary:hover { background: #000; color: var(--lamp); }
+.pr .entrada.vez .btn.lamp-btn:disabled { opacity: 1; background: #1d1c19; color: #6f6754; border-color: #000; }
+.pr .entrada.vez .btn.lamp-btn.travada:disabled { color: #9a8a5a; }
+.pr .entrada.vez .cadeado { flex: none; }
+/* Waiting for the host: three lamps taking turns. */
+.pr .pr-pedido .lamp { font-size: 1.05em; }
+.pr .pr-aguarde { display: flex; align-items: center; gap: 6px; font: 700 13px/1 var(--body); text-transform: uppercase; letter-spacing: .08em; }
+.pr .lampadinha { width: 12px; height: 12px; border-radius: 50%; background: #3A3730; border: 2px solid #000; animation: pr-lampada 1.5s steps(1) infinite; }
+.pr .lampadinha:nth-child(2) { animation-delay: .5s; } .pr .lampadinha:nth-child(3) { animation-delay: 1s; }
+@keyframes pr-lampada { 0% { background: var(--lamp); box-shadow: 0 0 8px rgba(255, 194, 26, .8); } 33% { background: #3A3730; box-shadow: none; } }
+/* The host's answer box: the scoreboard's lamps over whatever screen is on. */
+.pr .pr-pedidos { position: fixed; z-index: 30; top: 10px; left: 50%; transform: translateX(-50%); width: min(520px, calc(100vw - 32px));
+  border: 3px solid #000; box-shadow: 0 0 0 5px var(--turf), 6px 6px 0 5px rgba(0, 0, 0, .35); padding: 8px 10px 10px; display: flex; flex-direction: column; gap: 6px; }
+.pr .pr-pedidos-tit { margin: 0; font-size: 14px; letter-spacing: .1em; }
+.pr .pr-pedidos ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; max-height: 40vh; overflow-y: auto; }
+.pr .pr-pedidos li { display: flex; align-items: center; gap: 6px; background: var(--paper); color: var(--ink); border: 2px solid #000; padding: 5px 5px 5px 10px; }
+.pr .pr-pedidos li b { flex: 1; min-width: 0; font: 800 19px/1.1 var(--display); text-transform: uppercase; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pr .pr-pedidos .btn { font-size: 15px; padding: 8px 10px; min-height: 40px; }
+.pr .pr-pedidos .btn.lamp-btn { border: 2px solid #000; }
+.pr .pr-pedidos .btn.secondary { border-width: 2px; }
+.pr .pr-pedido-nota { font: 700 11px/1 var(--body); text-transform: uppercase; letter-spacing: .06em; color: var(--cartao); }
+.pr #pr-dica[hidden] + #pr-pular { flex: 1 1 0; }
