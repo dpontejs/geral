@@ -25,6 +25,7 @@ const COR = {
 export const GOL = { meia: 3.66, altura: 2.44, fundo: 2.0 };
 const MARCA_PENALTI = 11;
 const DIST_BARREIRA = 9.15;
+const VAO_HOMENS = 0.66; // centre to centre of two men in the wall (shoulders are 0.46 m)
 // Where a free kick is taken from, by the rules slice's `Posicao.nome`.
 export const POSICOES = {
   meia_lua: { x: 0, z: 20.5 },
@@ -437,8 +438,19 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       const d = new THREE.Vector3(alvo.x - bola0.x, 0, alvo.z - bola0.z).normalize();
       return new THREE.Vector3(bola0.x + d.x * DIST_BARREIRA, 0, bola0.z + d.z * DIST_BARREIRA);
     };
-    const a = naLinha(lo + borda);
-    const b = naLinha(hi - borda);
+    let a = naLinha(lo + borda);
+    let b = naLinha(hi - borda);
+    // Drawing only: the men stand a hand apart, so the wall reads as people, not one block.
+    // What it covers is still the rules' span.
+    const passo = n > 1 ? a.distanceTo(b) / (n - 1) : 0;
+    if (n > 1 && passo < VAO_HOMENS) {
+      const meio = a.clone().lerp(b, 0.5);
+      const eixo = b.clone().sub(a);
+      if (eixo.lengthSq() < 1e-6) eixo.set(1, 0, 0);
+      eixo.normalize().multiplyScalar((VAO_HOMENS * (n - 1)) / 2);
+      a = meio.clone().sub(eixo);
+      b = meio.clone().add(eixo);
+    }
     return Array.from({ length: n }, (_, i) => (n === 1 ? a : a.clone().lerp(b, i / (n - 1))));
   }
 
@@ -1203,12 +1215,13 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       ultimo = { lance: l, modo: estado.modo, falta: estado.falta ? { ...estado.falta } : null };
       relogio = setTimeout(fechar, tl.fim - performance.now() + 20);
     };
-    // The keeper's exit: space or a tap, once, from the run-up to the end of the flight.
+    // The keeper's exit: space, Enter or a tap on the scene, once, from the run-up to the end
+    // of the flight.
     const soltar = [];
     if (!replay && estado.papel === "goleiro") {
       const sair = (ev) => {
         if (ev.type === "keydown") {
-          if (ev.code !== "Space") return;
+          if (!["Space", "Enter", "NumpadEnter"].includes(ev.code)) return;
           ev.preventDefault(); // a focused button must not fire, nor fullscreen close
           if (ev.repeat) return;
         }
@@ -1300,6 +1313,8 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     reiniciar,
     placar,
     letreiro,
+    /** A line of lamps under the board (waiting for the other, whose turn it is); "" clears. */
+    dica,
     /** cb({ms}) once per kick when the keeper presses space / taps, ms from chute_em. */
     onSaida(cb) {
       ouvintesSaida.add(cb);

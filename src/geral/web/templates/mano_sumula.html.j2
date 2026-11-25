@@ -5,14 +5,14 @@
 <link rel="stylesheet" href="/static/geral/mano.css?v={{ asset_version }}">{% endblock %}
 {% block content %}
 {# What is left of a match at its link: the score and every kick. #}
-<section class="jogo wall pr mano">
+<section class="jogo wall mano">
   <div class="wrap">
     {% include "_game_tabs.html.j2" %}
     <div class="game-title"><h1>Mano a Mano</h1><button type="button" class="rules-open" aria-label="Como jogar">?</button></div>
-    <div class="palco" id="mn-sumula">
+    <div class="palco pr" id="mn-sumula">
       {% include "_mano_sumula.html.j2" %}
     </div>
-    <p class="credit">Sala privada: só entra quem tem o link.</p>
+    <p class="credit pr">Sala privada: só entra quem tem o link.</p>
     {% set rules_key = "mano" %}{% include "_regras.html.j2" %}
   </div>
 </section>
