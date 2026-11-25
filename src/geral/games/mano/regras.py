@@ -7,7 +7,7 @@ ground to the crossbar. Every draw comes from the ``rng`` passed in.
 import math
 import random
 
-from geral.games.mano.tipos import Chute, Defesa, Lado, Lance, Resultado
+from geral.games.mano.tipos import Barreira, Chute, Defesa, Lado, Lance, Posicao, Resultado
 
 # Tuning constants: only these change to pass the calibration.
 FAIXA_MIN = 60
@@ -20,6 +20,10 @@ TRAVE = 25
 ALTURA_PULO = 600
 P_ANGULO = 0.35
 ALCANCE_SAIDA = 120
+ALTURA_BARREIRA = 450
+MEIA_LARGURA_POR_HOMEM = 55
+CURVA_CONTORNA = 0.3
+ALTURA_RASTEIRA = 150
 
 TERCO = 333
 CENTRO = (500, 0)
@@ -48,6 +52,28 @@ def _desviar(alvo: tuple[int, int], erro: float) -> tuple[float, float]:
         dx, dy, norma = 0, 1, 1
     empurrao = erro * DESVIO_POR_ERRO
     return alvo[0] + dx / norma * empurrao, alvo[1] + dy / norma * empurrao
+
+
+def cobertura(barreira: Barreira) -> tuple[int, int]:
+    """Stretch of ``x`` the wall covers, cut to the goal mouth."""
+    meia = barreira.n * MEIA_LARGURA_POR_HOMEM
+    return max(0, barreira.x - meia), min(1000, barreira.x + meia)
+
+
+def _onde_na_falta(chute: Chute) -> tuple[float, float]:
+    """Where a free kick goes before noise: the bar is also the strength of ``por_cima``."""
+    erro = _erro(chute, falta=True)
+    if chute.trajetoria == "por_cima" and erro:
+        fraco = chute.barra < 500
+        return chute.alvo[0], chute.alvo[1] + (-erro if fraco else erro) * DESVIO_POR_ERRO
+    return _desviar(chute.alvo, erro)
+
+
+def _na_barreira(chute: Chute, barreira: Barreira, x: int, y: int) -> bool:
+    inicio, fim = cobertura(barreira)
+    if not (inicio <= x <= fim and y <= ALTURA_BARREIRA):
+        return False
+    return not (chute.trajetoria == "pelo_lado" and abs(chute.curva) >= CURVA_CONTORNA)
 
 
 def _na_trave_ou_fora(x: int, y: int) -> Resultado | None:
@@ -84,15 +110,36 @@ def _alcanca(defesa: Defesa, x: int, y: int, rng: random.Random) -> bool:
     return TERCO - ALCANCE_SAIDA <= x < 1000 - TERCO + ALCANCE_SAIDA
 
 
-def resolver(chute: Chute, defesa: Defesa, rng: random.Random) -> Lance:
-    """Resolve a penalty kick."""
-    x, y = _desviar(chute.alvo, _erro(chute, falta=False))
+def resolver(
+    chute: Chute,
+    defesa: Defesa,
+    rng: random.Random,
+    *,
+    barreira: Barreira | None = None,
+    posicao: Posicao | None = None,
+) -> Lance:
+    """Resolve a penalty, or a free kick when a ``barreira`` is given."""
+    falta = barreira is not None
+    if falta and chute.trajetoria is None:
+        raise ValueError("a free kick needs a trajetoria")
+    x, y = _onde_na_falta(chute) if falta else _desviar(chute.alvo, _erro(chute, falta=False))
     x += rng.uniform(-RUIDO, RUIDO)
     y += rng.uniform(-RUIDO, RUIDO)
-    onde = (round(x), max(0, round(y)))
-    resultado = _na_trave_ou_fora(*onde)
+    if chute.trajetoria == "rasteira":
+        y = min(y, ALTURA_RASTEIRA)
+    onde = (round(x) + (posicao.desvio if posicao else 0), max(0, round(y)))
+    resultado: Resultado | None = None
+    if barreira is not None and _na_barreira(chute, barreira, *onde):
+        resultado = "barreira"
+    if resultado is None:
+        resultado = _na_trave_ou_fora(*onde)
     if resultado is None:
         resultado = "defesa" if _alcanca(defesa, *onde, rng) else "gol"
     return Lance(
-        chute=chute, defesa=defesa, barreira=None, posicao=None, onde=onde, resultado=resultado
+        chute=chute,
+        defesa=defesa,
+        barreira=barreira,
+        posicao=posicao,
+        onde=onde,
+        resultado=resultado,
     )

@@ -5,13 +5,16 @@ from pydantic import ValidationError
 
 from geral.games.mano.regras import (
     ALCANCE_SAIDA,
+    ALTURA_BARREIRA,
     ALTURA_PULO,
+    MEIA_LARGURA_POR_HOMEM,
     P_ANGULO,
     RUIDO,
+    cobertura,
     faixa_boa,
     resolver,
 )
-from geral.games.mano.tipos import Chute, Defesa
+from geral.games.mano.tipos import Barreira, Chute, Defesa, Posicao
 
 LONGE = Defesa(lado="direita", saida=False)
 
@@ -88,3 +91,63 @@ def test_chute_valida_os_limites():
         Chute(alvo=(500, 300), barra=1001)
     with pytest.raises(ValidationError):
         Chute(alvo=(500, 300), barra=500, curva=1.5)
+
+
+BARREIRA = Barreira(n=4, x=500)
+MEIA_LUA = Posicao(nome="meia_lua", desvio=0)
+
+
+def _falta(chute: Chute, semente: int = 0, barreira: Barreira = BARREIRA, posicao=MEIA_LUA):
+    return resolver(chute, LONGE, Random(semente), barreira=barreira, posicao=posicao)
+
+
+def test_cobertura_cortada_no_gol():
+    assert cobertura(Barreira(n=5, x=20)) == (0, 20 + 5 * MEIA_LARGURA_POR_HOMEM)
+    assert cobertura(Barreira(n=5, x=990)) == (990 - 5 * MEIA_LARGURA_POR_HOMEM, 1000)
+    assert cobertura(Barreira(n=2, x=500)) == (390, 610)
+
+
+def test_barreira_bloqueia_rasteira():
+    for s in range(50):
+        chute = Chute(alvo=(450, 100), barra=500, trajetoria="rasteira")
+        assert _falta(chute, s).resultado == "barreira"
+
+
+def test_rasteira_fora_da_barreira_segue():
+    lance = _falta(Chute(alvo=(150, 400), barra=500, trajetoria="rasteira"), 1)
+    assert lance.onde[1] <= 150
+    assert lance.resultado == "gol"
+
+
+def test_pelo_lado_com_pouca_curva_bate_na_barreira():
+    reta = Chute(alvo=(450, 300), barra=500, trajetoria="pelo_lado", curva=0.2)
+    curvada = Chute(alvo=(450, 300), barra=500, trajetoria="pelo_lado", curva=0.8)
+    assert _falta(reta, 2).resultado == "barreira"
+    assert _falta(curvada, 2).resultado != "barreira"
+
+
+def test_por_cima_fraco_bate_na_barreira():
+    alvo = (450, ALTURA_BARREIRA + 100)
+    na_faixa = Chute(alvo=alvo, barra=500, trajetoria="por_cima")
+    fraco = Chute(alvo=alvo, barra=500 - faixa_boa(alvo, True) // 2 - 200, trajetoria="por_cima")
+    assert _falta(na_faixa, 3).resultado == "gol"
+    assert _falta(fraco, 3).resultado == "barreira"
+
+
+def test_por_cima_forte_demais_sai():
+    lance = _falta(Chute(alvo=(450, 850), barra=1000, trajetoria="por_cima"), 4)
+    assert lance.onde[1] > 1000
+    assert lance.resultado in {"fora", "trave"}
+
+
+def test_posicao_desvia_a_bola():
+    chute = Chute(alvo=(500, 700), barra=500, trajetoria="por_cima")
+    sem = _falta(chute, 5)
+    com = _falta(chute, 5, posicao=Posicao(nome="entrada_esquerda", desvio=60))
+    assert com.onde[0] - sem.onde[0] == 60
+    assert com.posicao is not None and com.barreira == BARREIRA
+
+
+def test_falta_sem_trajetoria_da_erro():
+    with pytest.raises(ValueError):
+        _falta(Chute(alvo=(500, 700), barra=500))
