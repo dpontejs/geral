@@ -5,7 +5,7 @@ import pytest
 
 from geral.games.mano.bot import ACERTO_SAIDA, armar, chutar, defender
 from geral.games.mano.regras import cobertura, resolver
-from geral.games.mano.tipos import Barreira, Chute, Defesa
+from geral.games.mano.tipos import Barreira, Chute, Defesa, Posicao
 
 REPETIDO = Chute(alvo=(150, 300), barra=500)
 
@@ -90,3 +90,21 @@ def test_bot_dificil_contorna_a_barreira():
         chute = chutar("dificil", historico, rng, barreira=barreira)
         if inicio <= chute.alvo[0] <= fim:
             assert chute.trajetoria == "pelo_lado" and abs(chute.curva) >= 0.5
+
+
+@pytest.mark.parametrize("desvio", [-80, 0, 80])
+def test_bot_dificil_compensa_a_posicao_e_nao_bate_na_barreira(desvio):
+    posicao = Posicao(nome="entrada_esquerda", desvio=desvio)
+    historico = [
+        resolver(REPETIDO, Defesa(lado="esquerda", saida=False), Random(s)) for s in range(3)
+    ]
+    rng = Random(10)
+    for x in (150, 400, 500, 600, 850):
+        barreira = Barreira(n=5, x=x)
+        for _ in range(100):
+            chute = chutar("dificil", historico, rng, barreira=barreira, posicao=posicao)
+            chega = chute.alvo[0] + desvio
+            assert 333 <= chega <= 850  # the third the human never dived to (fica/direita)
+            defesa = Defesa(lado="esquerda", saida=False)
+            lance = resolver(chute, defesa, rng, barreira=barreira, posicao=posicao)
+            assert lance.resultado != "barreira"

@@ -1,16 +1,28 @@
 """The Mano a Mano bot: random (facil), with a habit (medio) or reading the human (dificil).
 
 ``historico`` holds the human's previous kicks of the match in the opposite role: his kicks
-when the bot defends, his dives when the bot kicks. Every draw comes from ``rng``; the
-``medio`` habit is drawn once per ``rng`` (one per match) and remembered for it.
+when the bot defends, his dives when the bot kicks. Every draw comes from ``rng``.
+
+The ``medio`` habit is drawn on the first call with a given ``rng`` and remembered for that
+object, so the server must create one ``random.Random`` per match (a rematch is a new match,
+with a new ``Random``); reusing one carries the habit over.
 """
 
 import random
 from collections import Counter
 from weakref import WeakKeyDictionary
 
-from geral.games.mano.regras import cobertura
-from geral.games.mano.tipos import Barreira, Chute, Defesa, Lado, Lance, Nivel, Trajetoria
+from geral.games.mano.regras import RUIDO, cobertura, curva_certa
+from geral.games.mano.tipos import (
+    Barreira,
+    Chute,
+    Defesa,
+    Lado,
+    Lance,
+    Nivel,
+    Posicao,
+    Trajetoria,
+)
 
 ACERTO_SAIDA: dict[Nivel, float] = {"facil": 0.3, "medio": 0.5, "dificil": 0.7}
 P_MANIA = 0.6
@@ -59,18 +71,27 @@ def _menos_pulado(historico: list[Lance], rng: random.Random) -> Lado:
 
 
 def chutar(
-    nivel: Nivel, historico: list[Lance], rng: random.Random, *, barreira: Barreira | None
+    nivel: Nivel,
+    historico: list[Lance],
+    rng: random.Random,
+    *,
+    barreira: Barreira | None,
+    posicao: Posicao | None = None,
 ) -> Chute:
     if nivel == "dificil" and historico:
         inicio, fim = TERCOS[_menos_pulado(historico, rng)]
-        x = rng.randint(max(inicio, MARGEM), min(fim, 1000 - MARGEM))
+        chega = rng.randint(max(inicio, MARGEM), min(fim, 1000 - MARGEM))
         y = rng.randint(0, 1000 - MARGEM)
         barra = rng.randint(500 - BARRA_DIFICIL, 500 + BARRA_DIFICIL)
         if barreira is None:
-            return Chute(alvo=(x, y), barra=barra)
+            return Chute(alvo=(chega, y), barra=barra)
+        desvio = posicao.desvio if posicao else 0
+        x = min(1000, max(0, chega - desvio))
+        chega = x + desvio
         de, ate = cobertura(barreira)
-        if de <= x <= ate:
-            curva = rng.uniform(CURVA_DIFICIL, 1) * rng.choice((-1, 1))
+        if de - RUIDO <= chega <= ate + RUIDO:
+            sinal = curva_certa(barreira, chega) or 1
+            curva = rng.uniform(CURVA_DIFICIL, 1) * sinal
             return Chute(alvo=(x, y), barra=barra, trajetoria="pelo_lado", curva=curva)
         return Chute(alvo=(x, y), barra=barra, trajetoria="rasteira")
     if nivel == "medio":
