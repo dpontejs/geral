@@ -189,8 +189,9 @@ painel.addEventListener("click", (ev) => {
   }
 });
 document.getElementById("disputa").addEventListener("click", disputa);
-document.getElementById("bater").addEventListener("click", () => umaCobranca("voce"));
-document.getElementById("defender").addEventListener("click", () => umaCobranca("bot"));
+// A single kick never cuts into a running shootout.
+document.getElementById("bater").addEventListener("click", () => rodando || umaCobranca("voce"));
+document.getElementById("defender").addEventListener("click", () => rodando || umaCobranca("bot"));
 document.getElementById("replay").addEventListener("click", () => cena.replay());
 
 // For the photo script: drive a kick with a fixed result.
