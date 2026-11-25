@@ -11,7 +11,6 @@ import asyncio
 import json
 import logging
 import random
-import re
 import sqlite3
 from collections.abc import AsyncIterator, Awaitable, Callable
 from contextlib import closing
@@ -21,12 +20,16 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Annotated, Literal
 
 from fastapi import APIRouter, Body, Request
-from fastapi.responses import JSONResponse, Response, StreamingResponse
+from fastapi.responses import JSONResponse, Response
 from pydantic import BaseModel, Field
 
 from geral.games.prancheta import palavras
 from geral.games.prancheta.sala import ErroSala, Evento, Sala
 from geral.games.prancheta.tipos import Banco
+from geral.web.sse import SEM_TOKEN as _SEM_TOKEN
+from geral.web.sse import Fluxo as _Fluxo
+from geral.web.sse import SemToken as SemToken  # re-exported: the tests look for it here
+from geral.web.sse import sse as _sse
 from geral.web.team_requests import network
 
 if TYPE_CHECKING:
@@ -187,48 +190,8 @@ class _SalaViva:
     conexoes: list[_Conexao] = field(default_factory=list)
 
 
-class _Fluxo(StreamingResponse):
-    """An events stream that says goodbye however it ends: closed, dropped, cancelled or broken.
-
-    Starlette leaves a stream's generator unclosed when the client goes away while a chunk is
-    being sent, so its `finally` would only run whenever the garbage collector gets to it.
-    """
-
-    def __init__(self, conteudo, ao_fechar: Callable[[], None], **kwargs) -> None:
-        super().__init__(conteudo, **kwargs)
-        self._ao_fechar = ao_fechar
-
-    async def __call__(self, scope, receive, send) -> None:
-        try:
-            await super().__call__(scope, receive, send)
-        finally:
-            self._ao_fechar()
-
-
-class SemToken(logging.Filter):
-    """Hides `token=` values in uvicorn's access log: the events URL carries the player's token."""
-
-    PADRAO = re.compile(r"(token=)[^&\s\"]*")
-
-    def filter(self, record: logging.LogRecord) -> bool:
-        if isinstance(record.args, tuple):
-            record.args = tuple(
-                self.PADRAO.sub(r"\1***", a) if isinstance(a, str) else a for a in record.args
-            )
-        if isinstance(record.msg, str):
-            record.msg = self.PADRAO.sub(r"\1***", record.msg)
-        return True
-
-
-_SEM_TOKEN = SemToken()
-
-
 def _erro(status: int, motivo: str) -> JSONResponse:
     return JSONResponse({"erro": motivo}, status_code=status)
-
-
-def _sse(tipo: str, dados: dict) -> str:
-    return f"event: {tipo}\ndata: {json.dumps(dados, ensure_ascii=False)}\n\n"
 
 
 class Prancheta:
