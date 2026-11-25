@@ -48,7 +48,8 @@ export function mundoParaGol(p) {
 export const prender = (v, lo = 0, hi = 1000) => Math.min(hi, Math.max(lo, v));
 
 /** Barrier centre kept so its outer man is at most about one man outside a post. */
-export const prenderBarreira = (n, x) => prender(x, n * 55 - 120, 1120 - n * 55);
+/** The span the wall blocks, as the rules count it: x ± n·55, cut at the posts. */
+export const vaoDaBarreira = (n, x) => [Math.max(0, x - n * 55), Math.min(1000, x + n * 55)];
 
 /**
  * The draft's good band of the bar for an aim point: narrower near a post or the crossbar.
@@ -428,16 +429,16 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
 
   /** Where the n men stand: the contract span x ± n·55 seen from the ball, 9.15 m out. */
   function barreiraHomens({ n, x }) {
-    const meio = n * 55;
-    const c = prenderBarreira(n, x);
+    const [lo, hi] = vaoDaBarreira(n, x);
+    const borda = Math.min(55, (hi - lo) / (2 * n));
     const bola0 = estado.bolaEm;
     const naLinha = (cx) => {
       const alvo = golParaMundo(cx, 0);
       const d = new THREE.Vector3(alvo.x - bola0.x, 0, alvo.z - bola0.z).normalize();
       return new THREE.Vector3(bola0.x + d.x * DIST_BARREIRA, 0, bola0.z + d.z * DIST_BARREIRA);
     };
-    const a = naLinha(c - meio + 55);
-    const b = naLinha(c + meio - 55);
+    const a = naLinha(lo + borda);
+    const b = naLinha(hi - borda);
     return Array.from({ length: n }, (_, i) => (n === 1 ? a : a.clone().lerp(b, i / (n - 1))));
   }
 
@@ -545,9 +546,12 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
 
   function quadro() {
     if (estado.destruida) return;
-    if (estado.animacao) estado.animacao(performance.now());
-    renderer.render(cena, camera);
-    requestAnimationFrame(quadro);
+    try {
+      if (estado.animacao) estado.animacao(performance.now());
+      renderer.render(cena, camera);
+    } finally {
+      requestAnimationFrame(quadro); // one bad frame must not freeze the scene
+    }
   }
 
   function arrumar() {
@@ -601,7 +605,9 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       }
     };
     const relogio = setInterval(tique, 100);
-    tique();
+    // The first tick waits for the caller to build its controls, even at zero.
+    prazoEl.textContent = String(Math.max(0, Math.ceil(segundos))).padStart(2, "0");
+    setTimeout(tique, 0);
     function parar() {
       parado = true;
       clearInterval(relogio);
@@ -677,10 +683,14 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
         resolve(valor);
       };
       pedidoAtual = () => terminar(null);
-      fn({ terminar, aoFim: (f) => limpar.push(f), ouvir: (alvo, tipo, f) => {
+      // Anything registered after the end (a deadline already at zero) is undone at once.
+      const aoFim = (f) => (feito ? f() : limpar.push(f));
+      const ouvir = (alvo, tipo, f) => {
+        if (feito) return;
         alvo.addEventListener(tipo, f);
         limpar.push(() => alvo.removeEventListener(tipo, f));
-      } });
+      };
+      fn({ terminar, aoFim, ouvir, terminado: () => feito });
     });
   }
 
@@ -692,13 +702,14 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     return comecarPedido(({ terminar, aoFim, ouvir }) => {
       const escolha = falta ? { trajetoria: null, curva: 0 } : {};
       let alvo = null;
+      let mirado = false; // only a real aim counts; an untouched one is random at the deadline
       let travado = false;
       let barraLigada = false;
       let barraInicio = 0;
       let barraValor = 500;
       const fechar = () =>
         terminar({
-          alvo: alvo ? alvo.map(Math.round) : [Math.round(acaso(0, 1000)), Math.round(acaso(0, 1000))],
+          alvo: alvo && mirado ? alvo.map(Math.round) : [Math.round(acaso(0, 1000)), Math.round(acaso(0, 1000))],
           barra: Math.round(barraLigada ? barraValor : acaso(0, 1000)),
           ...(falta ? { trajetoria: escolha.trajetoria ?? sortear(["rasteira", "por_cima", "pelo_lado"]), curva: Math.round(escolha.curva * 100) / 100 } : {}),
         });
@@ -717,6 +728,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
           if (!p) return;
           const [x, y] = mundoParaGol(p);
           alvo = [prender(x), prender(y)];
+          mirado = true;
           porMira(alvo);
           if (falta) desenharPrevia(alvo, escolha);
         });
@@ -726,6 +738,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
           if (p) {
             const [x, y] = mundoParaGol(p);
             alvo = [prender(x), prender(y)];
+            mirado = true;
             porMira(alvo);
           }
           travado = true;
@@ -829,12 +842,13 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
   function pedirBarreira({ segundos = 10, inicial = { n: 3, x: 500 } } = {}) {
     return comecarPedido(({ terminar, aoFim, ouvir }) => {
       if (!estado.falta) api.posicionarFalta({});
-      const b = { n: inicial.n, x: prenderBarreira(inicial.n, inicial.x) };
+      const b = { n: inicial.n, x: prender(inicial.x) };
       const aplicar = () => {
-        b.x = Math.round(prenderBarreira(b.n, b.x));
+        b.x = Math.round(prender(b.x));
         estado.falta.barreira = { ...b };
         montarBarreira();
-        acoesEl.querySelector(".mn-n").textContent = b.n;
+        const n = acoesEl.querySelector(".mn-n");
+        if (n) n.textContent = b.n;
       };
       aoFim(
         contar(segundos, () => {
@@ -1137,7 +1151,8 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     const direita = new THREE.Vector3(-d.z, 0, d.x);
     const tl = {
       t0: performance.now(),
-      tChute: chute_em,
+      // A late start (or clock skew) still gets a short run-up, never a kick from 2 m away.
+      tChute: Math.max(chute_em, performance.now() + 600 * lento),
       tGolpe: Infinity,
       lance: null,
       lento,
@@ -1172,10 +1187,13 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     const aplicarFinal = () => {}; // the scene keeps the last frame until the next kick
     const receber = (l) => {
       if (parado) return;
+      // Plan everything first: a malformed lance must not leave a half-set timeline.
+      const voo = planejarVoo(l);
+      const alvoGoleiro = alvoDoGoleiro(l, voo);
+      tl.voo = voo;
+      tl.alvoGoleiro = alvoGoleiro;
       tl.lance = l;
-      tl.tGolpe = Math.max(chute_em + JANELA * lento, performance.now());
-      tl.voo = planejarVoo(l);
-      tl.alvoGoleiro = alvoDoGoleiro(l, tl.voo);
+      tl.tGolpe = Math.max(chute_em + JANELA * lento, tl.tChute, performance.now());
       tl.fim = tl.tGolpe + (VOO[estado.modo] * tl.voo.fim + DEPOIS) * lento;
       ultimo = { lance: l, modo: estado.modo, falta: estado.falta ? { ...estado.falta } : null };
       relogio = setTimeout(fechar, tl.fim - performance.now() + 20);
@@ -1184,8 +1202,11 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     const soltar = [];
     if (!replay && estado.papel === "goleiro") {
       const sair = (ev) => {
-        if (ev.type === "keydown" && (ev.code !== "Space" || ev.repeat)) return;
-        if (ev.target?.closest?.("button")) return;
+        if (ev.type === "keydown") {
+          if (ev.code !== "Space") return;
+          ev.preventDefault(); // a focused button must not fire, nor fullscreen close
+          if (ev.repeat) return;
+        }
         const agora = performance.now();
         const fimVoo = tl.lance ? tl.tGolpe + VOO[estado.modo] * tl.voo.fim : Infinity;
         if (tl.saidaLocal != null || agora > fimVoo) return;
@@ -1200,7 +1221,13 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     estado.animacao = aplicar;
     const controle = { parar: () => (parar(), resolver()) };
     cobrancaAtual = controle;
-    Promise.resolve(lance).then(receber);
+    // A lost lance (connection closed, W.O.) or a malformed one ends the kick where it is.
+    Promise.resolve(lance)
+      .then(receber)
+      .catch((erro) => {
+        console.error("mano: cobrança sem lance", erro);
+        controle.parar();
+      });
     return pronto;
   }
 
@@ -1227,6 +1254,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
 
   /** Back to the set position, sign and controls cleared. */
   function reiniciar() {
+    pedidoAtual?.();
     cobrancaAtual?.parar();
     estado.animacao = null;
     letreiro("");
