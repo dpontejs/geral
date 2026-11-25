@@ -7,9 +7,58 @@
 .mn .lamp { font-family: var(--dots, monospace); font-weight: 900; text-transform: uppercase; color: var(--lamp, #FFC21A); letter-spacing: .1em; line-height: 1; text-shadow: 0 0 6px rgba(255, 194, 26, .55), 0 0 18px rgba(255, 170, 0, .25); }
 .mn-board { background-color: var(--board, #0B0B0A); background-image: radial-gradient(circle, var(--lamp-off, #1D1C18) 1.6px, transparent 2.1px); background-size: 7px 7px; border: 3px solid #000; box-shadow: 0 0 0 2px #3A3833; }
 
-.mn-tela { position: absolute; right: 12px; bottom: 12px; z-index: 3; background: var(--board, #0B0B0A); color: var(--lamp, #FFC21A); border: 2px solid var(--lamp, #FFC21A); font: 800 15px/1 var(--display, sans-serif); text-transform: uppercase; letter-spacing: .06em; padding: 9px 12px; cursor: pointer; }
+.mn-tela { position: absolute; right: 12px; top: 12px; z-index: 3; background: var(--board, #0B0B0A); color: var(--lamp, #FFC21A); border: 2px solid var(--lamp, #FFC21A); font: 800 15px/1 var(--display, sans-serif); text-transform: uppercase; letter-spacing: .06em; padding: 9px 12px; cursor: pointer; }
 .mn-tela:hover { background: var(--lamp, #FFC21A); color: var(--ink, #14231A); }
 
 /* A phone held upright gets a single instruction. */
 .mn-gire { display: none; position: absolute; inset: 0; z-index: 5; place-items: center; background: var(--board, #0B0B0A); font-size: clamp(18px, 6vw, 30px); text-align: center; padding: 16px; }
 @media (orientation: portrait) and (max-width: 760px) { .mn-gire { display: grid; } }
+
+/* The board on top: the two lines of the shootout and the clock. */
+.mn-placar { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 18px; padding: 8px 14px; min-height: 44px; }
+.mn-placar:has(.mn-series:empty):has(.mn-prazo:empty) { display: none; }
+.mn-prazo { font-size: clamp(22px, 3.4vw, 36px); min-width: 2ch; text-align: right; font-variant-numeric: tabular-nums; }
+.mn-prazo:empty { display: none; }
+.mn-prazo.mn-urgente { color: #fff; text-shadow: 0 0 6px var(--lamp, #FFC21A), 0 0 18px rgba(255, 194, 26, .9); }
+
+/* The hint and the actions, at the bottom, over the grass. */
+.mn-baixo { position: absolute; left: 0; right: 0; bottom: 14px; display: flex; flex-direction: column; align-items: center; gap: 10px; pointer-events: none; padding: 0 64px; }
+.mn-baixo > * { pointer-events: auto; }
+.mn-dica { position: absolute; top: clamp(62px, 11vh, 86px); left: 50%; transform: translateX(-50%); white-space: nowrap; font-size: clamp(14px, 2vw, 22px); background: rgba(11, 11, 10, .82); padding: 7px 12px; }
+.mn-dica:empty { display: none; }
+.mn-acoes { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 10px; }
+.mn-acoes:empty { display: none; }
+.mn-opcoes { display: flex; gap: 8px; }
+.mn-opcao, .mn-ok { font: 900 clamp(16px, 2.2vw, 24px)/1 var(--display, sans-serif); text-transform: uppercase; letter-spacing: .05em; background: var(--paper, #EFE4CC); color: var(--ink, #14231A); border: 3px solid var(--ink, #14231A); padding: 12px 16px; min-height: 48px; cursor: pointer; box-shadow: 4px 4px 0 rgba(0, 0, 0, .45); }
+.mn-opcao:hover, .mn-opcao[aria-pressed="true"] { background: var(--lamp, #FFC21A); }
+.mn-ok { background: var(--board, #0B0B0A); color: var(--lamp, #FFC21A); border-color: var(--lamp, #FFC21A); }
+.mn-ok:hover:not(:disabled) { background: var(--lamp, #FFC21A); color: var(--ink, #14231A); }
+.mn-ok:disabled { opacity: .45; cursor: default; }
+.mn-curva { display: flex; align-items: center; gap: 8px; background: rgba(11, 11, 10, .82); padding: 8px 12px; }
+.mn-curva input { width: clamp(120px, 18vw, 220px); accent-color: var(--lamp, #FFC21A); }
+/* The keeper's three buttons: big, one per third of the screen. */
+.mn-acoes-defesa { width: 100%; max-width: 980px; display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.mn-grande { font-size: clamp(20px, 3.2vw, 38px); min-height: clamp(56px, 11vh, 96px); }
+.mn-acoes-barreira .mn-opcao { min-width: 52px; font-size: 28px; padding: 8px 14px; }
+.mn-n { font-size: clamp(26px, 3.6vw, 40px); }
+.mn-homens { font-size: 14px; }
+
+/* The bar: a column of lamps, the good band dimly lit, the running lamp bright. */
+.mn-barra { position: absolute; right: 18px; top: 50%; transform: translateY(-50%); padding: 8px; height: min(62%, 420px); }
+.mn-barra[hidden] { display: none; }
+.mn-celulas { display: flex; flex-direction: column; gap: 3px; height: 100%; }
+.mn-celulas i { flex: 1; width: clamp(22px, 2.6vw, 32px); background: var(--lamp-off, #1D1C18); border-radius: 2px; }
+.mn-celulas i.boa { background: rgba(255, 194, 26, .28); box-shadow: inset 0 0 0 1px rgba(255, 194, 26, .5); }
+.mn-celulas i.on { background: var(--lamp, #FFC21A); box-shadow: 0 0 10px var(--lamp, #FFC21A), 0 0 22px rgba(255, 170, 0, .6); }
+.mn-celulas i.boa.on { background: #fff; }
+
+/* The big result sign. */
+.mn-letreiro { position: absolute; left: 50%; top: 30%; transform: translate(-50%, -50%); font-size: clamp(36px, 8vw, 96px); background: rgba(11, 11, 10, .88); padding: 10px 22px; white-space: nowrap; pointer-events: none; }
+.mn-letreiro:empty { display: none; }
+@media (max-height: 430px) {
+  .mn-baixo { bottom: 8px; gap: 6px; }
+  .mn-opcao, .mn-ok { padding: 8px 12px; min-height: 40px; }
+  .mn-placar { top: 6px; padding: 4px 10px; }
+  .mn-dica { top: 52px; }
+  .mn-tela { top: 6px; right: 6px; padding: 7px 9px; font-size: 13px; }
+}

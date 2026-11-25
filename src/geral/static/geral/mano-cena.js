@@ -47,6 +47,45 @@ export function mundoParaGol(p) {
 
 export const prender = (v, lo = 0, hi = 1000) => Math.min(hi, Math.max(lo, v));
 
+/** Barrier centre kept so its outer man is at most about one man outside a post. */
+export const prenderBarreira = (n, x) => prender(x, n * 55 - 120, 1120 - n * 55);
+
+/**
+ * The draft's good band of the bar for an aim point: narrower near a post or the crossbar.
+ * Only an approximation for the draft; slice 4 passes the rules' own band to pedirChute.
+ */
+export function faixaBoa([x, y]) {
+  const perto = Math.max(0, 1 - Math.min(x, 1000 - x) / 250, 1 - (1000 - y) / 250);
+  const meia = 170 - 110 * Math.min(1, perto);
+  return [500 - meia, 500 + meia];
+}
+
+/**
+ * The ball's path from `origem` to `destino` (world points). Penalties fly almost straight;
+ * free kicks bend by `curva` (-1..1, positive bulges to the kicker's right) and by trajectory.
+ */
+export function caminho(origem, destino, { trajetoria = null, curva = 0 } = {}) {
+  const meio = origem.clone().lerp(destino, 0.5);
+  const chao = new THREE.Vector3(destino.x - origem.x, 0, destino.z - origem.z).normalize();
+  const direita = new THREE.Vector3(-chao.z, 0, chao.x); // kicker's right, facing the goal
+  const c = meio.clone();
+  const pico = (h) => 2 * h - (origem.y + destino.y) / 2; // control y for a peak near h
+  if (!trajetoria) {
+    c.y = pico(Math.max(origem.y, destino.y) * 0.75 + 0.12);
+  } else if (trajetoria === "rasteira") {
+    c.y = Math.max(0.11, pico(destino.y * 0.4 + 0.1));
+    c.addScaledVector(direita, curva * 3);
+  } else if (trajetoria === "por_cima") {
+    c.y = pico(Math.max(3.1, destino.y + 1.2));
+    c.addScaledVector(direita, curva * 3.2);
+  } else {
+    const lado = curva === 0 ? 1 : Math.sign(curva);
+    c.y = pico(destino.y * 0.6 + 0.9);
+    c.addScaledVector(direita, lado * 2.2 + curva * 1.6);
+  }
+  return new THREE.QuadraticBezierCurve3(origem.clone(), c, destino.clone());
+}
+
 // ---------------------------------------------------------------------------------------
 // The set: pitch, goal and net, the old concrete bowl with its crowd and lamp rigs.
 
@@ -358,26 +397,31 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     return d.normalize();
   }
 
+  // A pool of five men, so dragging the wall never rebuilds meshes.
+  const homens = Array.from({ length: 5 }, () => {
+    const j = montarJogador({ camisa: COR.concretoLt, calcao: COR.tinta, meia: COR.concretoLt });
+    j.partes.bracoE.rotation.set(-0.3, 0, 0.32);
+    j.partes.bracoD.rotation.set(-0.3, 0, -0.32);
+    barreiraGrupo.add(j.grupo);
+    return j;
+  });
+
   function montarBarreira() {
-    barreiraGrupo.clear();
     const b = estado.falta?.barreira;
-    if (!b) return;
-    const homens = barreiraHomens(b);
-    for (const p of homens) {
-      const j = montarJogador({ camisa: COR.concretoLt, calcao: COR.tinta, meia: COR.concretoLt });
-      pose(j, { bracos: 0 });
-      j.partes.bracoE.rotation.set(-0.3, 0, 0.32);
-      j.partes.bracoD.rotation.set(-0.3, 0, -0.32);
+    const lugares = b ? barreiraHomens(b) : [];
+    homens.forEach((j, i) => {
+      const p = lugares[i];
+      j.grupo.visible = Boolean(p);
+      if (!p) return;
       j.grupo.position.set(p.x, 0.95, p.z);
-      j.grupo.rotation.y = Math.atan2(estado.bolaEm.x - p.x, estado.bolaEm.z - p.z);
-      barreiraGrupo.add(j.grupo);
-    }
+      j.grupo.rotation.set(0, Math.atan2(estado.bolaEm.x - p.x, estado.bolaEm.z - p.z), 0);
+    });
   }
 
   /** Where the n men stand: the contract span x ± n·55 seen from the ball, 9.15 m out. */
   function barreiraHomens({ n, x }) {
     const meio = n * 55;
-    const c = prender(x, meio - 120, 1120 - meio);
+    const c = prenderBarreira(n, x);
     const bola0 = estado.bolaEm;
     const naLinha = (cx) => {
       const alvo = golParaMundo(cx, 0);
@@ -427,11 +471,12 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     if (estado.papel === "batedor") {
       const d = direcaoAoGol();
       camera.position.set(bz.x - d.x * 7, 2.7, bz.z - d.z * 7);
-      camera.lookAt(bz.x * 0.15, 0.3, 0);
+      camera.lookAt(bz.x * 0.15, -0.3, 0);
     } else {
       // Inside the goal, back to the net, under the crossbar: the kicker at the spot.
-      camera.position.set(0, 2.3, -1.9);
-      camera.lookAt(bz.x * 0.9, 0.1, bz.z);
+      // A little off-centre, over the keeper's shoulder, so his head never hides the ball.
+      camera.position.set(0.5, 2.3, -1.9);
+      camera.lookAt(bz.x * 0.9 + 0.2, 0.1, bz.z);
     }
     camera.updateProjectionMatrix();
   }
@@ -494,6 +539,326 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     posicionarCamera();
   }
 
+  // ---- HUD: board, hint, actions, bar ----------------------------------------------------
+
+  hud.innerHTML = `
+    <div class="mn-placar mn-board">
+      <div class="mn-series"></div>
+      <div class="mn-prazo lamp" aria-live="off"></div>
+    </div>
+    <div class="mn-letreiro lamp" aria-live="polite"></div>
+    <div class="mn-dica lamp"></div>
+    <div class="mn-baixo"><div class="mn-acoes"></div></div>
+    <div class="mn-barra mn-board" hidden><div class="mn-celulas"></div></div>`;
+  const $ = (sel) => hud.querySelector(sel);
+  const dicaEl = $(".mn-dica");
+  const acoesEl = $(".mn-acoes");
+  const prazoEl = $(".mn-prazo");
+  const barraEl = $(".mn-barra");
+  const CELULAS = 25;
+  $(".mn-celulas").innerHTML = Array.from({ length: CELULAS }, () => "<i></i>").join("");
+  const celulas = [...barraEl.querySelectorAll("i")].reverse(); // index 0 at the bottom
+
+  function dica(texto) {
+    dicaEl.textContent = texto || "";
+  }
+
+  /** Count `segundos` down on the board; calls aoZerar once at zero. Returns a stop(). */
+  function contar(segundos, aoZerar) {
+    const fim = performance.now() + segundos * 1000;
+    let parado = false;
+    const tique = () => {
+      if (parado) return;
+      const falta = Math.max(0, Math.ceil((fim - performance.now()) / 1000));
+      prazoEl.textContent = String(falta).padStart(2, "0");
+      prazoEl.classList.toggle("mn-urgente", falta <= 3);
+      if (falta === 0) {
+        parar();
+        aoZerar();
+      }
+    };
+    const relogio = setInterval(tique, 100);
+    tique();
+    function parar() {
+      parado = true;
+      clearInterval(relogio);
+      prazoEl.textContent = "";
+    }
+    return parar;
+  }
+
+  const raio = new THREE.Raycaster();
+  function noPlano(ev, plano) {
+    const r = canvas.getBoundingClientRect();
+    const ndc = new THREE.Vector2(((ev.clientX - r.left) / r.width) * 2 - 1, -((ev.clientY - r.top) / r.height) * 2 + 1);
+    raio.setFromCamera(ndc, camera);
+    return raio.ray.intersectPlane(plano, new THREE.Vector3());
+  }
+  const PLANO_GOL = new THREE.Plane(new THREE.Vector3(0, 0, 1), 0);
+  const PLANO_CHAO = new THREE.Plane(new THREE.Vector3(0, 1, 0), 0);
+
+  // The aim: a lamp ring on the goal mouth, drawn over the net.
+  const mira = new THREE.Group();
+  const miraMat = new THREE.MeshBasicMaterial({ color: COR.lamp, depthTest: false, transparent: true });
+  mira.add(new THREE.Mesh(new THREE.RingGeometry(0.17, 0.25, 24), miraMat));
+  mira.add(new THREE.Mesh(new THREE.PlaneGeometry(0.05, 0.22), miraMat).translateY(0.34));
+  mira.add(new THREE.Mesh(new THREE.PlaneGeometry(0.05, 0.22), miraMat).translateY(-0.34));
+  mira.add(new THREE.Mesh(new THREE.PlaneGeometry(0.22, 0.05), miraMat).translateX(0.34));
+  mira.add(new THREE.Mesh(new THREE.PlaneGeometry(0.22, 0.05), miraMat).translateX(-0.34));
+  mira.renderOrder = 10;
+  mira.traverse((o) => (o.renderOrder = 10));
+  mira.visible = false;
+  cena.add(mira);
+  function porMira([x, y]) {
+    mira.position.copy(golParaMundo(x, y, 0.06));
+  }
+
+  // The dashed path preview of a free kick.
+  const previaMat = new THREE.LineDashedMaterial({ color: COR.lamp, dashSize: 0.35, gapSize: 0.25, transparent: true, opacity: 0.85, depthTest: false });
+  const previa = new THREE.Line(new THREE.BufferGeometry(), previaMat);
+  previa.renderOrder = 9;
+  previa.visible = false;
+  cena.add(previa);
+  function desenharPrevia(alvo, escolha) {
+    const pts = caminho(estado.bolaEm, golParaMundo(alvo[0], alvo[1]), escolha).getPoints(40);
+    previa.geometry.dispose();
+    previa.geometry = new THREE.BufferGeometry().setFromPoints(pts);
+    previa.computeLineDistances();
+    previa.visible = true;
+  }
+
+  function limparControles() {
+    acoesEl.innerHTML = "";
+    acoesEl.className = "mn-acoes";
+    dica("");
+    barraEl.hidden = true;
+    mira.visible = false;
+    previa.visible = false;
+  }
+
+  const acaso = (a, b) => a + Math.random() * (b - a);
+  const sortear = (lista) => lista[Math.floor(Math.random() * lista.length)];
+
+  let pedidoAtual = null; // the stop() of the pending pedir*, so a new one cancels it
+  function comecarPedido(fn) {
+    pedidoAtual?.();
+    return new Promise((resolve) => {
+      const limpar = [];
+      let feito = false;
+      const terminar = (valor) => {
+        if (feito) return;
+        feito = true;
+        for (const f of limpar) f();
+        limparControles();
+        pedidoAtual = null;
+        resolve(valor);
+      };
+      pedidoAtual = () => terminar(null);
+      fn({ terminar, aoFim: (f) => limpar.push(f), ouvir: (alvo, tipo, f) => {
+        alvo.addEventListener(tipo, f);
+        limpar.push(() => alvo.removeEventListener(tipo, f));
+      } });
+    });
+  }
+
+  /**
+   * Kicker's choice. Free kick: trajectory and curve first, then the aim, then the bar.
+   * Resolves {alvo: [x, y], barra, trajetoria?, curva?}; at 10 s, whatever is missing is random.
+   */
+  function pedirChute({ falta = estado.modo === "faltas", faixa = faixaBoa, segundos = 10 } = {}) {
+    return comecarPedido(({ terminar, aoFim, ouvir }) => {
+      const escolha = falta ? { trajetoria: null, curva: 0 } : {};
+      let alvo = null;
+      let travado = false;
+      let barraLigada = false;
+      let barraInicio = 0;
+      let barraValor = 500;
+      const fechar = () =>
+        terminar({
+          alvo: alvo ? alvo.map(Math.round) : [Math.round(acaso(0, 1000)), Math.round(acaso(0, 1000))],
+          barra: Math.round(barraLigada ? barraValor : acaso(0, 1000)),
+          ...(falta ? { trajetoria: escolha.trajetoria ?? sortear(["rasteira", "por_cima", "pelo_lado"]), curva: Math.round(escolha.curva * 100) / 100 } : {}),
+        });
+      aoFim(contar(segundos, fechar));
+
+      const mirar = () => {
+        acoesEl.innerHTML = "";
+        dica("Mire no gol e clique");
+        mira.visible = true;
+        alvo = [500, 500];
+        porMira(alvo);
+        if (falta) desenharPrevia(alvo, escolha);
+        ouvir(canvas, "pointermove", (ev) => {
+          if (travado) return;
+          const p = noPlano(ev, PLANO_GOL);
+          if (!p) return;
+          const [x, y] = mundoParaGol(p);
+          alvo = [prender(x), prender(y)];
+          porMira(alvo);
+          if (falta) desenharPrevia(alvo, escolha);
+        });
+        ouvir(canvas, "pointerup", (ev) => {
+          if (travado) return;
+          const p = noPlano(ev, PLANO_GOL);
+          if (p) {
+            const [x, y] = mundoParaGol(p);
+            alvo = [prender(x), prender(y)];
+            porMira(alvo);
+          }
+          travado = true;
+          ligarBarra();
+        });
+      };
+
+      const ligarBarra = () => {
+        dica("Pare a barra na faixa acesa");
+        const [lo, hi] = faixa(alvo);
+        celulas.forEach((c, i) => {
+          const v = ((i + 0.5) / CELULAS) * 1000;
+          c.className = v >= lo && v <= hi ? "boa" : "";
+        });
+        barraEl.hidden = false;
+        barraLigada = true;
+        barraInicio = performance.now();
+        let parada = false;
+        const rodar = () => {
+          if (parada) return;
+          const fase = ((performance.now() - barraInicio) / 1300) % 1;
+          barraValor = (fase < 0.5 ? fase * 2 : 2 - fase * 2) * 1000;
+          const k = Math.min(CELULAS - 1, Math.floor((barraValor / 1000) * CELULAS));
+          celulas.forEach((c, i) => c.classList.toggle("on", i === k));
+          requestAnimationFrame(rodar);
+        };
+        aoFim(() => (parada = true));
+        requestAnimationFrame(rodar);
+        const parar = (ev) => {
+          if (ev.type === "keydown" && ev.code !== "Space") return;
+          ev.preventDefault?.();
+          fechar();
+        };
+        // The aim's own pointerup is over; the next press stops the bar.
+        setTimeout(() => {
+          ouvir(canvas, "pointerdown", parar);
+          ouvir(barraEl, "pointerdown", parar);
+        }, 0);
+        ouvir(window, "keydown", parar);
+      };
+
+      if (!falta) return mirar();
+      dica("Escolha a batida");
+      acoesEl.classList.add("mn-acoes-falta");
+      acoesEl.innerHTML = `
+        <div class="mn-opcoes">
+          <button type="button" class="mn-opcao" data-t="rasteira">Rasteira</button>
+          <button type="button" class="mn-opcao" data-t="por_cima">Por cima</button>
+          <button type="button" class="mn-opcao" data-t="pelo_lado">Pelo lado</button>
+        </div>
+        <label class="mn-curva"><span class="lamp">Curva</span>
+          <input type="range" min="-100" max="100" step="5" value="0" aria-label="Curva">
+        </label>
+        <button type="button" class="mn-ok" disabled>Mirar ▸</button>`;
+      const ok = acoesEl.querySelector(".mn-ok");
+      const range = acoesEl.querySelector("input");
+      const previaPadrao = () => desenharPrevia([500, 500], escolha);
+      ouvir(acoesEl, "click", (ev) => {
+        const b = ev.target.closest("[data-t]");
+        if (b) {
+          escolha.trajetoria = b.dataset.t;
+          for (const o of acoesEl.querySelectorAll("[data-t]")) o.setAttribute("aria-pressed", String(o === b));
+          ok.disabled = false;
+          previaPadrao();
+        }
+        if (ev.target.closest(".mn-ok") && escolha.trajetoria) mirar();
+      });
+      ouvir(range, "input", () => {
+        escolha.curva = Number(range.value) / 100;
+        if (escolha.trajetoria) previaPadrao();
+      });
+    });
+  }
+
+  /** Goalkeeper's choice: three big buttons, laid out as his own camera sees the goal. */
+  function pedirDefesa({ segundos = 10 } = {}) {
+    return comecarPedido(({ terminar, aoFim, ouvir }) => {
+      aoFim(contar(segundos, () => terminar({ lado: sortear(["esquerda", "fica", "direita"]) })));
+      // Contract sides are the kicker's; from inside the goal they are mirrored, so the
+      // button on the keeper's left sends "direita".
+      const espelho = estado.papel === "goleiro";
+      const ordem = espelho ? ["direita", "fica", "esquerda"] : ["esquerda", "fica", "direita"];
+      const rotulos = ["◀ Esquerda", "Ficar", "Direita ▶"];
+      dica("Pra onde você pula?");
+      acoesEl.classList.add("mn-acoes-defesa");
+      acoesEl.innerHTML = ordem
+        .map((lado, i) => `<button type="button" class="mn-opcao mn-grande" data-lado="${lado}">${rotulos[i]}</button>`)
+        .join("");
+      ouvir(acoesEl, "click", (ev) => {
+        const b = ev.target.closest("[data-lado]");
+        if (b) terminar({ lado: b.dataset.lado });
+      });
+      ouvir(window, "keydown", (ev) => {
+        const i = { ArrowLeft: 0, ArrowDown: 1, ArrowUp: 1, ArrowRight: 2 }[ev.key];
+        if (i !== undefined) terminar({ lado: ordem[i] });
+      });
+    });
+  }
+
+  /** Goalkeeper sets the wall: drag it along, +/- men, "pronto". Resolves {n, x}. */
+  function pedirBarreira({ segundos = 10, inicial = { n: 3, x: 500 } } = {}) {
+    return comecarPedido(({ terminar, aoFim, ouvir }) => {
+      if (!estado.falta) api.posicionarFalta({});
+      const b = { n: inicial.n, x: prenderBarreira(inicial.n, inicial.x) };
+      const aplicar = () => {
+        b.x = Math.round(prenderBarreira(b.n, b.x));
+        estado.falta.barreira = { ...b };
+        montarBarreira();
+        acoesEl.querySelector(".mn-n").textContent = b.n;
+      };
+      aoFim(
+        contar(segundos, () => {
+          b.n = 2 + Math.floor(Math.random() * 4);
+          b.x = acaso(0, 1000);
+          aplicar();
+          terminar({ ...b });
+        }),
+      );
+      dica("Arraste a barreira");
+      acoesEl.classList.add("mn-acoes-barreira");
+      acoesEl.innerHTML = `
+        <button type="button" class="mn-opcao" data-d="-1" aria-label="Tirar um homem">−</button>
+        <span class="mn-n lamp"></span><span class="mn-homens lamp">na barreira</span>
+        <button type="button" class="mn-opcao" data-d="1" aria-label="Pôr um homem">+</button>
+        <button type="button" class="mn-ok">Pronto</button>`;
+      aplicar();
+      let arrastando = false;
+      const mover = (ev) => {
+        if (ev.type === "pointermove" && ev.pointerType !== "mouse" && !arrastando) return;
+        const p = noPlano(ev, PLANO_CHAO);
+        if (!p) return;
+        const o = estado.bolaEm;
+        // The ray from the ball through the pointer, carried to the goal line.
+        const dz = p.z - o.z;
+        if (dz > -0.5) return;
+        const xGol = o.x + ((p.x - o.x) * (0 - o.z)) / dz;
+        b.x = mundoParaGol(new THREE.Vector3(xGol, 0, 0))[0];
+        aplicar();
+      };
+      ouvir(canvas, "pointerdown", (ev) => {
+        arrastando = true;
+        mover(ev);
+      });
+      ouvir(canvas, "pointermove", mover);
+      ouvir(window, "pointerup", () => (arrastando = false));
+      ouvir(acoesEl, "click", (ev) => {
+        const d = ev.target.closest("[data-d]");
+        if (d) {
+          b.n = Math.min(5, Math.max(2, b.n + Number(d.dataset.d)));
+          aplicar();
+        }
+        if (ev.target.closest(".mn-ok")) terminar({ ...b });
+      });
+    });
+  }
+
   arrumar();
   ajustar();
   requestAnimationFrame(quadro);
@@ -522,7 +887,11 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       estado.falta = { nome, x: p.x, z: p.z, barreira };
       arrumar();
     },
+    pedirChute,
+    pedirDefesa,
+    pedirBarreira,
     destruir() {
+      pedidoAtual?.();
       estado.destruida = true;
       observador.disconnect();
       document.removeEventListener("fullscreenchange", aoTelaCheia);
@@ -530,7 +899,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       el.innerHTML = "";
     },
     // internals for the later slices of this file
-    _interno: { THREE, el, hud, cena, camera, renderer, estado, batedor, goleiro, bola, rede, barreiraHomens, montarBarreira, posicionarJogadores, posicionarCamera, arrumar },
+    _interno: { mira, previa, celulas, THREE, el, hud, cena, camera, renderer, estado, batedor, goleiro, bola, rede, barreiraHomens, montarBarreira, posicionarJogadores, posicionarCamera, arrumar },
   };
   el.dataset.papel = papel;
   return api;
