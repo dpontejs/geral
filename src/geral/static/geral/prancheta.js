@@ -882,6 +882,8 @@
           palco.innerHTML = sumula.innerHTML;
           const topo = palco.querySelector(".placar");
           if (topo) topo.after(caixa); else palco.prepend(caixa);
+          // the room is still open: "Nova sala" belongs to the súmula's own page, after it closes
+          palco.querySelectorAll('.sumula a[href="/jogos/prancheta"]').forEach((l) => l.remove());
           palco.querySelectorAll("[data-copiar]").forEach((b) => b.addEventListener("click", () => copiar(b)));
           return;
         }

@@ -19,6 +19,8 @@ REGRAS = [
     "ganha 2 por acerto.",
     '"Na trave" quer dizer que você chegou perto: só você vê. Quem desenha pode acender uma '
     "letra aos 40 e outra aos 20 segundos, se quiser.",
+    "No fim, o anfitrião pode começar uma nova partida com a mesma turma, placar zerado; sem "
+    "isso, a sala fecha em 10 minutos. Cada partida tem a sua súmula, no seu link.",
 ]
 
 
