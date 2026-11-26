@@ -1707,7 +1707,11 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     // Out of the stride into the paradinha / wind-up (a late result can bring the wind-up into
     // the last steps), with no snap: blend from where the gait is at that moment.
     // It is over by the strike, which always gets its full pose.
-    const tMistura = Math.min(tl.tChute, tl.tArma, tGolpe - 50 * lento);
+    // Its start is kept once it began: a late result that pulls the wind-up earlier must not
+    // move it back and cut it short.
+    const tCalculado = Math.min(tl.tChute, tl.tArma, tGolpe - 50 * lento);
+    if (tl.tMistura === undefined && t >= tAnt && t >= tCalculado) tl.tMistura = tCalculado;
+    const tMistura = tl.tMistura ?? tCalculado;
     const fimMistura = Math.min(tMistura + MISTURA * lento, tGolpe - 50 * lento);
     if (t >= tAnt && t >= tMistura && t < fimMistura) {
       const w = suave(entre(t, tMistura, fimMistura));
