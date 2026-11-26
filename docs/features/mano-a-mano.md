@@ -108,6 +108,22 @@ Nome provisório: "Mano a Mano" (decisão minha; o dev pode trocar).
   semeado pela sala, pela partida e pela contagem da cobrança, então os dois navegadores veem o
   mesmo batedor; cabelo e número mudam sempre de uma cobrança para a seguinte. O goleiro de cada
   um é sempre o mesmo na sala (semente: sala + vaga + time) e veste a 1.
+- **Súmula sem o lance a lance (dev, 2026-11-26):** a tela do fim e a página da súmula mostram
+  o placar, os times, quem venceu (ou "Sem vencedor", e o W.O.), o link e os botões; a lista de
+  cobranças (quem bateu, o que deu) saiu. O servidor segue gravando `cobrancas` na súmula, e as
+  súmulas antigas abrem do mesmo jeito.
+- **Mirar alto custa (dev, 2026-11-26):** quanto mais alta a mira, mais rápida a barra. Até
+  y = 600 nada muda (uma volta em 1 s); de 600 ao travessão a velocidade sobe em linha reta até
+  +45% (volta em ~690 ms). A cavadinha mantém o ritmo. Só tempo no navegador
+  (`pressaBarra`/`periodoBarra` em `mano-faixa.js`): a regra da faixa no servidor não muda. Com a
+  barra apressada a moldura dela pisca no ritmo da varredura (fixa para quem pede menos
+  movimento) e, na primeira vez em cada navegador, a dica diz "Mais alto, barra mais rápida".
+- **Corrida com passada (dev, 2026-11-26):** a corrida do batedor é um ciclo de marcha ligado à
+  distância percorrida (2,25 ciclos, o pé não escorrega): coxas alternando, joelho dobrando no
+  balanço para trás e cedendo um pouco no apoio, braços contra as pernas com cotovelo dobrado,
+  tronco inclinado com um leve sobe e desce. Ela termina com a perna do chute atrás e a outra
+  chegando para plantar, e se mistura em 160 ms na paradinha e na armada. Os tempos não mudam
+  (a batida segue na janela fechada depois de `chute_em`).
 
 ## Contratos
 
@@ -149,6 +165,7 @@ Nome provisório: "Mano a Mano" (decisão minha; o dev pode trocar).
 - [x] `test_sala_cheia_409`, `test_token_de_outra_sala_403`, `test_acao_fora_da_fase_409`.
 - [x] `test_revanche_zera_e_grava_sumula_de_cada_partida` e `test_quem_sai_perde_por_wo`.
 - [x] `test_disputa_acaba_quando_nao_da_mais_para_alcancar`.
+- [x] `test_mirar_alto_acelera_a_barra` e `test_pressa_nao_depende_do_lado` (node roda `mano-faixa.js`).
 
 ## Verificação ponta a ponta
 
