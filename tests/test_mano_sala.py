@@ -22,6 +22,8 @@ from geral.games.mano.sala import (
     Evento,
     Sala,
 )
+from geral.games.mano.times import TIMES
+from geral.teams import load_teams
 
 T0 = datetime(2026, 11, 25, 20, 0, tzinfo=UTC)
 SORTEAR = sala_mod.sortear_primeiro
@@ -41,15 +43,21 @@ def _s(td: timedelta) -> float:
 
 
 class Jogo:
-    def __init__(self, modo: str = "penaltis", bot: str | None = None, seed: int = 1) -> None:
+    def __init__(
+        self,
+        modo: str = "penaltis",
+        bot: str | None = None,
+        seed: int = 1,
+        times: tuple[str, str] = ("flamengo", "abc"),
+    ) -> None:
         self.t = 0.0
         self.sala = Sala(SALA, modo, bot, self.agora, random.Random(seed))
         self.eventos: list[Evento] = []
-        jogador, self.token0, eventos = self.sala.entrar("Ana", self.agora)
+        jogador, self.token0, eventos = self.sala.entrar("Ana", self.agora, times[0])
         assert jogador == 0
         self.eventos += eventos + self.sala.conectou(0, self.agora)
         if bot is None:
-            jogador, self.token1, eventos = self.sala.entrar("Bia", self.agora)
+            jogador, self.token1, eventos = self.sala.entrar("Bia", self.agora, times[1])
             assert jogador == 1
             self.eventos += eventos + self.sala.conectou(1, self.agora)
 
@@ -114,21 +122,21 @@ def test_criar_e_entrar_comeca_a_disputa():
 
 def test_sozinho_espera():
     sala = Sala(SALA, "penaltis", None, T0, random.Random(1))
-    sala.entrar("Ana", T0)
+    sala.entrar("Ana", T0, "vasco")
     assert sala.foto(0, T0)["fase"] == "espera"
 
 
 def test_sala_cheia_409():
     jogo = Jogo()
     with pytest.raises(ErroSala) as erro:
-        jogo.sala.entrar("Caio", jogo.agora)
+        jogo.sala.entrar("Caio", jogo.agora, "vasco")
     assert erro.value.status == 409
 
 
 def test_contra_o_bot_nao_entra_ninguem():
     jogo = Jogo(bot="facil")
     with pytest.raises(ErroSala) as erro:
-        jogo.sala.entrar("Caio", jogo.agora)
+        jogo.sala.entrar("Caio", jogo.agora, "vasco")
     assert erro.value.status == 409
 
 
@@ -136,15 +144,15 @@ def test_contra_o_bot_nao_entra_ninguem():
 def test_apelido_invalido_422(apelido):
     sala = Sala(SALA, "penaltis", None, T0, random.Random(1))
     with pytest.raises(ErroSala) as erro:
-        sala.entrar(apelido, T0)
+        sala.entrar(apelido, T0, "vasco")
     assert erro.value.status == 422
 
 
 def test_apelido_repetido_422():
     sala = Sala(SALA, "penaltis", None, T0, random.Random(1))
-    sala.entrar("Ana", T0)
+    sala.entrar("Ana", T0, "vasco")
     with pytest.raises(ErroSala) as erro:
-        sala.entrar("ana", T0)
+        sala.entrar("ana", T0, "vasco")
     assert erro.value.status == 422
 
 
@@ -465,7 +473,7 @@ def test_foto_do_fim_traz_o_vencedor_mesmo_por_wo():
 
 def test_sala_cheia_vale_tambem_contra_o_bot():
     sozinha = Sala(SALA, "penaltis", None, T0, random.Random(1))
-    sozinha.entrar("Ana", T0)
+    sozinha.entrar("Ana", T0, "vasco")
     assert not sozinha.cheia()
     assert Jogo().sala.cheia()
     assert Jogo(bot="facil").sala.cheia()
@@ -588,7 +596,7 @@ def test_encerrar_no_meio_grava_sumula():
 
 def test_encerrar_na_espera_nao_grava():
     sala = Sala(SALA, "penaltis", None, T0, random.Random(1))
-    sala.entrar("Ana", T0)
+    sala.entrar("Ana", T0, "vasco")
     assert _fins(sala.encerrar(T0)) == []
     assert sala.encerrada
 
@@ -765,3 +773,50 @@ def test_chute_normal_nao_ganha_tempo_a_mais():
     jogo.cobrar(GOL_ESQUERDA, "direita")
     jogo.andar(_s(RESULTADO))
     assert jogo.foto(0)["fase"] == "escolha"
+
+
+def test_cada_um_com_seu_time():
+    jogo = Jogo(times=("flamengo", "abc"))
+    jogadores = jogo.foto(0)["jogadores"]
+    assert [(j["time"], j["time_nome"], j["uniforme"]) for j in jogadores] == [
+        ("flamengo", "Flamengo", "casa"),
+        ("abc", "ABC", "casa"),
+    ]
+
+
+def test_time_desconhecido_422():
+    sala = Sala(SALA, "penaltis", None, T0, random.Random(1))
+    for time in ("botafogo", "", "FLAMENGO"):
+        with pytest.raises(ErroSala) as erro:
+            sala.entrar("Ana", T0, time)
+        assert erro.value.status == 422
+
+
+def test_mesmo_time_quem_entrou_depois_veste_o_reserva():
+    jogo = Jogo(times=("flamengo", "flamengo"))
+    assert [j["uniforme"] for j in jogo.foto(1)["jogadores"]] == ["casa", "fora"]
+
+
+@pytest.mark.parametrize("time", ["flamengo", "vasco", "palmeiras", "abc", "nautico", "csa"])
+def test_bot_tem_outro_time(time):
+    vistos = set()
+    for seed in range(40):
+        bot = Jogo(bot="medio", seed=seed, times=(time, "")).foto(0)["jogadores"][1]
+        assert bot["time"] in TIMES and bot["time"] != time and bot["uniforme"] == "casa"
+        vistos.add(bot["time"])
+    assert len(vistos) > 1  # drawn, not fixed
+
+
+def test_sumula_traz_os_times():
+    jogo = Jogo(times=("csa", "nautico"))
+    jogo.agir(0, "sair")
+    sumula = _fins(jogo.eventos)[-1]
+    assert [(j["time"], j["time_nome"]) for j in sumula["jogadores"]] == [
+        ("csa", "CSA"),
+        ("nautico", "Náutico"),
+    ]
+
+
+def test_os_times_sao_os_da_geral():
+    assert set(TIMES) == set(load_teams())
+    assert list(TIMES.values()) == ["ABC", "CSA", "Flamengo", "Náutico", "Palmeiras", "Vasco"]

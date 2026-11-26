@@ -58,12 +58,14 @@ CREATE INDEX IF NOT EXISTS mano_sumulas_sala ON mano_sumulas (sala);
 
 class NovaSala(BaseModel):
     apelido: str = Field(max_length=64)
+    time: str = Field(max_length=16)
     modo: Modo
     bot: Nivel | None = None
 
 
 class Entrada(BaseModel):
     apelido: str = Field(max_length=64)
+    time: str = Field(max_length=16)
 
 
 class _ComToken(BaseModel):
@@ -318,7 +320,7 @@ class Mano:
             agora = self._now()
             sala = Sala(self._novo_id(), corpo.modo, corpo.bot, agora, self._rng)
             try:
-                jogador, token, _ = sala.entrar(corpo.apelido, agora)
+                jogador, token, _ = sala.entrar(corpo.apelido, agora, corpo.time)
             except ErroSala as erro:
                 return _erro(erro.status, erro.motivo)
             self._salas[sala.id] = _SalaViva(sala, vazia_desde=agora)
@@ -330,7 +332,7 @@ class Mano:
             if viva is None:
                 return _erro(404, "room not found")
             try:
-                jogador, token, eventos = viva.sala.entrar(corpo.apelido, self._now())
+                jogador, token, eventos = viva.sala.entrar(corpo.apelido, self._now(), corpo.time)
             except ErroSala as erro:
                 return _erro(erro.status, erro.motivo)
             self._entregar(viva, eventos)

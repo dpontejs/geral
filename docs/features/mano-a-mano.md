@@ -78,6 +78,13 @@ Nome provisório: "Mano a Mano" (decisão minha; o dev pode trocar).
   6% no `dificil`, nunca no `facil`). Na calibragem o batedor aleatório cava 5% dos pênaltis.
   O voo da cavadinha na tela é mais longo (1150 ms contra 600): o servidor segura o resultado
   550 ms a mais (`VOO_CAVADINHA_A_MAIS`), para a próxima cobrança não atropelar a animação.
+- **Time de cada jogador (dev, 2026-11-26):** ao criar e ao entrar, cada um escolhe um dos 6 times
+  da Geral (`teams.toml`, em ordem alfabética); o bot sorteia um time diferente do humano. O
+  placar e a súmula mostram os times ("FLAMENGO × ABC") com o apelido ao lado; as lâmpadas seguem
+  amarelas, cor de clube só no uniforme (o dev recusou cor de clube no painel). Uniformes simples
+  na cena (camisa com o padrão do clube numa textura pequena, calção e meião lisos, sem escudo nem
+  marca); o goleiro veste um uniforme neutro com uma faixa da cor do time. Os dois com o mesmo
+  time vale (Fla × Fla): quem entrou depois veste o reserva (`uniforme: "fora"`).
 - **Câmeras (dev, rascunho B):** quem bate vê de trás do batedor; quem defende, de dentro do gol,
   de costas para a rede. O replay de cada lance roda na câmera de cada um.
 
@@ -87,9 +94,9 @@ Nome provisório: "Mano a Mano" (decisão minha; o dev pode trocar).
   posicao, rng) -> Lance`), `bot.py` (`escolher(nivel, papel, historico, rng)`), `sala.py` (fases
   `espera → barreira? → escolha → cobranca → resultado → … → fim`, relógio injetado, devolve
   `list[Evento]` como a `Sala` da Prancheta). Tipos Pydantic em `tipos.py`.
-- **Rotas** (prefixo `/api/jogos/mano`): `POST /salas {apelido, modo: "penaltis"|"faltas",
+- **Rotas** (prefixo `/api/jogos/mano`): `POST /salas {apelido, time, modo: "penaltis"|"faltas",
   bot: null|"facil"|"medio"|"dificil"}` → `{id, jogador, token}`; `POST /salas/{id}/entrar
-  {apelido}` (409 cheia); `POST /salas/{id}/acao {token, tipo}` com `tipo` ∈ `barreira{n, x} |
+  {apelido, time}` (409 cheia; `time` fora da lista, 422); `POST /salas/{id}/acao {token, tipo}` com `tipo` ∈ `barreira{n, x} |
   chute{alvo, barra, trajetoria?, curva?, cavadinha?} | defesa{lado} | saida{ms} | revanche | sair`;
   `GET /salas/{id}/eventos?token=` (SSE). Páginas `GET /jogos/mano` e `/jogos/mano/s/{id}`.
 - **Privacidade:** a escolha de um nunca chega ao outro antes de os dois travarem (decidido

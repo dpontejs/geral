@@ -23,12 +23,44 @@ const MODOS = { penaltis: "Pênaltis", faltas: "Faltas" };
 // Free kicks can be off on the server (MANO_FALTAS): then the form offers only penalties.
 const MODOS_OFERTA = raiz.dataset.faltas ? MODOS : { penaltis: MODOS.penaltis };
 const BOTS = { facil: "Bot fácil", medio: "Bot médio", dificil: "Bot difícil" };
+// The Geral's six teams (geral/games/mano/times.py): each player wears one.
+const TIMES = { abc: "ABC", csa: "CSA", flamengo: "Flamengo", nautico: "Náutico", palmeiras: "Palmeiras", vasco: "Vasco" };
 const ERROS = {
   "nickname must have 2 to 16 characters": "O apelido precisa ter de 2 a 16 letras.",
   "nickname not allowed": "Esse apelido não pode. Escolha outro.",
   "nickname already in the room": "Esse apelido já está na sala. Escolha outro.",
   "too many rooms, try later": "Muitas salas criadas daqui agora. Tente de novo daqui a pouco.",
+  "unknown team": "Escolha o seu time.",
 };
+
+// The last team picked, so the next form comes with it marked (a convenience: may be empty).
+function timeGuardado() {
+  try {
+    const t = localStorage.getItem("mano:time");
+    return t in TIMES ? t : null;
+  } catch {
+    return null;
+  }
+}
+function guardarTime(t) {
+  try {
+    localStorage.setItem("mano:time", t);
+  } catch {
+    /* private mode */
+  }
+}
+const campoTime = () =>
+  `<fieldset class="campo-f"><legend>Seu time</legend><div class="chips mn-times" id="mn-time">${chips("time", TIMES, timeGuardado())}</div></fieldset>`;
+/** The marked team, or an error on the form when none is. */
+function timeEscolhido() {
+  const t = marcado($("#mn-time"), "time");
+  if (!t) {
+    const p = $(".pr-erro");
+    p.textContent = "Escolha o seu time.";
+    p.hidden = false;
+  }
+  return t;
+}
 
 // ---- my seat in the room -------------------------------------------------------------------
 const chave = (id) => `mano:${id}`;
@@ -118,12 +150,19 @@ function chips(nomeGrupo, opcoes, marcado) {
     .map(([valor, rotulo]) => `<button class="chip" type="button" data-${nomeGrupo}="${valor}" aria-pressed="${valor === marcado}">${rotulo}</button>`)
     .join("");
 }
-function escolherChip(grupo) {
+function escolherChip(grupo, aoEscolher = () => {}) {
   grupo.addEventListener("click", (e) => {
     const b = e.target.closest(".chip");
-    if (b) grupo.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(c === b)));
+    if (!b) return;
+    grupo.querySelectorAll(".chip").forEach((c) => c.setAttribute("aria-pressed", String(c === b)));
+    aoEscolher();
   });
 }
+// Picking a team clears the "pick your team" error.
+const limparErroDeTime = () => {
+  const p = $(".pr-erro");
+  if (p && p.textContent === "Escolha o seu time.") p.hidden = true;
+};
 const marcado = (grupo, attr) => grupo.querySelector('[aria-pressed="true"]')?.dataset[attr];
 
 function telaCriar(erro = "") {
@@ -134,6 +173,7 @@ function telaCriar(erro = "") {
       <h2>Nova sala</h2>
       <p>Batedor contra goleiro. Jogue contra o bot ou mande o link para um amigo.</p>
       <label class="campo-f"><span>Seu apelido</span><input class="pr-apelido" id="mn-apelido" maxlength="16" minlength="2" required autocomplete="nickname" spellcheck="false" placeholder="Como a turma te chama"></label>
+      ${campoTime()}
       <fieldset class="campo-f"${raiz.dataset.faltas ? "" : " hidden"}><legend>Modo</legend><div class="chips" id="mn-modo">${chips("modo", MODOS_OFERTA, "penaltis")}</div></fieldset>
       <fieldset class="campo-f"><legend>Contra quem</legend><div class="chips" id="mn-contra">${chips("contra", { amigo: "Um amigo", ...BOTS }, "amigo")}</div></fieldset>
       <p class="pr-erro" role="alert"${erro ? "" : " hidden"}>${esc(erro)}</p>
@@ -143,15 +183,20 @@ function telaCriar(erro = "") {
   </div>`;
   const modo = $("#mn-modo");
   const contra = $("#mn-contra");
+  escolherChip($("#mn-time"), limparErroDeTime);
   escolherChip(modo);
   escolherChip(contra);
   $("#mn-criar").addEventListener("submit", async (e) => {
     e.preventDefault();
+    const time = timeEscolhido();
+    if (!time) return;
     const botao = e.target.querySelector("[type=submit]");
     botao.disabled = true;
     const c = marcado(contra, "contra");
+    guardarTime(time);
     const { status, dados } = await postar("/salas", {
       apelido: $("#mn-apelido").value.trim(),
+      time,
       modo: marcado(modo, "modo"),
       bot: c === "amigo" ? null : c,
     });
@@ -179,15 +224,21 @@ function telaEntrar(erro = "") {
       <h2>Entrar na sala</h2>
       <p>Te chamaram para um Mano a Mano. Escolha um apelido e entre.</p>
       <label class="campo-f"><span>Seu apelido</span><input class="pr-apelido" id="mn-apelido" maxlength="16" minlength="2" required autocomplete="nickname" spellcheck="false" placeholder="Como a turma te chama"></label>
+      ${campoTime()}
+      <p class="fine">Mesmo time do amigo? Vale: quem entra depois joga com a camisa reserva.</p>
       <p class="pr-erro" role="alert"${erro ? "" : " hidden"}>${esc(erro)}</p>
       <button class="btn lamp-btn" type="submit">Entrar</button>
     </form>
   </div>`;
+  escolherChip($("#mn-time"), limparErroDeTime);
   $("#mn-entrar").addEventListener("submit", async (e) => {
     e.preventDefault();
+    const time = timeEscolhido();
+    if (!time) return;
     const botao = e.target.querySelector("[type=submit]");
     botao.disabled = true;
-    const { status, dados } = await postar(`/salas/${SALA}/entrar`, { apelido: $("#mn-apelido").value.trim() });
+    guardarTime(time);
+    const { status, dados } = await postar(`/salas/${SALA}/entrar`, { apelido: $("#mn-apelido").value.trim(), time });
     if (status === 200) {
       eu = { jogador: dados.jogador, token: dados.token };
       gravar(SALA, eu);
@@ -246,21 +297,32 @@ function faixaStrip() {
   const linhas = [];
   if (o && o.saiu) linhas.push(`${esc(o.apelido)} saiu da sala.`);
   else if (o && !o.presente) linhas.push(`${esc(o.apelido)} caiu. Se não voltar em 30 segundos, perde por W.O.`);
-  return `<div class="mn-strip board"><span class="lamp">${MODOS[est.modo]} · ${voce}</span><span class="lamp mn-contra">contra ${esc(o ? o.apelido : "")}</span></div>${linhas.map((l) => `<p class="mn-alerta">${l}</p>`).join("")}`;
+  return `<div class="mn-strip board"><span class="lamp">${MODOS[est.modo]} · ${voce}</span><span class="lamp mn-contra">contra ${esc(o ? o.apelido : "")}${o?.time_nome ? ` (${esc(o.time_nome)})` : ""}</span></div>${linhas.map((l) => `<p class="mn-alerta">${l}</p>`).join("")}`;
 }
 
 function placar() {
   cena.placar({
-    nomes: est.jogadores.map((j) => j.apelido),
+    nomes: est.jogadores.map((j) => (j.time_nome ? { time: j.time_nome, apelido: j.apelido } : j.apelido)),
     series: est.serie.map((s) => s.map((g) => (g ? "g" : "e"))),
     gols: est.placar,
   });
+}
+
+/** Each player in his team's kit for his role in this kick (the scene skips an unchanged one). */
+function vestir() {
+  const eu_ = est.jogadores[est.voce];
+  const ele = outro();
+  if (!eu_ || !ele || !est.papel) return;
+  const kit = (j) => ({ time: j.time, uniforme: j.uniforme });
+  const [b, g] = est.papel === "batedor" ? [eu_, ele] : [ele, eu_];
+  cena.vestir({ batedor: kit(b), goleiro: kit(g) });
 }
 
 /** Sets the scene for the kick `k`: the spot (and the wall, when it is known) and my camera. */
 function montar(k) {
   const falta = est.modo === "faltas";
   const barreira = falta ? JSON.stringify(est.barreira) : "";
+  vestir();
   if (montado === k && barreiraMontada === barreira && cena.papel === est.papel) return;
   if (montado !== k) cena.reiniciar();
   cena.trocarPapel(est.papel);

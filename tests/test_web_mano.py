@@ -61,7 +61,7 @@ class Mesa:
             return await c.post(f"{API}{caminho}", json=corpo)
 
     async def criar(self, modo: str = "penaltis", bot: str | None = None, ip="10.0.0.1") -> dict:
-        resposta = await self.post("/salas", ip, apelido="Ana", modo=modo, bot=bot)
+        resposta = await self.post("/salas", ip, apelido="Ana", time="flamengo", modo=modo, bot=bot)
         assert resposta.status_code == 201, resposta.text
         return resposta.json()
 
@@ -70,7 +70,7 @@ class Mesa:
     ) -> tuple[str, dict[int, str]]:
         """Ana and Bia in a room; `presentes`: each with an events tab open (else W.O. at 30 s)."""
         criada = await self.criar(modo)
-        entrou = await self.post(f"/salas/{criada['id']}/entrar", apelido="Bia")
+        entrou = await self.post(f"/salas/{criada['id']}/entrar", apelido="Bia", time="abc")
         assert entrou.status_code == 200, entrou.text
         tokens = {0: criada["token"], 1: entrou.json()["token"]}
         if presentes:
@@ -114,7 +114,7 @@ async def test_criar_e_entrar(tmp_path):
     async with mesa(tmp_path) as m:
         criada = await m.criar()
         assert criada["jogador"] == 0 and len(criada["id"]) == 6 and criada["token"]
-        entrou = await m.post(f"/salas/{criada['id']}/entrar", apelido="Bia")
+        entrou = await m.post(f"/salas/{criada['id']}/entrar", apelido="Bia", time="abc")
         assert entrou.status_code == 200
         assert entrou.json()["jogador"] == 1
         assert m.mano.viva(criada["id"])
@@ -127,7 +127,7 @@ async def test_cheia_para_a_pagina_avisar_antes_do_apelido(tmp_path):
     async with mesa(tmp_path) as m:
         criada = await m.criar()
         assert not m.mano.cheia(criada["id"])
-        await m.post(f"/salas/{criada['id']}/entrar", apelido="Bia")
+        await m.post(f"/salas/{criada['id']}/entrar", apelido="Bia", time="abc")
         assert m.mano.cheia(criada["id"])
         assert not m.mano.cheia("zzzzzz")
 
@@ -136,13 +136,13 @@ async def test_cheia_para_a_pagina_avisar_antes_do_apelido(tmp_path):
 async def test_corpo_invalido_422(tmp_path):
     async with mesa(tmp_path) as m:
         for corpo in (
-            {"apelido": "Ana", "modo": "escanteio", "bot": None},
-            {"apelido": "Ana", "modo": "penaltis", "bot": "impossivel"},
-            {"apelido": "A", "modo": "penaltis", "bot": None},
+            {"apelido": "Ana", "time": "abc", "modo": "escanteio", "bot": None},
+            {"apelido": "Ana", "time": "abc", "modo": "penaltis", "bot": "impossivel"},
+            {"apelido": "A", "time": "abc", "modo": "penaltis", "bot": None},
         ):
             assert (await m.post("/salas", **corpo)).status_code == 422
         criada = await m.criar()
-        resposta = await m.post(f"/salas/{criada['id']}/entrar", apelido="porra")
+        resposta = await m.post(f"/salas/{criada['id']}/entrar", apelido="porra", time="abc")
         assert resposta.status_code == 422
 
 
@@ -150,16 +150,18 @@ async def test_corpo_invalido_422(tmp_path):
 async def test_sala_cheia_409(tmp_path):
     async with mesa(tmp_path) as m:
         sala, _ = await m.dupla()
-        assert (await m.post(f"/salas/{sala}/entrar", apelido="Caio")).status_code == 409
+        assert (
+            await m.post(f"/salas/{sala}/entrar", apelido="Caio", time="abc")
+        ).status_code == 409
         contra_bot = await m.criar(bot="facil")
-        resposta = await m.post(f"/salas/{contra_bot['id']}/entrar", apelido="Caio")
+        resposta = await m.post(f"/salas/{contra_bot['id']}/entrar", apelido="Caio", time="abc")
         assert resposta.status_code == 409
 
 
 @assincrono
 async def test_sala_inexistente_404(tmp_path):
     async with mesa(tmp_path) as m:
-        assert (await m.post("/salas/zzzzzz/entrar", apelido="Bia")).status_code == 404
+        assert (await m.post("/salas/zzzzzz/entrar", apelido="Bia", time="abc")).status_code == 404
         assert (await m.agir("zzzzzz", "x", "sair")).status_code == 404
         async with m.cliente() as c:
             assert (await c.get(f"{API}/salas/zzzzzz/eventos?token=x")).status_code == 404
@@ -181,7 +183,9 @@ async def test_criar_sala_limitado_por_rede(tmp_path):
     async with mesa(tmp_path, limite=2) as m:
         await m.criar(ip="10.0.0.1")
         await m.criar(ip="10.0.0.1")
-        resposta = await m.post("/salas", "10.0.0.1", apelido="Ana", modo="penaltis", bot=None)
+        resposta = await m.post(
+            "/salas", "10.0.0.1", apelido="Ana", time="flamengo", modo="penaltis", bot=None
+        )
         assert resposta.status_code == 429
         await m.criar(ip="10.0.0.2")  # another address
 
@@ -356,7 +360,7 @@ async def test_sala_abandonada_e_encerrada(tmp_path):
         assert m.mano.viva(criada["id"])
         m.andar(60)
         assert not m.mano.viva(criada["id"])
-        resposta = await m.post(f"/salas/{criada['id']}/entrar", apelido="Bia")
+        resposta = await m.post(f"/salas/{criada['id']}/entrar", apelido="Bia", time="abc")
         assert resposta.status_code == 404
 
 
@@ -454,7 +458,7 @@ def test_token_some_do_access_log(tmp_path):
 def test_app_liga_o_mano(store, mailer, clock):
     with make_client(store, mailer, clock, MANO_LACO=True, MANO_FALTAS=True) as cliente:
         resposta = cliente.post(
-            f"{API}/salas", json={"apelido": "Ana", "modo": "faltas", "bot": "medio"}
+            f"{API}/salas", json={"apelido": "Ana", "time": "csa", "modo": "faltas", "bot": "medio"}
         )
         assert resposta.status_code == 201
         assert cliente.get("/jogos/mano").status_code == 200  # the page came in slice 4
@@ -463,7 +467,7 @@ def test_app_liga_o_mano(store, mailer, clock):
 def test_app_sem_faltas_por_padrao(store, mailer, clock):
     """Free kicks are off until the dev refines them (2026-11-25): MANO_FALTAS turns them on."""
     with make_client(store, mailer, clock) as cliente:
-        corpo = {"apelido": "Ana", "bot": "medio"}
+        corpo = {"apelido": "Ana", "time": "abc", "bot": "medio"}
         assert cliente.post(f"{API}/salas", json={**corpo, "modo": "faltas"}).status_code == 422
         assert cliente.post(f"{API}/salas", json={**corpo, "modo": "penaltis"}).status_code == 201
         assert 'data-faltas=""' in cliente.get("/jogos/mano").text
@@ -472,10 +476,14 @@ def test_app_sem_faltas_por_padrao(store, mailer, clock):
 @assincrono
 async def test_criar_falta_desligada_da_422(tmp_path):
     async with mesa(tmp_path, faltas=False) as m:
-        resposta = await m.post("/salas", "10.0.0.1", apelido="Ana", modo="faltas", bot=None)
+        resposta = await m.post(
+            "/salas", "10.0.0.1", apelido="Ana", time="flamengo", modo="faltas", bot=None
+        )
         assert resposta.status_code == 422
         assert (
-            await m.post("/salas", "10.0.0.1", apelido="Ana", modo="penaltis", bot=None)
+            await m.post(
+                "/salas", "10.0.0.1", apelido="Ana", time="flamengo", modo="penaltis", bot=None
+            )
         ).status_code == 201
 
 
@@ -492,3 +500,25 @@ async def test_cavadinha_pela_api(tmp_path):
         m.andar(VOO)
         lidos = await goleiro.ate(lambda tipo, _: tipo == "cobranca")
         assert lidos[-1][1]["lance"]["chute"]["cavadinha"] is True
+
+
+@assincrono
+async def test_time_na_criacao_e_na_entrada(tmp_path):
+    async with mesa(tmp_path) as m:
+        sem = await m.post("/salas", apelido="Ana", modo="penaltis", bot=None)
+        assert sem.status_code == 422
+        errado = await m.post("/salas", apelido="Ana", time="botafogo", modo="penaltis", bot=None)
+        assert errado.status_code == 422
+        criada = await m.criar()
+        caminho = f"/salas/{criada['id']}/entrar"
+        assert (await m.post(caminho, apelido="Bia")).status_code == 422
+        assert (await m.post(caminho, apelido="Bia", time="xxx")).status_code == 422
+        assert (await m.post(caminho, apelido="Bia", time="flamengo")).status_code == 200
+        ana = await m.ouvir(criada["id"], criada["token"])
+        estado = (await ana.ate(lambda tipo, d: tipo == "estado" and len(d["jogadores"]) == 2))[-1][
+            1
+        ]
+        assert [(j["time"], j["uniforme"]) for j in estado["jogadores"]] == [
+            ("flamengo", "casa"),
+            ("flamengo", "fora"),
+        ]

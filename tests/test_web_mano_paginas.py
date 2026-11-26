@@ -160,7 +160,9 @@ def test_app_liga_as_paginas_ao_servidor(store, mailer, clock):
     from webkit import make_client
 
     app = make_client(store, mailer, clock)
-    sala = app.post("/api/jogos/mano/salas", json={"apelido": "Marquinho", "modo": "penaltis"})
+    sala = app.post(
+        "/api/jogos/mano/salas", json={"apelido": "Marquinho", "time": "abc", "modo": "penaltis"}
+    )
     assert sala.status_code == 201
     pagina = app.get(f"/jogos/mano/s/{sala.json()['id']}")
     assert pagina.status_code == 200
@@ -210,3 +212,23 @@ def test_sem_faltas_a_pagina_nem_oferece_nem_explica(cliente):
     desligada = cliente(ManoFalso(faltas=False)).get("/jogos/mano").text
     assert 'data-faltas=""' in desligada
     assert "barreira" not in desligada and "pênaltis ou faltas" not in desligada
+
+
+def test_sumula_com_os_times(cliente):
+    sumula = SUMULA | {
+        "jogadores": [
+            {"apelido": "Marquinho", "bot": False, "time": "flamengo", "time_nome": "Flamengo"},
+            {"apelido": "Zé da Geral", "bot": False, "time": "abc", "time_nome": "ABC"},
+        ]
+    }
+    html = cliente(ManoFalso(sumulas={"k7m2qx-1": sumula})).get("/jogos/mano/s/k7m2qx-1").text
+    assert "FLAMENGO × ABC" in html
+    assert "<td>Flamengo · Marquinho</td>" in html
+    assert "Marquinho (Flamengo) venceu" in html
+
+
+def test_sumula_antiga_sem_times(cliente):
+    html = cliente(ManoFalso(sumulas={"k7m2qx-1": SUMULA})).get("/jogos/mano/s/k7m2qx-1").text
+    assert "mn-confronto" not in html and "None" not in html
+    assert "<td>Marquinho</td>" in html
+    assert "Marquinho venceu" in html
