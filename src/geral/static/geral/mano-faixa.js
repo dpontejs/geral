@@ -6,6 +6,9 @@ const FAIXA_MIN = 250;
 const FAIXA_MAX = 500;
 const FAIXA_POR_DIST = 3;
 const FATOR_FALTA = 0.95;
+const FAIXA_PENALTI_MIN = 120;
+const FAIXA_PENALTI_MAX = 450;
+const FAIXA_PENALTI_POR_DIST = 1;
 const FAIXA_CAVADINHA = 160;
 
 /** Python's round(): halves go to the even neighbour. */
@@ -20,9 +23,10 @@ function arredondar(v) {
 /** Width of the good band for an aim point: narrower near the posts and the crossbar. */
 export function larguraFaixa([x, y], falta = false) {
   const dist = Math.min(x, 1000 - x, 1000 - y);
-  let faixa = Math.min(FAIXA_MAX, Math.max(FAIXA_MIN, FAIXA_MIN + FAIXA_POR_DIST * dist));
-  if (falta) faixa *= FATOR_FALTA;
-  return arredondar(faixa);
+  // the penalty has its own, narrower band (dev, 2026-11-26)
+  if (!falta) return arredondar(Math.min(FAIXA_PENALTI_MAX, FAIXA_PENALTI_MIN + FAIXA_PENALTI_POR_DIST * dist));
+  const faixa = Math.min(FAIXA_MAX, Math.max(FAIXA_MIN, FAIXA_MIN + FAIXA_POR_DIST * dist));
+  return arredondar(faixa * FATOR_FALTA);
 }
 
 /** The band as the bar draws it, [lo, hi] in 0-1000: the bar is good within width/2 of 500. */

@@ -14,6 +14,10 @@ FAIXA_MIN = 250
 FAIXA_MAX = 500
 FAIXA_POR_DIST = 3
 FATOR_FALTA = 0.95
+# The penalty's band (dev, 2026-11-26): 120 at a post or the crossbar, +1 per unit away, up to 450
+FAIXA_PENALTI_MIN = 120
+FAIXA_PENALTI_MAX = 450
+FAIXA_PENALTI_POR_DIST = 1
 DESVIO_POR_ERRO = 0.8
 RUIDO = 10
 TRAVE = 15
@@ -42,13 +46,16 @@ CENTRO = (500, 0)
 
 
 def faixa_boa(alvo: tuple[int, int], falta: bool) -> int:
-    """Width of the good band of the bar: narrower near the posts and the crossbar."""
+    """Width of the good band of the bar: narrower near the posts and the crossbar.
+
+    The penalty has its own, narrower band (dev, 2026-11-26); the free kick keeps the first one.
+    """
     x, y = alvo
     dist = min(x, 1000 - x, 1000 - y)
+    if not falta:
+        return round(min(FAIXA_PENALTI_MAX, FAIXA_PENALTI_MIN + FAIXA_PENALTI_POR_DIST * dist))
     faixa = min(FAIXA_MAX, max(FAIXA_MIN, FAIXA_MIN + FAIXA_POR_DIST * dist))
-    if falta:
-        faixa *= FATOR_FALTA
-    return round(faixa)
+    return round(faixa * FATOR_FALTA)
 
 
 def _erro(chute: Chute, falta: bool) -> float:

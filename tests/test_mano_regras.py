@@ -9,7 +9,10 @@ from geral.games.mano.regras import (
     ALTURA_BARREIRA,
     ALTURA_PULO,
     FAIXA_CAVADINHA,
-    FAIXA_MIN,
+    FAIXA_MAX,
+    FAIXA_PENALTI_MAX,
+    FAIXA_PENALTI_MIN,
+    FATOR_FALTA,
     MEIA_LARGURA_POR_HOMEM,
     P_ANGULO,
     QUEDA_POR_ERRO,
@@ -27,7 +30,15 @@ LONGE = Defesa(lado="direita", saida=False)
 def test_faixa_estreita_perto_da_trave():
     assert faixa_boa((500, 300), falta=False) > faixa_boa((60, 300), falta=False)
     assert faixa_boa((500, 300), falta=False) > faixa_boa((500, 950), falta=False)
-    assert faixa_boa((500, 300), falta=True) < faixa_boa((500, 300), falta=False)
+    assert faixa_boa((500, 300), falta=True) == round(FAIXA_MAX * FATOR_FALTA)
+
+
+def test_faixa_do_penalti_e_mais_estreita_que_a_da_falta():
+    # the penalty got its own band (dev, 2026-11-26): narrower overall, much narrower in the corners
+    for alvo in ((500, 300), (90, 300), (910, 850), (500, 950)):
+        assert faixa_boa(alvo, falta=False) < faixa_boa(alvo, falta=True)
+    assert faixa_boa((90, 300), falta=False) <= FAIXA_PENALTI_MIN + 100
+    assert faixa_boa((500, 300), falta=False) == FAIXA_PENALTI_MAX
 
 
 def test_barra_na_faixa_vai_onde_mirou():
@@ -121,7 +132,7 @@ def test_cavadinha_contra_quem_fica_e_defesa_e_contra_quem_pula_e_gol():
 
 
 def test_cavadinha_tem_faixa_mais_estreita():
-    assert FAIXA_CAVADINHA < FAIXA_MIN
+    assert FAIXA_CAVADINHA < faixa_boa((500, 500), falta=False)
     pula = Defesa(lado="direita", saida=False)
     alta = Chute(alvo=(500, 500), barra=500 + FAIXA_CAVADINHA // 2 + 20, cavadinha=True)
     baixa = Chute(alvo=(500, 500), barra=500 - FAIXA_CAVADINHA // 2 - 20, cavadinha=True)
