@@ -204,6 +204,8 @@ def test_cena_importada_com_a_versao_dos_arquivos(store, mailer, clock):
     html = make_client(store, mailer, clock).get("/jogos/mano").text
     assert '<script type="importmap">' in html
     assert '"/static/geral/mano-cena.js": "/static/geral/mano-cena.js?v=' in html
+    # both browsers must derive the same kicker: the look's module is pinned too
+    assert '"/static/geral/mano-visual.js": "/static/geral/mano-visual.js?v=' in html
 
 
 def test_sem_faltas_a_pagina_nem_oferece_nem_explica(cliente):
