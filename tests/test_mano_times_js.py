@@ -19,9 +19,8 @@ def test_lista_de_times_da_pagina_e_a_da_regra():
 
 def test_cada_time_tem_uniforme_e_cor_de_goleiro():
     cena = (ESTATICO / "mano-cena.js").read_text(encoding="utf-8")
-    uniformes = cena[cena.index("const UNIFORMES = {") : cena.index("const COR_DO_GOLEIRO")]
-    goleiro = re.search(r"^const COR_DO_GOLEIRO = \{(.*)\};$", cena, re.MULTILINE)
-    assert goleiro
+    uniformes = cena[cena.index("const UNIFORMES = {") : cena.index("const GOLEIROS = {")]
+    goleiros = cena[cena.index("const GOLEIROS = {") : cena.index("const texturas")]
     for slug in TIMES:
         assert re.search(rf"^  {slug}: \{{$", uniformes, re.MULTILINE), slug
-        assert re.search(rf"\b{slug}:", goleiro.group(1)), slug
+        assert re.search(rf"^  {slug}: \{{ base: \"#[0-9A-F]{{6}}\"", goleiros, re.MULTILINE), slug
