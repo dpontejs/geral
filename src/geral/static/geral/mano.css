@@ -52,8 +52,8 @@
 .mn-celulas i.on { background: var(--lamp, #FFC21A); box-shadow: 0 0 10px var(--lamp, #FFC21A), 0 0 22px rgba(255, 170, 0, .6); }
 .mn-celulas i.boa.on { background: #fff; }
 /* aiming high: the bar runs faster and its frame flickers at the sweep's pace (dev, 2026-11-26) */
-.mn-barra.mn-rapida { animation: mn-pisca var(--mn-pisca, 400ms) steps(2, jump-none) infinite; }
-@keyframes mn-pisca { from { box-shadow: 0 0 0 2px rgba(255, 194, 26, .15); } to { box-shadow: 0 0 0 2px rgba(255, 194, 26, .7), 0 0 14px rgba(255, 170, 0, .35); } }
+.mn-barra.mn-rapida { animation: mn-pressa var(--mn-pisca, 400ms) steps(2, jump-none) infinite; }
+@keyframes mn-pressa { from { box-shadow: 0 0 0 2px rgba(255, 194, 26, .15); } to { box-shadow: 0 0 0 2px rgba(255, 194, 26, .7), 0 0 14px rgba(255, 170, 0, .35); } }
 @media (prefers-reduced-motion: reduce) { .mn-barra.mn-rapida { animation: none; box-shadow: 0 0 0 2px rgba(255, 194, 26, .55); } }
 
 /* The big result sign. */
