@@ -87,6 +87,27 @@ Nome provisório: "Mano a Mano" (decisão minha; o dev pode trocar).
   time vale (Fla × Fla): quem entrou depois veste o reserva (`uniforme: "fora"`).
 - **Câmeras (dev, rascunho B):** quem bate vê de trás do batedor; quem defende, de dentro do gol,
   de costas para a rede. O replay de cada lance roda na câmera de cada um.
+- **Jogadores arredondados (dev, 2026-11-26, maquete "A · arredondado, proporção real"):** no
+  lugar das caixas, tronco em cápsula, calção em cilindro, pescoço, cabeça redonda com cabelo,
+  braços e pernas em cápsulas com quadril/joelho e ombro/cotovelo, chuteira arredondada,
+  sombreado suave (`MeshStandardMaterial`) e sombra do sol só dos jogadores, da bola e do gol. Sem
+  rosto. A camisa é uma textura por jogador que dá a volta no tronco: o padrão do clube só no
+  peito e nas costas (a faixa do Vasco não passa para os lados), lados e mangas lisos (`lado`),
+  ou os aros do Flamengo dando a volta; o goleiro de cada clube com manga comprida e luvas.
+- **Animação de desenho animado (dev, 2026-11-26, opção C):** o batedor dá um passo atrás
+  agachado antes de correr, arma a perna perto da bola e segura (tremendo) até o resultado chegar,
+  e bate rápido com a perna seguindo; a bola achata no pé e voa esticada na direção do voo; o
+  goleiro estica o corpo no mergulho e passa um pouco do ponto antes de voltar (ease-out-back);
+  estouro de linhas de papel na batida e de lâmpada na rede no gol, com a tela tremendo um
+  instante (sem tremor para quem pede menos movimento no sistema). Os tempos do servidor não
+  mudam: a batida é na janela fechada (`chute_em` + 600 ms), o voo dura o mesmo (a cavadinha,
+  550 ms a mais), o achatado sai do tempo de voo.
+- **Um batedor diferente a cada cobrança (dev, 2026-11-26):** cor de pele, cabelo (curto,
+  raspado, black, topo crespo, careca, moicano, coque), cor do cabelo, faixa na cabeça às vezes,
+  altura ±5% e número nas costas (7, 9, 10, 11, 8, 19, 17, 21...). Vem de `mano-visual.js`, puro,
+  semeado pela sala, pela partida e pela contagem da cobrança, então os dois navegadores veem o
+  mesmo batedor; cabelo e número mudam sempre de uma cobrança para a seguinte. O goleiro de cada
+  um é sempre o mesmo na sala (semente: sala + vaga + time) e veste a 1.
 
 ## Contratos
 
@@ -103,7 +124,7 @@ Nome provisório: "Mano a Mano" (decisão minha; o dev pode trocar).
   dentro da `Sala`). `saida` vale se chegar ao servidor dentro da janela (+150 ms de folga para a
   rede); o cliente anima a corrida até `chute_em` e o voo da bola com o resultado de `cobranca`.
 - **Front:** Three.js fixado numa versão, vendorizado em `static/vendor/` (sem npm/CDN), cena
-  low-poly sombreada chapada na paleta da Geral (lâmpada, concreto, papel, gramado), placar de
+  low-poly na paleta da Geral (jogadores arredondados, sombreado suave) (lâmpada, concreto, papel, gramado), placar de
   lâmpadas em HTML por cima do canvas, Fullscreen API.
 - **Banco:** `mano_sumulas(id PK, criada_em, encerrada_em, dados JSON)`, gravada no `fim`.
 - **Limites:** criar sala 20/h por rede (`RateLimiter`); 1 ação a cada 0,3 s por jogador.

@@ -1,11 +1,13 @@
 // Mano a Mano: the penalty / free-kick scene in Three.js (vendored, pinned 0.187.0).
-// Flat-shaded low-poly in the Geral palette: lamps on black, concrete, paper, grass.
+// Low-poly in the Geral palette (lamps on black, concrete, paper, grass), rounded players with soft
+// shading and cartoon timing (anticipation, squash and stretch, bursts) on the kick.
 // The scoreboard and the buttons are HTML over the canvas, never 3D text.
 //
 // World: metres. Goal line on z = 0, the mouth from x = -3.66 to 3.66, crossbar at 2.44;
 // the pitch runs towards +z. Contract coordinates (0-1000) are the goal as the kicker sees
 // it: x = 0 is the kicker's left (world -x), y = 0 the ground, y = 1000 the crossbar.
 import * as THREE from "../vendor/three/three.module.js";
+import { visual } from "./mano-visual.js";
 
 const COR = {
   board: 0x0b0b0a,
@@ -109,6 +111,27 @@ function caixa(w, h, d, mat, x = 0, y = 0, z = 0) {
   return m;
 }
 
+/**
+ * A cartoon burst: `n` short rays around a unit circle, flat, drawn over everything. The caller
+ * places it, turns it to the camera, scales it and fades it (`material.opacity`).
+ */
+function estouro(cor, n) {
+  const pos = [];
+  for (let i = 0; i < n; i++) {
+    const a = (i / n) * Math.PI * 2 + 0.2;
+    const [c, s] = [Math.cos(a), Math.sin(a)];
+    const [px, py] = [-s * 0.07, c * 0.07]; // half the ray's width, across it
+    const p = (r, k) => [c * r + px * k, s * r + py * k, 0];
+    pos.push(...p(1, -1), ...p(1.7, -1), ...p(1.7, 1), ...p(1, -1), ...p(1.7, 1), ...p(1, 1));
+  }
+  const geo = new THREE.BufferGeometry();
+  geo.setAttribute("position", new THREE.Float32BufferAttribute(pos, 3));
+  const m = new THREE.Mesh(geo, new THREE.MeshBasicMaterial({ color: cor, transparent: true, depthTest: false, side: THREE.DoubleSide }));
+  m.renderOrder = 11;
+  m.visible = false;
+  return m;
+}
+
 function montarGramado(cena) {
   const g = new THREE.Group();
   const listras = [lambert(COR.gramado), lambert(COR.gramado2)];
@@ -203,6 +226,7 @@ function montarGol(cena) {
   g.add(fundo);
   g.add(new THREE.LineSegments(grade(xs, zs, (x, z) => [x, H, z]), malha));
   for (const s of [-1, 1]) g.add(new THREE.LineSegments(grade(zs, ys, (z, y) => [s * W, y, z]), malha));
+  g.traverse((o) => o.isMesh && (o.castShadow = true));
   cena.add(g);
   return { rede: fundo };
 }
@@ -297,65 +321,190 @@ function montarEstadio(cena) {
 }
 
 // ---------------------------------------------------------------------------------------
-// Players: blocky, faceless, as a table-football figure carved in concrete. The group's
-// origin is the hip, so a dive is a translation plus a roll around the hip.
+// Players: rounded, in real proportions (dev, 2026-11-26, mockup "A · arredondado"): a capsule
+// torso, cylinder shorts, a sphere head with hair, capsule limbs on hip/knee and shoulder/elbow
+// pivots, soft shading. Faceless. The group's origin is the hip, so a dive is a translation plus
+// a roll around the hip; `corpo` stretches along the body in the cartoon dive.
+
+const QUADRIL = 0.95; // hip height of a standing player at scale 1
+const GOLEIRO_QUADRIL = 0.88; // the keeper's, knees bent in his ready stance
+const EIXO_Z = new THREE.Vector3(0, 0, 1);
+const padrao = (cor) => new THREE.MeshStandardMaterial({ color: cor, roughness: 0.75, metalness: 0 });
+
+// The torso's capsule wraps its texture once around (CapsuleGeometry: u = 0 on -x, the chest
+// (+z) at u = 0.25, the back at 0.75; v from the bottom). The chest and back panels are
+// FRENTE_U wide each side of their centre; the rest is the sides, under the sleeves.
+const FRENTE_U = 0.18;
+const TELA_CAMISA = 256;
+
+let GEO = null;
+function geometrias() {
+  if (GEO) return GEO;
+  const cap = (r, l, seg = 10) => new THREE.CapsuleGeometry(r, l, 4, seg);
+  // A cap of hair: the top of a sphere down to `ate` (radians from the crown).
+  const calota = (r, ate) => new THREE.SphereGeometry(r, 16, 7, 0, Math.PI * 2, 0, ate);
+  const bota = cap(0.045, 0.14, 8).rotateX(Math.PI / 2);
+  GEO = {
+    tronco: cap(0.19, 0.32, 16),
+    calcao: new THREE.CylinderGeometry(0.2, 0.22, 0.2, 14),
+    pescoco: new THREE.CylinderGeometry(0.055, 0.065, 0.1, 8),
+    cabeca: new THREE.SphereGeometry(0.13, 16, 12),
+    coxa: cap(0.075, 0.27),
+    canela: cap(0.065, 0.29),
+    bota,
+    braco: cap(0.06, 0.17),
+    ante: cap(0.05, 0.17),
+    mao: new THREE.SphereGeometry(0.05, 10, 8),
+    luva: new THREE.SphereGeometry(0.075, 10, 8),
+    faixa: new THREE.TorusGeometry(0.128, 0.016, 6, 20).rotateX(Math.PI / 2),
+    // hair: the cap on the head and, for some styles, one extra piece
+    curto: calota(0.136, Math.PI / 2.1),
+    raspado: calota(0.1335, Math.PI / 2.5),
+    black: new THREE.SphereGeometry(0.175, 14, 10),
+    topo: cap(0.105, 0.05, 12),
+    moicano: cap(0.03, 0.17, 6).rotateX(Math.PI / 2),
+    coque: new THREE.SphereGeometry(0.055, 10, 8),
+  };
+  return GEO;
+}
+
+// Each style: the cap's geometry, its offset and scale on the head, and the extra piece.
+const ESTILOS = {
+  curto: { calota: "curto", pos: [0, 0.016, -0.006], esc: [0.95, 0.9, 1.02] },
+  raspado: { calota: "raspado", pos: [0, 0.008, -0.004], esc: [0.97, 0.95, 1.02] },
+  black: { calota: "black", pos: [0, 0.055, -0.05], esc: [1, 0.9, 0.9] },
+  topo: { calota: "curto", pos: [0, 0.016, -0.006], esc: [0.95, 0.9, 1.02], extra: ["topo", [0, 0.1, -0.012], [1.08, 1, 1.02]] },
+  careca: null,
+  moicano: { calota: "raspado", pos: [0, 0.008, -0.004], esc: [0.97, 0.95, 1.02], extra: ["moicano", [0, 0.125, -0.01], [1, 1.5, 1]] },
+  coque: { calota: "curto", pos: [0, 0.016, -0.006], esc: [0.95, 0.9, 1.02], extra: ["coque", [0, 0.07, -0.14], [1, 1, 1]] },
+};
 
 function montarJogador({ camisa, calcao, meia, luvas = null, cabelo = COR.tinta }) {
+  const G = geometrias();
   const grupo = new THREE.Group();
   const corpo = new THREE.Group(); // everything hangs from the hip (y = 0 here)
   grupo.add(corpo);
-  // One material per piece of the kit, shared by its meshes: vestir() swaps the colours. The
-  // shirt's pattern goes only on the chest (`frente`) and the back (`costas`); the sides, the
-  // shoulders and the sleeves (`lado`) take a plain colour or a pattern that wraps around.
+  // One material per piece of the kit: vestirJogador() swaps colours and maps. `camisa` is the
+  // torso (its own canvas: chest, back with the number, sides); `lado` the sleeves.
   const mats = {
-    frente: lambert(camisa),
-    costas: lambert(camisa),
-    lado: lambert(camisa),
-    calcao: lambert(calcao),
-    meia: lambert(meia),
+    camisa: padrao(camisa),
+    lado: padrao(camisa),
+    calcao: padrao(calcao),
+    meia: padrao(meia),
+    pele: padrao(COR.pele),
+    cabelo: padrao(cabelo),
+    faixa: padrao(COR.giz),
   };
-  const mc = mats.lado;
-  const pele = lambert(COR.pele);
-  // BoxGeometry's faces: +x, -x, +y, -y, +z (the chest: players face +z), -z (the back)
-  const tronco = caixa(0.46, 0.62, 0.26, [mc, mc, mc, mc, mats.frente, mats.costas], 0, 0.4, 0);
-  corpo.add(tronco);
-  corpo.add(caixa(0.44, 0.2, 0.27, mats.calcao, 0, 0.03, 0));
-  const cabeca = new THREE.Mesh(new THREE.IcosahedronGeometry(0.135, 0), pele);
-  cabeca.position.set(0, 0.86, 0);
+  const add = (pai, geo, mat, x = 0, y = 0, z = 0, s = null) => {
+    const m = new THREE.Mesh(geo, mat);
+    m.position.set(x, y, z);
+    if (s) m.scale.set(...s);
+    m.castShadow = true;
+    pai.add(m);
+    return m;
+  };
+  const tronco = add(corpo, G.tronco, mats.camisa, 0, 0.37, 0, [1.18, 1, 0.72]);
+  add(corpo, G.calcao, mats.calcao, 0, 0.02, 0, [1, 1, 0.75]);
+  add(corpo, G.pescoco, mats.pele, 0, 0.72, 0);
+  const cabeca = new THREE.Group();
+  cabeca.position.set(0, 0.87, 0);
   corpo.add(cabeca);
-  const topo = new THREE.Mesh(new THREE.IcosahedronGeometry(0.14, 0), lambert(cabelo));
-  topo.scale.set(1, 0.55, 1);
-  topo.position.set(0, 0.93, -0.02);
-  corpo.add(topo);
+  add(cabeca, G.cabeca, mats.pele, 0, 0, 0, [0.92, 1.05, 1]);
+  const calota = add(cabeca, G.curto, mats.cabelo);
+  const extra = add(cabeca, G.coque, mats.cabelo);
+  extra.visible = false;
+  const faixa = add(cabeca, G.faixa, mats.faixa, 0, 0.045, -0.005, [0.93, 1, 1.03]);
+  faixa.rotation.x = -0.12;
+  faixa.visible = false;
+  const botas = padrao(COR.tinta);
   const perna = (x) => {
-    const p = new THREE.Group();
-    p.position.set(x, -0.05, 0);
-    p.add(caixa(0.17, 0.42, 0.18, pele, 0, -0.2, 0));
-    p.add(caixa(0.16, 0.44, 0.17, mats.meia, 0, -0.62, 0));
-    p.add(caixa(0.17, 0.09, 0.28, lambert(COR.tinta), 0, -0.9, 0.05));
-    corpo.add(p);
-    return p;
+    const quadril = new THREE.Group();
+    quadril.position.set(x, -0.04, 0);
+    corpo.add(quadril);
+    add(quadril, G.coxa, mats.pele, 0, -0.21, 0);
+    const joelho = new THREE.Group();
+    joelho.position.y = -0.42;
+    quadril.add(joelho);
+    add(joelho, G.canela, mats.meia, 0, -0.21, 0);
+    add(joelho, G.bota, botas, 0, -0.44, 0.06, [1.1, 1, 1]);
+    return { quadril, joelho };
   };
   const braco = (x) => {
-    const b = new THREE.Group();
-    b.position.set(x, 0.66, 0);
-    b.add(caixa(0.13, 0.3, 0.14, mc, 0, -0.14, 0));
-    b.add(caixa(0.11, 0.3, 0.12, luvas ? mc : pele, 0, -0.43, 0));
-    if (luvas) b.add(caixa(0.16, 0.17, 0.12, lambert(luvas), 0, -0.64, 0));
-    corpo.add(b);
-    return b;
+    const ombro = new THREE.Group();
+    ombro.position.set(x, 0.6, 0);
+    corpo.add(ombro);
+    add(ombro, G.braco, mats.lado, 0, -0.145, 0);
+    const cotovelo = new THREE.Group();
+    cotovelo.position.y = -0.29;
+    ombro.add(cotovelo);
+    // A keeper's long sleeves and gloves.
+    add(cotovelo, G.ante, luvas ? mats.lado : mats.pele, 0, -0.135, 0);
+    add(cotovelo, luvas ? G.luva : G.mao, luvas ? padrao(luvas) : mats.pele, 0, -0.3, 0);
+    return { ombro, cotovelo };
   };
+  // pernaE/bracoE on -x: the player's right (he faces +z); the kicking leg is pernaE.
+  const pE = perna(-0.1);
+  const pD = perna(0.1);
+  const bE = braco(-0.23);
+  const bD = braco(0.23);
   const partes = {
     corpo,
     tronco,
     cabeca,
-    pernaE: perna(-0.12),
-    pernaD: perna(0.12),
-    bracoE: braco(-0.31),
-    bracoD: braco(0.31),
+    pernaE: pE.quadril,
+    pernaD: pD.quadril,
+    joelhoE: pE.joelho,
+    joelhoD: pD.joelho,
+    bracoE: bE.ombro,
+    bracoD: bD.ombro,
+    cotoveloE: bE.cotovelo,
+    cotoveloD: bD.cotovelo,
   };
-  grupo.position.y = 0.95;
-  return { grupo, partes, mats };
+  grupo.position.y = QUADRIL;
+  const j = { grupo, partes, mats, cabelo: { calota, extra, faixa }, quadril: QUADRIL, tela: null, mapa: null };
+  descansar(j);
+  return j;
+}
+
+const ARTICULACOES = ["corpo", "pernaE", "pernaD", "joelhoE", "joelhoD", "bracoE", "bracoD", "cotoveloE", "cotoveloD"];
+
+/** Standing at ease: every joint straight but the elbows, arms a little off the torso. */
+function descansar(j) {
+  const p = j.partes;
+  for (const k of ARTICULACOES) p[k].rotation.set(0, 0, 0);
+  p.corpo.scale.set(1, 1, 1);
+  p.bracoE.rotation.z = -0.12;
+  p.bracoD.rotation.z = 0.12;
+  p.cotoveloE.rotation.x = -0.25;
+  p.cotoveloD.rotation.x = -0.25;
+}
+
+/** A player's look ({pele, cabelo, corCabelo, faixa, escala}, mano-visual.js). */
+function aplicarVisual(j, v) {
+  if (!v) return;
+  j.mats.pele.color.set(v.pele);
+  j.mats.cabelo.color.set(v.corCabelo);
+  const { calota, extra, faixa } = j.cabelo;
+  const e = ESTILOS[v.cabelo] ?? null;
+  calota.visible = Boolean(e);
+  extra.visible = Boolean(e?.extra);
+  if (e) {
+    calota.geometry = GEO[e.calota];
+    calota.position.set(...e.pos);
+    calota.scale.set(...e.esc);
+    if (e.extra) {
+      const [geo, pos, esc] = e.extra;
+      extra.geometry = GEO[geo];
+      extra.position.set(...pos);
+      extra.scale.set(...esc);
+    }
+  }
+  // A headband sits over short hair only; an afro or a high top would swallow it.
+  faixa.visible = Boolean(v.faixa) && ["curto", "raspado", "careca", "moicano", "coque"].includes(v.cabelo);
+  if (v.faixa) j.mats.faixa.color.set(v.faixa);
+  j.quadril = QUADRIL * (v.escala ?? 1);
+  j.grupo.scale.setScalar(v.escala ?? 1);
+  j.grupo.position.y = j.quadril;
 }
 
 // ---------------------------------------------------------------------------------------
@@ -370,35 +519,35 @@ const BRANCO = "#FFFFFF";
 const PRETO = "#141414";
 const KIT_COR = { flamengo: "#B3121B", vasco: PRETO, palmeiras: "#006437", abc: PRETO, nautico: "#C60000", csa: "#1B4B9B" };
 
-/** Shirt patterns, drawn on a 64×64 canvas; u runs left to right as you look at that face. */
+/** Shirt patterns, drawn in a w×h box; x runs left to right as you look at that panel. */
 const ESTAMPAS = {
   // horizontal hoops, `cores` repeating from the collar down
-  aros: (g, { cores, n }) => [...Array(n)].forEach((_, i) => ((g.fillStyle = cores[i % cores.length]), g.fillRect(0, (64 * i) / n, 64, 64 / n + 1))),
+  aros: (g, { cores, n }, w, h) => [...Array(n)].forEach((_, i) => ((g.fillStyle = cores[i % cores.length]), g.fillRect(0, (h * i) / n, w, h / n + 1))),
   // vertical stripes
-  listras: (g, { cores, n }) => [...Array(n)].forEach((_, i) => ((g.fillStyle = cores[i % cores.length]), g.fillRect((64 * i) / n, 0, 64 / n + 1, 64))),
+  listras: (g, { cores, n }, w, h) => [...Array(n)].forEach((_, i) => ((g.fillStyle = cores[i % cores.length]), g.fillRect((w * i) / n, 0, w / n + 1, h))),
   // a sash from the wearer's right shoulder to his left hip: on the chest it runs from your
   // top-left to your bottom-right, on the back (`costas`) from your top-right to bottom-left
-  faixa: (g, { base, cor, costas = false }) => {
+  faixa: (g, { base, cor, costas = false }, w, h) => {
     g.fillStyle = base;
-    g.fillRect(0, 0, 64, 64);
+    g.fillRect(0, 0, w, h);
     g.fillStyle = cor;
     g.beginPath();
-    for (const [x, y] of [[0, 0], [18, 0], [64, 64], [46, 64]]) g.lineTo(costas ? 64 - x : x, y);
+    for (const [x, y] of [[0, 0.1], [0.3, 0.1], [1, 0.9], [0.7, 0.9]]) g.lineTo((costas ? 1 - x : x) * w, y * h);
     g.closePath();
     g.fill();
   },
   // plain, with an optional band of a detail colour across the chest
-  liso: (g, { base, cor = base, peito = false }) => {
+  liso: (g, { base, cor = base, peito = false }, w, h) => {
     g.fillStyle = base;
-    g.fillRect(0, 0, 64, 64);
+    g.fillRect(0, 0, w, h);
     g.fillStyle = cor;
-    if (peito) g.fillRect(0, 22, 64, 10);
+    if (peito) g.fillRect(0, h * 0.3, w, h * 0.12);
   },
   // white with a band of hoops across the chest
-  peito: (g, { base, cores }) => {
+  peito: (g, { base, cores }, w, h) => {
     g.fillStyle = base;
-    g.fillRect(0, 0, 64, 64);
-    cores.forEach((c, i) => ((g.fillStyle = c), g.fillRect(0, 20 + i * 6, 64, 6)));
+    g.fillRect(0, 0, w, h);
+    cores.forEach((c, i) => ((g.fillStyle = c), g.fillRect(0, h * (0.28 + i * 0.07), w, h * 0.07 + 1)));
   },
 };
 
@@ -442,11 +591,12 @@ const GOLEIROS = {
 };
 
 const texturas = new Map();
+/** A small cached 64×64 texture of one pattern: a hooped kit's sleeves. */
 function textura(chave, [estampa, params]) {
   if (!texturas.has(chave)) {
     const tela = document.createElement("canvas");
     tela.width = tela.height = 64;
-    ESTAMPAS[estampa](tela.getContext("2d"), params);
+    ESTAMPAS[estampa](tela.getContext("2d"), params, 64, 64);
     const t = new THREE.CanvasTexture(tela);
     t.colorSpace = THREE.SRGBColorSpace;
     t.magFilter = THREE.NearestFilter;
@@ -458,21 +608,71 @@ function textura(chave, [estampa, params]) {
 }
 
 /**
- * The kit for `{time, uniforme}` in a role: {frente, costas: Texture, lado: Texture | colour,
- * calcao, meia} (colours as CSS).
+ * The kit for `{time, uniforme}` in a role: {camisa: [estampa, params] for the chest, costas:
+ * the same for the back (a sash mirrored), lado: colour or Texture (hoops) for the sides and
+ * sleeves, aros: true when the sides take the chest's hoops, calcao, meia} (colours as CSS).
  */
 export function uniforme({ time, uniforme: lado = "casa" } = {}, papel = "batedor") {
   if (!UNIFORMES[time]) return null;
   if (papel === "goleiro") {
     const { base, cor, calcao } = GOLEIROS[time];
-    const peito = textura(`goleiro:${time}`, ["liso", { base, cor, peito: true }]);
-    return { frente: peito, costas: peito, lado: base, calcao, meia: base };
+    // the band across the chest only: the back is plain under the 1
+    return { camisa: ["liso", { base, cor, peito: true }], costas: ["liso", { base }], lado: base, calcao, meia: base };
   }
   const kit = UNIFORMES[time][lado === "fora" ? "fora" : "casa"];
   const [estampa, params] = kit.camisa;
-  const frente = textura(`${time}:${lado}`, kit.camisa);
-  const costas = estampa === "faixa" ? textura(`${time}:${lado}:costas`, [estampa, { ...params, costas: true }]) : frente;
-  return { frente, costas, lado: kit.lado === "estampa" ? frente : kit.lado, calcao: kit.calcao, meia: kit.meia };
+  const costas = estampa === "faixa" ? [estampa, { ...params, costas: true }] : kit.camisa;
+  const aros = kit.lado === "estampa";
+  return { camisa: kit.camisa, costas, lado: aros ? textura(`${time}:${lado}`, kit.camisa) : kit.lado, aros, calcao: kit.calcao, meia: kit.meia };
+}
+
+/** Light colour? (for the number: dark on light shirts, light on dark ones). */
+function claro(css) {
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(css.slice(i, i + 2), 16) / 255);
+  return 0.299 * r + 0.587 * g + 0.114 * b > 0.55;
+}
+
+/**
+ * Paint a player's torso canvas: the sides plain (or the hoops all round), the chest and the
+ * back panels with the club's pattern, the number big on the back.
+ */
+function pintarCamisa(tela, kit, numero) {
+  const g = tela.getContext("2d");
+  const W = tela.width;
+  const H = tela.height;
+  g.setTransform(1, 0, 0, 1, 0, 0);
+  if (kit.aros) ESTAMPAS[kit.camisa[0]](g, kit.camisa[1], W, H);
+  else {
+    g.fillStyle = typeof kit.lado === "string" ? kit.lado : BRANCO;
+    g.fillRect(0, 0, W, H);
+  }
+  const largura = 2 * FRENTE_U * W;
+  for (const [centro, [estampa, params]] of [[0.25, kit.camisa], [0.75, kit.costas]]) {
+    g.save();
+    g.translate(centro * W - largura / 2, 0);
+    g.beginPath();
+    g.rect(0, 0, largura, H);
+    g.clip();
+    ESTAMPAS[estampa](g, params, largura, H);
+    g.restore();
+  }
+  if (!numero) return;
+  const [estampa, params] = kit.costas;
+  const fundo = params.base ?? (estampa === "aros" ? params.cores[0] : params.cores[1]);
+  const escuro = claro(fundo);
+  g.save();
+  g.translate(0.75 * W, H * 0.47);
+  g.scale(1, 0.95);
+  g.font = `900 ${Math.round(H * 0.3)}px "Arial Black", Impact, sans-serif`;
+  g.textAlign = "center";
+  g.textBaseline = "middle";
+  g.lineJoin = "round";
+  g.lineWidth = H * 0.035;
+  g.strokeStyle = escuro ? BRANCO : PRETO;
+  g.fillStyle = escuro ? PRETO : BRANCO;
+  g.strokeText(String(numero), 0, 0, largura * 0.9);
+  g.fillText(String(numero), 0, 0, largura * 0.9);
+  g.restore();
 }
 
 function vestir(mat, tinta) {
@@ -484,18 +684,19 @@ function vestir(mat, tinta) {
   mat.color.set(mapa ? 0xffffff : tinta);
 }
 
-function vestirJogador(j, kit) {
-  for (const peca of ["frente", "costas", "lado", "calcao", "meia"]) vestir(j.mats[peca], kit[peca]);
-}
-
-function pose(j, { pernas = 0, bracos = 0, abrir = 0 } = {}) {
-  const p = j.partes;
-  p.pernaE.rotation.x = pernas;
-  p.pernaD.rotation.x = -pernas;
-  p.bracoE.rotation.x = -bracos;
-  p.bracoD.rotation.x = bracos;
-  p.bracoE.rotation.z = -abrir;
-  p.bracoD.rotation.z = abrir;
+/** Dress a player: the kit (from uniforme()) and the number on his back. */
+function vestirJogador(j, kit, numero = null) {
+  if (!j.tela) {
+    j.tela = document.createElement("canvas");
+    j.tela.width = j.tela.height = TELA_CAMISA;
+    j.mapa = new THREE.CanvasTexture(j.tela);
+    j.mapa.colorSpace = THREE.SRGBColorSpace;
+    j.mapa.anisotropy = 4;
+  }
+  pintarCamisa(j.tela, kit, numero);
+  j.mapa.needsUpdate = true;
+  vestir(j.mats.camisa, j.mapa);
+  for (const peca of ["lado", "calcao", "meia"]) vestir(j.mats[peca], kit[peca]);
 }
 
 // ---------------------------------------------------------------------------------------
@@ -518,32 +719,53 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
 
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true, preserveDrawingBuffer: true });
   renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+  // Only the players, the ball and the goal cast shadows, from the one sun, over the box.
+  renderer.shadowMap.enabled = true;
+  renderer.shadowMap.type = THREE.PCFShadowMap;
   const cena = new THREE.Scene();
   cena.background = new THREE.Color(COR.board);
   cena.fog = new THREE.Fog(COR.board, 45, 170);
   cena.add(new THREE.HemisphereLight(0xfff1d0, 0x1a2a1f, 1.5));
   const sol = new THREE.DirectionalLight(0xffe6b0, 1.7);
-  sol.position.set(-30, 60, 40);
-  cena.add(sol);
+  sol.position.set(-30, 60, 50);
+  sol.target.position.set(0, 0, 10);
+  sol.castShadow = true;
+  sol.shadow.mapSize.set(1024, 1024);
+  Object.assign(sol.shadow.camera, { left: -18, right: 18, top: 18, bottom: -18, near: 40, far: 120 });
+  sol.shadow.bias = -0.0005;
+  sol.shadow.normalBias = 0.02;
+  cena.add(sol, sol.target);
   const contra = new THREE.DirectionalLight(0xfff3dc, 0.6);
   contra.position.set(40, 50, -60);
   cena.add(contra);
 
   montarGramado(cena);
+  cena.traverse((o) => o.isMesh && (o.receiveShadow = true));
   const { rede } = montarGol(cena);
   montarEstadio(cena);
 
   const batedor = montarJogador({ camisa: COR.papel, calcao: COR.tinta, meia: COR.papel });
   const goleiro = montarJogador({ camisa: COR.tintaSoft, calcao: COR.tinta, meia: COR.tinta, luvas: COR.papel, cabelo: COR.tinta });
   cena.add(batedor.grupo, goleiro.grupo);
-  const bola = new THREE.Mesh(new THREE.IcosahedronGeometry(0.13, 1), lambert(COR.giz));
+  // The ball: `bola` is placed, squashed and stretched along its flight; its mesh spins inside.
+  const bola = new THREE.Group();
+  const bolaMalha = new THREE.Mesh(new THREE.IcosahedronGeometry(0.13, 2), new THREE.MeshStandardMaterial({ color: COR.giz, roughness: 0.55, flatShading: true }));
+  bolaMalha.castShadow = true;
+  bola.add(bolaMalha);
   cena.add(bola);
+  // The cartoon bursts: paper lines at the strike, lamp lines at the net on a goal.
+  const estouroChute = estouro(COR.papel, 8);
+  const estouroGol = estouro(COR.lamp, 12);
+  cena.add(estouroChute, estouroGol);
   const barreiraGrupo = new THREE.Group();
   cena.add(barreiraGrupo);
 
   const camera = new THREE.PerspectiveCamera(40, 16 / 9, 0.1, 400);
 
+  // No shake for who asked the system for less motion.
+  const calmo = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
   const estado = {
+    tremor: 0, // the camera's shake (m), set by the goal
     papel,
     modo,
     falta: null, // {nome, x, z, barreira: {n, x} | null}
@@ -561,10 +783,14 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
   }
 
   // A pool of five men, so dragging the wall never rebuilds meshes.
-  const homens = Array.from({ length: 5 }, () => {
+  // Each man has his own fixed look; hands crossed in front, as a wall stands.
+  const homens = Array.from({ length: 5 }, (_, i) => {
     const j = montarJogador({ camisa: COR.concretoLt, calcao: COR.tinta, meia: COR.concretoLt });
-    j.partes.bracoE.rotation.set(-0.3, 0, 0.32);
-    j.partes.bracoD.rotation.set(-0.3, 0, -0.32);
+    aplicarVisual(j, visual("barreira", i));
+    j.partes.bracoE.rotation.set(-0.25, 0, 0.3);
+    j.partes.bracoD.rotation.set(-0.25, 0, -0.3);
+    j.partes.cotoveloE.rotation.set(-1.0, 0, 0);
+    j.partes.cotoveloD.rotation.set(-1.0, 0, 0);
     barreiraGrupo.add(j.grupo);
     return j;
   });
@@ -576,7 +802,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       const p = lugares[i];
       j.grupo.visible = Boolean(p);
       if (!p) return;
-      j.grupo.position.set(p.x, 0.95, p.z);
+      j.grupo.position.set(p.x, j.quadril, p.z);
       j.grupo.rotation.set(0, Math.atan2(estado.bolaEm.x - p.x, estado.bolaEm.z - p.z), 0);
     });
   }
@@ -612,24 +838,36 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     const bx = estado.bolaEm.x;
     const bz = estado.bolaEm.z;
     bola.position.copy(estado.bolaEm);
-    bola.rotation.set(0, 0, 0);
+    bola.quaternion.identity();
+    bola.scale.set(1, 1, 1);
+    bolaMalha.rotation.set(0, 0, 0);
+    estouroChute.visible = estouroGol.visible = false;
+    estado.tremor = 0;
     // Kicker 2.2 m behind the ball and a little to his left, facing the goal.
     const direita = new THREE.Vector3(-d.z, 0, d.x); // kicker's right on the ground
-    batedor.grupo.position.set(bx - d.x * 2.2 - direita.x * 1.1, 0.95, bz - d.z * 2.2 - direita.z * 1.1);
+    batedor.grupo.position.set(bx - d.x * 2.2 - direita.x * 1.1, batedor.quadril, bz - d.z * 2.2 - direita.z * 1.1);
     batedor.grupo.rotation.set(0, Math.atan2(d.x, d.z), 0);
-    batedor.partes.corpo.rotation.set(0, 0, 0);
-    pose(batedor);
-    goleiro.grupo.rotation.set(0, 0, 0);
-    goleiro.partes.bracoE.rotation.set(0, 0, 0);
-    goleiro.partes.bracoD.rotation.set(0, 0, 0);
+    descansar(batedor);
     rede.geometry.attributes.position.array.set(rede.userData.base);
     rede.geometry.attributes.position.needsUpdate = true;
-    goleiro.grupo.position.set(0, 0.88, 0.35);
+    goleiro.grupo.position.set(0, GOLEIRO_QUADRIL, 0.35);
     goleiro.grupo.rotation.set(0, Math.atan2(bx, bz) * 0.6, 0);
-    goleiro.partes.corpo.rotation.set(0.12, 0, 0);
-    pose(goleiro, { pernas: 0.0, bracos: 0.35, abrir: 0.45 });
-    goleiro.partes.pernaE.rotation.z = -0.12;
-    goleiro.partes.pernaD.rotation.z = 0.12;
+    prontoGoleiro(goleiro, 0);
+  }
+
+  /** The keeper's ready stance (mockup): knees bent, arms out, elbows bent; `s` sways it. */
+  function prontoGoleiro(g, s) {
+    const p = g.partes;
+    descansar(g);
+    p.corpo.rotation.x = 0.15;
+    p.pernaE.rotation.set(-0.35, 0, -0.25);
+    p.pernaD.rotation.set(-0.35, 0, 0.25);
+    p.joelhoE.rotation.x = 0.6;
+    p.joelhoD.rotation.x = 0.6;
+    p.bracoE.rotation.set(-0.3, 0, -0.9 - s * 0.08);
+    p.bracoD.rotation.set(-0.3, 0, 0.9 + s * 0.08);
+    p.cotoveloE.rotation.x = -0.5;
+    p.cotoveloD.rotation.x = -0.5;
   }
 
   // Horizontal field of view kept at 16:9 values, so a tall window shows more sky, never
@@ -713,7 +951,15 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     if (estado.destruida) return;
     try {
       if (estado.animacao) estado.animacao(performance.now());
-      renderer.render(cena, camera);
+      // The goal's shake: the camera jolts for a moment, then goes back where it was.
+      const tremor = calmo ? 0 : estado.tremor;
+      if (tremor > 0) {
+        const t = performance.now();
+        const desvio = new THREE.Vector3(Math.sin(t * 0.091) * tremor, Math.cos(t * 0.077) * tremor * 0.7, 0).applyQuaternion(camera.quaternion);
+        camera.position.add(desvio);
+        renderer.render(cena, camera);
+        camera.position.sub(desvio);
+      } else renderer.render(cena, camera);
     } finally {
       requestAnimationFrame(quadro); // one bad frame must not freeze the scene
     }
@@ -1130,6 +1376,10 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
 
   const lerp = (a, b, k) => a + (b - a) * k;
   const suave = (k) => (k <= 0 ? 0 : k >= 1 ? 1 : k * k * (3 - 2 * k));
+  const saiRapido = (k) => 1 - (1 - k) ** 3; // ease-out
+  const emEntra = (k) => (k < 0.5 ? 2 * k * k : 1 - (-2 * k + 2) ** 2 / 2); // ease-in-out
+  // ease-out-back: past the mark by about a tenth, then back to it
+  const voltaAtras = (k) => (k <= 0 ? 0 : k >= 1 ? 1 : 1 + 2.70158 * (k - 1) ** 3 + 1.70158 * (k - 1) ** 2);
   const entre = (t, a, b) => Math.min(1, Math.max(0, (t - a) / (b - a)));
 
   function planejarVoo(lance) {
@@ -1238,20 +1488,28 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
 
   function animarGoleiro(t, tl) {
     const g = goleiro;
+    const p = g.partes;
     const { lento } = tl;
-    const H0 = new THREE.Vector3(0, 0.88, 0.35);
+    const H0 = new THREE.Vector3(0, GOLEIRO_QUADRIL, 0.35);
     // The exit: a step off the line, from the local press or from the result.
     const tSaida = tl.saidaLocal ?? (tl.lance?.defesa?.saida ? tl.tGolpe - 220 * lento : null);
     const passo = tSaida != null ? suave(entre(t, tSaida, tSaida + 200 * lento)) * 0.6 : 0;
     H0.z += passo;
     if (!tl.lance || t < tl.tGolpe - 40 * lento) {
-      // Ready stance, rocking on his toes.
+      // Ready stance, bouncing on his toes, swaying side to side.
+      const s = Math.sin(t / 140);
+      prontoGoleiro(g, s);
       g.grupo.position.copy(H0);
-      g.grupo.position.y += Math.sin(t / 140) * 0.015;
+      g.grupo.position.y -= Math.abs(s) * 0.025;
+      g.grupo.position.x += Math.sin(t / 260) * 0.04;
       return;
     }
     const T = tl.alvoGoleiro;
-    const k = suave(entre(t, tl.tGolpe - 40 * lento, tl.tGolpe + 380 * lento));
+    const kd = entre(t, tl.tGolpe - 40 * lento, tl.tGolpe + 420 * lento);
+    const k = suave(kd);
+    // Cartoon: the dive overshoots its mark and settles back (ease-out-back), the body
+    // stretched long at its height.
+    const kb = voltaAtras(kd);
     if (estado.papel === "goleiro") {
       estado.seguir = { k, T };
       posicionarCamera();
@@ -1269,65 +1527,160 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     // Then down to the grass (not when he just jumped in the middle).
     const q = fica ? 0 : suave(entre(t, tl.tGolpe + 420 * lento, tl.tGolpe + 900 * lento));
     const virado = Math.atan2(estado.bolaEm.x, estado.bolaEm.z) * 0.6; // stance facing the ball
-    g.grupo.rotation.set(0, virado * (1 - k), lerp(0, theta, k) + q * (Math.sign(theta) * Math.PI) / 2 * 0.25);
-    g.grupo.position.set(lerp(H0.x, quadrilAlvo.x, k), lerp(H0.y, quadrilAlvo.y, k) * (1 - q) + 0.32 * q, lerp(H0.z, quadrilAlvo.z, k));
+    g.grupo.rotation.set(0, virado * (1 - k), lerp(0, theta, kb) + q * (Math.sign(theta) * Math.PI) / 2 * 0.25);
+    g.grupo.position.set(lerp(H0.x, quadrilAlvo.x, kb), lerp(H0.y, quadrilAlvo.y, kb) * (1 - q) + 0.32 * q, lerp(H0.z, quadrilAlvo.z, k));
     if (fica) g.grupo.position.y -= suave(entre(t, tl.tGolpe + 450 * lento, tl.tGolpe + 800 * lento)) * (quadrilAlvo.y - H0.y);
+    descansar(g);
+    const estica = 1 + (fica ? 0.12 : 0.3) * Math.sin(Math.PI * kd);
+    p.corpo.scale.set(1 / Math.sqrt(estica), estica, 1 / Math.sqrt(estica));
     const braco = -Math.PI * 0.95 * k;
-    g.partes.bracoE.rotation.set(braco, 0, lerp(-0.45, 0.1, k));
-    g.partes.bracoD.rotation.set(braco, 0, lerp(0.45, -0.1, k));
-    g.partes.pernaE.rotation.set(0.35 * k, 0, -0.12 - 0.25 * k);
-    g.partes.pernaD.rotation.set(-0.2 * k, 0, 0.12 + 0.15 * k);
-    g.partes.corpo.rotation.set(0.12 * (1 - k), 0, 0);
+    p.bracoE.rotation.set(braco, 0, lerp(-0.9, 0.1, k));
+    p.bracoD.rotation.set(braco, 0, lerp(0.9, -0.1, k));
+    p.cotoveloE.rotation.x = p.cotoveloD.rotation.x = lerp(-0.5, 0, k);
+    p.pernaE.rotation.set(lerp(-0.35, 0.35, k), 0, -0.25 + 0.05 * k);
+    p.pernaD.rotation.set(lerp(-0.35, -0.25, k), 0, 0.25 - 0.05 * k);
+    p.joelhoE.rotation.x = lerp(0.6, 0.15, k);
+    p.joelhoD.rotation.x = lerp(0.6, 0.55, k);
+    p.corpo.rotation.set(0.15 * (1 - k), 0, 0);
   }
 
   function animarBatedor(t, tl) {
     const b = batedor;
-    const { lento, inicio, plantio } = tl;
-    const u = suave(entre(t, tl.t0, tl.tChute)) * 0.7 + entre(t, tl.t0, tl.tChute) * 0.3;
-    const pos = inicio.clone().lerp(plantio, u);
-    const correndo = t < tl.tChute;
-    const passada = correndo ? Math.sin(u * Math.PI * 7) : 0;
-    b.partes.pernaE.rotation.x = passada * 0.7;
-    b.partes.pernaD.rotation.x = -passada * 0.7;
-    b.partes.bracoE.rotation.x = -passada * 0.6;
-    b.partes.bracoD.rotation.x = passada * 0.6;
-    b.partes.corpo.rotation.x = correndo ? 0.18 : 0.08;
-    // The strike: his right leg through the ball, the body following.
-    const tGolpe = tl.lance ? tl.tGolpe : Infinity;
-    const kg = entre(t, tGolpe - 160 * lento, tGolpe + 260 * lento);
-    if (kg > 0) {
-      const balanco = kg < 0.38 ? lerp(0, 0.9, kg / 0.38) : lerp(0.9, -1.5, suave((kg - 0.38) / 0.62));
-      b.partes.pernaE.rotation.x = balanco;
-      b.partes.pernaD.rotation.x = 0.1;
-      b.partes.bracoE.rotation.set(0, 0, -0.6 * Math.sin(Math.PI * kg));
-      b.partes.bracoD.rotation.set(-0.5 * Math.sin(Math.PI * kg), 0, 0.7 * Math.sin(Math.PI * kg));
-      b.partes.corpo.rotation.x = -0.15 * Math.sin(Math.PI * kg);
-      pos.addScaledVector(tl.d, 0.3 * suave(kg));
-    } else if (!correndo) {
+    const p = b.partes;
+    const { lento, inicio, plantio, d } = tl;
+    descansar(b);
+    const tAnt = tl.t0 + tl.antecipa;
+    const atras = inicio.clone().addScaledVector(d, -0.35);
+    let pos;
+    let salto = 0;
+    if (t < tAnt) {
+      // Anticipation (cartoon): a step back into a crouch, arms back, then the spring forward.
+      const a = entre(t, tl.t0, tAnt);
+      const m = Math.sin(a * Math.PI);
+      pos = inicio.clone().lerp(atras, Math.sin((a * Math.PI) / 2));
+      p.corpo.rotation.x = -0.22 * m;
+      p.pernaD.rotation.x = 0.45 * m;
+      p.joelhoD.rotation.x = 0.7 * m;
+      p.pernaE.rotation.x = -0.2 * m;
+      p.joelhoE.rotation.x = 0.5 * m;
+      p.bracoE.rotation.x = p.bracoD.rotation.x = 0.7 * m;
+      salto = -0.07 * m;
+    } else if (t < tl.tChute) {
+      // The run: fast and springy, strides by the distance covered.
+      const e = emEntra(entre(t, tAnt, tl.tChute));
+      pos = atras.clone().lerp(plantio, e);
+      const passada = Math.sin(e * Math.PI * 6);
+      p.pernaE.rotation.x = passada * 0.8;
+      p.pernaD.rotation.x = -passada * 0.8;
+      p.joelhoE.rotation.x = 0.25 + Math.max(0, passada) * 1.5;
+      p.joelhoD.rotation.x = 0.25 + Math.max(0, -passada) * 1.5;
+      p.bracoE.rotation.x = -passada * 0.7;
+      p.bracoD.rotation.x = passada * 0.7;
+      p.cotoveloE.rotation.x = p.cotoveloD.rotation.x = -1.1;
+      p.corpo.rotation.x = 0.22;
+      salto = Math.abs(passada) * 0.06;
+    } else {
       // Paradinha: weight shifting by the ball.
-      b.partes.corpo.rotation.z = Math.sin((t - tl.tChute) / 110) * 0.05;
+      pos = plantio.clone();
+      p.corpo.rotation.set(0.08, 0, Math.sin((t - tl.tChute) / 110) * 0.05);
     }
-    pos.y = 0.95 + (correndo ? Math.abs(Math.sin(u * Math.PI * 7)) * 0.05 : 0);
+    const tGolpe = tl.lance ? tl.tGolpe : Infinity;
+    const armado = (x) => suave(entre(x, tl.tArma, tl.tArma + 200 * lento));
+    if (t >= tGolpe - 50 * lento) {
+      // The strike, fast, from the cocked leg through the ball, and the follow-through with a
+      // hop on the standing foot.
+      const a = armado(tGolpe - 50 * lento);
+      const s = saiRapido(entre(t, tGolpe - 50 * lento, tGolpe + 70 * lento));
+      const f = entre(t, tGolpe + 70 * lento, tGolpe + 520 * lento);
+      const fe = saiRapido(f);
+      const coxa = f > 0 ? lerp(-1.5, -0.25, fe) : lerp(0.9 * a, -1.5, s);
+      const inclina = f > 0 ? lerp(0.2, 0.05, fe) : lerp(-0.25 * a, 0.2, s);
+      const bracos = f > 0 ? lerp(-0.6, -0.1, fe) : lerp(0.8 * a, -0.6, s);
+      p.pernaE.rotation.x = coxa;
+      p.joelhoE.rotation.x = f > 0 ? lerp(0, 0.3, fe) : lerp(1.6 * a, 0, s);
+      p.pernaD.rotation.x = -0.15;
+      p.joelhoD.rotation.x = 0.2;
+      p.corpo.rotation.set(inclina, 0, 0);
+      p.bracoE.rotation.set(bracos, 0, -0.25 - Math.abs(inclina));
+      p.bracoD.rotation.set(-bracos, 0, 0.25 + Math.abs(inclina));
+      pos = plantio.clone().addScaledVector(d, 0.3 * suave(entre(t, tGolpe - 50 * lento, tGolpe + 300 * lento)));
+      salto = 0.07 * Math.sin(Math.PI * f);
+    } else if (t >= tl.tArma) {
+      // Wind-up: the kicking leg cocked back, leaning back, arms out; held (quivering) until the
+      // server's result lets the strike go.
+      const a = armado(t);
+      p.pernaE.rotation.x = 0.9 * a;
+      p.joelhoE.rotation.x = 1.6 * a;
+      p.pernaD.rotation.x = -0.15 * a;
+      p.joelhoD.rotation.x = 0.2 * a;
+      p.corpo.rotation.set(-0.25 * a, 0, Math.sin(t / 35) * 0.012 * a);
+      p.bracoE.rotation.set(0.8 * a, 0, -0.25 - 0.25 * a);
+      p.bracoD.rotation.set(-0.8 * a, 0, 0.25 + 0.25 * a);
+      p.cotoveloE.rotation.x = p.cotoveloD.rotation.x = -0.25;
+    }
+    pos.y = b.quadril + salto;
     b.grupo.position.copy(pos);
   }
 
   function animarBola(t, tl) {
+    const { lento } = tl;
     if (!tl.lance || t < tl.tGolpe) {
       bola.position.copy(estado.bolaEm);
+      bola.quaternion.identity();
+      bola.scale.set(1, 1, 1);
+      estouroChute.visible = estouroGol.visible = false;
+      estado.tremor = 0;
       return;
     }
     const voo = tl.voo;
     const fimVoo = tl.tGolpe + msDeVoo(tl.lance) * voo.fim * tl.lento;
-    if (t <= fimVoo) {
-      const u = entre(t, tl.tGolpe, fimVoo) * voo.fim;
+    // The flash at the strike: paper lines out of the ball, a blink long.
+    const kf = entre(t, tl.tGolpe, tl.tGolpe + 170 * lento);
+    estouroChute.visible = kf < 1;
+    if (kf < 1) {
+      estouroChute.position.copy(estado.bolaEm);
+      estouroChute.quaternion.copy(camera.quaternion);
+      estouroChute.scale.setScalar(0.22 + 0.3 * kf);
+      estouroChute.material.opacity = 1 - kf * kf;
+    }
+    // The ball squashes on the boot for a moment, then flies stretched along its path, the
+    // stretch easing as it slows; the flight itself still lands at fimVoo.
+    const tSai = tl.tGolpe + Math.min(55 * lento, (fimVoo - tl.tGolpe) * 0.15);
+    if (t < tSai) {
+      bola.position.copy(estado.bolaEm);
+      bola.position.y -= 0.035;
+      bola.quaternion.identity();
+      bola.scale.set(1.35, 0.68, 1.35);
+    } else if (t <= fimVoo) {
+      const k = entre(t, tSai, fimVoo);
+      const u = k * voo.fim;
       bola.position.copy(voo.curva.getPoint(u));
-      bola.rotation.x -= 0.5;
-      bola.rotation.y += (lance_curva(tl.lance) || 0.1) * 0.4;
+      bola.quaternion.setFromUnitVectors(EIXO_Z, voo.curva.getTangent(u));
+      const e = 1.08 + (tl.lance.chute?.cavadinha ? 0.2 : 0.5) * Math.exp(-4 * k);
+      bola.scale.set(1 / Math.sqrt(e), 1 / Math.sqrt(e), e);
+      bolaMalha.rotation.x -= 0.5;
+      bolaMalha.rotation.y += (lance_curva(tl.lance) || 0.1) * 0.4;
     } else {
       const dt = (t - fimVoo) / 1000 / tl.lento;
+      bola.quaternion.identity();
+      bola.scale.set(1, 1, 1);
       bola.position.copy(bolaDepois(voo, tl.lance.resultado, dt));
-      bola.rotation.x -= 0.2 * Math.exp(-dt);
+      bolaMalha.rotation.x -= 0.2 * Math.exp(-dt);
       sacudirRede(voo, tl.lance.resultado, dt);
+      if (tl.lance.resultado === "gol") {
+        // The goal: lamp lines burst where the ball hits the net, and the picture shakes.
+        const kg = entre(dt, 0.1, 0.65);
+        estouroGol.visible = kg > 0 && kg < 1;
+        if (estouroGol.visible) {
+          const dentro = estado.papel === "goleiro"; // the camera is in the net: the burst at the line
+          tl.pontoGol ??= dentro ? voo.chegada.clone() : bolaDepois(voo, "gol", 0.5);
+          estouroGol.position.copy(tl.pontoGol);
+          estouroGol.quaternion.copy(camera.quaternion);
+          estouroGol.scale.setScalar((0.35 + 0.95 * saiRapido(kg)) * (dentro ? 0.55 : 1));
+          estouroGol.material.opacity = 1 - kg * kg;
+        }
+        estado.tremor = dt > 0.1 && dt < 0.45 ? 0.1 * ((0.45 - dt) / 0.35) : 0;
+      }
     }
     if (!tl.letreiro && t >= fimVoo + 80 * tl.lento) {
       tl.letreiro = true;
@@ -1349,6 +1702,10 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       // A late start (or clock skew) still gets a short run-up, never a kick from 2 m away.
       tChute: Math.max(chute_em, performance.now() + 600 * lento),
       tGolpe: Infinity,
+      // The cartoon anticipation before the run, and the wind-up held at the ball until the
+      // result arrives (the window closes at chute_em + JANELA).
+      antecipa: 0,
+      tArma: Infinity,
       lance: null,
       lento,
       d,
@@ -1357,6 +1714,8 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       saidaLocal: null,
       letreiro: false,
     };
+    tl.antecipa = Math.min(320 * lento, (tl.tChute - tl.t0) * 0.3);
+    tl.tArma = Math.max(tl.tChute, chute_em + (JANELA - 230) * lento);
     let parado = false;
     let resolver;
     const pronto = new Promise((r) => (resolver = r));
@@ -1389,6 +1748,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       tl.alvoGoleiro = alvoGoleiro;
       tl.lance = l;
       tl.tGolpe = Math.max(chute_em + JANELA * lento, tl.tChute, performance.now());
+      tl.tArma = Math.max(tl.t0 + tl.antecipa, Math.min(tl.tArma, tl.tGolpe - 230 * lento));
       tl.fim = tl.tGolpe + (msDeVoo(l) * tl.voo.fim + DEPOIS) * lento;
       ultimo = { lance: l, modo: estado.modo, falta: estado.falta ? { ...estado.falta } : null };
       relogio = setTimeout(fechar, tl.fim - performance.now() + 20);
@@ -1459,17 +1819,22 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
   ajustar();
   requestAnimationFrame(quadro);
 
-  /** Dress the two players: {batedor: {time, uniforme}, goleiro: {time, uniforme}}; an unknown
+  /** Dress the two players: {batedor: {time, uniforme, visual}, goleiro: {...}}. `visual` is
+   * the look from mano-visual.js (skin, hair, number...), the same in both browsers; an unknown
    * team keeps the scene's own neutral kits. */
   let vestidos = "";
   function vestir({ batedor: b = null, goleiro: g = null } = {}) {
     const chave = JSON.stringify([b, g]);
     if (chave === vestidos) return;
     vestidos = chave;
-    const kb = uniforme(b ?? {}, "batedor");
-    const kg = uniforme(g ?? {}, "goleiro");
-    if (kb) vestirJogador(batedor, kb);
-    if (kg) vestirJogador(goleiro, kg);
+    for (const [j, dados, papelDele] of [[batedor, b, "batedor"], [goleiro, g, "goleiro"]]) {
+      const v = dados?.visual ?? null;
+      aplicarVisual(j, v);
+      const kit = uniforme(dados ?? {}, papelDele);
+      if (kit) vestirJogador(j, kit, v?.numero ?? (papelDele === "goleiro" ? 1 : null));
+    }
+    // A new look can change the kicker's height: his feet back on the grass.
+    if (!cobrancaAtual) batedor.grupo.position.y = batedor.quadril;
   }
 
   const api = {
@@ -1518,7 +1883,10 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       if (emTelaCheia()) document.exitFullscreen().catch(() => {});
       cena.traverse((o) => {
         o.geometry?.dispose();
-        for (const m of [].concat(o.material ?? [])) m.dispose();
+        for (const m of [].concat(o.material ?? [])) {
+          m.map?.dispose();
+          m.dispose();
+        }
       });
       renderer.forceContextLoss();
       estado.destruida = true;

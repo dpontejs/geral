@@ -6,6 +6,7 @@
 // for the room stays in localStorage (`mano:<id>`).
 import { criarCena, letreiroDoLance } from "/static/geral/mano-cena.js";
 import { faixaBoa, faixaCavadinha } from "/static/geral/mano-faixa.js";
+import { visual } from "/static/geral/mano-visual.js";
 
 const raiz = document.getElementById("mano");
 const API = "/api/jogos/mano";
@@ -320,21 +321,29 @@ function placar() {
   });
 }
 
-/** Each player in his team's kit for his role in this kick (the scene skips an unchanged one). */
-function vestir() {
+/**
+ * Each player in his team's kit for his role in the kick `k` (the scene skips an unchanged one).
+ * The kicker looks like a different player each kick and the keeper is always the same one of
+ * his team: both derived from the room and the kick, so both browsers show the same men.
+ */
+function vestir(k) {
   const eu_ = est.jogadores[est.voce];
   const ele = outro();
   if (!eu_ || !ele || !est.papel) return;
-  const kit = (j) => ({ time: j.time, uniforme: j.uniforme });
   const [b, g] = est.papel === "batedor" ? [eu_, ele] : [ele, eu_];
-  cena.vestir({ batedor: kit(b), goleiro: kit(g) });
+  const [partida, n] = k.split(":");
+  const vaga = est.jogadores.indexOf(g);
+  cena.vestir({
+    batedor: { time: b.time, uniforme: b.uniforme, visual: visual(`${SALA}:${partida}`, Number(n)) },
+    goleiro: { time: g.time, uniforme: g.uniforme, visual: visual(`${SALA}:goleiro:${vaga}:${g.time}`, 0, "goleiro") },
+  });
 }
 
 /** Sets the scene for the kick `k`: the spot (and the wall, when it is known) and my camera. */
 function montar(k) {
   const falta = est.modo === "faltas";
   const barreira = falta ? JSON.stringify(est.barreira) : "";
-  vestir();
+  vestir(k);
   if (montado === k && barreiraMontada === barreira && cena.papel === est.papel) return;
   if (montado !== k) cena.reiniciar();
   cena.trocarPapel(est.papel);
