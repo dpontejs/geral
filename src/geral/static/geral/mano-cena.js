@@ -395,22 +395,23 @@ function montarJogador({ camisa, calcao, meia, luvas = null, cabelo = COR.tinta 
     cabelo: padrao(cabelo),
     faixa: padrao(COR.giz),
   };
-  const add = (pai, geo, mat, x = 0, y = 0, z = 0, s = null) => {
+  // Only the big pieces cast shadows (torso, shorts, head, legs): fewer draw calls on phones.
+  const add = (pai, geo, mat, x = 0, y = 0, z = 0, s = null, sombra = false) => {
     const m = new THREE.Mesh(geo, mat);
     m.position.set(x, y, z);
     if (s) m.scale.set(...s);
-    m.castShadow = true;
+    m.castShadow = sombra;
     pai.add(m);
     return m;
   };
-  const tronco = add(corpo, G.tronco, mats.camisa, 0, 0.37, 0, [1.18, 1, 0.72]);
-  add(corpo, G.calcao, mats.calcao, 0, 0.02, 0, [1, 1, 0.75]);
+  const tronco = add(corpo, G.tronco, mats.camisa, 0, 0.37, 0, [1.18, 1, 0.72], true);
+  add(corpo, G.calcao, mats.calcao, 0, 0.02, 0, [1, 1, 0.75], true);
   add(corpo, G.pescoco, mats.pele, 0, 0.72, 0);
   const cabeca = new THREE.Group();
   cabeca.position.set(0, 0.87, 0);
   corpo.add(cabeca);
-  add(cabeca, G.cabeca, mats.pele, 0, 0, 0, [0.92, 1.05, 1]);
-  const calota = add(cabeca, G.curto, mats.cabelo);
+  add(cabeca, G.cabeca, mats.pele, 0, 0, 0, [0.92, 1.05, 1], true);
+  const calota = add(cabeca, G.curto, mats.cabelo, ...ESTILOS.curto.pos, ESTILOS.curto.esc);
   const extra = add(cabeca, G.coque, mats.cabelo);
   extra.visible = false;
   const faixa = add(cabeca, G.faixa, mats.faixa, 0, 0.045, -0.005, [0.93, 1, 1.03]);
@@ -421,11 +422,11 @@ function montarJogador({ camisa, calcao, meia, luvas = null, cabelo = COR.tinta 
     const quadril = new THREE.Group();
     quadril.position.set(x, -0.04, 0);
     corpo.add(quadril);
-    add(quadril, G.coxa, mats.pele, 0, -0.21, 0);
+    add(quadril, G.coxa, mats.pele, 0, -0.21, 0, null, true);
     const joelho = new THREE.Group();
     joelho.position.y = -0.42;
     quadril.add(joelho);
-    add(joelho, G.canela, mats.meia, 0, -0.21, 0);
+    add(joelho, G.canela, mats.meia, 0, -0.21, 0, null, true);
     add(joelho, G.bota, botas, 0, -0.44, 0.06, [1.1, 1, 1]);
     return { quadril, joelho };
   };
@@ -504,7 +505,6 @@ function aplicarVisual(j, v) {
   if (v.faixa) j.mats.faixa.color.set(v.faixa);
   j.quadril = QUADRIL * (v.escala ?? 1);
   j.grupo.scale.setScalar(v.escala ?? 1);
-  j.grupo.position.y = j.quadril;
 }
 
 // ---------------------------------------------------------------------------------------
@@ -621,7 +621,13 @@ export function uniforme({ time, uniforme: lado = "casa" } = {}, papel = "batedo
   }
   const kit = UNIFORMES[time][lado === "fora" ? "fora" : "casa"];
   const [estampa, params] = kit.camisa;
-  const costas = estampa === "faixa" ? [estampa, { ...params, costas: true }] : kit.camisa;
+  // The back: a sash mirrored, a chest band left out (plain under the number), else the same.
+  const costas =
+    estampa === "faixa"
+      ? [estampa, { ...params, costas: true }]
+      : estampa === "peito" || params.peito
+        ? ["liso", { base: params.base }]
+        : kit.camisa;
   const aros = kit.lado === "estampa";
   return { camisa: kit.camisa, costas, lado: aros ? textura(`${time}:${lado}`, kit.camisa) : kit.lado, aros, calcao: kit.calcao, meia: kit.meia };
 }
@@ -1533,6 +1539,8 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     descansar(g);
     const estica = 1 + (fica ? 0.12 : 0.3) * Math.sin(Math.PI * kd);
     p.corpo.scale.set(1 / Math.sqrt(estica), estica, 1 / Math.sqrt(estica));
+    // Jumping in the middle, the stretched legs must not sink into the grass.
+    if (fica) g.grupo.position.y += (estica - 1) * GOLEIRO_QUADRIL;
     const braco = -Math.PI * 0.95 * k;
     p.bracoE.rotation.set(braco, 0, lerp(-0.9, 0.1, k));
     p.bracoD.rotation.set(braco, 0, lerp(0.9, -0.1, k));
@@ -1748,7 +1756,8 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       tl.alvoGoleiro = alvoGoleiro;
       tl.lance = l;
       tl.tGolpe = Math.max(chute_em + JANELA * lento, tl.tChute, performance.now());
-      tl.tArma = Math.max(tl.t0 + tl.antecipa, Math.min(tl.tArma, tl.tGolpe - 230 * lento));
+      // A late result never brings the wind-up into the run, at most its last steps.
+      tl.tArma = Math.max(tl.t0 + tl.antecipa, tl.tChute - 120 * lento, Math.min(tl.tArma, tl.tGolpe - 230 * lento));
       tl.fim = tl.tGolpe + (msDeVoo(l) * tl.voo.fim + DEPOIS) * lento;
       ultimo = { lance: l, modo: estado.modo, falta: estado.falta ? { ...estado.falta } : null };
       relogio = setTimeout(fechar, tl.fim - performance.now() + 20);
@@ -1833,7 +1842,8 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       const kit = uniforme(dados ?? {}, papelDele);
       if (kit) vestirJogador(j, kit, v?.numero ?? (papelDele === "goleiro" ? 1 : null));
     }
-    // A new look can change the kicker's height: his feet back on the grass.
+    // A new look can change the kicker's height: his feet back on the grass (the keeper's
+    // height is his stance's, set by posicionarJogadores and his animation).
     if (!cobrancaAtual) batedor.grupo.position.y = batedor.quadril;
   }
 
