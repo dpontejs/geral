@@ -68,6 +68,12 @@
 .mn-series:empty { display: none; }
 .mn-fila { display: grid; grid-template-columns: minmax(0, 9ch) auto 2ch; gap: 12px; align-items: center; font-size: clamp(13px, 1.7vw, 19px); }
 .mn-quem { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+/* The team in lamps with the nickname smaller beside it (lamps only: no club colours on the board). */
+.mn-quem:has(.mn-time) { display: flex; align-items: baseline; gap: .6em; }
+.mn-time { white-space: nowrap; }
+.mn-apelido { font-size: .7em; opacity: .75; max-width: 12ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mn-fila:has(.mn-time) { grid-template-columns: minmax(0, 21ch) auto 2ch; }
+.mn-quem:has(.mn-time) { min-width: 0; overflow: hidden; }
 .mn-bolas { display: flex; gap: 5px; letter-spacing: 0; }
 .mn-bolas b { width: 1.1em; text-align: center; font-weight: 900; }
 .mn-bolas .mn-a { color: #3A3833; text-shadow: none; }
@@ -98,3 +104,8 @@
 .mano .lances li.mn-gol .pal { color: var(--ink); }
 .mano .lances li:not(.mn-gol) .pal { color: var(--ink-soft); }
 .mano .mn-grande { white-space: nowrap; }
+
+/* The team picker: six chips, three by three, on the create and join forms. */
+.mano .mn-times { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.mano .mn-times .chip { min-width: 0; padding: 9px 6px; text-align: center; }
+.mano .sumula .mn-confronto { font: 900 clamp(18px, 3vw, 26px)/1 var(--display); color: var(--ink); letter-spacing: .04em; }

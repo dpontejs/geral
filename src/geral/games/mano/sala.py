@@ -18,6 +18,7 @@ from pydantic import ValidationError
 from geral.games.mano import bot
 from geral.games.mano.disputa import Disputa
 from geral.games.mano.regras import resolver
+from geral.games.mano.times import TIMES
 from geral.games.mano.tipos import (
     Barreira,
     Chute,
@@ -78,6 +79,8 @@ class _Jogador:
     id: int
     apelido: str
     token: str | None  # the bot has none
+    time: str  # a slug of TIMES
+    fora: bool  # the away kit: same team as the one who joined first
     desde: datetime  # last time the player had no events connection (or joined)
     conexoes: int = 0
     ultima_acao: datetime | None = None
@@ -123,19 +126,29 @@ class Sala:
 
     # --- entrada e identidade ---
 
-    def entrar(self, apelido: str, agora: datetime) -> tuple[int, str, list[Evento]]:
-        """Player 0 creates the room, player 1 joins (with a bot, the bot is player 1)."""
+    def entrar(self, apelido: str, agora: datetime, time: str) -> tuple[int, str, list[Evento]]:
+        """Player 0 creates the room, player 1 joins (with a bot, the bot is player 1).
+
+        Each picks a ``time``; the bot draws another one. Two on the same team: the one who
+        joined second wears the away kit."""
         if self.encerrada:
             raise ErroSala(409, "room is over")
         if len(self._jogadores) >= 2:
             raise ErroSala(409, "room is full")
         apelido = self._validar_apelido(apelido)
-        jogador = _Jogador(len(self._jogadores), apelido, secrets.token_urlsafe(16), desde=agora)
+        if time not in TIMES:
+            raise ErroSala(422, "unknown team")
+        fora = any(j.time == time for j in self._jogadores)
+        jogador = _Jogador(
+            len(self._jogadores), apelido, secrets.token_urlsafe(16), time, fora, desde=agora
+        )
         self._jogadores.append(jogador)
         assert jogador.token is not None
         self._tokens[jogador.token] = jogador.id
         if self.nivel is not None:
-            self._jogadores.append(_Jogador(1, APELIDO_BOT[self.nivel], None, desde=agora))
+            outro = self._rng_sala.choice([t for t in TIMES if t != time])
+            bot = _Jogador(1, APELIDO_BOT[self.nivel], None, outro, False, desde=agora)
+            self._jogadores.append(bot)
         if len(self._jogadores) == 2:
             return jogador.id, jogador.token, self._iniciar_cobranca(agora)
         return jogador.id, jogador.token, self._estados(agora)
@@ -474,7 +487,10 @@ class Sala:
             "sala": self.id,
             "partida": self._partida,
             "modo": self.modo,
-            "jogadores": [{"apelido": j.apelido, "bot": j.bot} for j in self._jogadores],
+            "jogadores": [
+                {"apelido": j.apelido, "bot": j.bot, "time": j.time, "time_nome": TIMES[j.time]}
+                for j in self._jogadores
+            ],
             "placar": self._placar(),
             "vencedor": self._vencedor(),
             "wo": self._disputa.perdedor_wo is not None,
@@ -538,6 +554,9 @@ class Sala:
                 {
                     "apelido": j.apelido,
                     "bot": j.bot,
+                    "time": j.time,
+                    "time_nome": TIMES[j.time],
+                    "uniforme": "fora" if j.fora else "casa",
                     "presente": j.bot or j.conexoes > 0,
                     "saiu": not j.bot and j.token not in self._tokens,
                 }

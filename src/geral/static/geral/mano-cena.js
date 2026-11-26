@@ -304,11 +304,13 @@ function montarJogador({ camisa, calcao, meia, luvas = null, cabelo = COR.tinta 
   const grupo = new THREE.Group();
   const corpo = new THREE.Group(); // everything hangs from the hip (y = 0 here)
   grupo.add(corpo);
-  const mc = lambert(camisa);
+  // One material per piece of the kit, shared by its meshes: vestir() swaps the colours.
+  const mats = { camisa: lambert(camisa), calcao: lambert(calcao), meia: lambert(meia) };
+  const mc = mats.camisa;
   const pele = lambert(COR.pele);
   const tronco = caixa(0.46, 0.62, 0.26, mc, 0, 0.4, 0);
   corpo.add(tronco);
-  corpo.add(caixa(0.44, 0.2, 0.27, lambert(calcao), 0, 0.03, 0));
+  corpo.add(caixa(0.44, 0.2, 0.27, mats.calcao, 0, 0.03, 0));
   const cabeca = new THREE.Mesh(new THREE.IcosahedronGeometry(0.135, 0), pele);
   cabeca.position.set(0, 0.86, 0);
   corpo.add(cabeca);
@@ -319,8 +321,8 @@ function montarJogador({ camisa, calcao, meia, luvas = null, cabelo = COR.tinta 
   const perna = (x) => {
     const p = new THREE.Group();
     p.position.set(x, -0.05, 0);
-    p.add(caixa(0.17, 0.42, 0.18, lambert(calcao === camisa ? meia : COR.pele), 0, -0.2, 0));
-    p.add(caixa(0.16, 0.44, 0.17, lambert(meia), 0, -0.62, 0));
+    p.add(caixa(0.17, 0.42, 0.18, pele, 0, -0.2, 0));
+    p.add(caixa(0.16, 0.44, 0.17, mats.meia, 0, -0.62, 0));
     p.add(caixa(0.17, 0.09, 0.28, lambert(COR.tinta), 0, -0.9, 0.05));
     corpo.add(p);
     return p;
@@ -344,7 +346,128 @@ function montarJogador({ camisa, calcao, meia, luvas = null, cabelo = COR.tinta 
     bracoD: braco(0.31),
   };
   grupo.position.y = 0.95;
-  return { grupo, partes };
+  return { grupo, partes, mats };
+}
+
+// ---------------------------------------------------------------------------------------
+// Kits: each club's pattern on the shirt (a small canvas texture), plain shorts and socks.
+// No crests, no logos (docs/features/identidade-visual-times.md). The keeper wears a neutral
+// kit with a band in his team's colour. Two players of the same team: the one who joined
+// second wears the away kit ("fora").
+
+const BRANCO = "#F4F4F4";
+const PRETO = "#141414";
+const KIT_COR = { flamengo: "#A51C24", vasco: PRETO, palmeiras: "#006437", abc: PRETO, nautico: "#C60000", csa: "#1B4B9B" };
+
+/** Shirt patterns, drawn on a 64×64 canvas that wraps every face of the torso and sleeves. */
+const ESTAMPAS = {
+  // horizontal hoops, `cores` repeating from the collar down
+  aros: (g, { cores, n }) => [...Array(n)].forEach((_, i) => ((g.fillStyle = cores[i % cores.length]), g.fillRect(0, (64 * i) / n, 64, 64 / n + 1))),
+  // vertical stripes
+  listras: (g, { cores, n }) => [...Array(n)].forEach((_, i) => ((g.fillStyle = cores[i % cores.length]), g.fillRect((64 * i) / n, 0, 64 / n + 1, 64))),
+  // a sash from the right shoulder down to the left hip (as you face the player)
+  faixa: (g, { base, cor }) => {
+    g.fillStyle = base;
+    g.fillRect(0, 0, 64, 64);
+    g.fillStyle = cor;
+    g.beginPath();
+    g.moveTo(46, 0);
+    g.lineTo(64, 0);
+    g.lineTo(18, 64);
+    g.lineTo(0, 64);
+    g.closePath();
+    g.fill();
+  },
+  // plain, with the collar, the hem and a thin band of a detail colour
+  liso: (g, { base, cor, peito = false }) => {
+    g.fillStyle = base;
+    g.fillRect(0, 0, 64, 64);
+    g.fillStyle = cor;
+    g.fillRect(0, 0, 64, 7);
+    g.fillRect(0, 58, 64, 6);
+    if (peito) g.fillRect(0, 24, 64, 10);
+  },
+  // the keeper's neutral shirt: one band of his team's colour across the chest
+  goleiro: (g, { base, cor }) => {
+    g.fillStyle = base;
+    g.fillRect(0, 0, 64, 64);
+    g.fillStyle = cor;
+    g.fillRect(0, 22, 64, 8);
+  },
+  // white with a band of hoops across the chest
+  peito: (g, { base, cores }) => {
+    g.fillStyle = base;
+    g.fillRect(0, 0, 64, 64);
+    cores.forEach((c, i) => ((g.fillStyle = c), g.fillRect(0, 20 + i * 6, 64, 6)));
+  },
+};
+
+const UNIFORMES = {
+  flamengo: {
+    casa: { camisa: ["aros", { cores: [KIT_COR.flamengo, PRETO], n: 8 }], calcao: BRANCO, meia: PRETO },
+    fora: { camisa: ["peito", { base: BRANCO, cores: [KIT_COR.flamengo, PRETO, KIT_COR.flamengo] }], calcao: BRANCO, meia: BRANCO },
+  },
+  vasco: {
+    casa: { camisa: ["faixa", { base: BRANCO, cor: PRETO }], calcao: PRETO, meia: BRANCO },
+    fora: { camisa: ["faixa", { base: PRETO, cor: BRANCO }], calcao: BRANCO, meia: PRETO },
+  },
+  palmeiras: {
+    casa: { camisa: ["liso", { base: KIT_COR.palmeiras, cor: BRANCO }], calcao: BRANCO, meia: KIT_COR.palmeiras },
+    fora: { camisa: ["liso", { base: BRANCO, cor: KIT_COR.palmeiras }], calcao: KIT_COR.palmeiras, meia: BRANCO },
+  },
+  abc: {
+    casa: { camisa: ["liso", { base: BRANCO, cor: PRETO }], calcao: PRETO, meia: BRANCO },
+    fora: { camisa: ["liso", { base: PRETO, cor: BRANCO }], calcao: BRANCO, meia: PRETO },
+  },
+  nautico: {
+    casa: { camisa: ["listras", { cores: [KIT_COR.nautico, BRANCO], n: 7 }], calcao: BRANCO, meia: KIT_COR.nautico },
+    fora: { camisa: ["liso", { base: BRANCO, cor: KIT_COR.nautico, peito: true }], calcao: KIT_COR.nautico, meia: BRANCO },
+  },
+  csa: {
+    casa: { camisa: ["listras", { cores: [KIT_COR.csa, BRANCO], n: 7 }], calcao: KIT_COR.csa, meia: BRANCO },
+    fora: { camisa: ["liso", { base: BRANCO, cor: KIT_COR.csa, peito: true }], calcao: BRANCO, meia: KIT_COR.csa },
+  },
+};
+// The keeper's band: his club's colour, white where the club's colour is black.
+const COR_DO_GOLEIRO = { flamengo: KIT_COR.flamengo, vasco: BRANCO, palmeiras: "#1E9E52", abc: BRANCO, nautico: "#E01B1B", csa: "#3C78D8" };
+const GOLEIRO_BASE = "#3F3C36";
+
+const texturas = new Map();
+function textura(chave, [estampa, params]) {
+  if (!texturas.has(chave)) {
+    const tela = document.createElement("canvas");
+    tela.width = tela.height = 64;
+    ESTAMPAS[estampa](tela.getContext("2d"), params);
+    const t = new THREE.CanvasTexture(tela);
+    t.colorSpace = THREE.SRGBColorSpace;
+    t.magFilter = THREE.NearestFilter;
+    t.minFilter = THREE.NearestFilter;
+    t.generateMipmaps = false;
+    texturas.set(chave, t);
+  }
+  return texturas.get(chave);
+}
+
+/** The kit for `{time, uniforme}` in a role: {camisa: Texture, calcao, meia} (colours as CSS). */
+export function uniforme({ time, uniforme: lado = "casa" } = {}, papel = "batedor") {
+  if (!UNIFORMES[time]) return null;
+  if (papel === "goleiro") {
+    const cor = COR_DO_GOLEIRO[time];
+    return { camisa: textura(`goleiro:${time}`, ["goleiro", { base: GOLEIRO_BASE, cor }]), calcao: PRETO, meia: GOLEIRO_BASE };
+  }
+  const kit = UNIFORMES[time][lado === "fora" ? "fora" : "casa"];
+  return { camisa: textura(`${time}:${lado}`, kit.camisa), calcao: kit.calcao, meia: kit.meia };
+}
+
+function vestirJogador(j, kit) {
+  const { camisa, calcao, meia } = j.mats;
+  if (camisa.map !== kit.camisa) {
+    camisa.map = kit.camisa;
+    camisa.color.set(0xffffff);
+    camisa.needsUpdate = true;
+  }
+  calcao.color.set(kit.calcao);
+  meia.color.set(kit.meia);
 }
 
 function pose(j, { pernas = 0, bracos = 0, abrir = 0 } = {}) {
@@ -942,7 +1065,8 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
 
   const seriesEl = $(".mn-series");
   const letreiroEl = $(".mn-letreiro");
-  /** nomes: [a, b]; series: [[...], [...]] with "g" (goal) | "e" (missed); gols: [ga, gb]. */
+  /** nomes: [a, b] (a name, or {time, apelido}: the team big, the nickname under it);
+   * series: [[...], [...]] with "g" (goal) | "e" (missed); gols: [ga, gb]. */
   function placar({ nomes = ["", ""], series = [[], []], gols = null } = {}) {
     const vagas = Math.max(5, series[0].length, series[1].length);
     const conta = gols ?? series.map((s) => s.filter((v) => v === "g").length);
@@ -952,7 +1076,12 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
           const v = series[i][k];
           return v === "g" ? '<b class="mn-g">●</b>' : v === "e" ? '<b class="mn-e">✕</b>' : '<b class="mn-a">○</b>';
         }).join("");
-        return `<div class="mn-fila"><span class="mn-quem lamp">${escapar(nomes[i])}</span><span class="mn-bolas lamp">${bolas}</span><span class="mn-gols lamp">${conta[i]}</span></div>`;
+        const n = nomes[i];
+        const quem =
+          n && typeof n === "object" && n.time
+            ? `<span class="mn-quem"><span class="lamp mn-time">${escapar(n.time)}</span><span class="lamp mn-apelido">${escapar(n.apelido ?? "")}</span></span>`
+            : `<span class="mn-quem lamp">${escapar(typeof n === "object" ? (n?.apelido ?? "") : n)}</span>`;
+        return `<div class="mn-fila">${quem}<span class="mn-bolas lamp">${bolas}</span><span class="mn-gols lamp">${conta[i]}</span></div>`;
       })
       .join("");
   }
@@ -1312,7 +1441,21 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
   ajustar();
   requestAnimationFrame(quadro);
 
+  /** Dress the two players: {batedor: {time, uniforme}, goleiro: {time, uniforme}}; an unknown
+   * team keeps the scene's own neutral kits. */
+  let vestidos = "";
+  function vestir({ batedor: b = null, goleiro: g = null } = {}) {
+    const chave = JSON.stringify([b, g]);
+    if (chave === vestidos) return;
+    vestidos = chave;
+    const kb = uniforme(b ?? {}, "batedor");
+    const kg = uniforme(g ?? {}, "goleiro");
+    if (kb) vestirJogador(batedor, kb);
+    if (kg) vestirJogador(goleiro, kg);
+  }
+
   const api = {
+    vestir,
     get papel() {
       return estado.papel;
     },
