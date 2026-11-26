@@ -8,6 +8,7 @@
 // it: x = 0 is the kicker's left (world -x), y = 0 the ground, y = 1000 the crossbar.
 import * as THREE from "../vendor/three/three.module.js";
 import { periodoBarra, pressaBarra } from "./mano-faixa.js";
+import { criarFesta, tituloCampeao } from "./mano-festa.js";
 import { visual } from "./mano-visual.js";
 
 const COR = {
@@ -416,7 +417,9 @@ function montarJogador({ camisa, calcao, meia, luvas = null, cabelo = COR.tinta 
   const faixa = add(cabeca, G.faixa, mats.faixa, 0, 0.045, -0.005, [0.93, 1, 1.03]);
   faixa.rotation.x = -0.12;
   faixa.visible = false;
-  const botas = padrao(COR.tinta);
+  // boots and gloves are in `mats` too, so whoever disposes a player frees them all
+  const botas = (mats.botas = padrao(COR.tinta));
+  if (luvas) mats.luvas = padrao(luvas);
   const perna = (x) => {
     const quadril = new THREE.Group();
     quadril.position.set(x, -0.04, 0);
@@ -439,7 +442,7 @@ function montarJogador({ camisa, calcao, meia, luvas = null, cabelo = COR.tinta 
     ombro.add(cotovelo);
     // A keeper's long sleeves and gloves.
     add(cotovelo, G.ante, luvas ? mats.lado : mats.pele, 0, -0.135, 0);
-    add(cotovelo, luvas ? G.luva : G.mao, luvas ? padrao(luvas) : mats.pele, 0, -0.3, 0);
+    add(cotovelo, luvas ? G.luva : G.mao, luvas ? mats.luvas : mats.pele, 0, -0.3, 0);
     return { ombro, cotovelo };
   };
   // pernaE/bracoE on -x: the player's right (he faces +z); the kicking leg is pernaE.
@@ -769,6 +772,20 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
 
   // No shake for who asked the system for less motion.
   const calmo = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+  // The winners' celebration at the end (mano-festa.js): its own players, dressed here.
+  const festa = criarFesta(THREE, {
+    cena,
+    camera,
+    calmo,
+    descansar,
+    jogador({ papel: p, time, uniforme: u, visual: v }) {
+      const j = montarJogador({ camisa: COR.papel, calcao: COR.tinta, meia: COR.papel, luvas: p === "goleiro" ? COR.papel : null });
+      aplicarVisual(j, v);
+      const kit = uniforme({ time, uniforme: u }, p);
+      if (kit) vestirJogador(j, kit, v?.numero ?? null);
+      return j;
+    },
+  });
   const estado = {
     tremor: 0, // the camera's shake (m), set by the goal
     papel,
@@ -1690,7 +1707,11 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     // Out of the stride into the paradinha / wind-up (a late result can bring the wind-up into
     // the last steps), with no snap: blend from where the gait is at that moment.
     // It is over by the strike, which always gets its full pose.
-    const tMistura = Math.min(tl.tChute, tl.tArma, tGolpe - 50 * lento);
+    // Its start is kept once it began: a late result that pulls the wind-up earlier must not
+    // move it back and cut it short.
+    const tCalculado = Math.min(tl.tChute, tl.tArma, tGolpe - 50 * lento);
+    if (tl.tMistura === undefined && t >= tAnt && t >= tCalculado) tl.tMistura = tCalculado;
+    const tMistura = tl.tMistura ?? tCalculado;
     const fimMistura = Math.min(tMistura + MISTURA * lento, tGolpe - 50 * lento);
     if (t >= tAnt && t >= tMistura && t < fimMistura) {
       const w = suave(entre(t, tMistura, fimMistura));
@@ -1898,6 +1919,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
   function reiniciar() {
     pedidoAtual?.();
     cobrancaAtual?.parar();
+    acabarFesta();
     estado.animacao = null;
     letreiro("");
     arrumar();
@@ -1926,8 +1948,33 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     if (!cobrancaAtual) batedor.grupo.position.y = batedor.quadril;
   }
 
+  /**
+   * The match is over: the winners lift the cup (mano-festa.js) and the board reads "<TEAM>
+   * CAMPEÃO". {time, uniforme, nome, semente: "room:match", goleiro: the keeper's look seed}.
+   * Holds at the end; reiniciar() (the rematch) clears it.
+   */
+  function festejar(dados) {
+    pedidoAtual?.();
+    cobrancaAtual?.parar();
+    dica("");
+    barraEl.hidden = true;
+    estado.tremor = 0;
+    for (const o of [batedor.grupo, goleiro.grupo, bola, barreiraGrupo, estouroChute, estouroGol, mira, previa]) o.visible = false;
+    festa.comecar(dados);
+    estado.animacao = festa.aplicar;
+    el.classList.add("mn-festa"); // the board's line goes down, under the cup
+    letreiro(tituloCampeao(dados.nome));
+  }
+  function acabarFesta() {
+    if (!festa.ativa) return;
+    festa.parar();
+    el.classList.remove("mn-festa");
+    for (const o of [batedor.grupo, goleiro.grupo, bola, barreiraGrupo]) o.visible = true;
+  }
+
   const api = {
     vestir,
+    festejar,
     get papel() {
       return estado.papel;
     },
@@ -1969,6 +2016,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     destruir() {
       pedidoAtual?.();
       cobrancaAtual?.parar();
+      festa.parar();
       if (emTelaCheia()) document.exitFullscreen().catch(() => {});
       cena.traverse((o) => {
         o.geometry?.dispose();

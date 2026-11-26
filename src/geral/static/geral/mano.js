@@ -6,6 +6,7 @@
 // for the room stays in localStorage (`mano:<id>`).
 import { criarCena, letreiroDoLance } from "/static/geral/mano-cena.js";
 import { faixaBoa, faixaCavadinha } from "/static/geral/mano-faixa.js";
+import { FESTA_MS } from "/static/geral/mano-festa.js";
 import { visual } from "/static/geral/mano-visual.js";
 
 const raiz = document.getElementById("mano");
@@ -459,6 +460,7 @@ const anterior = () => `${est.partida}:${est.serie[0].length + est.serie[1].leng
 
 // ---- the end: súmula and rematch ------------------------------------------------------------
 let sumulaCarregada = "";
+let festejando = false;
 async function telaFim() {
   const primeira = tela !== "fim";
   tela = "fim";
@@ -471,8 +473,20 @@ async function telaFim() {
       montado = "";
       cobrando = "";
       cena.dica("");
-      const venceu = est.vencedor; // a W.O. wins even when behind on the score
-      cena.letreiro(venceu === null ? "FIM DE JOGO" : venceu === est.voce ? "VOCÊ GANHOU" : "VOCÊ PERDEU");
+      // The winners lift the cup, in both browsers (dev, 2026-11-26); a W.O. wins even when
+      // behind on the score.
+      const venceu = est.vencedor;
+      const campeao = venceu === null ? null : est.jogadores[venceu];
+      if (campeao)
+        cena.festejar({
+          time: campeao.time,
+          uniforme: campeao.uniforme,
+          nome: campeao.time_nome || campeao.apelido,
+          semente: `${SALA}:${est.partida}`,
+          goleiro: `${SALA}:goleiro:${venceu}:${campeao.time}`,
+        });
+      else cena.letreiro("FIM DE JOGO");
+      festejando = Boolean(campeao);
     }
     if (document.fullscreenElement) document.exitFullscreen().catch(() => {});
   }
@@ -498,7 +512,8 @@ async function telaFim() {
     } catch {
       $(".mn-sumula-viva").innerHTML = `<p class="fine">A súmula fica em <a href="/jogos/mano/s/${esc(est.sumula)}">${esc(linkDa(est.sumula))}</a>.</p>`;
     }
-    setTimeout(() => $("#mn-revanche")?.scrollIntoView({ block: "start", behavior: "smooth" }), 2200);
+    // down to the rematch once the celebration has played
+    setTimeout(() => $("#mn-revanche")?.scrollIntoView({ block: "start", behavior: "smooth" }), festejando ? FESTA_MS + 300 : 2200);
   }
   revanche();
 }
