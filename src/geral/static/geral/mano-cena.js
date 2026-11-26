@@ -417,7 +417,9 @@ function montarJogador({ camisa, calcao, meia, luvas = null, cabelo = COR.tinta 
   const faixa = add(cabeca, G.faixa, mats.faixa, 0, 0.045, -0.005, [0.93, 1, 1.03]);
   faixa.rotation.x = -0.12;
   faixa.visible = false;
-  const botas = padrao(COR.tinta);
+  // boots and gloves are in `mats` too, so whoever disposes a player frees them all
+  const botas = (mats.botas = padrao(COR.tinta));
+  if (luvas) mats.luvas = padrao(luvas);
   const perna = (x) => {
     const quadril = new THREE.Group();
     quadril.position.set(x, -0.04, 0);
@@ -440,7 +442,7 @@ function montarJogador({ camisa, calcao, meia, luvas = null, cabelo = COR.tinta 
     ombro.add(cotovelo);
     // A keeper's long sleeves and gloves.
     add(cotovelo, G.ante, luvas ? mats.lado : mats.pele, 0, -0.135, 0);
-    add(cotovelo, luvas ? G.luva : G.mao, luvas ? padrao(luvas) : mats.pele, 0, -0.3, 0);
+    add(cotovelo, luvas ? G.luva : G.mao, luvas ? mats.luvas : mats.pele, 0, -0.3, 0);
     return { ombro, cotovelo };
   };
   // pernaE/bracoE on -x: the player's right (he faces +z); the kicking leg is pernaE.
