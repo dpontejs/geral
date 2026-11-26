@@ -7,6 +7,7 @@
 // the pitch runs towards +z. Contract coordinates (0-1000) are the goal as the kicker sees
 // it: x = 0 is the kicker's left (world -x), y = 0 the ground, y = 1000 the crossbar.
 import * as THREE from "../vendor/three/three.module.js";
+import { periodoBarra, pressaBarra } from "./mano-faixa.js";
 import { visual } from "./mano-visual.js";
 
 const COR = {
@@ -25,8 +26,6 @@ const COR = {
 };
 
 export const GOL = { meia: 3.66, altura: 2.44, fundo: 2.0 };
-// One sweep of the bar, up and back down (ms): 30% faster than the first 1300 (dev, 2026-11-26).
-const PERIODO_BARRA = 1000;
 const MARCA_PENALTI = 11;
 const DIST_BARREIRA = 9.15;
 const VAO_HOMENS = 0.66; // centre to centre of two men in the wall (shoulders are 0.46 m)
@@ -1007,6 +1006,17 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     dicaEl.textContent = texto || "";
   }
 
+  /** The "aim high, faster bar" hint shows once per browser; false the first time. */
+  function avisouPressa() {
+    try {
+      if (localStorage.getItem("mano:pressa")) return true;
+      localStorage.setItem("mano:pressa", "1");
+    } catch {
+      /* no storage: the hint shows every time, which is harmless */
+    }
+    return false;
+  }
+
   /** Count `segundos` down on the board; calls aoZerar once at zero. Returns a stop(). */
   function contar(segundos, aoZerar) {
     const fim = performance.now() + segundos * 1000;
@@ -1180,7 +1190,14 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
 
       const ligarBarra = () => {
         acoesEl.innerHTML = ""; // the cavadinha button goes with the aim
-        dica(cavadinha ? "Cavadinha: pare a barra na faixa acesa" : "Pare a barra na faixa acesa");
+        // One sweep is 1000 ms (30% faster than the first 1300, dev 2026-11-26), and faster still
+        // the higher the aim (mano-faixa.js, dev 2026-11-26).
+        const periodo = periodoBarra(alvo, cavadinha);
+        const apressada = pressaBarra(alvo, cavadinha) > 1;
+        barraEl.classList.toggle("mn-rapida", apressada);
+        barraEl.style.setProperty("--mn-pisca", `${Math.round(periodo / 2)}ms`);
+        if (apressada && !avisouPressa()) dica("Mais alto, barra mais rápida: pare na faixa acesa");
+        else dica(cavadinha ? "Cavadinha: pare a barra na faixa acesa" : "Pare a barra na faixa acesa");
         const [lo, hi] = cavadinha ? faixaCavadinha() : faixa(alvo);
         celulas.forEach((c, i) => {
           const v = ((i + 0.5) / CELULAS) * 1000;
@@ -1192,7 +1209,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
         let parada = false;
         const rodar = () => {
           if (parada) return;
-          const fase = ((performance.now() - barraInicio) / PERIODO_BARRA) % 1;
+          const fase = ((performance.now() - barraInicio) / periodo) % 1;
           barraValor = (fase < 0.5 ? fase * 2 : 2 - fase * 2) * 1000;
           const k = Math.min(CELULAS - 1, Math.floor((barraValor / 1000) * CELULAS));
           celulas.forEach((c, i) => c.classList.toggle("on", i === k));
@@ -1552,6 +1569,56 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     p.corpo.rotation.set(0.15 * (1 - k), 0, 0);
   }
 
+  // The run-up's gait (dev, 2026-11-26): strides over the run, ending with the kicking leg
+  // (pernaE) behind and the standing one reaching for the plant, as the wind-up wants them.
+  const PASSADAS = 2.25; // gait cycles (two steps each) from the step back to the plant
+  const MISTURA = 160; // ms to blend the last stride into what follows
+  /**
+   * The run's pose at `e` (0-1 of the distance): hip and knee of each leg, arms swinging
+   * against the legs, torso lean and the bob, low at each foot's midstance.
+   */
+  function passada(e, ciclos = PASSADAS, amp = 1) {
+    const fase0 = Math.PI - 2 * Math.PI * ciclos; // ends at PI: left leg back, right forward
+    const fase = fase0 + 2 * Math.PI * ciclos * e;
+    const perna = (f) => {
+      const u = ((f % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
+      // Knee: a little give at midstance, and the heel kicking up early in the swing.
+      const apoio = u < Math.PI ? 0.3 * Math.sin(u) : 0;
+      const balanco = u >= Math.PI ? 1.3 * Math.sin(Math.PI * ((u - Math.PI) / Math.PI) ** 0.75) : 0;
+      // Hip: forward (negative) at contact (u=0), back at toe-off (u=PI), swinging forward after;
+      // the bent stance knee is taken up at the hip, so the planted foot stays under the body.
+      const quadril = -0.72 * Math.cos(f) - 0.55 * apoio;
+      return { quadril: quadril * amp, joelho: (0.12 + apoio + balanco) * amp };
+    };
+    const E = perna(fase);
+    const D = perna(fase + Math.PI);
+    // The legs hang from the leaning torso (corpo): its lean is taken off the hips, or both feet
+    // would trail behind.
+    const corpo = (0.2 + 0.03 * Math.cos(2 * fase)) * amp;
+    return {
+      pernaE: E.quadril - corpo,
+      joelhoE: E.joelho,
+      pernaD: D.quadril - corpo,
+      joelhoD: D.joelho,
+      // each arm against its leg, elbows bent, swinging a little at the elbow too
+      bracoE: 0.6 * Math.cos(fase) * amp,
+      bracoD: -0.6 * Math.cos(fase) * amp,
+      // more bend on the forward swing (hand up), more open going back
+      cotoveloE: -0.25 - (1.05 - 0.25 * Math.cos(fase)) * amp,
+      cotoveloD: -0.25 - (1.05 + 0.25 * Math.cos(fase)) * amp,
+      corpo,
+      rolar: 0.035 * Math.sin(fase) * amp,
+      salto: (0.035 * (0.5 + 0.5 * Math.cos(2 * fase)) - 0.012) * amp,
+    };
+  }
+  // The run's distance over its time: a softer ease-in-out than emEntra, so the first stride is
+  // not slow motion; still from 0 to 1.
+  const corrida = (k) => lerp(k, emEntra(k), 0.5);
+  function posar(p, g) {
+    for (const k of ["pernaE", "pernaD", "joelhoE", "joelhoD", "bracoE", "bracoD", "cotoveloE", "cotoveloD"]) p[k].rotation.x = g[k];
+    p.corpo.rotation.set(g.corpo, 0, g.rolar);
+  }
+
   function animarBatedor(t, tl) {
     const b = batedor;
     const p = b.partes;
@@ -1574,19 +1641,13 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       p.bracoE.rotation.x = p.bracoD.rotation.x = 0.7 * m;
       salto = -0.07 * m;
     } else if (t < tl.tChute) {
-      // The run: fast and springy, strides by the distance covered.
-      const e = emEntra(entre(t, tAnt, tl.tChute));
+      // The run: a gait cycle tied to the distance covered, so the feet do not skate.
+      const k = entre(t, tAnt, tl.tChute);
+      const e = corrida(k);
       pos = atras.clone().lerp(plantio, e);
-      const passada = Math.sin(e * Math.PI * 6);
-      p.pernaE.rotation.x = passada * 0.8;
-      p.pernaD.rotation.x = -passada * 0.8;
-      p.joelhoE.rotation.x = 0.25 + Math.max(0, passada) * 1.5;
-      p.joelhoD.rotation.x = 0.25 + Math.max(0, -passada) * 1.5;
-      p.bracoE.rotation.x = -passada * 0.7;
-      p.bracoD.rotation.x = passada * 0.7;
-      p.cotoveloE.rotation.x = p.cotoveloD.rotation.x = -1.1;
-      p.corpo.rotation.x = 0.22;
-      salto = Math.abs(passada) * 0.06;
+      const g = passada(e, tl.passadas, suave(k / 0.12));
+      posar(p, g);
+      salto = g.salto;
     } else {
       // Paradinha: weight shifting by the ball.
       pos = plantio.clone();
@@ -1625,6 +1686,23 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       p.bracoE.rotation.set(0.8 * a, 0, -0.25 - 0.25 * a);
       p.bracoD.rotation.set(-0.8 * a, 0, 0.25 + 0.25 * a);
       p.cotoveloE.rotation.x = p.cotoveloD.rotation.x = -0.25;
+    }
+    // Out of the stride into the paradinha / wind-up (a late result can bring the wind-up into
+    // the last steps), with no snap: blend from where the gait is at that moment.
+    // It is over by the strike, which always gets its full pose.
+    const tMistura = Math.min(tl.tChute, tl.tArma, tGolpe - 50 * lento);
+    const fimMistura = Math.min(tMistura + MISTURA * lento, tGolpe - 50 * lento);
+    if (t >= tAnt && t >= tMistura && t < fimMistura) {
+      const w = suave(entre(t, tMistura, fimMistura));
+      const k = entre(t, tAnt, tl.tChute);
+      const fimCorrida = passada(corrida(k), tl.passadas, suave(k / 0.12));
+      for (const j of ["pernaE", "pernaD", "joelhoE", "joelhoD", "bracoE", "bracoD", "cotoveloE", "cotoveloD", "corpo"])
+        p[j].rotation.x = lerp(fimCorrida[j], p[j].rotation.x, w);
+      // the run keeps the arms at rest sideways (descansar); the wind-up opens them
+      p.bracoE.rotation.z = lerp(-0.12, p.bracoE.rotation.z, w);
+      p.bracoD.rotation.z = lerp(0.12, p.bracoD.rotation.z, w);
+      p.corpo.rotation.z = lerp(fimCorrida.rolar, p.corpo.rotation.z, w);
+      salto = lerp(fimCorrida.salto, salto, w);
     }
     pos.y = b.quadril + salto;
     b.grupo.position.copy(pos);
@@ -1721,6 +1799,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       plantio: estado.bolaEm.clone().addScaledVector(d, -0.5).addScaledVector(direita, -0.45),
       saidaLocal: null,
       letreiro: false,
+      passadas: PASSADAS,
     };
     tl.antecipa = Math.min(320 * lento, (tl.tChute - tl.t0) * 0.3);
     tl.tArma = Math.max(tl.tChute, chute_em + (JANELA - 230) * lento);

@@ -108,8 +108,8 @@ def test_link_de_sala_encerrada_mostra_a_sumula(cliente, caminho):
     for texto in ("Marquinho", "Zé da Geral", "Pênaltis", "Sala k7m2qx · partida 1"):
         assert texto in html
     assert "Marquinho venceu" in html
-    for resultado in ("Gol", "Defendeu", "Na trave"):
-        assert resultado in html
+    # no kick-by-kick log, only the score (dev, 2026-11-26); old súmulas keep their kicks
+    assert "Cobranças" not in html and "Defendeu" not in html and "bateu" not in html
     assert "https://geral.test/jogos/mano/s/k7m2qx-1" in html  # each match's own link
     assert "mano.js" not in html  # nothing live on the súmula
     assert 'href="/jogos/mano"' in html
@@ -137,7 +137,7 @@ def test_sumula_empatada_sem_vencedor(cliente):
     sumula = SUMULA | {"placar": [0, 0], "vencedor": None, "cobrancas": []}
     html = cliente(ManoFalso(sumulas={"k7m2qx-1": sumula})).get("/jogos/mano/s/k7m2qx-1").text
     assert "Sem vencedor" in html
-    assert "acabou antes da primeira cobrança" in html
+    assert "0×0" in html
 
 
 def test_apelidos_da_sumula_escapados(cliente):

@@ -1,17 +1,15 @@
-{# The súmula on paper: the page at the match's link and, fetched by mano.js, the live room's end. #}
+{# The súmula on paper (the score only, no kick-by-kick log: dev, 2026-11-26): the page at the match's link and, fetched by mano.js, the live room's end. #}
 {% set link = public_url ~ "/jogos/mano/s/" ~ (sumula.id or sala_id) %}
 {% set jogadores = sumula.jogadores %}
 {% set placar = sumula.placar or [0, 0] %}
 {# each player's team (súmulas from before the teams have none) #}
 {% macro quem(j) %}{{ j.apelido }}{% if j.time_nome %} ({{ j.time_nome }}){% endif %}{% endmacro %}
-{% set ROTULO = {"gol": "Gol", "defesa": "Defendeu", "trave": "Na trave", "fora": "Pra fora", "barreira": "Na barreira"} %}
 <div class="placar board campeao"><span class="lamp">Fim de jogo · {% if sumula.vencedor is not none and jogadores %}{{ quem(jogadores[sumula.vencedor]) }} venceu{% else %}Sem vencedor{% endif %}{% if sumula.wo %} por W.O.{% endif %}</span><span class="lamp n">{{ placar[0] }}×{{ placar[1] }}</span></div>
 <article class="sumula">
   <div class="cab"><h2>Súmula</h2>{% if jogadores | length == 2 and jogadores[0].time_nome and jogadores[1].time_nome %}<p class="mn-confronto">{{ jogadores[0].time_nome | upper }} × {{ jogadores[1].time_nome | upper }}</p>{% endif %}<p>Sala {{ sumula.sala or sala_id }}{% if sumula.partida %} · partida {{ sumula.partida }}{% endif %} · {{ "Faltas" if sumula.modo == "faltas" else "Pênaltis" }}{% if sumula.wo %} · W.O.{% endif %}</p></div>
-  <div class="colunas">
+  <div class="mn-placar-final">
     <section><h3>Placar</h3><table><thead><tr><th>#</th><th>Jogador</th><th>Gols</th></tr></thead>
       <tbody>{% for j in jogadores %}<tr{% if sumula.vencedor == loop.index0 %} class="venceu"{% endif %}><td>{{ loop.index }}</td><td>{% if j.time_nome %}{{ j.time_nome }} · {% endif %}{{ j.apelido }}</td><td class="pts">{{ placar[loop.index0] }}</td></tr>{% endfor %}</tbody></table></section>
-    <section><h3>Cobranças</h3>{% if sumula.cobrancas %}<ol class="lances">{% for c in sumula.cobrancas %}<li class="mn-{{ c.resultado }}"><span class="n">{{ loop.index }}</span><span class="pal">{{ ROTULO.get(c.resultado, c.resultado) }}</span><span class="quem">{{ jogadores[c.batedor].apelido if c.batedor < jogadores | length else "" }} bateu</span></li>{% endfor %}</ol>{% else %}<p class="fine">A partida acabou antes da primeira cobrança.</p>{% endif %}</section>
   </div>
   <div class="link"><code>{{ link }}</code><button class="btn" type="button" data-copiar="{{ link }}">Copiar</button></div>
   <div class="acoes"><a class="btn lamp-btn" href="/jogos/mano">Nova sala</a><a class="btn secondary" href="https://wa.me/?text={{ ('Súmula do Mano a Mano na Geral: ' ~ link) | urlencode }}" target="_blank" rel="noopener">Mandar no Zap</a></div>
