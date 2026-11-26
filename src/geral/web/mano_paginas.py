@@ -10,6 +10,8 @@ from typing import Protocol
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse, Response
 
+from geral.web import codigo_sala
+
 REGRAS = [
     "Batedor contra goleiro, um de cada vez: crie a sala, escolha pênaltis ou faltas e mande o "
     "link para um amigo, ou jogue contra o bot.",
@@ -64,8 +66,14 @@ def paginas_mano(mano: Salas, render: Callable[..., Response]) -> APIRouter:
     def criar(request: Request):
         return jogo(request)
 
+    @router.get("/jogos/mano/entrar", response_class=HTMLResponse)
+    def entrar(request: Request, codigo: str = ""):
+        return codigo_sala.entrar(request, "mano", codigo, render)
+
     @router.get("/jogos/mano/s/{sala_id}", response_class=HTMLResponse)
     def sala(request: Request, sala_id: str):
+        if (minusculas := codigo_sala.em_minusculas("mano", sala_id)) is not None:
+            return minusculas
         # A live room (also at the end of a match, waiting for the rematch) is the game; else
         # the súmula of that match (`{sala}-{n}`), or the room's last one.
         if mano.viva(sala_id):

@@ -442,6 +442,16 @@
   const sis = (t) => noFeed(esc(t), "sis");
 
   // ---- screens before the room: create, join, notices ----------------------------------------
+  // Join by the room's code instead of the link, like the Gartic (dev, 2026-11-26): a plain GET
+  // form, the server sends it to the room's page (/jogos/{jogo}/entrar).
+  function formCodigo(jogo) {
+    return `<form class="ticket codigo-form" method="get" action="/jogos/${jogo}/entrar">
+        <h2>Tem um código?</h2>
+        <p>Te passaram o código da sala? Digite e entre.</p>
+        <div class="link"><input name="codigo" maxlength="9" required autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="K7M2QX" aria-label="Código da sala"><button class="btn" type="submit">Entrar</button></div>
+      </form>`;
+  }
+
   function telaCriar(erro = "") {
     tela = "criar";
     palco.className = "palco";
@@ -458,6 +468,7 @@
         <p class="fine">Quem cria é o anfitrião: começa a partida e pode tirar quem atrapalhar.</p>
       </form>
       <div class="ticket pr-so-pc"><h2>Na sala</h2><ul class="vagas">${vazias(MAX_JOGADORES)}</ul></div>
+      ${formCodigo("prancheta")}
     </div>`;
     const chips = $("#pr-rodadas");
     chips.addEventListener("click", (e) => {
@@ -593,7 +604,8 @@
         <div id="pr-placar-box" class="placar-box"></div>
         <div class="ticket">
           <h2>Chame a turma</h2>
-          <p>Mande o link no grupo. Quem abrir escolhe um apelido e pede para entrar; o anfitrião aceita.</p>
+          <p>Mande o link no grupo, ou passe o código da sala. Quem entrar escolhe um apelido e pede para entrar; o anfitrião aceita.</p>
+          <p class="codigo-sala">Código <strong>${esc(SALA.toUpperCase())}</strong></p>
           <div class="link"><code>${esc(LINK)}</code><button class="btn" type="button" id="pr-copiar">Copiar</button></div>
           <div class="acoes"><a class="btn secondary" href="${ZAP}" target="_blank" rel="noopener">Mandar no Zap</a></div>
           <p class="pr-rodadas" id="pr-rodadas-info"></p>

@@ -8,7 +8,7 @@ from geral.web.app import templates
 from geral.web.prancheta_paginas import paginas_prancheta
 
 SUMULA = {
-    "id": "K7M2QX",
+    "id": "k7m2qx",
     "jogadores": [
         {"apelido": "Marquinho", "pontos": 31, "gols": 4, "assist": 3},
         {"apelido": "Zé da Geral", "pontos": 24, "gols": 3, "assist": 2},
@@ -60,15 +60,15 @@ def test_pagina_de_criar(cliente):
 
 
 def test_sala_viva_abre_o_jogo(cliente):
-    resposta = cliente(PranchetaFalsa(vivas={"K7M2QX"})).get("/jogos/prancheta/s/K7M2QX")
+    resposta = cliente(PranchetaFalsa(vivas={"k7m2qx"})).get("/jogos/prancheta/s/k7m2qx")
     assert resposta.status_code == 200
-    assert 'data-sala="K7M2QX"' in resposta.text
+    assert 'data-sala="k7m2qx"' in resposta.text
     assert "prancheta.js" in resposta.text
 
 
 def test_sala_encerrada_mostra_sumula(cliente):
-    prancheta = PranchetaFalsa(sumulas={"K7M2QX": SUMULA})
-    resposta = cliente(prancheta).get("/jogos/prancheta/s/K7M2QX")
+    prancheta = PranchetaFalsa(sumulas={"k7m2qx": SUMULA})
+    resposta = cliente(prancheta).get("/jogos/prancheta/s/k7m2qx")
     assert resposta.status_code == 200
     html = resposta.text
     assert 'id="pr-sumula"' in html
@@ -81,18 +81,18 @@ def test_sala_encerrada_mostra_sumula(cliente):
 
 def test_sala_viva_vale_mais_que_sumula(cliente):
     """At the end the room stays open for another game (2026-11-25): its link is the live room."""
-    prancheta = PranchetaFalsa(vivas={"K7M2QX"}, sumulas={"K7M2QX": SUMULA})
-    html = cliente(prancheta).get("/jogos/prancheta/s/K7M2QX").text
-    assert 'data-sala="K7M2QX"' in html and 'id="pr-sumula"' not in html
+    prancheta = PranchetaFalsa(vivas={"k7m2qx"}, sumulas={"k7m2qx": SUMULA})
+    html = cliente(prancheta).get("/jogos/prancheta/s/k7m2qx").text
+    assert 'data-sala="k7m2qx"' in html and 'id="pr-sumula"' not in html
 
 
 def test_sumula_de_cada_partida_no_seu_link(cliente):
-    sumula = SUMULA | {"id": "K7M2QX-2", "sala": "K7M2QX", "partida": 2}
-    prancheta = PranchetaFalsa(vivas={"K7M2QX"}, sumulas={"K7M2QX-2": sumula})
-    html = cliente(prancheta).get("/jogos/prancheta/s/K7M2QX-2").text
+    sumula = SUMULA | {"id": "k7m2qx-2", "sala": "k7m2qx", "partida": 2}
+    prancheta = PranchetaFalsa(vivas={"k7m2qx"}, sumulas={"k7m2qx-2": sumula})
+    html = cliente(prancheta).get("/jogos/prancheta/s/k7m2qx-2").text
     assert 'id="pr-sumula"' in html
-    assert "Sala K7M2QX · partida 2" in html
-    assert "https://geral.test/jogos/prancheta/s/K7M2QX-2" in html
+    assert "Sala k7m2qx · partida 2" in html
+    assert "https://geral.test/jogos/prancheta/s/k7m2qx-2" in html
 
 
 def test_sala_inexistente_mostra_aviso(cliente):
@@ -108,7 +108,7 @@ def test_apelidos_da_sumula_escapados(cliente):
         "jogadores": [{"apelido": "<b>x</b>", "pontos": 1, "gols": 1, "assist": 0}],
         "lances": [],
     }
-    html = cliente(PranchetaFalsa(sumulas={"AAAAAA": sumula})).get("/jogos/prancheta/s/AAAAAA")
+    html = cliente(PranchetaFalsa(sumulas={"aaaaaa": sumula})).get("/jogos/prancheta/s/aaaaaa")
     assert "<b>x</b>" not in html.text
     assert "&lt;b&gt;x&lt;/b&gt;" in html.text
 
@@ -149,3 +149,32 @@ def test_quadro_sem_marcacoes_do_campo():
 
     js = (Path(geral.__file__).parent / "static/geral/prancheta.js").read_text()
     assert 'class="campo"' not in js
+
+
+def test_entrar_com_codigo_leva_a_sala(cliente):
+    """Like the Gartic: the room's 6-character code typed on the create page (dev, 2026-11-26)."""
+    c = cliente(PranchetaFalsa(vivas={"k7m2qx"}))
+    for digitado in ("k7m2qx", " K7M2QX ", "k7m-2qx", "K7M 2QX"):
+        resposta = c.get(
+            "/jogos/prancheta/entrar", params={"codigo": digitado}, follow_redirects=False
+        )
+        assert resposta.status_code == 303, digitado
+        assert resposta.headers["location"] == "/jogos/prancheta/s/k7m2qx"
+
+
+def test_codigo_invalido_avisa_e_volta(cliente):
+    for digitado in ("", "abc", "k7m2q1", "k7m2qxx"):
+        resposta = cliente(PranchetaFalsa()).get(
+            "/jogos/prancheta/entrar", params={"codigo": digitado}
+        )
+        assert resposta.status_code == 404, digitado
+        assert "código" in resposta.text.lower()
+        assert 'href="/jogos/prancheta"' in resposta.text
+
+
+def test_link_com_codigo_em_maiusculas_funciona(cliente):
+    resposta = cliente(PranchetaFalsa(vivas={"k7m2qx"})).get(
+        "/jogos/prancheta/s/K7M2QX", follow_redirects=False
+    )
+    assert resposta.status_code == 301
+    assert resposta.headers["location"] == "/jogos/prancheta/s/k7m2qx"

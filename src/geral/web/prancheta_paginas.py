@@ -10,6 +10,8 @@ from typing import Protocol
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse, Response
 
+from geral.web import codigo_sala
+
 REGRAS = [
     "Crie a sala, escolha quantas rodadas e mande o link no grupo. De 2 a 10 jogadores. Quem "
     "abre o link pede para entrar e o anfitrião aceita.",
@@ -39,8 +41,14 @@ def paginas_prancheta(prancheta: Salas, render: Callable[..., Response]) -> APIR
     def criar(request: Request):
         return jogo(request)
 
+    @router.get("/jogos/prancheta/entrar", response_class=HTMLResponse)
+    def entrar(request: Request, codigo: str = ""):
+        return codigo_sala.entrar(request, "prancheta", codigo, render)
+
     @router.get("/jogos/prancheta/s/{sala_id}", response_class=HTMLResponse)
     def sala(request: Request, sala_id: str):
+        if (minusculas := codigo_sala.em_minusculas("prancheta", sala_id)) is not None:
+            return minusculas
         # A live room (also at the end of a game, waiting for the next) is the game; else the
         # súmula of that game, or the room's last one.
         if prancheta.viva(sala_id):

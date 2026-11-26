@@ -317,3 +317,8 @@
 
 /* ---- 2026-11-25: another game in the same room ------------------------------------------------ */
 .pr .pr-revanche { max-width: 780px; width: 100%; align-self: center; gap: 12px; }
+
+/* The room's code, typed instead of the link (dev, 2026-11-26); mano.css reuses these. */
+.pr .codigo-sala { margin: 6px 0 12px; font: 700 15px/1.2 var(--body); letter-spacing: .04em; text-transform: uppercase; }
+.pr .codigo-sala strong { display: inline-block; margin-left: 8px; padding: 6px 12px; background: var(--board, #0b0b0a); color: var(--lamp, #ffc21a); font: 400 28px/1 var(--dots, monospace); letter-spacing: .18em; }
+.pr .codigo-form .link input { flex: 1; min-width: 0; font: 700 22px/1 var(--body); letter-spacing: .2em; text-transform: uppercase; padding: 12px; background: #fff; border: 3px solid var(--ink); border-right: 0; }
