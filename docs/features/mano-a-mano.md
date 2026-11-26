@@ -119,6 +119,18 @@ Nome provisório: "Mano a Mano" (decisão minha; o dev pode trocar).
   barra apressada a moldura dela pisca no ritmo da varredura (fixa para quem pede menos
   movimento) e, na primeira vez em cada navegador, a dica diz "Mais alto, barra mais rápida: pare
   na faixa acesa". Vale também na falta (o pedido não a excluiu).
+- **Taça no fim (dev, 2026-11-26):** quando a partida acaba com vencedor (também por W.O. e
+  contra o bot), a cena mostra a comemoração de quem venceu, igual nos dois navegadores (quem
+  perdeu vê o outro time comemorar): o batedor e três companheiros (visuais variados de
+  `mano-visual.js`, semente sala + partida, uniforme do time) e o goleiro do time (o mesmo da
+  partida, a 1) juntos perto da marca do pênalti. Um levanta uma taça simples low-poly amarelo
+  lâmpada (nenhuma taça de verdade), os outros pulam de braços para cima, confete amarelo sai da
+  taça e a câmera gira devagar em volta. O letreiro, embaixo, diz "<TIME> CAMPEÃO". Dura 7 s e
+  segura a última pose; a tela do fim (placar, revanche, súmula) segue logo abaixo, e a rolagem
+  até a revanche espera a festa. Com menos movimento pedido no sistema: câmera parada, sem
+  confete nem pulos, taça já no alto. A revanche desfaz tudo (`reiniciar`) e libera materiais e
+  texturas da festa. Fica em `mano-festa.js` (tempo e elenco puros, testados com node). Empate
+  sem vencedor segue com "FIM DE JOGO".
 - **Corrida com passada (dev, 2026-11-26):** a corrida do batedor é um ciclo de marcha ligado à
   distância percorrida (2,25 ciclos, o pé não escorrega): coxas alternando, joelho dobrando no
   balanço para trás e cedendo um pouco no apoio, braços contra as pernas com cotovelo dobrado,
@@ -167,6 +179,8 @@ Nome provisório: "Mano a Mano" (decisão minha; o dev pode trocar).
 - [x] `test_revanche_zera_e_grava_sumula_de_cada_partida` e `test_quem_sai_perde_por_wo`.
 - [x] `test_disputa_acaba_quando_nao_da_mais_para_alcancar`.
 - [x] `test_mirar_alto_acelera_a_barra` e `test_pressa_nao_depende_do_lado` (node roda `mano-faixa.js`).
+- [x] `test_elenco_igual_nos_dois_navegadores_com_o_goleiro_de_sempre`, `test_festa_dura_uns_7_segundos_e_segura`,
+  `test_menos_movimento_fica_parado` e `test_letreiro_do_campeao` (node roda `mano-festa.js`).
 
 ## Verificação ponta a ponta
 

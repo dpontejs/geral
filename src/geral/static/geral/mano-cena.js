@@ -8,6 +8,7 @@
 // it: x = 0 is the kicker's left (world -x), y = 0 the ground, y = 1000 the crossbar.
 import * as THREE from "../vendor/three/three.module.js";
 import { periodoBarra, pressaBarra } from "./mano-faixa.js";
+import { criarFesta, tituloCampeao } from "./mano-festa.js";
 import { visual } from "./mano-visual.js";
 
 const COR = {
@@ -769,6 +770,20 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
 
   // No shake for who asked the system for less motion.
   const calmo = window.matchMedia?.("(prefers-reduced-motion: reduce)").matches ?? false;
+  // The winners' celebration at the end (mano-festa.js): its own players, dressed here.
+  const festa = criarFesta(THREE, {
+    cena,
+    camera,
+    calmo,
+    descansar,
+    jogador({ papel: p, time, uniforme: u, visual: v }) {
+      const j = montarJogador({ camisa: COR.papel, calcao: COR.tinta, meia: COR.papel, luvas: p === "goleiro" ? COR.papel : null });
+      aplicarVisual(j, v);
+      const kit = uniforme({ time, uniforme: u }, p);
+      if (kit) vestirJogador(j, kit, v?.numero ?? null);
+      return j;
+    },
+  });
   const estado = {
     tremor: 0, // the camera's shake (m), set by the goal
     papel,
@@ -1898,6 +1913,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
   function reiniciar() {
     pedidoAtual?.();
     cobrancaAtual?.parar();
+    acabarFesta();
     estado.animacao = null;
     letreiro("");
     arrumar();
@@ -1926,8 +1942,33 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     if (!cobrancaAtual) batedor.grupo.position.y = batedor.quadril;
   }
 
+  /**
+   * The match is over: the winners lift the cup (mano-festa.js) and the board reads "<TEAM>
+   * CAMPEÃO". {time, uniforme, nome, semente: "room:match", goleiro: the keeper's look seed}.
+   * Holds at the end; reiniciar() (the rematch) clears it.
+   */
+  function festejar(dados) {
+    pedidoAtual?.();
+    cobrancaAtual?.parar();
+    dica("");
+    barraEl.hidden = true;
+    estado.tremor = 0;
+    for (const o of [batedor.grupo, goleiro.grupo, bola, barreiraGrupo, estouroChute, estouroGol, mira, previa]) o.visible = false;
+    festa.comecar(dados);
+    estado.animacao = festa.aplicar;
+    el.classList.add("mn-festa"); // the board's line goes down, under the cup
+    letreiro(tituloCampeao(dados.nome));
+  }
+  function acabarFesta() {
+    if (!festa.ativa) return;
+    festa.parar();
+    el.classList.remove("mn-festa");
+    for (const o of [batedor.grupo, goleiro.grupo, bola, barreiraGrupo]) o.visible = true;
+  }
+
   const api = {
     vestir,
+    festejar,
     get papel() {
       return estado.papel;
     },
@@ -1969,6 +2010,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     destruir() {
       pedidoAtual?.();
       cobrancaAtual?.parar();
+      festa.parar();
       if (emTelaCheia()) document.exitFullscreen().catch(() => {});
       cena.traverse((o) => {
         o.geometry?.dispose();
