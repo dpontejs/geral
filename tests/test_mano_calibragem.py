@@ -6,6 +6,7 @@ from geral.games.mano.regras import resolver
 from geral.games.mano.tipos import Barreira, Chute, Defesa, Posicao
 
 LANCES = 10_000
+P_CAVADINHA_ALEATORIA = 0.05  # the random kicker chips one kick in twenty (dev, 2026-11-26)
 POSICOES = ("meia_lua", "entrada_esquerda", "entrada_direita")
 
 
@@ -13,6 +14,8 @@ def _lance_aleatorio(modo: str, rng: Random):
     chute = Chute(alvo=(rng.randint(0, 1000), rng.randint(0, 1000)), barra=rng.randint(0, 1000))
     defesa = Defesa(lado=rng.choice(("esquerda", "fica", "direita")), saida=rng.random() < 0.5)
     if modo == "penaltis":
+        if rng.random() < P_CAVADINHA_ALEATORIA:
+            chute = chute.model_copy(update={"alvo": (500, 500), "cavadinha": True})
         return resolver(chute, defesa, rng)
     chute = chute.model_copy(
         update={
@@ -37,3 +40,22 @@ def test_calibragem(modo):
     print(modo, taxas)
     minimo, maximo = FAIXAS[modo]
     assert minimo <= taxas["gol"] <= maximo
+
+
+def test_quem_acerta_a_barra_no_canto_ainda_perde_alguns():
+    """A good human: corner aims, the bar near the band's centre, against a keeper who guesses
+    the side half the time. The rate goes in the PR; here only a sanity range."""
+    rng = Random(7)
+    gols = 0
+    for _ in range(LANCES):
+        x = rng.choice((90, 910))
+        alvo = (x, rng.randint(80, 450))
+        barra = min(1000, max(0, round(rng.gauss(500, 60))))
+        certo = "esquerda" if x < 500 else "direita"
+        outros = [lado for lado in ("esquerda", "fica", "direita") if lado != certo]
+        lado = certo if rng.random() < 0.5 else rng.choice(outros)
+        defesa = Defesa(lado=lado, saida=rng.random() < 0.5)
+        gols += resolver(Chute(alvo=alvo, barra=barra), defesa, rng).resultado == "gol"
+    taxa = gols / LANCES
+    print("humano no canto", taxa)
+    assert 0.35 <= taxa <= 0.60

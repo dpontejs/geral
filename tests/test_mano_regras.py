@@ -4,12 +4,17 @@ import pytest
 from pydantic import ValidationError
 
 from geral.games.mano.regras import (
+    ALCANCE_FRACO,
     ALCANCE_SAIDA,
     ALTURA_BARREIRA,
     ALTURA_PULO,
+    FAIXA_CAVADINHA,
+    FAIXA_MIN,
     MEIA_LARGURA_POR_HOMEM,
     P_ANGULO,
+    QUEDA_POR_ERRO,
     RUIDO,
+    SUBIDA_POR_ERRO,
     cobertura,
     faixa_boa,
     resolver,
@@ -33,13 +38,102 @@ def test_barra_na_faixa_vai_onde_mirou():
 
 
 def test_barra_fora_da_faixa_desvia():
-    alvo = (150, 300)
-    perto = resolver(
-        Chute(alvo=alvo, barra=500 + faixa_boa(alvo, False) // 2 + 50), LONGE, Random(1)
-    )
+    # above the band the ball climbs from the aim: a little, then the crossbar, then over
+    alvo = (150, 600)
+    topo = 500 + faixa_boa(alvo, False) // 2
+    perto = resolver(Chute(alvo=alvo, barra=topo + 30), LONGE, Random(1))
     longe = resolver(Chute(alvo=alvo, barra=1000), LONGE, Random(1))
-    assert longe.onde[0] < perto.onde[0] < 150 + RUIDO
-    assert longe.resultado in {"fora", "trave"}
+    assert 600 + RUIDO < perto.onde[1] < longe.onde[1]
+    assert abs(perto.onde[0] - 150) <= RUIDO and abs(longe.onde[0] - 150) <= RUIDO
+    assert longe.resultado == "fora"
+
+
+def test_um_pouco_acima_da_faixa_no_alto_e_travessao():
+    alvo = (500, 850)
+    topo = 500 + faixa_boa(alvo, False) // 2
+    erro = round((1000 - 850) / SUBIDA_POR_ERRO)
+    resultados = {
+        resolver(Chute(alvo=alvo, barra=topo + erro), LONGE, Random(s)).resultado for s in range(50)
+    }
+    assert resultados == {"trave"}
+
+
+def test_abaixo_da_faixa_e_chute_fraco_que_o_goleiro_alcanca():
+    # aimed at the middle third, near the left: in the band the left dive misses it
+    alvo = (333 + 40, 300)
+    base = 500 - faixa_boa(alvo, False) // 2
+    esquerda = Defesa(lado="esquerda", saida=False)
+    assert resolver(Chute(alvo=alvo, barra=base), esquerda, Random(1)).resultado == "gol"
+    fraco = resolver(Chute(alvo=alvo, barra=base - 70), esquerda, Random(1))
+    assert fraco.resultado == "defesa"
+    assert abs(fraco.onde[0] - alvo[0]) <= RUIDO
+    assert abs(fraco.onde[1] - (300 - 70 * QUEDA_POR_ERRO)) <= RUIDO  # a weak ball drops
+
+
+def test_chute_fraco_nao_e_defesa_automatica():
+    # the weak shot's extra reach stops at about the exit's: the far corner is still a goal
+    for s in range(50):
+        lance = resolver(
+            Chute(alvo=(900, 300), barra=0), Defesa(lado="esquerda", saida=True), Random(s)
+        )
+        assert lance.resultado == "gol"
+    perto = (333 + ALCANCE_SAIDA + ALCANCE_FRACO + 30, 300)
+    lance = resolver(Chute(alvo=perto, barra=0), Defesa(lado="esquerda", saida=True), Random(1))
+    assert lance.resultado == "gol"
+
+
+def test_chute_fraco_no_alto_cai_e_o_goleiro_pega():
+    # a weak ball does not reach the top corner: it drops, and the extra reach has no height limit
+    def defesas(barra: int) -> float:
+        direita = Defesa(lado="direita", saida=False)
+        lances = [
+            resolver(Chute(alvo=(950, 950), barra=barra), direita, Random(s)) for s in range(500)
+        ]
+        return sum(lance.resultado == "defesa" for lance in lances) / 500
+
+    assert defesas(0) > 0.9
+    assert defesas(500) < 0.4
+    fraco = resolver(Chute(alvo=(950, 950), barra=0), LONGE, Random(1))
+    assert fraco.onde[1] < 950 - QUEDA_POR_ERRO * 100
+
+
+def test_chute_fraco_alto_no_vizinho_tambem_e_alcancado():
+    alvo = (333 + 40, 700)
+    base = 500 - faixa_boa(alvo, False) // 2
+    esquerda = Defesa(lado="esquerda", saida=False)
+    lance = resolver(Chute(alvo=alvo, barra=base - 70), esquerda, Random(1))
+    assert lance.resultado == "defesa"
+
+
+def test_cavadinha_mira_o_meio():
+    chute = Chute(alvo=(100, 900), barra=500, cavadinha=True)
+    assert chute.alvo == (500, 500)
+
+
+def test_cavadinha_contra_quem_fica_e_defesa_e_contra_quem_pula_e_gol():
+    chute = Chute(alvo=(500, 500), barra=500, cavadinha=True)
+    for s in range(20):
+        assert resolver(chute, Defesa(lado="fica", saida=False), Random(s)).resultado == "defesa"
+        for lado in ("esquerda", "direita"):
+            for saida in (False, True):
+                lance = resolver(chute, Defesa(lado=lado, saida=saida), Random(s))
+                assert lance.resultado == "gol"
+
+
+def test_cavadinha_tem_faixa_mais_estreita():
+    assert FAIXA_CAVADINHA < FAIXA_MIN
+    pula = Defesa(lado="direita", saida=False)
+    alta = Chute(alvo=(500, 500), barra=500 + FAIXA_CAVADINHA // 2 + 20, cavadinha=True)
+    baixa = Chute(alvo=(500, 500), barra=500 - FAIXA_CAVADINHA // 2 - 20, cavadinha=True)
+    lance = resolver(alta, pula, Random(1))
+    assert lance.resultado == "fora" and lance.onde[1] > 1000
+    assert resolver(baixa, pula, Random(1)).resultado == "defesa"
+
+
+def test_cavadinha_so_no_penalti():
+    chute = Chute(alvo=(500, 500), barra=500, trajetoria="por_cima", cavadinha=True)
+    with pytest.raises(ValueError):
+        resolver(chute, LONGE, Random(0), barreira=BARREIRA, posicao=MEIA_LUA)
 
 
 def test_barra_nos_extremos_nao_quebra():

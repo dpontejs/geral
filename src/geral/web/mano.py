@@ -21,7 +21,7 @@ from typing import TYPE_CHECKING, Annotated, Literal
 
 from fastapi import APIRouter, Body, Request
 from fastapi.responses import JSONResponse, Response
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, StrictBool
 
 from geral.games.mano.sala import ErroSala, Evento, Sala
 from geral.games.mano.tipos import Modo, Nivel
@@ -82,6 +82,7 @@ class AcaoChute(_ComToken):
     barra: int
     trajetoria: str | None = Field(default=None, max_length=16)
     curva: float = 0
+    cavadinha: StrictBool = False
 
 
 class AcaoDefesa(_ComToken):

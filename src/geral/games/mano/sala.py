@@ -37,6 +37,8 @@ CORRIDA = timedelta(seconds=1.5)  # from both locked to `chute_em`
 JANELA = timedelta(milliseconds=600)  # the keeper's exit counts from `chute_em` for this long
 FOLGA = timedelta(milliseconds=150)  # plus this, for the network
 RESULTADO = timedelta(seconds=3)  # the replay before the next kick
+# the cavadinha's flight is longer on screen (1150 ms against 600): the next kick waits for it
+VOO_CAVADINHA_A_MAIS = timedelta(milliseconds=550)
 AUSENCIA = timedelta(seconds=30)  # with no events connection for this long: loses by W.O.
 ESPERA_FIM = timedelta(minutes=10)  # a finished match waits this long for a rematch
 INTERVALO_ACAO = timedelta(seconds=0.3)  # one action per player every this long
@@ -205,7 +207,9 @@ class Sala:
         if self._chute is not None:
             raise ErroSala(409, "already locked")
         campos = {"alvo": dados.get("alvo"), "barra": dados.get("barra")}
-        if self.modo == "faltas":  # a penalty drops the trajectory and the curve
+        if self.modo == "penaltis":  # a free kick drops the cavadinha
+            campos["cavadinha"] = dados.get("cavadinha", False)
+        else:  # and a penalty drops the trajectory and the curve
             if dados.get("trajetoria") is None:
                 raise ErroSala(422, "a free kick needs a trajetoria")
             campos |= {"trajetoria": dados["trajetoria"], "curva": dados.get("curva", 0)}
@@ -426,6 +430,8 @@ class Sala:
         self._lances.append(lance)
         self._fase = "resultado"
         self._prazo = agora + RESULTADO
+        if lance.chute.cavadinha:
+            self._prazo += VOO_CAVADINHA_A_MAIS
         return [
             self._evento(
                 "cobranca", {"lance": lance.model_dump(mode="json"), "placar": self._placar()}

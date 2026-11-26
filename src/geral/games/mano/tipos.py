@@ -2,7 +2,7 @@
 
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 Lado = Literal["esquerda", "fica", "direita"]
 Trajetoria = Literal["rasteira", "por_cima", "pelo_lado"]
@@ -11,6 +11,7 @@ Modo = Literal["penaltis", "faltas"]
 Nivel = Literal["facil", "medio", "dificil"]
 
 Coord = Annotated[int, Field(ge=0, le=1000)]
+CENTRO_DO_GOL = (500, 500)
 
 
 class Chute(BaseModel):
@@ -18,6 +19,13 @@ class Chute(BaseModel):
     barra: Coord
     trajetoria: Trajetoria | None = None
     curva: float = Field(default=0, ge=-1, le=1)
+    cavadinha: bool = False  # penalties only: a chip down the middle, the aim is ignored
+
+    @model_validator(mode="after")
+    def _cavadinha_no_meio(self) -> "Chute":
+        if self.cavadinha:
+            self.alvo = CENTRO_DO_GOL
+        return self
 
 
 class Defesa(BaseModel):

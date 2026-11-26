@@ -108,3 +108,45 @@ def test_bot_dificil_compensa_a_posicao_e_nao_bate_na_barreira(desvio):
             defesa = Defesa(lado="esquerda", saida=False)
             lance = resolver(chute, defesa, rng, barreira=barreira, posicao=posicao)
             assert lance.resultado != "barreira"
+
+
+CAVADINHA = Chute(alvo=(500, 500), barra=500, cavadinha=True)
+
+
+def test_bot_dificil_fica_contra_quem_repete_a_cavadinha():
+    gols = 0
+    for partida in range(500):
+        rng = Random(partida)
+        historico = []
+        for _ in range(5):
+            lance = resolver(CAVADINHA, defender("dificil", historico, rng), rng)
+            gols += lance.resultado == "gol"
+            historico.append(lance)
+    assert gols / 2500 < 0.24
+
+
+@pytest.mark.parametrize("nivel", ["medio", "dificil"])
+def test_bot_bate_cavadinha_de_vez_em_quando(nivel):
+    rng = Random(11)
+    historico = [resolver(REPETIDO, Defesa(lado="esquerda", saida=False), Random(1))]
+    chutes = [chutar(nivel, historico if i % 2 else [], rng, barreira=None) for i in range(4000)]
+    cavadinhas = [c for c in chutes if c.cavadinha]
+    assert 0.02 <= len(cavadinhas) / 4000 <= 0.10
+    assert all(c.alvo == (500, 500) for c in cavadinhas)
+
+
+def test_bot_facil_e_falta_sem_cavadinha():
+    rng = Random(12)
+    assert not any(chutar("facil", [], rng, barreira=None).cavadinha for _ in range(2000))
+    for nivel in ("medio", "dificil"):
+        assert not any(
+            chutar(nivel, [], rng, barreira=Barreira(n=3, x=500)).cavadinha for _ in range(2000)
+        )
+
+
+def test_bot_facil_nao_gasta_sorteio_com_cavadinha():
+    # facil never chips: its draws stay the ones it had before the cavadinha existed
+    rng, espelho = Random(5), Random(5)
+    chute = chutar("facil", [], rng, barreira=None)
+    x, y_barra = espelho.randint(0, 1000), espelho.randint(0, 1000)
+    assert chute.alvo[0] == x and chute.barra == y_barra

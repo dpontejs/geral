@@ -17,6 +17,7 @@ from geral.games.mano.sala import (
     JANELA,
     PRAZO_ESCOLHA,
     RESULTADO,
+    VOO_CAVADINHA_A_MAIS,
     ErroSala,
     Evento,
     Sala,
@@ -729,3 +730,38 @@ def test_bot_comecando_ja_chutou(monkeypatch):
     jogo = Jogo(bot="facil")
     foto = jogo.foto(0)
     assert foto["papel"] == "goleiro" and foto["travou"]["outro"] is True
+
+
+def test_cavadinha_no_penalti():
+    jogo = Jogo()
+    lance = jogo.cobrar({"alvo": [150, 300], "barra": 500, "cavadinha": True}, "direita")["lance"]
+    assert lance["chute"]["cavadinha"] is True and lance["chute"]["alvo"] == [500, 500]
+    assert lance["resultado"] == "gol"
+
+
+def test_falta_descarta_cavadinha():
+    jogo = Jogo(modo="faltas")
+    jogo.agir(1, "barreira", n=3, x=800)
+    jogo.agir(0, "chute", trajetoria="rasteira", cavadinha=True, **GOL_ESQUERDA)
+    jogo.andar(0.5)
+    jogo.agir(1, "defesa", lado="direita")
+    jogo.andar(_s(CORRIDA + JANELA + FOLGA))
+    chute = [e for e in jogo.eventos if e.tipo == "cobranca"][0].dados["lance"]["chute"]
+    assert chute["cavadinha"] is False and chute["alvo"] == [150, 300]
+
+
+def test_cavadinha_segura_o_resultado_ate_a_bola_chegar():
+    # the chip flies longer: the next kick waits for it (the slack stays the same)
+    jogo = Jogo()
+    jogo.cobrar({"alvo": [500, 500], "barra": 500, "cavadinha": True}, "direita")
+    jogo.andar(_s(RESULTADO))
+    assert jogo.foto(0)["fase"] == "resultado"
+    jogo.andar(_s(VOO_CAVADINHA_A_MAIS))
+    assert jogo.foto(0)["fase"] == "escolha"
+
+
+def test_chute_normal_nao_ganha_tempo_a_mais():
+    jogo = Jogo()
+    jogo.cobrar(GOL_ESQUERDA, "direita")
+    jogo.andar(_s(RESULTADO))
+    assert jogo.foto(0)["fase"] == "escolha"
