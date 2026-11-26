@@ -117,7 +117,8 @@ Nome provisório: "Mano a Mano" (decisão minha; o dev pode trocar).
   +45% (volta em ~690 ms). A cavadinha mantém o ritmo. Só tempo no navegador
   (`pressaBarra`/`periodoBarra` em `mano-faixa.js`): a regra da faixa no servidor não muda. Com a
   barra apressada a moldura dela pisca no ritmo da varredura (fixa para quem pede menos
-  movimento) e, na primeira vez em cada navegador, a dica diz "Mais alto, barra mais rápida".
+  movimento) e, na primeira vez em cada navegador, a dica diz "Mais alto, barra mais rápida: pare
+  na faixa acesa". Vale também na falta (o pedido não a excluiu).
 - **Corrida com passada (dev, 2026-11-26):** a corrida do batedor é um ciclo de marcha ligado à
   distância percorrida (2,25 ciclos, o pé não escorrega): coxas alternando, joelho dobrando no
   balanço para trás e cedendo um pouco no apoio, braços contra as pernas com cotovelo dobrado,

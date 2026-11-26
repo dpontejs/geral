@@ -1193,10 +1193,10 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
         // One sweep is 1000 ms (30% faster than the first 1300, dev 2026-11-26), and faster still
         // the higher the aim (mano-faixa.js, dev 2026-11-26).
         const periodo = periodoBarra(alvo, cavadinha);
-        const apressada = pressaBarra(alvo, cavadinha) > 1.05;
+        const apressada = pressaBarra(alvo, cavadinha) > 1;
         barraEl.classList.toggle("mn-rapida", apressada);
         barraEl.style.setProperty("--mn-pisca", `${Math.round(periodo / 2)}ms`);
-        if (apressada && !avisouPressa()) dica("Mais alto, barra mais rápida");
+        if (apressada && !avisouPressa()) dica("Mais alto, barra mais rápida: pare na faixa acesa");
         else dica(cavadinha ? "Cavadinha: pare a barra na faixa acesa" : "Pare a barra na faixa acesa");
         const [lo, hi] = cavadinha ? faixaCavadinha() : faixa(alvo);
         celulas.forEach((c, i) => {
@@ -1689,13 +1689,18 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     }
     // Out of the stride into the paradinha / wind-up (a late result can bring the wind-up into
     // the last steps), with no snap: blend from where the gait is at that moment.
+    // It is over by the strike, which always gets its full pose.
     const tMistura = Math.min(tl.tChute, tl.tArma, tGolpe - 50 * lento);
-    if (t >= tAnt && t >= tMistura && t < tMistura + MISTURA * lento) {
-      const w = suave(entre(t, tMistura, tMistura + MISTURA * lento));
+    const fimMistura = Math.min(tMistura + MISTURA * lento, tGolpe - 50 * lento);
+    if (t >= tAnt && t >= tMistura && t < fimMistura) {
+      const w = suave(entre(t, tMistura, fimMistura));
       const k = entre(t, tAnt, tl.tChute);
       const fimCorrida = passada(corrida(k), tl.passadas, suave(k / 0.12));
-      for (const k of ["pernaE", "pernaD", "joelhoE", "joelhoD", "bracoE", "bracoD", "cotoveloE", "cotoveloD", "corpo"])
-        p[k].rotation.x = lerp(fimCorrida[k], p[k].rotation.x, w);
+      for (const j of ["pernaE", "pernaD", "joelhoE", "joelhoD", "bracoE", "bracoD", "cotoveloE", "cotoveloD", "corpo"])
+        p[j].rotation.x = lerp(fimCorrida[j], p[j].rotation.x, w);
+      // the run keeps the arms at rest sideways (descansar); the wind-up opens them
+      p.bracoE.rotation.z = lerp(-0.12, p.bracoE.rotation.z, w);
+      p.bracoD.rotation.z = lerp(0.12, p.bracoD.rotation.z, w);
       p.corpo.rotation.z = lerp(fimCorrida.rolar, p.corpo.rotation.z, w);
       salto = lerp(fimCorrida.salto, salto, w);
     }
