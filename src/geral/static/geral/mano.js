@@ -165,6 +165,16 @@ const limparErroDeTime = () => {
 };
 const marcado = (grupo, attr) => grupo.querySelector('[aria-pressed="true"]')?.dataset[attr];
 
+// Join by the room's code instead of the link, like the Gartic (dev, 2026-11-26): a plain GET
+// form, the server sends it to the room's page (/jogos/{jogo}/entrar).
+function formCodigo(jogo) {
+  return `<form class="ticket codigo-form" method="get" action="/jogos/${jogo}/entrar">
+      <h2>Tem um código?</h2>
+      <p>Te passaram o código da sala? Digite e entre.</p>
+      <div class="link"><input name="codigo" maxlength="9" required autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="K7M2QX" aria-label="Código da sala"><button class="btn" type="submit">Entrar</button></div>
+    </form>`;
+}
+
 function telaCriar(erro = "") {
   tela = "criar";
   palcoCena.hidden = true;
@@ -180,6 +190,7 @@ function telaCriar(erro = "") {
       <button class="btn lamp-btn" type="submit">Criar sala</button>
       <p class="fine">Cinco cobranças para cada um, alternando quem bate. Quem começa batendo é sorteado.</p>
     </form>
+    ${formCodigo("mano")}
   </div>`;
   const modo = $("#mn-modo");
   const contra = $("#mn-contra");
@@ -273,10 +284,11 @@ function telaEspera() {
   const zap = `https://wa.me/?text=${encodeURIComponent(`Bora um Mano a Mano na Geral? ${MODOS[est.modo]}, eu contra você: ${link}`)}`;
   const html = `<div class="espera so"><div class="ticket mn-espera">
     <h2>Esperando o adversário</h2>
-    <p>${MODOS[est.modo]} · sala ${esc(SALA)}. Mande o link: a partida começa quando ele entrar.</p>
+    <p>${MODOS[est.modo]}. Mande o link, ou passe o código: a partida começa quando ele entrar.</p>
+    <p class="codigo-sala">Código <strong>${esc(SALA.toUpperCase())}</strong></p>
     <div class="link"><code>${esc(link)}</code></div>
     <div class="acoes"><button class="btn lamp-btn" type="button" id="mn-copiar">Copiar link</button><a class="btn secondary" href="${zap}" target="_blank" rel="noopener">Mandar no Zap</a></div>
-    <p class="fine">Só entra quem tem o link. A sala fecha se ficar 10 minutos sem ninguém.</p>
+    <p class="fine">Só entra quem tem o link ou o código. A sala fecha se ficar 10 minutos sem ninguém.</p>
   </div></div>`;
   if (palco.__html === html) return;
   palco.innerHTML = palco.__html = html;

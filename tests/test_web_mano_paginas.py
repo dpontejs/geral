@@ -232,3 +232,26 @@ def test_sumula_antiga_sem_times(cliente):
     assert "mn-confronto" not in html and "None" not in html
     assert "<td>Marquinho</td>" in html
     assert "Marquinho venceu" in html
+
+
+def test_entrar_com_codigo_leva_a_sala(cliente):
+    """Like the Gartic: the room's 6-character code typed on the create page (dev, 2026-11-26)."""
+    c = cliente(ManoFalso(vivas={"k7m2qx"}))
+    for digitado in ("k7m2qx", " K7M2QX ", "k7m-2qx"):
+        resposta = c.get("/jogos/mano/entrar", params={"codigo": digitado}, follow_redirects=False)
+        assert resposta.status_code == 303, digitado
+        assert resposta.headers["location"] == "/jogos/mano/s/k7m2qx"
+
+
+def test_codigo_invalido_avisa_e_volta(cliente):
+    resposta = cliente(ManoFalso()).get("/jogos/mano/entrar", params={"codigo": "abc"})
+    assert resposta.status_code == 404
+    assert "código" in resposta.text.lower() and 'href="/jogos/mano"' in resposta.text
+
+
+def test_link_com_codigo_em_maiusculas_funciona(cliente):
+    resposta = cliente(ManoFalso(vivas={"k7m2qx"})).get(
+        "/jogos/mano/s/K7M2QX", follow_redirects=False
+    )
+    assert resposta.status_code == 301
+    assert resposta.headers["location"] == "/jogos/mano/s/k7m2qx"
