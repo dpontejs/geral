@@ -46,7 +46,8 @@ Nome provisório: "Mano a Mano" (decisão minha; o dev pode trocar).
   servidor, 1,5 s à frente: corrida do batedor). Janela de 600 ms a partir de `chute_em`; o
   servidor só resolve e manda `cobranca` (escolhas + resultado) quando a janela fecha.
 - **Prazos:** 10 s para a barreira e para cada escolha; acabou, escolha ao acaso.
-- **Equilíbrio:** ~60% no pênalti, ~45–50% na falta (dev, 2026-11-25), com os dois lados
+- **Equilíbrio:** 50–60% no pênalti (era ~60%; dev, 2026-11-26: pênalti mais difícil para o
+  batedor), ~45–50% na falta (dev, 2026-11-25), com os dois lados
   aleatórios, definidos como: `alvo` uniforme na boca do gol, `barra` uniforme, lado do goleiro
   uniforme, saída na janela em 50%, barreira e trajetória uniformes.
 - **Disputa:** 5 cobranças para cada um, alternando os papéis, e acaba antes quando não dá mais
@@ -64,7 +65,10 @@ Nome provisório: "Mano a Mano" (decisão minha; o dev pode trocar).
   no ângulo) e o alcance do goleiro cresce 1 por unidade de erro, até `ALCANCE_FRACO` (= o bônus
   da saída, 90), somado à saída, em qualquer altura, e pega o ângulo do seu lado; não é defesa
   automática (o canto oposto segue gol). A falta segue com o desvio simétrico de antes. A barra
-  ficou 30% mais rápida na cena (volta inteira em 1 s em vez de 1,3 s).
+  ficou 30% mais rápida na cena (volta inteira em 1 s em vez de 1,3 s). E o pênalti ganhou faixa
+  própria, mais estreita (`FAIXA_PENALTI_*`): 120 na trave ou no travessão, +1 por unidade de
+  distância, até 450 no meio (a da falta seguiu 250–500 × 0,95). Mirando no canto (x = 90), a
+  faixa tem 210: com a barra a 2 unidades por ms, a janela é de ~105 ms, duas vezes por volta.
 - **Cavadinha (dev, 2026-11-26):** só no pênalti, um botão no lugar da mira. `Chute.cavadinha`
   (padrão `false`); a mira é ignorada (vai a `(500, 500)`). Faixa própria e mais estreita
   (`FAIXA_CAVADINHA` = 160, fixa). Na faixa: goleiro que `fica` defende, goleiro que pula para
@@ -110,7 +114,7 @@ Nome provisório: "Mano a Mano" (decisão minha; o dev pode trocar).
   centro da faixa) contra goleiro que acerta o lado metade das vezes; a taxa medida vai no PR.
 - [x] `test_saida_no_tempo_alcanca_o_vizinho` e `test_saida_fora_da_janela_nao_conta`.
 - [x] `test_barreira_bloqueia_rasteira` e `test_por_cima_fraco_bate_na_barreira`.
-- [x] `test_calibragem`: 10 mil lances aleatórios × aleatórios → 55–65% de gols no pênalti e
+- [x] `test_calibragem`: 10 mil lances aleatórios × aleatórios → 50–60% de gols no pênalti e
   45–50% na falta.
 - [x] `test_bot_dificil_pune_quem_repete`: batedor que sempre mira à esquerda marca < 40% contra ele.
 - [x] `test_disputa_alternada_e_morte_subita` e `test_prazo_estourado_escolhe_ao_acaso`.
