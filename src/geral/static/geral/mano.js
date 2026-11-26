@@ -4,8 +4,8 @@
 // screen from it: the kick being chosen, the run-up already under way, the end. The 3D scene is
 // mano-cena.js; the screens around it (create, join, waiting, the end) are drawn here. My token
 // for the room stays in localStorage (`mano:<id>`).
-import { criarCena } from "/static/geral/mano-cena.js";
-import { faixaBoa } from "/static/geral/mano-faixa.js";
+import { criarCena, letreiroDoLance } from "/static/geral/mano-cena.js";
+import { faixaBoa, faixaCavadinha } from "/static/geral/mano-faixa.js";
 
 const raiz = document.getElementById("mano");
 const API = "/api/jogos/mano";
@@ -23,7 +23,6 @@ const MODOS = { penaltis: "Pênaltis", faltas: "Faltas" };
 // Free kicks can be off on the server (MANO_FALTAS): then the form offers only penalties.
 const MODOS_OFERTA = raiz.dataset.faltas ? MODOS : { penaltis: MODOS.penaltis };
 const BOTS = { facil: "Bot fácil", medio: "Bot médio", dificil: "Bot difícil" };
-const LETREIROS = { gol: "GOOOL", defesa: "DEFENDEU", trave: "NA TRAVE", fora: "PRA FORA", barreira: "NA BARREIRA" };
 const ERROS = {
   "nickname must have 2 to 16 characters": "O apelido precisa ter de 2 a 16 letras.",
   "nickname not allowed": "Esse apelido não pode. Escolha outro.",
@@ -299,7 +298,7 @@ async function pedirEscolha(k) {
   pedido = `${k}:escolha`;
   const falta = est.modo === "faltas";
   if (est.papel === "batedor") {
-    const v = await cena.pedirChute({ falta, faixa: (alvo) => faixaBoa(alvo, falta), segundos: restam() });
+    const v = await cena.pedirChute({ falta, faixa: (alvo) => faixaBoa(alvo, falta), faixaCavadinha, segundos: restam() });
     if (v && pedido === `${k}:escolha`) enviar(k, "escolha", "chute", v);
   } else {
     const v = await cena.pedirDefesa({ segundos: restam() });
@@ -350,7 +349,7 @@ function telaJogo() {
       entregarLance = null; // a kick still waiting is an older one: its lance is not this
       letreiroDe = anterior();
       montar(anterior());
-      cena.letreiro(LETREIROS[est.ultimo.resultado] ?? "");
+      cena.letreiro(letreiroDoLance(est.ultimo));
     }
     return;
   }

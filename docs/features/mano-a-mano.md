@@ -37,7 +37,7 @@ Nome provisório: "Mano a Mano" (decisão minha; o dev pode trocar).
 - Na falta o goleiro é o mesmo do pênalti; a barreira é o que torna a falta mais difícil. Bola
   alcançada é sempre defendida (dev, 2026-11-25).
 - **Barra (minha decisão):** um só valor `barra` 0–1000, uma parada. No pênalti é precisão: fora
-  da faixa boa, desvia. Na falta `por_cima` é também força: abaixo da faixa bate na barreira,
+  da faixa boa, sobe ou sai fraca (ver abaixo, 2026-11-26). Na falta `por_cima` é também força: abaixo da faixa bate na barreira,
   acima sai por cima. Força não existe à parte.
 - **Barreira (minha decisão):** `x` na mesma projeção 0–1000 da boca do gol vista da posição da
   falta; cobre `n × 110` de largura centrada em `x`, até 45% da altura (os jogadores pulam).
@@ -57,6 +57,23 @@ Nome provisório: "Mano a Mano" (decisão minha; o dev pode trocar).
   30/50/70% por nível.
 - **Abandono (minha decisão):** quem sai ou fica 30 s sem conexão perde por W.O.; a súmula é
   gravada com o placar até ali e a marca "W.O.".
+- **Pênalti mais difícil para o batedor (dev, 2026-11-26):** no pênalti o erro da barra tem
+  direção. **Acima** da faixa a bola sobe a partir da mira (`SUBIDA_POR_ERRO` = 2 por unidade de
+  erro): um pouco acima no alto bate no travessão, bem acima isola (letreiro "ISOLOU"). **Abaixo**
+  da faixa é chute fraco: a bola cai a partir da mira (`QUEDA_POR_ERRO` = 2: bola fraca não chega
+  no ângulo) e o alcance do goleiro cresce 1 por unidade de erro, até `ALCANCE_FRACO` (= o bônus
+  da saída, 90), somado à saída, em qualquer altura, e pega o ângulo do seu lado; não é defesa
+  automática (o canto oposto segue gol). A falta segue com o desvio simétrico de antes. A barra
+  ficou 30% mais rápida na cena (volta inteira em 1 s em vez de 1,3 s).
+- **Cavadinha (dev, 2026-11-26):** só no pênalti, um botão no lugar da mira. `Chute.cavadinha`
+  (padrão `false`); a mira é ignorada (vai a `(500, 500)`). Faixa própria e mais estreita
+  (`FAIXA_CAVADINHA` = 160, fixa). Na faixa: goleiro que `fica` defende, goleiro que pula para
+  qualquer lado (com ou sem saída) toma o gol. Acima da faixa sai por cima; abaixo, o goleiro se
+  recupera e defende. Na falta a sala descarta o campo. O bot `dificil` goleiro fica (90%) quando
+  o humano bateu 2 cavadinhas nas últimas 3; o bot batedor cava de vez em quando (4% no `medio`,
+  6% no `dificil`, nunca no `facil`). Na calibragem o batedor aleatório cava 5% dos pênaltis.
+  O voo da cavadinha na tela é mais longo (1150 ms contra 600): o servidor segura o resultado
+  550 ms a mais (`VOO_CAVADINHA_A_MAIS`), para a próxima cobrança não atropelar a animação.
 - **Câmeras (dev, rascunho B):** quem bate vê de trás do batedor; quem defende, de dentro do gol,
   de costas para a rede. O replay de cada lance roda na câmera de cada um.
 
@@ -69,7 +86,7 @@ Nome provisório: "Mano a Mano" (decisão minha; o dev pode trocar).
 - **Rotas** (prefixo `/api/jogos/mano`): `POST /salas {apelido, modo: "penaltis"|"faltas",
   bot: null|"facil"|"medio"|"dificil"}` → `{id, jogador, token}`; `POST /salas/{id}/entrar
   {apelido}` (409 cheia); `POST /salas/{id}/acao {token, tipo}` com `tipo` ∈ `barreira{n, x} |
-  chute{alvo, barra, trajetoria?, curva?} | defesa{lado} | saida{ms} | revanche | sair`;
+  chute{alvo, barra, trajetoria?, curva?, cavadinha?} | defesa{lado} | saida{ms} | revanche | sair`;
   `GET /salas/{id}/eventos?token=` (SSE). Páginas `GET /jogos/mano` e `/jogos/mano/s/{id}`.
 - **Privacidade:** a escolha de um nunca chega ao outro antes de os dois travarem (decidido
   dentro da `Sala`). `saida` vale se chegar ao servidor dentro da janela (+150 ms de folga para a
@@ -85,6 +102,12 @@ Nome provisório: "Mano a Mano" (decisão minha; o dev pode trocar).
 - [x] `test_escolha_nunca_vaza`: dado o batedor travado, quando o goleiro recebe eventos, então nada traz o alvo até `cobranca`.
 - [x] `test_goleiro_no_lado_certo_defende_ate_meia_altura` e `test_angulo_so_em_parte`.
 - [x] `test_barra_fora_da_faixa_desvia` e `test_faixa_estreita_perto_da_trave`.
+- [x] `test_um_pouco_acima_da_faixa_no_alto_e_travessao`, `test_abaixo_da_faixa_e_chute_fraco_que_o_goleiro_alcanca`,
+  `test_chute_fraco_no_alto_cai_e_o_goleiro_pega` e `test_chute_fraco_nao_e_defesa_automatica`.
+- [x] `test_cavadinha_contra_quem_fica_e_defesa_e_contra_quem_pula_e_gol`,
+  `test_cavadinha_tem_faixa_mais_estreita` e `test_bot_dificil_fica_contra_quem_repete_a_cavadinha`.
+- [x] `test_quem_acerta_a_barra_no_canto_ainda_perde_alguns`: batedor "humano" (canto, barra perto do
+  centro da faixa) contra goleiro que acerta o lado metade das vezes; a taxa medida vai no PR.
 - [x] `test_saida_no_tempo_alcanca_o_vizinho` e `test_saida_fora_da_janela_nao_conta`.
 - [x] `test_barreira_bloqueia_rasteira` e `test_por_cima_fraco_bate_na_barreira`.
 - [x] `test_calibragem`: 10 mil lances aleatórios × aleatórios → 55–65% de gols no pênalti e

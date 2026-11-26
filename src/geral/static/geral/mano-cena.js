@@ -23,6 +23,8 @@ const COR = {
 };
 
 export const GOL = { meia: 3.66, altura: 2.44, fundo: 2.0 };
+// One sweep of the bar, up and back down (ms): 30% faster than the first 1300 (dev, 2026-11-26).
+const PERIODO_BARRA = 1000;
 const MARCA_PENALTI = 11;
 const DIST_BARREIRA = 9.15;
 const VAO_HOMENS = 0.66; // centre to centre of two men in the wall (shoulders are 0.46 m)
@@ -46,6 +48,14 @@ export function mundoParaGol(p) {
   return [((p.x + GOL.meia) / (2 * GOL.meia)) * 1000, (p.y / GOL.altura) * 1000];
 }
 
+const LETREIROS = { gol: "GOOOL", defesa: "DEFENDEU", trave: "NA TRAVE", fora: "PRA FORA", barreira: "NA BARREIRA" };
+
+/** The board's sign for a kick: over the crossbar (y past it) is "ISOLOU". */
+export function letreiroDoLance(lance) {
+  if (lance?.resultado === "fora" && lance.onde?.[1] > 1000) return "ISOLOU";
+  return LETREIROS[lance?.resultado] ?? "";
+}
+
 export const prender = (v, lo = 0, hi = 1000) => Math.min(hi, Math.max(lo, v));
 
 /** Barrier centre kept so its outer man is at most about one man outside a post. */
@@ -66,13 +76,15 @@ export function faixaBoa([x, y]) {
  * The ball's path from `origem` to `destino` (world points). Penalties fly almost straight;
  * free kicks bend by `curva` (-1..1, positive bulges to the kicker's right) and by trajectory.
  */
-export function caminho(origem, destino, { trajetoria = null, curva = 0 } = {}) {
+export function caminho(origem, destino, { trajetoria = null, curva = 0, cavadinha = false } = {}) {
   const meio = origem.clone().lerp(destino, 0.5);
   const chao = new THREE.Vector3(destino.x - origem.x, 0, destino.z - origem.z).normalize();
   const direita = new THREE.Vector3(-chao.z, 0, chao.x); // kicker's right, facing the goal
   const c = meio.clone();
   const pico = (h) => 2 * h - (origem.y + destino.y) / 2; // control y for a peak near h
-  if (!trajetoria) {
+  if (cavadinha) {
+    c.y = pico(Math.max(destino.y + 0.9, 2.3)); // a slow chip, high over the dive
+  } else if (!trajetoria) {
     c.y = pico(Math.max(origem.y, destino.y) * 0.75 + 0.12);
   } else if (trajetoria === "rasteira") {
     c.y = Math.max(0.11, pico(destino.y * 0.4 + 0.1));
@@ -708,9 +720,10 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
 
   /**
    * Kicker's choice. Free kick: trajectory and curve first, then the aim, then the bar.
-   * Resolves {alvo: [x, y], barra, trajetoria?, curva?}; at 10 s, whatever is missing is random.
+   * Resolves {alvo: [x, y], barra, trajetoria?, curva?, cavadinha?}; at 10 s, whatever is missing
+   * is random. A penalty offers the cavadinha in place of the aim, with its own band.
    */
-  function pedirChute({ falta = estado.modo === "faltas", faixa = faixaBoa, segundos = 10 } = {}) {
+  function pedirChute({ falta = estado.modo === "faltas", faixa = faixaBoa, faixaCavadinha = () => [420, 580], segundos = 10 } = {}) {
     return comecarPedido(({ terminar, aoFim, ouvir }) => {
       const escolha = falta ? { trajetoria: null, curva: 0 } : {};
       let alvo = null;
@@ -719,8 +732,10 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       let barraLigada = false;
       let barraInicio = 0;
       let barraValor = 500;
+      let cavadinha = false;
       const fechar = () =>
         terminar({
+          ...(cavadinha ? { cavadinha: true } : {}),
           alvo: alvo && mirado ? alvo.map(Math.round) : [Math.round(acaso(0, 1000)), Math.round(acaso(0, 1000))],
           barra: Math.round(barraLigada ? barraValor : acaso(0, 1000)),
           ...(falta ? { trajetoria: escolha.trajetoria ?? sortear(["rasteira", "por_cima", "pelo_lado"]), curva: Math.round(escolha.curva * 100) / 100 } : {}),
@@ -728,8 +743,20 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       aoFim(contar(segundos, fechar));
 
       const mirar = () => {
-        acoesEl.innerHTML = "";
+        acoesEl.innerHTML = falta ? "" : `<button type="button" class="mn-opcao mn-cavadinha">Cavadinha</button>`;
         dica("Mire no gol e clique");
+        // The chip replaces the aim: straight to the bar, with its own narrower band.
+        if (!falta)
+          ouvir(acoesEl, "click", (ev) => {
+            if (travado || !ev.target.closest(".mn-cavadinha")) return;
+            cavadinha = true;
+            alvo = [500, 500];
+            mirado = true;
+            porMira(alvo);
+            travado = true;
+            acoesEl.innerHTML = "";
+            ligarBarra();
+          });
         mira.visible = true;
         alvo = [500, 500];
         porMira(alvo);
@@ -759,8 +786,9 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       };
 
       const ligarBarra = () => {
-        dica("Pare a barra na faixa acesa");
-        const [lo, hi] = faixa(alvo);
+        acoesEl.innerHTML = ""; // the cavadinha button goes with the aim
+        dica(cavadinha ? "Cavadinha: pare a barra na faixa acesa" : "Pare a barra na faixa acesa");
+        const [lo, hi] = cavadinha ? faixaCavadinha() : faixa(alvo);
         celulas.forEach((c, i) => {
           const v = ((i + 0.5) / CELULAS) * 1000;
           c.className = v >= lo && v <= hi ? "boa" : "";
@@ -771,7 +799,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
         let parada = false;
         const rodar = () => {
           if (parada) return;
-          const fase = ((performance.now() - barraInicio) / 1300) % 1;
+          const fase = ((performance.now() - barraInicio) / PERIODO_BARRA) % 1;
           barraValor = (fase < 0.5 ? fase * 2 : 2 - fase * 2) * 1000;
           const k = Math.min(CELULAS - 1, Math.floor((barraValor / 1000) * CELULAS));
           celulas.forEach((c, i) => c.classList.toggle("on", i === k));
@@ -930,7 +958,6 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
   }
   const escapar = (t) => String(t).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 
-  const LETREIROS = { gol: "GOOOL", defesa: "DEFENDEU", trave: "NA TRAVE", fora: "PRA FORA", barreira: "NA BARREIRA" };
   function letreiro(texto) {
     letreiroEl.textContent = texto || "";
     letreiroEl.classList.toggle("blink", Boolean(texto));
@@ -946,7 +973,9 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
   // while the keeper's exit window is open; then ~0.6 s of flight and the outcome.
 
   const JANELA = 600;
-  const VOO = { penaltis: 600, faltas: 800 };
+  // The chip flies 550 ms longer; the server holds its result as long (sala.py VOO_CAVADINHA_A_MAIS).
+  const VOO = { penaltis: 600, faltas: 800, cavadinha: 1150 };
+  const msDeVoo = (lance) => (lance?.chute?.cavadinha ? VOO.cavadinha : VOO[estado.modo]);
   const DEPOIS = 1700;
   const ouvintesSaida = new Set();
   let ultimo = null; // {lance, modo, falta} of the last kick, for the replay
@@ -967,7 +996,9 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       if (oy >= 940 && ox > 40 && ox < 960) destino.y = GOL.altura + 0.02;
       else destino.x = Math.sign(destino.x || 1) * (GOL.meia + 0.02);
     }
-    const escolha = falta ? { trajetoria: lance.chute.trajetoria ?? "por_cima", curva: lance.chute.curva ?? 0 } : {};
+    const escolha = falta
+      ? { trajetoria: lance.chute.trajetoria ?? "por_cima", curva: lance.chute.curva ?? 0 }
+      : { cavadinha: Boolean(lance.chute?.cavadinha) };
     const curva = caminho(origem, destino, escolha);
     let fim = 1;
     if (lance.resultado === "barreira") {
@@ -982,7 +1013,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     const chegada = curva.getPoint(fim);
     if (lance.resultado === "barreira") chegada.y = Math.min(chegada.y, 1.9);
     const tangente = curva.getTangent(fim);
-    const velocidade = (curva.getLength() * fim) / (VOO[estado.modo] / 1000);
+    const velocidade = (curva.getLength() * fim) / (msDeVoo(lance) / 1000);
     return { curva, fim, chegada, tangente, velocidade, origem };
   }
 
@@ -1139,7 +1170,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       return;
     }
     const voo = tl.voo;
-    const fimVoo = tl.tGolpe + VOO[estado.modo] * voo.fim * tl.lento;
+    const fimVoo = tl.tGolpe + msDeVoo(tl.lance) * voo.fim * tl.lento;
     if (t <= fimVoo) {
       const u = entre(t, tl.tGolpe, fimVoo) * voo.fim;
       bola.position.copy(voo.curva.getPoint(u));
@@ -1153,7 +1184,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     }
     if (!tl.letreiro && t >= fimVoo + 80 * tl.lento) {
       tl.letreiro = true;
-      letreiro(LETREIROS[tl.lance.resultado] ?? "");
+      letreiro(letreiroDoLance(tl.lance));
     }
   }
   const lance_curva = (lance) => lance?.chute?.curva ?? 0;
@@ -1211,7 +1242,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       tl.alvoGoleiro = alvoGoleiro;
       tl.lance = l;
       tl.tGolpe = Math.max(chute_em + JANELA * lento, tl.tChute, performance.now());
-      tl.fim = tl.tGolpe + (VOO[estado.modo] * tl.voo.fim + DEPOIS) * lento;
+      tl.fim = tl.tGolpe + (msDeVoo(l) * tl.voo.fim + DEPOIS) * lento;
       ultimo = { lance: l, modo: estado.modo, falta: estado.falta ? { ...estado.falta } : null };
       relogio = setTimeout(fechar, tl.fim - performance.now() + 20);
     };
@@ -1226,7 +1257,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
           if (ev.repeat) return;
         }
         const agora = performance.now();
-        const fimVoo = tl.lance ? tl.tGolpe + VOO[estado.modo] * tl.voo.fim : Infinity;
+        const fimVoo = tl.lance ? tl.tGolpe + msDeVoo(tl.lance) * tl.voo.fim : Infinity;
         if (tl.saidaLocal != null || agora > fimVoo) return;
         ev.preventDefault?.();
         tl.saidaLocal = agora;

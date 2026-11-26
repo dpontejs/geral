@@ -14,7 +14,10 @@ REGRAS = [
     "Batedor contra goleiro, um de cada vez: crie a sala, escolha pênaltis ou faltas e mande o "
     "link para um amigo, ou jogue contra o bot.",
     "Quem bate mira num ponto do gol e para a barra na faixa acesa. Perto da trave e do "
-    "travessão a faixa estreita; fora dela a bola desvia.",
+    "travessão a faixa estreita. Passou da faixa, a bola sobe (travessão ou pra fora); ficou "
+    "abaixo, o chute sai fraco e o goleiro alcança mais longe.",
+    "No pênalti dá para bater de cavadinha: a bola vai no meio, com uma faixa mais estreita. "
+    "Contra goleiro que pula é gol; contra quem fica, defesa.",
     "Quem defende escolhe às escondidas: pular para um lado ou ficar. Na hora do chute, aperte "
     "espaço, Enter ou toque na tela: saindo no tempo, o goleiro alcança mais longe.",
     "Na falta, o goleiro arma a barreira antes; o batedor escolhe rasteira, por cima ou pelo "

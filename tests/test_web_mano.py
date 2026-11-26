@@ -477,3 +477,18 @@ async def test_criar_falta_desligada_da_422(tmp_path):
         assert (
             await m.post("/salas", "10.0.0.1", apelido="Ana", modo="penaltis", bot=None)
         ).status_code == 201
+
+
+@assincrono
+async def test_cavadinha_pela_api(tmp_path):
+    async with mesa(tmp_path) as m:
+        sala, tokens = await m.dupla()
+        resposta = await m.agir(sala, tokens[0], "chute", cavadinha="talvez", **GOL)
+        assert resposta.status_code == 422
+        m.relogio.andar(0.3)
+        goleiro = await m.ouvir(sala, tokens[1])
+        assert (await m.agir(sala, tokens[0], "chute", cavadinha=True, **GOL)).status_code == 204
+        await m.agir(sala, tokens[1], "defesa", lado="direita")
+        m.andar(VOO)
+        lidos = await goleiro.ate(lambda tipo, _: tipo == "cobranca")
+        assert lidos[-1][1]["lance"]["chute"]["cavadinha"] is True

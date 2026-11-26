@@ -1,11 +1,12 @@
 // Mano a Mano: the bar's good band, the same numbers as the rules (geral/games/mano/regras.py,
-// `faixa_boa`); tests/test_mano_faixa_js.py runs this module against the Python one.
+// `faixa_boa`, `FAIXA_CAVADINHA`); tests/test_mano_faixa_js.py runs this module against the Python one.
 // Pure, with no imports, so node can load it.
 
 const FAIXA_MIN = 250;
 const FAIXA_MAX = 500;
 const FAIXA_POR_DIST = 3;
 const FATOR_FALTA = 0.95;
+const FAIXA_CAVADINHA = 160;
 
 /** Python's round(): halves go to the even neighbour. */
 function arredondar(v) {
@@ -28,4 +29,9 @@ export function larguraFaixa([x, y], falta = false) {
 export function faixaBoa(alvo, falta = false) {
   const meia = larguraFaixa(alvo, falta) / 2;
   return [500 - meia, 500 + meia];
+}
+
+/** The cavadinha's band: fixed and narrower than any aimed kick's (FAIXA_CAVADINHA). */
+export function faixaCavadinha() {
+  return [500 - FAIXA_CAVADINHA / 2, 500 + FAIXA_CAVADINHA / 2];
 }

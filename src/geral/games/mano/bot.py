@@ -12,7 +12,7 @@ import random
 from collections import Counter
 from weakref import WeakKeyDictionary
 
-from geral.games.mano.regras import RUIDO, cobertura, curva_certa
+from geral.games.mano.regras import FAIXA_CAVADINHA, RUIDO, cobertura, curva_certa
 from geral.games.mano.tipos import (
     Barreira,
     Chute,
@@ -32,6 +32,12 @@ MARGEM = 150
 BARRA_DIFICIL = 40
 BARRA_MEDIO = 250
 CURVA_DIFICIL = 0.5
+# Cavadinha (dev, 2026-11-26): the bot chips now and then as a kicker (medio/dificil, penalties
+# only), and the dificil keeper stays put against a human who has chipped twice lately.
+P_CAVADINHA: dict[Nivel, float] = {"facil": 0.0, "medio": 0.04, "dificil": 0.06}
+BARRA_CAVADINHA: dict[Nivel, int] = {"facil": 0, "medio": 110, "dificil": FAIXA_CAVADINHA // 2 - 20}
+CAVADINHAS_PARA_FICAR = 2
+P_FICAR_NA_CAVADINHA = 0.9
 
 LADOS: tuple[Lado, ...] = ("esquerda", "fica", "direita")
 TRAJETORIAS: tuple[Trajetoria, ...] = ("rasteira", "por_cima", "pelo_lado")
@@ -54,10 +60,17 @@ def _terco(x: int) -> Lado:
     return "esquerda" if x < 333 else "fica" if x < 667 else "direita"
 
 
+def _cavadinhas_recentes(historico: list[Lance]) -> int:
+    return sum(lance.chute.cavadinha for lance in historico[-JANELA_LEITURA:])
+
+
 def defender(nivel: Nivel, historico: list[Lance], rng: random.Random) -> Defesa:
     lado: Lado = rng.choice(LADOS)
     if nivel == "medio" and rng.random() < P_MANIA:
         lado = _mania(rng)
+    elif nivel == "dificil" and _cavadinhas_recentes(historico) >= CAVADINHAS_PARA_FICAR:
+        if rng.random() < P_FICAR_NA_CAVADINHA:
+            lado = "fica"
     elif nivel == "dificil" and historico and rng.random() < P_LEITURA:
         recentes = Counter(_terco(lance.chute.alvo[0]) for lance in historico[-JANELA_LEITURA:])
         lado = recentes.most_common(1)[0][0]
@@ -78,6 +91,9 @@ def chutar(
     barreira: Barreira | None,
     posicao: Posicao | None = None,
 ) -> Chute:
+    if barreira is None and P_CAVADINHA[nivel] and rng.random() < P_CAVADINHA[nivel]:
+        margem = BARRA_CAVADINHA[nivel]
+        return Chute(alvo=(500, 500), barra=rng.randint(500 - margem, 500 + margem), cavadinha=True)
     if nivel == "dificil" and historico:
         inicio, fim = TERCOS[_menos_pulado(historico, rng)]
         chega = rng.randint(max(inicio, MARGEM), min(fim, 1000 - MARGEM))

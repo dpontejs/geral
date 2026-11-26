@@ -24,6 +24,18 @@ ALTURA_BARREIRA = 450
 MEIA_LARGURA_POR_HOMEM = 55
 CURVA_CONTORNA = 0.3
 ALTURA_RASTEIRA = 150
+# Penalty bar error by direction (dev, 2026-11-26): over the band the ball climbs from the
+# aim; under it the shot is weak: it drops from the aim and the keeper reaches further, at any
+# height, up to about the exit's bonus.
+SUBIDA_POR_ERRO = 2
+QUEDA_POR_ERRO = 2
+ALCANCE_POR_ERRO = 1
+ALCANCE_FRACO = ALCANCE_SAIDA
+# Cavadinha: a fixed, narrower band; over it the chip clears the bar, under it the keeper
+# recovers. Inside it beats any dive and dies in the hands of a keeper who stays.
+FAIXA_CAVADINHA = 160
+ALTURA_CAVADINHA = 550
+CAVADINHA_FRACA = 150
 
 TERCO = 333
 CENTRO = (500, 0)
@@ -41,7 +53,32 @@ def faixa_boa(alvo: tuple[int, int], falta: bool) -> int:
 
 def _erro(chute: Chute, falta: bool) -> float:
     """How far the bar stopped outside the good band (0 inside it)."""
-    return max(0.0, abs(chute.barra - 500) - faixa_boa(chute.alvo, falta) / 2)
+    largura = FAIXA_CAVADINHA if chute.cavadinha else faixa_boa(chute.alvo, falta)
+    return max(0.0, abs(chute.barra - 500) - largura / 2)
+
+
+def _onde_no_penalti(chute: Chute) -> tuple[float, float, float]:
+    """Where a penalty goes before noise, and the keeper's extra reach of a weak shot."""
+    x, y = chute.alvo
+    erro = _erro(chute, falta=False)
+    if not erro:
+        return x, y, 0.0
+    if chute.barra > 500:
+        return x, y + erro * SUBIDA_POR_ERRO, 0.0
+    return x, max(0, y - erro * QUEDA_POR_ERRO), min(ALCANCE_FRACO, erro * ALCANCE_POR_ERRO)
+
+
+def _cavadinha(
+    chute: Chute, defesa: Defesa, rng: random.Random
+) -> tuple[tuple[int, int], Resultado]:
+    """The chip: decided by the bar and by whether the keeper stayed, never by the aim."""
+    erro = _erro(chute, falta=False)
+    x = 500 + round(rng.uniform(-RUIDO, RUIDO))
+    if erro and chute.barra > 500:
+        return (x, 1000 + TRAVE + 1 + round(erro * SUBIDA_POR_ERRO)), "fora"
+    if erro:
+        return (x, CAVADINHA_FRACA), "defesa"
+    return (x, ALTURA_CAVADINHA), "defesa" if defesa.lado == "fica" else "gol"
 
 
 def _desviar(alvo: tuple[int, int], erro: float) -> tuple[float, float]:
@@ -108,19 +145,23 @@ def _terco(x: int) -> Lado:
     return "direita"
 
 
-def _alcanca(defesa: Defesa, x: int, y: int, rng: random.Random) -> bool:
-    """Whether the keeper's choice covers the ball at (x, y): same keeper in both modes."""
+def _alcanca(defesa: Defesa, x: int, y: int, rng: random.Random, extra: float = 0) -> bool:
+    """Whether the keeper's choice covers the ball at (x, y): same keeper in both modes.
+
+    ``extra`` widens his reach past his third at any height, and takes the angle too: a weak
+    penalty."""
     if _terco(x) == defesa.lado:
-        if defesa.lado == "fica" or y <= ALTURA_PULO:
+        if defesa.lado == "fica" or y <= ALTURA_PULO or extra:
             return True
         return rng.random() < P_ANGULO
-    if not defesa.saida or y > ALTURA_PULO:
+    alcance = (ALCANCE_SAIDA if defesa.saida and y <= ALTURA_PULO else 0) + extra
+    if not alcance:
         return False
     if defesa.lado == "esquerda":
-        return x < TERCO + ALCANCE_SAIDA
+        return x < TERCO + alcance
     if defesa.lado == "direita":
-        return x >= 1000 - TERCO - ALCANCE_SAIDA
-    return TERCO - ALCANCE_SAIDA <= x < 1000 - TERCO + ALCANCE_SAIDA
+        return x >= 1000 - TERCO - alcance
+    return TERCO - alcance <= x < 1000 - TERCO + alcance
 
 
 def resolver(
@@ -133,14 +174,28 @@ def resolver(
 ) -> Lance:
     """Resolve a free kick when a ``barreira`` is given, else a penalty.
 
-    A penalty ignores ``trajetoria``, ``curva`` and ``posicao``.
+    A penalty ignores ``trajetoria``, ``curva`` and ``posicao``; a free kick refuses a
+    ``cavadinha``.
     """
+    extra = 0.0
     if barreira is None:
-        x, y = _desviar(chute.alvo, _erro(chute, falta=False))
+        if chute.cavadinha:
+            onde, resultado = _cavadinha(chute, defesa, rng)
+            return Lance(
+                chute=chute,
+                defesa=defesa,
+                barreira=None,
+                posicao=None,
+                onde=onde,
+                resultado=resultado,
+            )
+        x, y, extra = _onde_no_penalti(chute)
         posicao = None
     else:
         if chute.trajetoria is None:
             raise ValueError("a free kick needs a trajetoria")
+        if chute.cavadinha:
+            raise ValueError("a cavadinha is a penalty kick")
         x, y = _onde_na_falta(chute)
     x += rng.uniform(-RUIDO, RUIDO)
     y += rng.uniform(-RUIDO, RUIDO)
@@ -154,7 +209,7 @@ def resolver(
     if resultado is None:
         resultado = _na_trave_ou_fora(*onde)
     if resultado is None:
-        resultado = "defesa" if _alcanca(defesa, *onde, rng) else "gol"
+        resultado = "defesa" if _alcanca(defesa, *onde, rng, extra) else "gol"
     return Lance(
         chute=chute,
         defesa=defesa,
