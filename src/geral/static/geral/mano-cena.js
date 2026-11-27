@@ -7,6 +7,7 @@
 // the pitch runs towards +z. Contract coordinates (0-1000) are the goal as the kicker sees
 // it: x = 0 is the kicker's left (world -x), y = 0 the ground, y = 1000 the crossbar.
 import * as THREE from "../vendor/three/three.module.js";
+import { cameraReplay, planoReplay, relogioReplay, zoomDoChute } from "./mano-camera.js";
 import { periodoBarra, pressaBarra } from "./mano-faixa.js";
 import { criarFesta, tituloCampeao } from "./mano-festa.js";
 import { visual } from "./mano-visual.js";
@@ -937,10 +938,25 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
   el.classList.add("mn");
   el.innerHTML = `
     <canvas class="mn-canvas" aria-label="Cena do Mano a Mano"></canvas>
+    <div class="mn-cortina"></div>
     <div class="mn-hud"></div>
     <button type="button" class="mn-tela" aria-label="Tela cheia">⛶ tela cheia</button>
     <div class="mn-gire" role="status"><span class="lamp">Gire o celular</span></div>`;
   const canvas = el.querySelector(".mn-canvas");
+  // The fade out of the goal's replay and into the next kick (dev, 2026-11-27): the picture goes
+  // dark at the replay's end and comes back once the next kick is set (or soon after, anyway).
+  const cortina = el.querySelector(".mn-cortina");
+  let cortinaRelogio = null;
+  function fecharCortina() {
+    if (cortina.classList.contains("fechada")) return;
+    cortina.classList.add("fechada");
+    clearTimeout(cortinaRelogio);
+    cortinaRelogio = setTimeout(abrirCortina, 1600);
+  }
+  function abrirCortina() {
+    clearTimeout(cortinaRelogio);
+    cortina.classList.remove("fechada");
+  }
   const hud = el.querySelector(".mn-hud");
   const botaoTela = el.querySelector(".mn-tela");
 
@@ -1012,6 +1028,9 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
   });
   const estado = {
     tremor: 0, // the camera's shake (m), set by the goal
+    zoom: 1, // the kicker camera's push-in at the strike (mano-camera.js)
+    replay: null, // {posicao, olhar}: the goal's replay camera, while it runs
+    replayAte: null, // when the next kick's phase begins (page clock): the replay ends before
     papel,
     modo,
     falta: null, // {nome, x, z, barreira: {n, x} | null}
@@ -1122,6 +1141,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
   const LENTE = {
     batedor: { hfov: 58 },
     goleiro: { hfov: 76 },
+    replay: { hfov: 58 },
   };
 
   function posicionarCamera() {
@@ -1133,7 +1153,12 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     camera.fov = (Math.max(vfov, (28 * Math.PI) / 180) * 180) / Math.PI;
     camera.aspect = aspecto;
     const bz = estado.bolaEm;
-    if (estado.papel === "batedor") {
+    if (estado.replay) {
+      // The goal's replay, from TV's camera behind the goal (mano-camera.js).
+      camera.fov = 2 * Math.atan(Math.tan(((LENTE.replay.hfov / 2) * Math.PI) / 180) / aspecto) * (180 / Math.PI);
+      camera.position.fromArray(estado.replay.posicao);
+      camera.lookAt(new THREE.Vector3().fromArray(estado.replay.olhar));
+    } else if (estado.papel === "batedor") {
       const d = direcaoAoGol();
       // Behind the ball and a step to the right, so the kicker never hides the goal.
       camera.position.set(bz.x - d.x * 7 - d.z * 0.6, 2.7, bz.z - d.z * 7 + d.x * 0.6);
@@ -1201,6 +1226,12 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       sombras.atualizar();
       // The goal's shake: the camera jolts for a moment, then goes back where it was.
       const tremor = calmo ? 0 : estado.tremor;
+      // The strike's push-in: a narrower lens for the frame, the camera's own put back after.
+      const fov = camera.fov;
+      if (estado.zoom !== 1) {
+        camera.fov = (2 * Math.atan(Math.tan((fov * Math.PI) / 360) / estado.zoom) * 180) / Math.PI;
+        camera.updateProjectionMatrix();
+      }
       if (tremor > 0) {
         const t = performance.now();
         const desvio = new THREE.Vector3(Math.sin(t * 0.091) * tremor, Math.cos(t * 0.077) * tremor * 0.7, 0).applyQuaternion(camera.quaternion);
@@ -1208,6 +1239,10 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
         renderer.render(cena, camera);
         camera.position.sub(desvio);
       } else renderer.render(cena, camera);
+      if (estado.zoom !== 1) {
+        camera.fov = fov;
+        camera.updateProjectionMatrix();
+      }
     } finally {
       requestAnimationFrame(quadro); // one bad frame must not freeze the scene
     }
@@ -1233,6 +1268,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       <div class="mn-prazo lamp" aria-live="off"></div>
     </div>
     <div class="mn-letreiro lamp" aria-live="polite"></div>
+    <div class="mn-replay lamp" aria-hidden="true">Replay</div>
     <div class="mn-dica lamp"></div>
     <div class="mn-baixo"><div class="mn-acoes"></div></div>
     <div class="mn-barra mn-board" hidden><div class="mn-celulas"></div></div>`;
@@ -1636,6 +1672,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
   const VOO = { penaltis: 600, faltas: 800, cavadinha: 1150 };
   const msDeVoo = (lance) => (lance?.chute?.cavadinha ? VOO.cavadinha : VOO[estado.modo]);
   const DEPOIS = 1700;
+  const FIM_REPLAY = 220; // ms: the curtain closes over the replay's last moments
   const ouvintesSaida = new Set();
   let ultimo = null; // {lance, modo, falta} of the last kick, for the replay
   let cobrancaAtual = null;
@@ -2199,15 +2236,22 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
         estado.tremor = dt > 0.1 && dt < 0.45 ? 0.1 * ((0.45 - dt) / 0.35) : 0;
       }
     }
-    if (!tl.letreiro && t >= fimVoo + 80 * tl.lento) {
+    if (!tl.letreiro && !tl.semLetreiro && t >= fimVoo + 80 * tl.lento) {
       tl.letreiro = true;
       letreiro(letreiroDoLance(tl.lance));
     }
   }
   const lance_curva = (lance) => lance?.chute?.curva ?? 0;
 
+  function sairDoReplay() {
+    estado.replay = null;
+    el.classList.remove("mn-em-replay");
+    posicionarCamera();
+  }
+
   function rodarCobranca({ chute_em, lance, lento = 1, replay = false }) {
     cobrancaAtual?.parar();
+    if (!replay) estado.replayAte = null; // the next kick's start comes with this kick's result
     posicionarJogadores();
     letreiro("");
     estado.seguir = null;
@@ -2245,12 +2289,50 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       resolver();
     };
     const aplicar = (t) => {
+      if (!replay) planejarReplay();
+      // The goal's replay: the same pure frames, on a slower clock, from TV's camera.
+      const r = relogioReplay(tl.replay, t);
+      if (r != null) {
+        const k = (r - tl.replay.de) / (tl.replay.ate - tl.replay.de);
+        if ((tl.replay.ate - r) * tl.replay.fator < FIM_REPLAY) fecharCortina();
+        estado.replay = cameraReplay(tl.voo.chegada.x, k);
+        el.classList.add("mn-em-replay");
+        estado.zoom = 1;
+        animarBatedor(r, tl);
+        animarGoleiro(r, tl);
+        animarBola(r, tl);
+        estado.tremor = 0;
+        posicionarCamera();
+        return;
+      }
+      if (estado.replay) {
+        // Behind the closed curtain: the live picture without the sign, for the next kick.
+        sairDoReplay();
+        fecharCortina();
+        letreiro("");
+        tl.semLetreiro = true;
+      }
       animarBatedor(t, tl);
       animarGoleiro(t, tl);
       animarBola(t, tl);
+      const fimVoo = tl.lance ? tl.tGolpe + msDeVoo(tl.lance) * tl.voo.fim * tl.lento : Infinity;
+      estado.zoom = calmo || replay || estado.papel !== "batedor" ? 1 : zoomDoChute(t, { tGolpe: tl.tGolpe, fimVoo, lento: tl.lento });
+    };
+    // Once the lance and the next kick's start are both known: a goal gets its replay, the
+    // kick's end pushed past it.
+    const planejarReplay = () => {
+      if (tl.replay !== undefined || !tl.lance || estado.replayAte == null) return;
+      const fimVoo = tl.tGolpe + msDeVoo(tl.lance) * tl.voo.fim * tl.lento;
+      tl.replay = tl.lance.resultado === "gol" ? planoReplay({ tGolpe: tl.tGolpe, fimVoo, ate: estado.replayAte }) : null;
+      if (!tl.replay) return;
+      tl.fim = Math.max(tl.fim, tl.replay.inicio + (tl.replay.ate - tl.replay.de) * tl.replay.fator + 50);
+      clearTimeout(relogio);
+      relogio = setTimeout(fechar, tl.fim - performance.now() + 20);
     };
     function parar() {
       parado = true;
+      if (estado.replay) sairDoReplay();
+      estado.zoom = 1;
       clearTimeout(relogio);
       for (const f of soltar) f();
       if (estado.animacao === aplicar) estado.animacao = aplicarFinal;
@@ -2329,7 +2411,14 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
   /** Back to the set position, sign and controls cleared. */
   function reiniciar() {
     pedidoAtual?.();
+    // Mid-replay (a late result): dark at once, then the same fade in as after a whole one.
+    if (estado.replay) {
+      cortina.classList.add("fechada", "ja");
+      void cortina.offsetWidth;
+      cortina.classList.remove("ja");
+    }
     cobrancaAtual?.parar();
+    if (cortina.classList.contains("fechada")) requestAnimationFrame(abrirCortina);
     acabarFesta();
     estado.animacao = null;
     letreiro("");
@@ -2365,6 +2454,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
    * Holds at the end; reiniciar() (the rematch) clears it.
    */
   function festejar(dados) {
+    abrirCortina();
     pedidoAtual?.();
     cobrancaAtual?.parar();
     dica("");
@@ -2391,6 +2481,13 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     },
     get modo() {
       return estado.modo;
+    },
+    /**
+     * When the next kick's phase begins (page clock): a goal is shown again, slower, before it
+     * (mano-camera.js). Sent with the result's state; null or never sent, no replay.
+     */
+    replayAte(ate) {
+      estado.replayAte = ate;
     },
     trocarPapel(novo) {
       estado.papel = novo;
