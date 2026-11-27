@@ -132,15 +132,106 @@ function estouro(cor, n) {
   return m;
 }
 
-function montarGramado(cena) {
-  const g = new THREE.Group();
-  const listras = [lambert(COR.gramado), lambert(COR.gramado2)];
-  for (let i = 0, z = -8; z < 113; i++, z += 5.25) {
-    const faixa = new THREE.Mesh(new THREE.PlaneGeometry(84, 5.25), listras[i % 2]);
-    faixa.rotation.x = -Math.PI / 2;
-    faixa.position.set(0, 0, z + 2.625);
-    g.add(faixa);
+/** A small seeded generator (mulberry32): the same grass on every load and in both browsers. */
+function sorteio(semente) {
+  let a = semente >>> 0;
+  return () => {
+    a = (a + 0x6d2b79f5) >>> 0;
+    let t = a;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+// The grass is one plane: a canvas tile of two mowing stripes (10.5 m) with blades and grain
+// painted in, repeated over the pitch, times vertex colours for the big, slow variation (worn
+// patches, damp ones, a darker edge by the stands), so the tile never reads as a pattern.
+const LISTRA = 5.25;
+function texturaGrama() {
+  const N = 256;
+  const tela = document.createElement("canvas");
+  tela.width = tela.height = N;
+  const ctx = tela.getContext("2d");
+  const acaso = sorteio(1950);
+  // The stripes a touch further apart than the flat ones were: the grain eats some contrast.
+  const [esc, cla] = [new THREE.Color(COR.gramado).multiplyScalar(0.94), new THREE.Color(COR.gramado2).multiplyScalar(1.06)];
+  ctx.fillStyle = `#${esc.getHexString()}`;
+  ctx.fillRect(0, 0, N, N / 2);
+  ctx.fillStyle = `#${cla.getHexString()}`;
+  ctx.fillRect(0, N / 2, N, N / 2);
+  // Blades: short strokes along the mowing, a shade either way of their stripe.
+  for (let i = 0; i < 9000; i++) {
+    const x = acaso() * N;
+    const y = acaso() * N;
+    const claro = acaso() < 0.5;
+    ctx.fillStyle = claro ? "rgba(190,235,150,0.06)" : "rgba(0,30,10,0.09)";
+    ctx.fillRect(x, y, 1, 1 + acaso() * 2);
   }
+  // Grain: one random tint per pixel, small.
+  const img = ctx.getImageData(0, 0, N, N);
+  for (let i = 0; i < img.data.length; i += 4) {
+    const k = 1 + (acaso() - 0.5) * 0.07;
+    img.data[i] *= k;
+    img.data[i + 1] *= k;
+    img.data[i + 2] *= k;
+  }
+  ctx.putImageData(img, 0, 0);
+  const t = new THREE.CanvasTexture(tela);
+  t.colorSpace = THREE.SRGBColorSpace;
+  t.wrapS = t.wrapT = THREE.RepeatWrapping;
+  return t;
+}
+
+/** Smooth value noise in [0, 1] over the plane, a few octaves (for the vertex colours). */
+function ruido(semente) {
+  const acaso = sorteio(semente);
+  const T = 64;
+  const tab = Float32Array.from({ length: T * T }, acaso);
+  const v = (i, j) => tab[(((j % T) + T) % T) * T + (((i % T) + T) % T)];
+  const suave = (t) => t * t * (3 - 2 * t);
+  const um = (x, y) => {
+    const [i, j] = [Math.floor(x), Math.floor(y)];
+    const [fx, fy] = [suave(x - i), suave(y - j)];
+    const a = v(i, j) + (v(i + 1, j) - v(i, j)) * fx;
+    const b = v(i, j + 1) + (v(i + 1, j + 1) - v(i, j + 1)) * fx;
+    return a + (b - a) * fy;
+  };
+  return (x, y) => um(x, y) * 0.55 + um(x * 2.3 + 17, y * 2.3 + 5) * 0.3 + um(x * 5.1 + 3, y * 5.1 + 29) * 0.15;
+}
+
+function montarGramado(cena, anisotropia = 1) {
+  const g = new THREE.Group();
+  const [Z0, LARG, COMP] = [-8, 84, 24 * LISTRA]; // from behind the goal to past the far end
+  const geo = new THREE.PlaneGeometry(LARG, COMP, 56, 80).rotateX(-Math.PI / 2).translate(0, 0, Z0 + COMP / 2);
+  const pos = geo.attributes.position;
+  const cores = new Float32Array(pos.count * 3);
+  const manchas = ruido(7);
+  // The bare, sandy patches where the game is played: a multiplier (linear) that turns the
+  // grass's green into a dry olive.
+  const gasto = new THREE.Color().setRGB(16, 1.2, 1.6);
+  const c = new THREE.Color();
+  for (let i = 0; i < pos.count; i++) {
+    const x = pos.getX(i);
+    const z = pos.getZ(i);
+    const n = manchas(x / 9, z / 9);
+    c.setScalar(0.88 + n * 0.22);
+    // Worn: the goalmouth and the spot, like any pitch at the end of a season.
+    const boca = Math.exp(-((x / 4.2) ** 2) - ((z - 2.2) / 3) ** 2);
+    const marca = Math.exp(-((x / 1.3) ** 2) - ((z - MARCA_PENALTI) / 1.6) ** 2);
+    const meio = Math.exp(-((x / 6) ** 2) - ((z - 52.5) / 6) ** 2) * 0.5;
+    c.lerp(gasto, Math.min(0.22, (boca * 0.22 + marca * 0.2 + meio * 0.16) * (0.6 + n * 0.8)));
+    // Darker past the lines, where the floodlights reach less.
+    const fora = Math.max(0, Math.abs(x) - 34, -z, z - 105);
+    c.multiplyScalar(1 - Math.min(0.3, fora * 0.045));
+    c.toArray(cores, i * 3);
+  }
+  geo.setAttribute("color", new THREE.BufferAttribute(cores, 3));
+  const mapa = texturaGrama();
+  mapa.repeat.set(LARG / (2 * LISTRA), COMP / (2 * LISTRA));
+  mapa.anisotropy = anisotropia;
+  const grama = new THREE.Mesh(geo, new THREE.MeshLambertMaterial({ map: mapa, vertexColors: true }));
+  g.add(grama);
   const giz = basico(COR.giz);
   const linha = (x1, z1, x2, z2) => {
     const len = Math.hypot(x2 - x1, z2 - z1);
@@ -231,6 +322,24 @@ function montarGol(cena) {
   return { rede: fundo };
 }
 
+/** A radial glow (white centre, soft falloff) for the lamps' halos. */
+function texturaHalo() {
+  const N = 64;
+  const tela = document.createElement("canvas");
+  tela.width = tela.height = N;
+  const ctx = tela.getContext("2d");
+  const grad = ctx.createRadialGradient(N / 2, N / 2, 0, N / 2, N / 2, N / 2);
+  grad.addColorStop(0, "rgba(255,255,255,0.85)");
+  grad.addColorStop(0.18, "rgba(255,255,255,0.45)");
+  grad.addColorStop(0.5, "rgba(255,255,255,0.12)");
+  grad.addColorStop(1, "rgba(255,255,255,0)");
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, N, N);
+  const t = new THREE.CanvasTexture(tela);
+  t.colorSpace = THREE.SRGBColorSpace;
+  return t;
+}
+
 function montarEstadio(cena) {
   // The old bowl: an oval of concrete terraces around the pitch, the Geral at the bottom,
   // a moat, two tiers and the roof edge with yellow lamp rigs.
@@ -291,15 +400,18 @@ function montarEstadio(cena) {
     q.setFromAxisAngle(new THREE.Vector3(0, 1, 0), -ang + Math.PI / 2);
     m.compose(p, q, sc);
     povo.setMatrixAt(k, m);
-    povo.setColorAt(k, cor.setHex(cores[Math.floor(Math.random() * cores.length)]));
+    // The rows by the pitch catch the floodlights; the top ones fade into the night.
+    povo.setColorAt(k, cor.setHex(cores[Math.floor(Math.random() * cores.length)]).multiplyScalar(1.25 - 0.6 * (h / topo)));
     k++;
   }
   g.add(povo);
   // Lamp rigs on the roof edge: grids of yellow bulbs, as the old board.
   // One instanced mesh for every bulb keeps the draw calls down on phones.
   const angulos = [0.35, 1.2, 1.95, 2.8, 3.5, 4.3, 5.1, 5.9];
-  const bulbos = new THREE.InstancedMesh(new THREE.BoxGeometry(0.6, 0.6, 0.2), basico(COR.lamp), angulos.length * 24);
+  // The bulbs and their halos skip the fog: a lamp at night reads from any distance.
+  const bulbos = new THREE.InstancedMesh(new THREE.BoxGeometry(0.6, 0.6, 0.2), new THREE.MeshBasicMaterial({ color: COR.lamp, fog: false }), angulos.length * 24);
   const placa = basico(0x16150f);
+  const halo = new THREE.SpriteMaterial({ map: texturaHalo(), color: 0xffd36a, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, fog: false });
   let nb = 0;
   for (const ang of angulos) {
     const rr = R0 + r - 3;
@@ -315,6 +427,12 @@ function montarEstadio(cena) {
       }
     }
     g.add(rig);
+    // A fake bloom: one soft additive sprite in front of each rig (no post-processing pass).
+    const s = new THREE.Sprite(halo);
+    s.position.set(0, 0, 3).applyMatrix4(rig.matrixWorld);
+    s.scale.set(26, 15, 1);
+    s.renderOrder = 2;
+    g.add(s);
   }
   g.add(bulbos);
   cena.add(g);
@@ -714,6 +832,104 @@ function vestirJogador(j, kit, numero = null) {
  * @param {HTMLElement} el
  * @param {{papel: "batedor"|"goleiro", modo: "penaltis"|"faltas"}} opcoes
  */
+// ---------------------------------------------------------------------------------------
+// Contact shadows: they keep everyone on the grass.
+
+const PE = new THREE.Vector3(0, -0.44, 0.06); // the sole, in the knee's frame
+const TRONCO = new THREE.Vector3(0, 0.3, 0); // the middle of the torso, in the hip's frame
+
+/**
+ * Soft dark blobs on the grass under each foot, under the body and under the ball: one
+ * instanced quad and a tiny shader, one draw call. They follow whatever the animation did
+ * (read from the world matrices once a frame), fading and spreading as a part leaves the ground.
+ */
+function criarSombras(cena) {
+  const MAX = 64;
+  const geo = new THREE.PlaneGeometry(1, 1).rotateX(-Math.PI / 2);
+  const forca = new THREE.InstancedBufferAttribute(new Float32Array(MAX), 1);
+  forca.setUsage(THREE.DynamicDrawUsage);
+  geo.setAttribute("forca", forca);
+  const mat = new THREE.ShaderMaterial({
+    transparent: true,
+    depthWrite: false,
+    vertexShader: `attribute float forca; varying vec2 vUv; varying float vForca;
+      void main() { vUv = uv; vForca = forca; gl_Position = projectionMatrix * modelViewMatrix * instanceMatrix * vec4(position, 1.0); }`,
+    fragmentShader: `varying vec2 vUv; varying float vForca;
+      void main() { float r = length(vUv - 0.5) * 2.0; float a = 1.0 - smoothstep(0.2, 1.0, r);
+        gl_FragColor = vec4(0.0, 0.03, 0.01, a * vForca); }`,
+  });
+  const malha = new THREE.InstancedMesh(geo, mat, MAX);
+  malha.instanceMatrix.setUsage(THREE.DynamicDrawUsage);
+  malha.frustumCulled = false;
+  malha.renderOrder = 1; // over the lines, under the players' transparent bits
+  malha.count = 0;
+  cena.add(malha);
+  const jogadores = new Set();
+  let bola = null;
+  const [m, p, q, e, eixo] = [new THREE.Matrix4(), new THREE.Vector3(), new THREE.Quaternion(), new THREE.Vector3(), new THREE.Vector3()];
+  const Y = new THREE.Vector3(0, 1, 0);
+  let n = 0;
+  const marcar = (x, z, sx, sz, ang, f) => {
+    if (n >= MAX || f <= 0.01) return;
+    q.setFromAxisAngle(Y, ang);
+    m.compose(p.set(x, 0.02, z), q, e.set(sx, 1, sz));
+    malha.setMatrixAt(n, m);
+    forca.array[n++] = f;
+  };
+  const presente = (o) => {
+    for (; o; o = o.parent) {
+      if (!o.visible) return false;
+      if (o === cena) return true;
+    }
+    return false;
+  };
+  const sat = (v) => Math.min(1, Math.max(0, v));
+  return {
+    seguir(j) {
+      jogadores.add(j);
+    },
+    bola(o) {
+      bola = o;
+    },
+    atualizar() {
+      n = 0;
+      for (const j of jogadores) {
+        if (!presente(j.grupo)) {
+          if (j.sombraVista && !j.grupo.parent) jogadores.delete(j); // a celebration's, gone
+          continue;
+        }
+        j.sombraVista = true;
+        j.grupo.updateMatrixWorld(true);
+        const s = j.grupo.scale.y;
+        for (const joelho of [j.partes.joelhoE, j.partes.joelhoD]) {
+          p.copy(PE).applyMatrix4(joelho.matrixWorld);
+          const h = Math.max(0, p.y - 0.05);
+          const r = 0.34 * s * (1 + h * 1.2);
+          marcar(p.x, p.z, r, r * 1.25, j.grupo.rotation.y, 0.8 * sat(1 - h / 0.5));
+        }
+        // The body: an ellipse along the torso's lean, darker the closer it is (a dive).
+        const corpo = j.partes.corpo.matrixWorld;
+        p.copy(TRONCO).applyMatrix4(corpo);
+        const h = Math.max(0, p.y - 0.25);
+        eixo.setFromMatrixColumn(corpo, 1);
+        const deitado = Math.hypot(eixo.x, eixo.z) / Math.max(1e-6, eixo.length());
+        const [x, z] = [p.x, p.z];
+        const r = 0.62 * s * (1 + h * 0.35);
+        marcar(x, z, r * (1 + deitado * 1.3), r, Math.atan2(-eixo.z, eixo.x), 0.55 * sat(1 - h / 1.8));
+      }
+      if (bola && presente(bola)) {
+        bola.getWorldPosition(p);
+        const h = Math.max(0, p.y - 0.13);
+        const r = 0.36 * (1 + h * 0.6);
+        marcar(p.x, p.z, r, r, 0, 0.7 * sat(1 - h / 2.5));
+      }
+      malha.count = n;
+      malha.instanceMatrix.needsUpdate = true;
+      forca.needsUpdate = true;
+    },
+  };
+}
+
 export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
   el.classList.add("mn");
   el.innerHTML = `
@@ -733,7 +949,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
   const cena = new THREE.Scene();
   cena.background = new THREE.Color(COR.board);
   cena.fog = new THREE.Fog(COR.board, 45, 170);
-  cena.add(new THREE.HemisphereLight(0xfff1d0, 0x1a2a1f, 1.5));
+  cena.add(new THREE.HemisphereLight(0xfff1d0, 0x1a2a1f, 1.4));
   const sol = new THREE.DirectionalLight(0xffe6b0, 1.7);
   sol.position.set(-30, 60, 50);
   sol.target.position.set(0, 0, 10);
@@ -743,11 +959,11 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
   sol.shadow.bias = -0.0005;
   sol.shadow.normalBias = 0.02;
   cena.add(sol, sol.target);
-  const contra = new THREE.DirectionalLight(0xfff3dc, 0.6);
+  const contra = new THREE.DirectionalLight(0xd6e2ff, 0.8); // cool, from behind the goal: a rim on the players
   contra.position.set(40, 50, -60);
   cena.add(contra);
 
-  montarGramado(cena);
+  montarGramado(cena, Math.min(8, renderer.capabilities.getMaxAnisotropy()));
   cena.traverse((o) => o.isMesh && (o.receiveShadow = true));
   const { rede } = montarGol(cena);
   montarEstadio(cena);
@@ -762,6 +978,10 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
   bola.add(bolaMalha);
   cena.add(bola);
   // The cartoon bursts: paper lines at the strike, lamp lines at the net on a goal.
+  const sombras = criarSombras(cena);
+  sombras.bola(bolaMalha);
+  sombras.seguir(batedor);
+  sombras.seguir(goleiro);
   const estouroChute = estouro(COR.papel, 8);
   const estouroGol = estouro(COR.lamp, 12);
   cena.add(estouroChute, estouroGol);
@@ -780,6 +1000,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     descansar,
     jogador({ papel: p, time, uniforme: u, visual: v }) {
       const j = montarJogador({ camisa: COR.papel, calcao: COR.tinta, meia: COR.papel, luvas: p === "goleiro" ? COR.papel : null });
+      sombras.seguir(j);
       aplicarVisual(j, v);
       const kit = uniforme({ time, uniforme: u }, p);
       if (kit) vestirJogador(j, kit, v?.numero ?? null);
@@ -814,6 +1035,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     j.partes.cotoveloE.rotation.set(-1.0, 0, 0);
     j.partes.cotoveloD.rotation.set(-1.0, 0, 0);
     barreiraGrupo.add(j.grupo);
+    sombras.seguir(j);
     return j;
   });
 
@@ -973,6 +1195,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     if (estado.destruida) return;
     try {
       if (estado.animacao) estado.animacao(performance.now());
+      sombras.atualizar();
       // The goal's shake: the camera jolts for a moment, then goes back where it was.
       const tremor = calmo ? 0 : estado.tremor;
       if (tremor > 0) {
