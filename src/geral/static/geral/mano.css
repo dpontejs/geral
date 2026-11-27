@@ -59,6 +59,16 @@
 /* The big result sign. */
 .mn-letreiro { position: absolute; left: 50%; top: 21%; transform: translate(-50%, -50%); font-size: clamp(36px, 8vw, 96px); background: rgba(11, 11, 10, .88); padding: 10px 22px; white-space: nowrap; pointer-events: none; }
 .mn-letreiro:empty { display: none; }
+/* the goal's slow replay (dev, 2026-11-27): TV's "REPLAY" lamp blinking top left, the sign out of the way */
+.mn-replay { position: absolute; left: 14px; top: 14px; z-index: 2; font-size: clamp(20px, 3.4vw, 36px); background: rgba(11, 11, 10, .9); border: 2px solid var(--lamp, #FFC21A); padding: 8px 14px; pointer-events: none; display: none; }
+.mn-em-replay .mn-replay { display: block; animation: mn-pisca-replay 1s steps(1, end) infinite; }
+.mn-em-replay .mn-letreiro { visibility: hidden; }
+@keyframes mn-pisca-replay { 0% { opacity: 1; } 50% { opacity: 0; } }
+/* the curtain between the replay and the next kick: under the board and the buttons */
+.mn-cortina { position: absolute; inset: 0; background: var(--board, #0B0B0A); opacity: 0; pointer-events: none; transition: opacity 380ms ease-out; }
+.mn-cortina.fechada { opacity: 1; transition-duration: 220ms; transition-timing-function: ease-in; }
+.mn-cortina.ja { transition: none; }
+@media (prefers-reduced-motion: reduce) { .mn-em-replay .mn-replay { animation: none; } }
 /* the winners' celebration: the line at the bottom, over the grass, not over the cup */
 .mn-festa .mn-letreiro { top: auto; bottom: 5%; transform: translateX(-50%); font-size: clamp(24px, 5.4vw, 64px); }
 @media (max-height: 430px) {

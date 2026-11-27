@@ -4,7 +4,7 @@
 <link rel="stylesheet" href="/static/geral/prancheta.css?v={{ asset_version }}">
 <link rel="stylesheet" href="/static/geral/mano.css?v={{ asset_version }}">
 {# mano.js imports the scene by its plain path: this pins it to the deploy's version. #}
-<script type="importmap">{"imports": {"/static/geral/mano-cena.js": "/static/geral/mano-cena.js?v={{ asset_version }}", "/static/geral/mano-faixa.js": "/static/geral/mano-faixa.js?v={{ asset_version }}", "/static/geral/mano-festa.js": "/static/geral/mano-festa.js?v={{ asset_version }}", "/static/geral/mano-visual.js": "/static/geral/mano-visual.js?v={{ asset_version }}"}}</script>{% endblock %}
+<script type="importmap">{"imports": {"/static/geral/mano-camera.js": "/static/geral/mano-camera.js?v={{ asset_version }}", "/static/geral/mano-cena.js": "/static/geral/mano-cena.js?v={{ asset_version }}", "/static/geral/mano-faixa.js": "/static/geral/mano-faixa.js?v={{ asset_version }}", "/static/geral/mano-festa.js": "/static/geral/mano-festa.js?v={{ asset_version }}", "/static/geral/mano-visual.js": "/static/geral/mano-visual.js?v={{ asset_version }}"}}</script>{% endblock %}
 {% block content %}
 {# The screens (create, join, waiting, the end) are drawn by mano.js from the server's `estado`;
    the 3D scene lives in #mn-cena and stays put between kicks. #}

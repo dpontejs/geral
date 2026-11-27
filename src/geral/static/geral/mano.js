@@ -425,6 +425,8 @@ function telaJogo() {
   placar();
   const fase = est.fase;
   if (fase === "resultado") {
+    // A goal is shown again, slower, before the next kick begins (mano-camera.js).
+    cena.replayAte(est.prazo ? local(est.prazo) : null);
     // The kick just taken: its lance, if the event was lost (a reconnect, a background tab);
     // after a reload, or a reconnect that missed the whole kick, at least the sign, with the
     // ball on its spot (a free kick's, not the penalty mark).
