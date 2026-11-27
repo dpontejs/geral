@@ -137,6 +137,20 @@ Nome provisório: "Mano a Mano" (decisão minha; o dev pode trocar).
   tronco inclinado com um leve sobe e desce. Ela termina com a perna do chute atrás e a outra
   chegando para plantar, e se mistura em 160 ms na paradinha e na armada. Os tempos não mudam
   (a batida segue na janela fechada depois de `chute_em`).
+- **Animação refinada no estilo cartum (dev, 2026-11-27):** substitui a passada acima. A corrida
+  são quatro passos com pegadas fixas no chão (IK de duas articulações na perna: o quadril passa
+  por cima do pé plantado, nada escorrega), o último mais longo até o pé de apoio ao lado da
+  bola; o batedor corre de frente para a corrida e gira para o gol no fim. Na armada ele inclina
+  para trás e para o lado do apoio, abre o braço livre e engatilha a perna do chute (corpo um
+  pouco achatado); a batida estica o corpo, o joelho estala reto logo antes do contato e a perna
+  sobe no acompanhamento, desce um passo à frente com um pulinho no pé de apoio. Um resultado
+  atrasado ganha 50 ms para o balanço inteiro antes de a bola sair (sem salto de pose). O
+  goleiro dá um split step na armada do batedor, carrega para o lado e mergulha com os braços
+  indo para a bola (o de perto pelo lado, o de longe por cima do rosto, nunca para trás); bola
+  alta voa subindo, bola baixa cai de lado; chega ao ponto quando a bola chega, cai na grama e
+  achata no pouso. Cabeça e cabelo vêm um tempo atrás (movimento secundário). Tudo é função do
+  relógio da cobrança (nada de aleatório nem dt), igual nos dois navegadores; com menos movimento
+  pedido no sistema saem o achatar/esticar, o pulinho, o passar do ponto e o cabelo.
 
 ## Contratos
 

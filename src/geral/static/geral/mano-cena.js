@@ -594,6 +594,9 @@ function descansar(j) {
   const p = j.partes;
   for (const k of ARTICULACOES) p[k].rotation.set(0, 0, 0);
   p.corpo.scale.set(1, 1, 1);
+  p.cabeca.rotation.set(0, 0, 0);
+  j.cabelo.calota.rotation.set(0, 0, 0);
+  j.cabelo.extra.rotation.set(0, 0, 0);
   p.bracoE.rotation.z = -0.12;
   p.bracoD.rotation.z = 0.12;
   p.cotoveloE.rotation.x = -0.25;
@@ -1749,207 +1752,389 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     return new THREE.Vector3(s * alcance, bolaDoLado ? Math.min(Math.max(plano.chegada.y, 0.4), 2.1) : 1.0, 0.45);
   }
 
+  // ---- the players' motion ----------------------------------------------------------------
+  //
+  // Both are pure functions of the kick's clock (no random, no frame dt), so both browsers in
+  // a match draw the same frame. `calmo` (prefers-reduced-motion) keeps the motion but drops
+  // the cartoon extras: squash and stretch, hops, overshoots and the hair lagging behind.
+
+  /** Every key of `a` blended towards `b` by `w`. */
+  const mistura = (a, b, w) => {
+    const r = {};
+    for (const k in a) r[k] = lerp(a[k], b[k] ?? a[k], w);
+    return r;
+  };
+
+  // The leg's bones (montarJogador): hip to knee, knee to the boot's centre, the boot's centre
+  // over its sole.
+  const COXA = 0.42;
+  const CANELA = 0.44;
+  const SOLA = 0.045;
+  const _pe = new THREE.Vector3();
+  const arco = (x) => Math.acos(Math.min(1, Math.max(-1, x)));
+  /**
+   * Two-bone IK in the leg's plane: hip and knee bent so the boot sits at `pe` (world; y = 0 on
+   * the grass). The knee only bends forward. Needs the player's matrices up to date.
+   */
+  function pisar(j, lado, pe) {
+    const p = j.partes;
+    const quadril = p[`perna${lado}`];
+    const joelho = p[`joelho${lado}`];
+    _pe.copy(pe);
+    _pe.y += SOLA * j.grupo.scale.y;
+    p.corpo.worldToLocal(_pe);
+    const dy = _pe.y - quadril.position.y;
+    const dz = _pe.z - quadril.position.z;
+    const D = Math.max(0.05, Math.min(Math.hypot(dy, dz), COXA + CANELA - 1e-4));
+    return {
+      coxa: Math.atan2(-dz, -dy) - arco((COXA * COXA + D * D - CANELA * CANELA) / (2 * COXA * D)),
+      joelho: Math.PI - arco((COXA * COXA + CANELA * CANELA - D * D) / (2 * COXA * CANELA)),
+    };
+  }
+
+  // The run-up (dev, 2026-11-27): four steps whose feet stay where they land (the hip carries
+  // the body over them, no skating), a longer last stride into the plant foot beside the ball.
+  const PASSOS = [0.8, 1, 1, 1.15]; // relative lengths: right, left, right, left (the plant)
+  const APOIO = 0.2; // m of the hip's travel each side of a planted foot while it bears weight
+  // The run's distance over its time: a softer ease-in-out than emEntra, so the first stride is
+  // not slow motion; still from 0 to 1.
+  const corrida = (k) => lerp(k, emEntra(k), 0.5);
+
+  /** The run's footprints, from where he stands to the plant (once per kick). */
+  function planoCorrida(tl) {
+    if (tl.plano) return tl.plano;
+    const esc = batedor.grupo.scale.x;
+    const S = tl.inicio.clone().setY(0);
+    const P = tl.plantio.clone().setY(0);
+    const u = P.clone().sub(S);
+    const L = u.length();
+    u.normalize();
+    const direita = new THREE.Vector3(-u.z, 0, u.x); // the runner's right
+    const C = APOIO * esc;
+    const pegada = (x, lado, lateral = 0.1) => S.clone().addScaledVector(u, x).addScaledVector(direita, (lado === "E" ? 1 : -1) * lateral * esc);
+    const soma = PASSOS.reduce((a, b) => a + b, 0);
+    const total = L + 0.08 * esc;
+    let x = 0;
+    const xs = PASSOS.map((w) => (x += (total * w) / soma));
+    // Each foot: where it stands, from which point of the hip's travel it bears weight
+    // (`chega`) and when it lifts (`sai`). The kicking foot (right, E) goes first and ends
+    // resting a little behind, lightly on its toes, for the wind-up.
+    const pes = {
+      E: [
+        { pos: pegada(0, "E"), chega: -Infinity, sai: 0 },
+        { pos: pegada(xs[0], "E"), chega: xs[0] - C, sai: xs[0] + C },
+        { pos: pegada(xs[2], "E"), chega: xs[2] - C, sai: xs[2] + C },
+        { pos: pegada(L - 0.22 * esc, "E", 0.14), chega: L, sai: Infinity, leve: true },
+      ],
+      D: [
+        { pos: pegada(0, "D"), chega: -Infinity, sai: C },
+        { pos: pegada(xs[1], "D"), chega: xs[1] - C, sai: xs[1] + C },
+        { pos: pegada(xs[3], "D"), chega: xs[3] - C, sai: Infinity },
+      ],
+    };
+    tl.plano = { S, P, u, L, esc, pes, yaw: Math.atan2(u.x, u.z) };
+    return tl.plano;
+  }
+
+  /** A foot at the hip's travel `h`: {pos, apoio: 0-1 into its stance or -1 in the air}. */
+  function peEm(lista, h, esc) {
+    for (let i = 0; i < lista.length; i++) {
+      const a = lista[i];
+      if (h < a.chega) {
+        // Swinging from the previous print to this one, lifted in an arc.
+        const b = lista[i - 1];
+        const s = entre(h, b.sai, a.chega);
+        const pos = b.pos.clone().lerp(a.pos, suave(s));
+        pos.y = (a.leve ? 0.05 : 0.13) * esc * Math.sin(Math.PI * suave(s)); // eased: no snap of the knee off the grass
+        return { pos, apoio: -1 };
+      }
+      if (h <= a.sai) {
+        // The resting toe bears no weight; the plant foot settles to midstance and stays there.
+        if (a.leve) return { pos: a.pos.clone(), apoio: -1 };
+        const apoio = Number.isFinite(a.sai) ? (h - a.chega) / (a.sai - a.chega) : Math.min(0.5, (h - a.chega) / (2 * APOIO * esc));
+        return { pos: a.pos.clone(), apoio };
+      }
+    }
+    return { pos: lista.at(-1).pos.clone(), apoio: 0.5 };
+  }
+
+  /** The run's pose at the hip's travel `h` (m): where the hip and both feet are, and the body. */
+  function corridaEm(pl, h) {
+    const { S, u, L, esc, pes } = pl;
+    const E = peEm(pes.E, h, esc);
+    const D = peEm(pes.D, h, esc);
+    // Lowest over the middle of a stance, highest in the air between steps.
+    const desce = Math.max(E.apoio >= 0 ? Math.sin(Math.PI * E.apoio) : 0, D.apoio >= 0 ? Math.sin(Math.PI * D.apoio) : 0);
+    const entra = suave(h / (0.35 * esc)); // from standing into the run
+    const freia = suave(entre(h, L - 0.6 * esc, L)); // the last stride, slowing into the plant
+    const quadril = S.clone().addScaledVector(u, h);
+    quadril.y = batedor.quadril - esc * entra * (0.05 + 0.025 * desce);
+    // Arms against the legs: each one back while its leg is forward.
+    const frente = (pe) => pe.pos.clone().sub(quadril).dot(u) / esc;
+    return {
+      quadril,
+      pes: { E: E.pos, D: D.pos },
+      corpo: {
+        inclina: entra * (0.2 - 0.14 * freia),
+        rola: 0.04 * entra * ((E.apoio >= 0 ? -Math.sin(Math.PI * E.apoio) : 0) + (D.apoio >= 0 ? Math.sin(Math.PI * D.apoio) : 0)),
+        bEx: prender(1.5 * frente(E), -0.8, 0.8),
+        bDx: prender(1.5 * frente(D), -0.8, 0.8),
+        bEz: -0.12,
+        bDz: 0.12,
+        cot: -0.25 - 0.9 * entra,
+        escala: 1,
+        avanca: 0,
+        baixa: 0,
+      },
+    };
+  }
+
+  // The kicker's body over the kick (ease: each pose blended into the next, never a snap).
+  const PARADINHA = { inclina: 0.06, rola: 0, bEx: 0.15, bDx: 0.15, bEz: -0.15, bDz: 0.15, cot: -0.45, escala: 1, avanca: 0, baixa: 0.03 };
+  // The wind-up: leaning back and over the plant foot, the free arm wide, the kicking leg cocked.
+  const ARMADO = { inclina: -0.28, rola: -0.13, bEx: 0.75, bDx: -0.45, bEz: -0.6, bDz: 1.3, cot: -0.35, escala: 0.95, avanca: -0.06, baixa: 0.07, coxa: 1.0, joelho: 1.95 };
+  // The strike, through the ball: over it, the arms swapped, stretched long.
+  const GOLPE = { inclina: 0.16, rola: -0.06, bEx: -0.65, bDx: 0.1, bEz: -0.35, bDz: 1.0, cot: -0.4, escala: 1.07, avanca: 0.12, baixa: 0.04, coxa: -1.35, joelho: 0.05 };
+  // After: the follow-through lands a step ahead, upright, arms down.
+  const DEPOIS_CHUTE = { inclina: 0.06, rola: 0, bEx: 0.1, bDx: 0.1, bEz: -0.18, bDz: 0.18, cot: -0.4, escala: 1, avanca: 0.42, baixa: 0.02 };
+
+  function animarBatedor(t, tl) {
+    const b = batedor;
+    const p = b.partes;
+    const { lento, d } = tl;
+    const pl = planoCorrida(tl);
+    const { u, L, esc } = pl;
+    const ef = calmo ? 0 : 1;
+    descansar(b);
+    const tAnt = tl.t0 + tl.antecipa;
+    const tGolpe = tl.lance ? tl.tGolpe : Infinity;
+    // The wind-up's start, kept once it began: a late result may pull tl.tArma earlier, and that
+    // must not jump the pose or cut the wind-up short.
+    if (tl.tArmaFixo === undefined && t >= tl.tArma) tl.tArmaFixo = Math.max(tl.tArma, tl.tVisto ?? tl.tArma);
+    tl.tVisto = t;
+
+    // The run (and before it, a rock back on the spot to get going), then the paradinha.
+    const r = corridaEm(pl, L * corrida(entre(t, tAnt, tl.tChute)));
+    let c = r.corpo;
+    const pes = r.pes;
+    const pos = r.quadril;
+    if (t < tAnt) {
+      const m = Math.sin(Math.PI * suave(entre(t, tl.t0, tAnt)));
+      pos.addScaledVector(u, -0.07 * esc * m);
+      c = { ...c, inclina: -0.15 * m, baixa: 0.04 * m, bEx: 0.5 * m, bDx: 0.5 * m };
+    }
+    const fixo = (t - tl.t0) / lento; // ms since the kick began, for the idle sway
+    if (t > tl.tChute) {
+      const parado = { ...PARADINHA, rola: 0.04 * Math.sin((t - tl.tChute) / lento / 110) };
+      c = mistura(c, parado, suave(entre(t, tl.tChute, tl.tChute + 260 * lento)));
+    }
+    // Facing along the run, turning to the goal over the last stride.
+    let yaw = lerp(pl.yaw, Math.atan2(d.x, d.z), suave(entre(t, lerp(tAnt, tl.tChute, 0.55), tl.tChute + 120 * lento)));
+    const tArma = tl.tArmaFixo ?? Infinity;
+    const golpe0 = tGolpe - 50 * lento;
+    const wArma = suave(entre(Math.min(t, golpe0), tArma, tArma + 200 * lento));
+    let perna = null; // the kicking leg's own pose, over the IK one: {coxa, joelho, w}
+    if (wArma > 0) {
+      const armado = { ...ARMADO, inclina: ARMADO.inclina + Math.sin(fixo / 35) * 0.012 };
+      c = mistura(c, armado, wArma);
+      perna = { coxa: ARMADO.coxa, joelho: ARMADO.joelho, w: wArma };
+    }
+    let pulo = null;
+    if (t >= golpe0) {
+      // The strike, at full speed through the ball; the knee snaps straight a beat after the
+      // thigh (the whip), just before the contact at tGolpe.
+      const s = entre(t, golpe0, tGolpe + 70 * lento);
+      const sj = suave(entre(t, golpe0 + 10 * lento, tGolpe + 25 * lento));
+      c = mistura(c, GOLPE, s);
+      perna = { coxa: lerp(ARMADO.coxa * wArma, GOLPE.coxa, s), joelho: lerp(ARMADO.joelho * wArma, GOLPE.joelho, sj), w: 1 };
+      const f = entre(t, tGolpe + 70 * lento, tGolpe + 650 * lento);
+      if (f > 0) {
+        // Follow-through: the leg rises on past the ball, comes down a step ahead; the body
+        // carries on with a skip on the standing foot.
+        c = mistura(c, DEPOIS_CHUTE, saiRapido(f));
+        c.escala = lerp(GOLPE.escala, 1, saiRapido(entre(f, 0, 0.35)));
+        perna.coxa = f < 0.15 ? lerp(GOLPE.coxa, -1.6, saiRapido(f / 0.15)) : lerp(-1.6, -0.5, suave((f - 0.15) / 0.35));
+        perna.joelho = lerp(GOLPE.joelho, 0.35, suave(entre(f, 0.1, 0.4)));
+        perna.w = 1 - suave(entre(f, 0.3, 0.62));
+        const ahead = pes.D.clone().addScaledVector(d, 0.55 * esc).addScaledVector(new THREE.Vector3(-d.z, 0, d.x), 0.2 * esc);
+        ahead.y = 0.08 * esc * (1 - suave(entre(f, 0.3, 0.6)));
+        pes.E = ahead;
+        const hf = entre(f, 0.08, 0.42);
+        pulo = ef * 0.06 * esc * Math.sin(Math.PI * hf);
+        pes.D.addScaledVector(d, 0.22 * esc * suave(hf));
+        pes.D.y = pulo;
+        // landing the skip: a small squash
+        c.escala -= ef * 0.03 * Math.sin(Math.PI * entre(f, 0.38, 0.6));
+      }
+    }
+    if (calmo) c.escala = 1;
+
+    pos.addScaledVector(d, c.avanca * esc);
+    pos.y -= c.baixa * esc;
+    if (pulo) pos.y += pulo;
+    b.grupo.position.copy(pos);
+    b.grupo.rotation.set(0, yaw, 0);
+    p.corpo.rotation.set(c.inclina, 0, c.rola);
+    p.corpo.scale.set(1 / Math.sqrt(c.escala), c.escala, 1 / Math.sqrt(c.escala));
+    b.grupo.updateMatrixWorld(true);
+    for (const lado of ["E", "D"]) {
+      const ik = pisar(b, lado, pes[lado]);
+      p[`perna${lado}`].rotation.x = ik.coxa;
+      p[`joelho${lado}`].rotation.x = ik.joelho;
+    }
+    if (perna) {
+      p.pernaE.rotation.x = lerp(p.pernaE.rotation.x, perna.coxa, perna.w);
+      p.joelhoE.rotation.x = lerp(p.joelhoE.rotation.x, perna.joelho, perna.w);
+    }
+    p.bracoE.rotation.set(c.bEx, 0, c.bEz);
+    p.bracoD.rotation.set(c.bDx, 0, c.bDz);
+    p.cotoveloE.rotation.x = p.cotoveloD.rotation.x = c.cot;
+    // The head stays on the ball through the strike; the hair bobs a beat behind the body.
+    const olhaBola = t >= tGolpe ? 1 - suave(entre(t, tGolpe + 200 * lento, tGolpe + 600 * lento)) : 1;
+    p.cabeca.rotation.x = 0.28 * wArma * olhaBola;
+    if (ef) {
+      const atras = corridaEm(pl, Math.max(0, L * corrida(entre(t - 45 * lento, tAnt, tl.tChute))));
+      balancarCabelo(b, (atras.quadril.y - r.quadril.y) / esc);
+    }
+  }
+
+  /** The hair lagging the head: `dy` (m) how far the body just went up (+) or down. */
+  function balancarCabelo(j, dy) {
+    const { calota, extra } = j.cabelo;
+    const v = prender(dy * 6, -0.12, 0.12);
+    calota.rotation.x = -v * 0.6;
+    extra.rotation.x = -v * 1.6;
+  }
+
+  /** The keeper's ready stance with the split step: a hop as the kicker winds up, landing low. */
+  function goleiroPronto(g, t, tl, H0) {
+    const p = g.partes;
+    const { lento } = tl;
+    const ef = calmo ? 0 : 1;
+    const tA = tl.tArmaFixo ?? tl.tArma;
+    const sp = entre(t, tA - 60 * lento, tA + 150 * lento);
+    const agacha = suave(entre(t, tA + 60 * lento, tA + 220 * lento));
+    const rel = (t - tl.t0) / lento;
+    const s = Math.sin(rel / 140) * (1 - agacha);
+    prontoGoleiro(g, s);
+    const estende = ef * Math.sin(Math.PI * sp);
+    p.pernaE.rotation.x = p.pernaD.rotation.x = -0.35 - 0.2 * agacha + 0.2 * estende;
+    p.joelhoE.rotation.x = p.joelhoD.rotation.x = 0.6 + 0.35 * agacha - 0.35 * estende;
+    p.corpo.rotation.x = 0.15 + 0.12 * agacha;
+    p.bracoE.rotation.z -= 0.15 * agacha;
+    p.bracoD.rotation.z += 0.15 * agacha;
+    g.grupo.position.copy(H0);
+    g.grupo.position.y += -Math.abs(s) * 0.025 - 0.06 * agacha + 0.07 * estende;
+    g.grupo.position.x += Math.sin(rel / 260) * 0.04 * (1 - agacha);
+    return agacha;
+  }
+
   function animarGoleiro(t, tl) {
     const g = goleiro;
     const p = g.partes;
     const { lento } = tl;
+    const ef = calmo ? 0 : 1;
     const H0 = new THREE.Vector3(0, GOLEIRO_QUADRIL, 0.35);
     // The exit: a step off the line, from the local press or from the result.
     const tSaida = tl.saidaLocal ?? (tl.lance?.defesa?.saida ? tl.tGolpe - 220 * lento : null);
     const passo = tSaida != null ? suave(entre(t, tSaida, tSaida + 200 * lento)) * 0.6 : 0;
     H0.z += passo;
-    if (!tl.lance || t < tl.tGolpe - 40 * lento) {
-      // Ready stance, bouncing on his toes, swaying side to side.
-      const s = Math.sin(t / 140);
-      prontoGoleiro(g, s);
-      g.grupo.position.copy(H0);
-      g.grupo.position.y -= Math.abs(s) * 0.025;
-      g.grupo.position.x += Math.sin(t / 260) * 0.04;
+    const tG = tl.tGolpe;
+    if (!tl.lance || t < tG - 40 * lento) {
+      goleiroPronto(g, t, tl, H0);
       return;
     }
+    // Start from the stance as it was when the dive began.
+    const agacha = goleiroPronto(g, tG - 40 * lento, tl, H0);
+    const H = g.grupo.position.clone();
     const T = tl.alvoGoleiro;
-    const kd = entre(t, tl.tGolpe - 40 * lento, tl.tGolpe + 420 * lento);
+    const lado = tl.lance.defesa.lado;
+    const sx = lado === "esquerda" ? -1 : lado === "direita" ? 1 : 0;
+    // The load (a dip and a lean to the side), the flight to full stretch, the fall, the landing.
+    const kc = suave(entre(t, tG - 40 * lento, tG + 70 * lento));
+    // Full stretch as the ball gets there (never slower than a real dive), then the fall.
+    const voa = prender(msDeVoo(tl.lance) * tl.voo.fim - 60, 380, 560) * lento;
+    const kd = entre(t, tG + 40 * lento, tG + voa);
     const k = suave(kd);
-    // Cartoon: the dive overshoots its mark and settles back (ease-out-back), the body
-    // stretched long at its height.
-    const kb = voltaAtras(kd);
+    // Cartoon: a touch past the mark, then back; pushing off (kd^1.5), not shot from a cannon.
+    const kb = ef ? voltaAtras(kd ** 1.5) : k;
     if (estado.papel === "goleiro") {
       estado.seguir = { k, T };
       posicionarCamera();
     }
-    const pe = new THREE.Vector3(H0.x, 0.35, H0.z);
+    const pe = new THREE.Vector3(H.x, 0.35, H.z);
     const dir = T.clone().sub(pe);
     dir.z = 0;
-    dir.y = Math.max(dir.y, 0.3); // never head-first into the grass
+    dir.y = Math.max(dir.y, 0.15); // never head-first into the grass
     dir.normalize();
-    const quadrilAlvo = T.clone().addScaledVector(dir, -1.15);
-    quadrilAlvo.y = Math.max(0.55, quadrilAlvo.y);
-    quadrilAlvo.z = T.z;
     const fica = Math.abs(dir.x) < 0.35;
-    const theta = Math.atan2(-dir.x, dir.y) * 1.0;
-    // Then down to the grass (not when he just jumped in the middle).
-    const q = fica ? 0 : suave(entre(t, tl.tGolpe + 420 * lento, tl.tGolpe + 900 * lento));
+    const lider = sx === 0 ? 0 : Math.sign(dir.x); // the side he flies to, -1 = his right (E)
+    const alto = prender((T.y - 0.7) / 1.2, 0, 1);
+    const QA = T.clone().addScaledVector(dir, -1.15);
+    QA.y = Math.max(0.42, QA.y);
+    QA.z = T.z;
+    const theta = Math.atan2(-dir.x, dir.y);
+    // Then down to the grass (not when he just jumped in the middle), and the landing.
+    const q = fica ? 0 : suave(entre(t, tG + voa + 100 * lento, tG + voa + 430 * lento));
+    const pouso = entre(t, tG + voa + 410 * lento, tG + voa + 680 * lento);
     const virado = Math.atan2(estado.bolaEm.x, estado.bolaEm.z) * 0.6; // stance facing the ball
-    g.grupo.rotation.set(0, virado * (1 - k), lerp(0, theta, kb) + q * (Math.sign(theta) * Math.PI) / 2 * 0.25);
-    g.grupo.position.set(lerp(H0.x, quadrilAlvo.x, kb), lerp(H0.y, quadrilAlvo.y, kb) * (1 - q) + 0.32 * q, lerp(H0.z, quadrilAlvo.z, k));
-    if (fica) g.grupo.position.y -= suave(entre(t, tl.tGolpe + 450 * lento, tl.tGolpe + 800 * lento)) * (quadrilAlvo.y - H0.y);
+    const H1 = H.clone();
+    H1.y -= 0.05 * kc;
+    H1.x += lider * 0.08 * kc;
+    // Up early for a high ball (the peak as the ball comes), sideways and down for a low one.
+    const sobe = alto > 0.3 ? lerp(k, saiRapido(kd), 0.35) : k;
+    const queda = -lider * 1.42; // lying on his side, facing the pitch
+    g.grupo.rotation.set(0, virado * (1 - k), lerp(lerp(0, 0.15 * -lider, kc), theta, kb) * (1 - q) + q * queda);
+    g.grupo.position.set(
+      lerp(H1.x, QA.x, kb) + lider * 0.22 * q,
+      lerp(H1.y, QA.y, sobe) * (1 - q) + 0.3 * q + ef * 0.035 * Math.sin(Math.PI * pouso) * (1 - fica),
+      lerp(H1.z, QA.z, k),
+    );
+    if (fica) g.grupo.position.y -= suave(entre(t, tG + voa - 20 * lento, tG + voa + 330 * lento)) * (QA.y - H1.y);
     descansar(g);
-    const estica = 1 + (fica ? 0.12 : 0.3) * Math.sin(Math.PI * kd);
-    p.corpo.scale.set(1 / Math.sqrt(estica), estica, 1 / Math.sqrt(estica));
+    // Squash and stretch: long in the air, squashed against the grass as he lands (his body's
+    // x is the vertical when lying on his side); a jump in the middle lands on his feet.
+    let estica = 1 + ef * (fica ? 0.08 : 0.14) * Math.sin(Math.PI * kd);
+    let achata = 1;
+    if (fica) estica -= ef * 0.08 * Math.sin(Math.PI * entre(t, tG + voa + 290 * lento, tG + voa + 480 * lento));
+    else achata = 1 - ef * 0.13 * Math.sin(Math.PI * Math.min(1, pouso * 2.2));
+    p.corpo.scale.set(achata / Math.sqrt(estica), estica * (2 - achata) ** 0.5, 1 / Math.sqrt(estica));
     // Jumping in the middle, the stretched legs must not sink into the grass.
     if (fica) g.grupo.position.y += (estica - 1) * GOLEIRO_QUADRIL;
-    const braco = -Math.PI * 0.95 * k;
-    p.bracoE.rotation.set(braco, 0, lerp(-0.9, 0.1, k));
-    p.bracoD.rotation.set(braco, 0, lerp(0.9, -0.1, k));
-    p.cotoveloE.rotation.x = p.cotoveloD.rotation.x = lerp(-0.5, 0, k);
-    p.pernaE.rotation.set(lerp(-0.35, 0.35, k), 0, -0.25 + 0.05 * k);
-    p.pernaD.rotation.set(lerp(-0.35, -0.25, k), 0, 0.25 - 0.05 * k);
-    p.joelhoE.rotation.x = lerp(0.6, 0.15, k);
-    p.joelhoD.rotation.x = lerp(0.6, 0.55, k);
-    p.corpo.rotation.set(0.15 * (1 - k), 0, 0);
-  }
 
-  // The run-up's gait (dev, 2026-11-26): strides over the run, ending with the kicking leg
-  // (pernaE) behind and the standing one reaching for the plant, as the wind-up wants them.
-  const PASSADAS = 2.25; // gait cycles (two steps each) from the step back to the plant
-  const MISTURA = 160; // ms to blend the last stride into what follows
-  /**
-   * The run's pose at `e` (0-1 of the distance): hip and knee of each leg, arms swinging
-   * against the legs, torso lean and the bob, low at each foot's midstance.
-   */
-  function passada(e, ciclos = PASSADAS, amp = 1) {
-    const fase0 = Math.PI - 2 * Math.PI * ciclos; // ends at PI: left leg back, right forward
-    const fase = fase0 + 2 * Math.PI * ciclos * e;
-    const perna = (f) => {
-      const u = ((f % (2 * Math.PI)) + 2 * Math.PI) % (2 * Math.PI);
-      // Knee: a little give at midstance, and the heel kicking up early in the swing.
-      const apoio = u < Math.PI ? 0.3 * Math.sin(u) : 0;
-      const balanco = u >= Math.PI ? 1.3 * Math.sin(Math.PI * ((u - Math.PI) / Math.PI) ** 0.75) : 0;
-      // Hip: forward (negative) at contact (u=0), back at toe-off (u=PI), swinging forward after;
-      // the bent stance knee is taken up at the hip, so the planted foot stays under the body.
-      const quadril = -0.72 * Math.cos(f) - 0.55 * apoio;
-      return { quadril: quadril * amp, joelho: (0.12 + apoio + balanco) * amp };
-    };
-    const E = perna(fase);
-    const D = perna(fase + Math.PI);
-    // The legs hang from the leaning torso (corpo): its lean is taken off the hips, or both feet
-    // would trail behind.
-    const corpo = (0.2 + 0.03 * Math.cos(2 * fase)) * amp;
-    return {
-      pernaE: E.quadril - corpo,
-      joelhoE: E.joelho,
-      pernaD: D.quadril - corpo,
-      joelhoD: D.joelho,
-      // each arm against its leg, elbows bent, swinging a little at the elbow too
-      bracoE: 0.6 * Math.cos(fase) * amp,
-      bracoD: -0.6 * Math.cos(fase) * amp,
-      // more bend on the forward swing (hand up), more open going back
-      cotoveloE: -0.25 - (1.05 - 0.25 * Math.cos(fase)) * amp,
-      cotoveloD: -0.25 - (1.05 + 0.25 * Math.cos(fase)) * amp,
-      corpo,
-      rolar: 0.035 * Math.sin(fase) * amp,
-      salto: (0.035 * (0.5 + 0.5 * Math.cos(2 * fase)) - 0.012) * amp,
-    };
-  }
-  // The run's distance over its time: a softer ease-in-out than emEntra, so the first stride is
-  // not slow motion; still from 0 to 1.
-  const corrida = (k) => lerp(k, emEntra(k), 0.5);
-  function posar(p, g) {
-    for (const k of ["pernaE", "pernaD", "joelhoE", "joelhoD", "bracoE", "bracoD", "cotoveloE", "cotoveloD"]) p[k].rotation.x = g[k];
-    p.corpo.rotation.set(g.corpo, 0, g.rolar);
-  }
-
-  function animarBatedor(t, tl) {
-    const b = batedor;
-    const p = b.partes;
-    const { lento, inicio, plantio, d } = tl;
-    descansar(b);
-    const tAnt = tl.t0 + tl.antecipa;
-    const atras = inicio.clone().addScaledVector(d, -0.35);
-    let pos;
-    let salto = 0;
-    if (t < tAnt) {
-      // Anticipation (cartoon): a step back into a crouch, arms back, then the spring forward.
-      const a = entre(t, tl.t0, tAnt);
-      const m = Math.sin(a * Math.PI);
-      pos = inicio.clone().lerp(atras, Math.sin((a * Math.PI) / 2));
-      p.corpo.rotation.x = -0.22 * m;
-      p.pernaD.rotation.x = 0.45 * m;
-      p.joelhoD.rotation.x = 0.7 * m;
-      p.pernaE.rotation.x = -0.2 * m;
-      p.joelhoE.rotation.x = 0.5 * m;
-      p.bracoE.rotation.x = p.bracoD.rotation.x = 0.7 * m;
-      salto = -0.07 * m;
-    } else if (t < tl.tChute) {
-      // The run: a gait cycle tied to the distance covered, so the feet do not skate.
-      const k = entre(t, tAnt, tl.tChute);
-      const e = corrida(k);
-      pos = atras.clone().lerp(plantio, e);
-      const g = passada(e, tl.passadas, suave(k / 0.12));
-      posar(p, g);
-      salto = g.salto;
-    } else {
-      // Paradinha: weight shifting by the ball.
-      pos = plantio.clone();
-      p.corpo.rotation.set(0.08, 0, Math.sin((t - tl.tChute) / 110) * 0.05);
+    // Arms: reaching for the ball from the first moment (they lead the body). The near arm goes
+    // up the side, the far one across the face, both ending past the head towards the ball.
+    const a = suave(entre(t, tG - 30 * lento, tG + 230 * lento));
+    for (const [ombro, cot, fora] of [[p.bracoE, p.cotoveloE, -1], [p.bracoD, p.cotoveloD, 1]]) {
+      let alvo;
+      if (fica) alvo = alto > 0.35 ? { x: -0.25, z: fora * 2.75, c: -0.1 } : { x: -1.35, z: fora * 0.35, c: -0.3 };
+      else if (fora === lider) alvo = { x: -0.25, z: fora * (Math.PI - 0.32), c: -0.04 };
+      else alvo = { x: -2.75, z: lider * 0.28, c: -0.22 };
+      ombro.rotation.set(lerp(-0.3, alvo.x, a), 0, lerp(fora * (0.9 + 0.15 * agacha), alvo.z, a));
+      cot.rotation.x = lerp(-0.5, alvo.c, a);
     }
-    const tGolpe = tl.lance ? tl.tGolpe : Infinity;
-    const armado = (x) => suave(entre(x, tl.tArma, tl.tArma + 200 * lento));
-    if (t >= tGolpe - 50 * lento) {
-      // The strike, fast, from the cocked leg through the ball, and the follow-through with a
-      // hop on the standing foot.
-      const a = armado(tGolpe - 50 * lento);
-      const s = saiRapido(entre(t, tGolpe - 50 * lento, tGolpe + 70 * lento));
-      const f = entre(t, tGolpe + 70 * lento, tGolpe + 520 * lento);
-      const fe = saiRapido(f);
-      const coxa = f > 0 ? lerp(-1.5, -0.25, fe) : lerp(0.9 * a, -1.5, s);
-      const inclina = f > 0 ? lerp(0.2, 0.05, fe) : lerp(-0.25 * a, 0.2, s);
-      const bracos = f > 0 ? lerp(-0.6, -0.1, fe) : lerp(0.8 * a, -0.6, s);
-      p.pernaE.rotation.x = coxa;
-      p.joelhoE.rotation.x = f > 0 ? lerp(0, 0.3, fe) : lerp(1.6 * a, 0, s);
-      p.pernaD.rotation.x = -0.15;
-      p.joelhoD.rotation.x = 0.2;
-      p.corpo.rotation.set(inclina, 0, 0);
-      p.bracoE.rotation.set(bracos, 0, -0.25 - Math.abs(inclina));
-      p.bracoD.rotation.set(-bracos, 0, 0.25 + Math.abs(inclina));
-      pos = plantio.clone().addScaledVector(d, 0.3 * suave(entre(t, tGolpe - 50 * lento, tGolpe + 300 * lento)));
-      salto = 0.07 * Math.sin(Math.PI * f);
-    } else if (t >= tl.tArma) {
-      // Wind-up: the kicking leg cocked back, leaning back, arms out; held (quivering) until the
-      // server's result lets the strike go.
-      const a = armado(t);
-      p.pernaE.rotation.x = 0.9 * a;
-      p.joelhoE.rotation.x = 1.6 * a;
-      p.pernaD.rotation.x = -0.15 * a;
-      p.joelhoD.rotation.x = 0.2 * a;
-      p.corpo.rotation.set(-0.25 * a, 0, Math.sin(t / 35) * 0.012 * a);
-      p.bracoE.rotation.set(0.8 * a, 0, -0.25 - 0.25 * a);
-      p.bracoD.rotation.set(-0.8 * a, 0, 0.25 + 0.25 * a);
-      p.cotoveloE.rotation.x = p.cotoveloD.rotation.x = -0.25;
+    // Legs: the near one pushed straight, the far one tucked (higher for a high ball); on a jump
+    // in the middle both tuck; lying on the grass they relax.
+    for (const [perna, joelho, fora] of [[p.pernaE, p.joelhoE, -1], [p.pernaD, p.joelhoD, 1]]) {
+      let alvo;
+      if (fica) alvo = { x: -0.45, z: fora * 0.15, j: 0.6 };
+      else if (fora === lider) alvo = { x: 0.25, z: fora * 0.12, j: 0.08 };
+      else alvo = { x: lerp(-0.2, -0.7, alto), z: fora * 0.05, j: lerp(0.55, 1.1, alto) };
+      const solto = { x: 0.1, z: fora * 0.1, j: 0.35 };
+      const x0 = -0.35 - 0.2 * agacha;
+      const j0 = 0.6 + 0.35 * agacha;
+      perna.rotation.set(lerp(lerp(x0, alvo.x, k), solto.x, q), 0, lerp(lerp(fora * 0.25, alvo.z, k), solto.z, q));
+      joelho.rotation.x = lerp(lerp(j0, alvo.j, k), solto.j, q);
     }
-    // Out of the stride into the paradinha / wind-up (a late result can bring the wind-up into
-    // the last steps), with no snap: blend from where the gait is at that moment.
-    // It is over by the strike, which always gets its full pose.
-    // Its start is kept once it began: a late result that pulls the wind-up earlier must not
-    // move it back and cut it short.
-    const tCalculado = Math.min(tl.tChute, tl.tArma, tGolpe - 50 * lento);
-    if (tl.tMistura === undefined && t >= tAnt && t >= tCalculado) tl.tMistura = tCalculado;
-    const tMistura = tl.tMistura ?? tCalculado;
-    const fimMistura = Math.min(tMistura + MISTURA * lento, tGolpe - 50 * lento);
-    if (t >= tAnt && t >= tMistura && t < fimMistura) {
-      const w = suave(entre(t, tMistura, fimMistura));
-      const k = entre(t, tAnt, tl.tChute);
-      const fimCorrida = passada(corrida(k), tl.passadas, suave(k / 0.12));
-      for (const j of ["pernaE", "pernaD", "joelhoE", "joelhoD", "bracoE", "bracoD", "cotoveloE", "cotoveloD", "corpo"])
-        p[j].rotation.x = lerp(fimCorrida[j], p[j].rotation.x, w);
-      // the run keeps the arms at rest sideways (descansar); the wind-up opens them
-      p.bracoE.rotation.z = lerp(-0.12, p.bracoE.rotation.z, w);
-      p.bracoD.rotation.z = lerp(0.12, p.bracoD.rotation.z, w);
-      p.corpo.rotation.z = lerp(fimCorrida.rolar, p.corpo.rotation.z, w);
-      salto = lerp(fimCorrida.salto, salto, w);
+    p.corpo.rotation.set((0.15 + 0.12 * agacha) * (1 - k), 0, 0);
+    // The head keeps his eyes nearer level, a beat behind the dive (and the hair a beat more).
+    const atras = (ef ? voltaAtras(entre(t - 60 * lento, tG + 40 * lento, tG + voa) ** 1.5) : k) - kb;
+    p.cabeca.rotation.z = -0.3 * (theta * k * (1 - q) + q * queda) - (fica ? 0 : 0.5 * theta * atras);
+    if (ef) {
+      const { calota, extra } = g.cabelo;
+      calota.rotation.z = -theta * atras * 0.5;
+      extra.rotation.z = -theta * atras * 1.2;
     }
-    pos.y = b.quadril + salto;
-    b.grupo.position.copy(pos);
   }
 
   function animarBola(t, tl) {
@@ -2040,10 +2225,10 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       lento,
       d,
       inicio: batedor.grupo.position.clone(),
-      plantio: estado.bolaEm.clone().addScaledVector(d, -0.5).addScaledVector(direita, -0.45),
+      // the hip at the plant: the kicking (right) foot meets the ball, the other beside it
+      plantio: estado.bolaEm.clone().addScaledVector(d, -0.14).addScaledVector(direita, -0.1),
       saidaLocal: null,
       letreiro: false,
-      passadas: PASSADAS,
     };
     tl.antecipa = Math.min(320 * lento, (tl.tChute - tl.t0) * 0.3);
     tl.tArma = Math.max(tl.tChute, chute_em + (JANELA - 230) * lento);
@@ -2078,7 +2263,8 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       tl.voo = voo;
       tl.alvoGoleiro = alvoGoleiro;
       tl.lance = l;
-      tl.tGolpe = Math.max(chute_em + JANELA * lento, tl.tChute, performance.now());
+      // A result that comes late still gets the whole swing (50 ms) before the ball goes.
+      tl.tGolpe = Math.max(chute_em + JANELA * lento, tl.tChute, performance.now() + 50 * lento);
       // A late result never brings the wind-up into the run, at most its last steps.
       tl.tArma = Math.max(tl.t0 + tl.antecipa, tl.tChute - 120 * lento, Math.min(tl.tArma, tl.tGolpe - 230 * lento));
       tl.fim = tl.tGolpe + (msDeVoo(l) * tl.voo.fim + DEPOIS) * lento;
