@@ -7,3 +7,5 @@ out/
 fonts/
 brand_src/
 .omc/
+# semantic-release dry run output (CI)
+.next-version
