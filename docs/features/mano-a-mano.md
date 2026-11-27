@@ -140,7 +140,8 @@ Nome provisório: "Mano a Mano" (decisão minha; o dev pode trocar).
 - **Animação refinada no estilo cartum (dev, 2026-11-27):** substitui a passada acima. A corrida
   são quatro passos com pegadas fixas no chão (IK de duas articulações na perna: o quadril passa
   por cima do pé plantado, nada escorrega), o último mais longo até o pé de apoio ao lado da
-  bola; o batedor corre de frente para a corrida e gira para o gol no fim. Na armada ele inclina
+  bola; o batedor corre de frente para o gol o tempo todo, só na leve diagonal da corrida, sem
+  giro no último passo. Na armada ele inclina
   para trás e para o lado do apoio, abre o braço livre e engatilha a perna do chute (corpo um
   pouco achatado); a batida estica o corpo, o joelho estala reto logo antes do contato e a perna
   sobe no acompanhamento, desce um passo à frente com um pulinho no pé de apoio. Um resultado

@@ -1809,7 +1809,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
     const u = P.clone().sub(S);
     const L = u.length();
     u.normalize();
-    const direita = new THREE.Vector3(-u.z, 0, u.x); // the runner's right
+    const direita = new THREE.Vector3(-tl.d.z, 0, tl.d.x); // his right, facing the goal
     const C = APOIO * esc;
     const pegada = (x, lado, lateral = 0.1) => S.clone().addScaledVector(u, x).addScaledVector(direita, (lado === "E" ? 1 : -1) * lateral * esc);
     const soma = PASSOS.reduce((a, b) => a + b, 0);
@@ -1832,7 +1832,7 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
         { pos: pegada(xs[3], "D"), chega: xs[3] - C, sai: Infinity },
       ],
     };
-    tl.plano = { S, P, u, L, esc, pes, yaw: Math.atan2(u.x, u.z) };
+    tl.plano = { S, P, u, L, esc, pes };
     return tl.plano;
   }
 
@@ -1877,8 +1877,8 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       corpo: {
         inclina: entra * (0.2 - 0.14 * freia),
         rola: 0.04 * entra * ((E.apoio >= 0 ? -Math.sin(Math.PI * E.apoio) : 0) + (D.apoio >= 0 ? Math.sin(Math.PI * D.apoio) : 0)),
-        bEx: prender(1.5 * frente(E), -0.8, 0.8),
-        bDx: prender(1.5 * frente(D), -0.8, 0.8),
+        bEx: entra * prender(1.5 * frente(E), -0.8, 0.8),
+        bDx: entra * prender(1.5 * frente(D), -0.8, 0.8),
         bEz: -0.12,
         bDz: 0.12,
         cot: -0.25 - 0.9 * entra,
@@ -1928,11 +1928,13 @@ export function criarCena(el, { papel = "batedor", modo = "penaltis" } = {}) {
       const parado = { ...PARADINHA, rola: 0.04 * Math.sin((t - tl.tChute) / lento / 110) };
       c = mistura(c, parado, suave(entre(t, tl.tChute, tl.tChute + 260 * lento)));
     }
-    // Facing along the run, turning to the goal over the last stride.
-    let yaw = lerp(pl.yaw, Math.atan2(d.x, d.z), suave(entre(t, lerp(tAnt, tl.tChute, 0.55), tl.tChute + 120 * lento)));
+    // Facing the goal the whole way (dev, 2026-11-27: no turn on the last stride); the run comes
+    // in on the slight diagonal from where he stands.
+    const yaw = Math.atan2(d.x, d.z);
     const tArma = tl.tArmaFixo ?? Infinity;
     const golpe0 = tGolpe - 50 * lento;
-    const wArma = suave(entre(Math.min(t, golpe0), tArma, tArma + 200 * lento));
+    // (no wind-up yet: entre() over an infinite window is NaN, which hid the head on the run)
+    const wArma = Number.isFinite(tArma) ? suave(entre(Math.min(t, golpe0), tArma, tArma + 200 * lento)) : 0;
     let perna = null; // the kicking leg's own pose, over the IK one: {coxa, joelho, w}
     if (wArma > 0) {
       const armado = { ...ARMADO, inclina: ARMADO.inclina + Math.sin(fixo / 35) * 0.012 };
